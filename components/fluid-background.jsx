@@ -4,8 +4,8 @@ import { useEffect, useRef } from 'react';
 function FluidBackground({
   SIM_RESOLUTION = 128,
   DYE_RESOLUTION = 1024,
-  DENSITY_DISSIPATION = 1,
-  VELOCITY_DISSIPATION = 0.2,
+  DENSITY_DISSIPATION = 2.5,
+  VELOCITY_DISSIPATION = 2,
   PRESSURE = 0.8,
   PRESSURE_ITERATIONS = 20,
   CURL = 0,
