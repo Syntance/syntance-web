@@ -3,13 +3,13 @@ import { useEffect, useRef } from 'react';
 
 function FluidBackground({
   SIM_RESOLUTION = 128,
-  DYE_RESOLUTION = 800,
-  DENSITY_DISSIPATION = 0.98,
-  VELOCITY_DISSIPATION = 0.99,
+  DYE_RESOLUTION = 1024,
+  DENSITY_DISSIPATION = 1,
+  VELOCITY_DISSIPATION = 0.2,
   PRESSURE = 0.8,
   PRESSURE_ITERATIONS = 20,
-  CURL = 30,
-  SPLAT_RADIUS = 0.005,
+  CURL = 0,
+  SPLAT_RADIUS = 0.25,
   SPLAT_FORCE = 6000,
   SHADING = true,
   COLOR_UPDATE_SPEED = 10,
@@ -762,10 +762,10 @@ function FluidBackground({
     }
 
     function generateColor() {
-      let c = HSVtoRGB(Math.random(), 0.5, 0.5);
-      c.r *= 0.1;
-      c.g *= 0.1;
-      c.b *= 0.1;
+      let c = HSVtoRGB(Math.random(), 1.0, 1.0);
+      c.r *= 0.15;
+      c.g *= 0.15;
+      c.b *= 0.15;
       return c;
     }
 
@@ -837,26 +837,34 @@ function FluidBackground({
       return hash;
     }
 
-    // Auto-generate splats
-    function multipleSplats(amount) {
-      for (let i = 0; i < amount; i++) {
-        const color = generateColor();
-        const x = Math.random();
-        const y = Math.random();
-        const dx = 100 * (Math.random() - 0.5);
-        const dy = 100 * (Math.random() - 0.5);
-        splat(x, y, dx, dy, color);
+    // Smooth moving light point
+    let time = 0;
+    let currentColor = generateColor();
+    let colorChangeTime = 0;
+
+    function animateSplat() {
+      time += 0.01;
+      
+      // Change color smoothly every few seconds
+      if (time - colorChangeTime > 3) {
+        currentColor = generateColor();
+        colorChangeTime = time;
       }
+
+      // Smooth movement using sine/cosine
+      const x = 0.5 + 0.3 * Math.sin(time * 0.3);
+      const y = 0.5 + 0.3 * Math.cos(time * 0.2);
+      
+      // Calculate velocity based on position change
+      const dx = Math.cos(time * 0.3) * 30;
+      const dy = -Math.sin(time * 0.2) * 30;
+
+      splat(x, y, dx, dy, currentColor);
+      
+      requestAnimationFrame(animateSplat);
     }
 
-    // Start with initial splats
-    multipleSplats(Math.random() * 10 + 5);
-
-    // Auto-splat interval
-    setInterval(() => {
-      multipleSplats(Math.random() * 2 + 1);
-    }, 200);
-
+    animateSplat();
     updateFrame();
   }, [SIM_RESOLUTION, DYE_RESOLUTION, DENSITY_DISSIPATION, VELOCITY_DISSIPATION, PRESSURE, PRESSURE_ITERATIONS, CURL, SPLAT_RADIUS, SPLAT_FORCE, SHADING, COLOR_UPDATE_SPEED]);
 
