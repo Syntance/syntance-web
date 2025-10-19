@@ -9,7 +9,7 @@ function FluidBackground({
   PRESSURE = 0.8,
   PRESSURE_ITERATIONS = 20,
   CURL = 0,
-  SPLAT_RADIUS = 0.25,
+  SPLAT_RADIUS = 0.003,
   SPLAT_FORCE = 6000,
   SHADING = true,
   COLOR_UPDATE_SPEED = 10,
