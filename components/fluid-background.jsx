@@ -9,7 +9,7 @@ function FluidBackground({
   PRESSURE = 0.8,
   PRESSURE_ITERATIONS = 20,
   CURL = 0,
-  SPLAT_RADIUS = 0.001,
+  SPLAT_RADIUS = 0.0005,
   SPLAT_FORCE = 6000,
   SHADING = true,
   COLOR_UPDATE_SPEED = 10,
@@ -856,8 +856,8 @@ function FluidBackground({
       const y = 0.5 + 0.3 * Math.cos(time * 0.2);
       
       // Calculate velocity based on position change
-      const dx = Math.cos(time * 0.3) * 30;
-      const dy = -Math.sin(time * 0.2) * 30;
+      const dx = Math.cos(time * 0.3) * 15;
+      const dy = -Math.sin(time * 0.2) * 15;
 
       splat(x, y, dx, dy, currentColor);
       
