@@ -1,7 +1,8 @@
 "use client";
 
-import FluidBackground from "@/components/fluid-background";
+import VantaBackground from "@/components/vanta-background";
 import NavbarNew from "@/components/navbar-new";
+import InteractiveFluidBox from "@/components/interactive-fluid-box";
 import { Wind, Layers, Globe, Twitter, Linkedin, Github } from "lucide-react";
 import Image from "next/image";
 import { useEffect } from "react";
@@ -21,52 +22,14 @@ export default function Page() {
     
     manifestLines.forEach(line => observer.observe(line));
 
-    // Interactive light effect
-    const canvas = document.getElementById('light-canvas');
-    const light = document.getElementById('interactive-light');
-    
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!canvas || !light) return;
-      
-      const rect = canvas.getBoundingClientRect();
-      
-      if (e.clientX > rect.left && e.clientX < rect.right && 
-          e.clientY > rect.top && e.clientY < rect.bottom) {
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        light.style.left = x + 'px';
-        light.style.top = y + 'px';
-        light.style.transform = 'translate(-50%, -50%)';
-        
-        // Create floating light orb
-        const orb = document.createElement('div');
-        orb.className = 'absolute w-8 h-8 rounded-full bg-purple-300 opacity-40 blur-md pointer-events-none';
-        orb.style.left = x + 'px';
-        orb.style.top = y + 'px';
-        canvas.appendChild(orb);
-        
-        // Animate and remove orb
-        setTimeout(() => {
-          orb.style.transform = 'translate(' + (Math.random() * 100 - 50) + 'px, ' + (Math.random() * 100 - 50) + 'px)';
-          orb.style.opacity = '0';
-          orb.style.transition = 'all 1s ease-out';
-          setTimeout(() => orb.remove(), 1000);
-        }, 50);
-      }
-    };
-    
-    document.addEventListener('mousemove', handleMouseMove);
-
     return () => {
       manifestLines.forEach(line => observer.unobserve(line));
-      document.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
 
   return (
     <div className="min-h-screen">
-      <FluidBackground />
+      <VantaBackground />
 
       <NavbarNew />
 
@@ -181,16 +144,7 @@ export default function Page() {
           <p className="text-lg font-light tracking-wide text-gray-300 max-w-2xl mx-auto mb-12">
             Porusz myszką, aby zobaczyć nasz inteligentny system w akcji
           </p>
-          <div 
-            id="light-canvas" 
-            className="h-96 w-full backdrop-filter backdrop-blur-sm bg-gray-900 bg-opacity-20 border border-gray-800 rounded-2xl relative overflow-hidden cursor-none"
-          >
-            <div 
-              id="interactive-light" 
-              className="absolute w-40 h-40 rounded-full bg-purple-500 opacity-20 blur-xl transition-all duration-300 ease-out pointer-events-none"
-              style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
-            ></div>
-          </div>
+          <InteractiveFluidBox />
         </div>
       </section>
 

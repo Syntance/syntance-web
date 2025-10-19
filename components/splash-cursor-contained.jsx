@@ -1,28 +1,63 @@
 'use client';
 import { useEffect, useRef } from 'react';
 
-function FluidBackground({
+function SplashCursorContained({
   SIM_RESOLUTION = 128,
   DYE_RESOLUTION = 1024,
-  DENSITY_DISSIPATION = 2.5,
+  DENSITY_DISSIPATION = 3.5,
   VELOCITY_DISSIPATION = 2,
-  PRESSURE = 0.8,
+  PRESSURE = 0.1,
   PRESSURE_ITERATIONS = 20,
-  CURL = 0,
-  SPLAT_RADIUS = 0.0005,
+  CURL = 3,
+  SPLAT_RADIUS = 0.2,
   SPLAT_FORCE = 6000,
   SHADING = true,
   COLOR_UPDATE_SPEED = 10,
+  TRANSPARENT = true
 }) {
   const canvasRef = useRef(null);
+  const containerRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    const container = containerRef.current;
+    if (!canvas || !container) return;
+
+    function pointerPrototype() {
+      this.id = -1;
+      this.texcoordX = 0;
+      this.texcoordY = 0;
+      this.prevTexcoordX = 0;
+      this.prevTexcoordY = 0;
+      this.deltaX = 0;
+      this.deltaY = 0;
+      this.down = false;
+      this.moved = false;
+      this.color = [0, 0, 0];
+    }
+
+    let config = {
+      SIM_RESOLUTION,
+      DYE_RESOLUTION,
+      DENSITY_DISSIPATION,
+      VELOCITY_DISSIPATION,
+      PRESSURE,
+      PRESSURE_ITERATIONS,
+      CURL,
+      SPLAT_RADIUS,
+      SPLAT_FORCE,
+      SHADING,
+      COLOR_UPDATE_SPEED,
+      PAUSED: false,
+      TRANSPARENT
+    };
+
+    let pointers = [new pointerPrototype()];
 
     const { gl, ext } = getWebGLContext(canvas);
     if (!ext.supportLinearFiltering) {
-      console.log('Linear filtering not supported');
+      config.DYE_RESOLUTION = 256;
+      config.SHADING = false;
     }
 
     function getWebGLContext(canvas) {
@@ -240,14 +275,6 @@ function FluidBackground({
       varying vec2 vT;
       varying vec2 vB;
       uniform sampler2D uTexture;
-      uniform sampler2D uDithering;
-      uniform vec2 ditherScale;
-      uniform vec2 texelSize;
-
-      vec3 linearToGamma (vec3 color) {
-          color = max(color, vec3(0));
-          return max(1.055 * pow(color, vec3(0.416666667)) - 0.055, vec3(0));
-      }
 
       void main () {
           vec3 c = texture2D(uTexture, vUv).rgb;
@@ -260,7 +287,7 @@ function FluidBackground({
               float dx = length(rc) - length(lc);
               float dy = length(tc) - length(bc);
 
-              vec3 n = normalize(vec3(dx, dy, length(texelSize)));
+              vec3 n = normalize(vec3(dx, dy, length(texelSize.y)));
               vec3 l = vec3(0.0, 0.0, 1.0);
 
               float diffuse = clamp(dot(n, l) + 0.7, 0.7, 1.0);
@@ -511,8 +538,8 @@ function FluidBackground({
     const displayMaterial = new Material(baseVertexShader, displayShaderSource);
 
     function initFramebuffers() {
-      let simRes = getResolution(SIM_RESOLUTION);
-      let dyeRes = getResolution(DYE_RESOLUTION);
+      let simRes = getResolution(config.SIM_RESOLUTION);
+      let dyeRes = getResolution(config.DYE_RESOLUTION);
       const texType = ext.halfFloatTexType;
       const rgba = ext.formatRGBA;
       const rg = ext.formatRG;
@@ -625,17 +652,20 @@ function FluidBackground({
 
     function updateKeywords() {
       let displayKeywords = [];
-      if (SHADING) displayKeywords.push('SHADING');
+      if (config.SHADING) displayKeywords.push('SHADING');
       displayMaterial.setKeywords(displayKeywords);
     }
 
     updateKeywords();
     initFramebuffers();
     let lastUpdateTime = Date.now();
+    let colorUpdateTimer = 0.0;
 
     function updateFrame() {
       const dt = calcDeltaTime();
       if (resizeCanvas()) initFramebuffers();
+      updateColors(dt);
+      applyInputs();
       step(dt);
       render(null);
       requestAnimationFrame(updateFrame);
@@ -660,6 +690,25 @@ function FluidBackground({
       return false;
     }
 
+    function updateColors(dt) {
+      colorUpdateTimer += dt * config.COLOR_UPDATE_SPEED;
+      if (colorUpdateTimer >= 1) {
+        colorUpdateTimer = wrap(colorUpdateTimer, 0, 1);
+        pointers.forEach(p => {
+          p.color = generateColor();
+        });
+      }
+    }
+
+    function applyInputs() {
+      pointers.forEach(p => {
+        if (p.moved) {
+          p.moved = false;
+          splatPointer(p);
+        }
+      });
+    }
+
     function step(dt) {
       gl.disable(gl.BLEND);
       curlProgram.bind();
@@ -671,7 +720,7 @@ function FluidBackground({
       gl.uniform2f(vorticityProgram.uniforms.texelSize, velocity.texelSizeX, velocity.texelSizeY);
       gl.uniform1i(vorticityProgram.uniforms.uVelocity, velocity.read.attach(0));
       gl.uniform1i(vorticityProgram.uniforms.uCurl, curl.attach(1));
-      gl.uniform1f(vorticityProgram.uniforms.curl, CURL);
+      gl.uniform1f(vorticityProgram.uniforms.curl, config.CURL);
       gl.uniform1f(vorticityProgram.uniforms.dt, dt);
       blit(velocity.write);
       velocity.swap();
@@ -683,14 +732,14 @@ function FluidBackground({
 
       clearProgram.bind();
       gl.uniform1i(clearProgram.uniforms.uTexture, pressure.read.attach(0));
-      gl.uniform1f(clearProgram.uniforms.value, PRESSURE);
+      gl.uniform1f(clearProgram.uniforms.value, config.PRESSURE);
       blit(pressure.write);
       pressure.swap();
 
       pressureProgram.bind();
       gl.uniform2f(pressureProgram.uniforms.texelSize, velocity.texelSizeX, velocity.texelSizeY);
       gl.uniform1i(pressureProgram.uniforms.uDivergence, divergence.attach(0));
-      for (let i = 0; i < PRESSURE_ITERATIONS; i++) {
+      for (let i = 0; i < config.PRESSURE_ITERATIONS; i++) {
         gl.uniform1i(pressureProgram.uniforms.uPressure, pressure.read.attach(1));
         blit(pressure.write);
         pressure.swap();
@@ -711,7 +760,7 @@ function FluidBackground({
       gl.uniform1i(advectionProgram.uniforms.uVelocity, velocityId);
       gl.uniform1i(advectionProgram.uniforms.uSource, velocityId);
       gl.uniform1f(advectionProgram.uniforms.dt, dt);
-      gl.uniform1f(advectionProgram.uniforms.dissipation, VELOCITY_DISSIPATION);
+      gl.uniform1f(advectionProgram.uniforms.dissipation, config.VELOCITY_DISSIPATION);
       blit(velocity.write);
       velocity.swap();
 
@@ -719,7 +768,7 @@ function FluidBackground({
         gl.uniform2f(advectionProgram.uniforms.dyeTexelSize, dye.texelSizeX, dye.texelSizeY);
       gl.uniform1i(advectionProgram.uniforms.uVelocity, velocity.read.attach(0));
       gl.uniform1i(advectionProgram.uniforms.uSource, dye.read.attach(1));
-      gl.uniform1f(advectionProgram.uniforms.dissipation, DENSITY_DISSIPATION);
+      gl.uniform1f(advectionProgram.uniforms.dissipation, config.DENSITY_DISSIPATION);
       blit(dye.write);
       dye.swap();
     }
@@ -734,9 +783,25 @@ function FluidBackground({
       let width = target == null ? gl.drawingBufferWidth : target.width;
       let height = target == null ? gl.drawingBufferHeight : target.height;
       displayMaterial.bind();
-      if (SHADING) gl.uniform2f(displayMaterial.uniforms.texelSize, 1.0 / width, 1.0 / height);
+      if (config.SHADING) gl.uniform2f(displayMaterial.uniforms.texelSize, 1.0 / width, 1.0 / height);
       gl.uniform1i(displayMaterial.uniforms.uTexture, dye.read.attach(0));
       blit(target);
+    }
+
+    function splatPointer(pointer) {
+      let dx = pointer.deltaX * config.SPLAT_FORCE;
+      let dy = pointer.deltaY * config.SPLAT_FORCE;
+      splat(pointer.texcoordX, pointer.texcoordY, dx, dy, pointer.color);
+    }
+
+    function clickSplat(pointer) {
+      const color = generateColor();
+      color.r *= 10.0;
+      color.g *= 10.0;
+      color.b *= 10.0;
+      let dx = 10 * (Math.random() - 0.5);
+      let dy = 30 * (Math.random() - 0.5);
+      splat(pointer.texcoordX, pointer.texcoordY, dx, dy, color);
     }
 
     function splat(x, y, dx, dy, color) {
@@ -745,7 +810,7 @@ function FluidBackground({
       gl.uniform1f(splatProgram.uniforms.aspectRatio, canvas.width / canvas.height);
       gl.uniform2f(splatProgram.uniforms.point, x, y);
       gl.uniform3f(splatProgram.uniforms.color, dx, dy, 0.0);
-      gl.uniform1f(splatProgram.uniforms.radius, correctRadius(SPLAT_RADIUS));
+      gl.uniform1f(splatProgram.uniforms.radius, correctRadius(config.SPLAT_RADIUS / 100.0));
       blit(velocity.write);
       velocity.swap();
 
@@ -759,6 +824,46 @@ function FluidBackground({
       let aspectRatio = canvas.width / canvas.height;
       if (aspectRatio > 1) radius *= aspectRatio;
       return radius;
+    }
+
+    function updatePointerDownData(pointer, id, posX, posY) {
+      pointer.id = id;
+      pointer.down = true;
+      pointer.moved = false;
+      pointer.texcoordX = posX / canvas.width;
+      pointer.texcoordY = 1.0 - posY / canvas.height;
+      pointer.prevTexcoordX = pointer.texcoordX;
+      pointer.prevTexcoordY = pointer.texcoordY;
+      pointer.deltaX = 0;
+      pointer.deltaY = 0;
+      pointer.color = generateColor();
+    }
+
+    function updatePointerMoveData(pointer, posX, posY, color) {
+      pointer.prevTexcoordX = pointer.texcoordX;
+      pointer.prevTexcoordY = pointer.texcoordY;
+      pointer.texcoordX = posX / canvas.width;
+      pointer.texcoordY = 1.0 - posY / canvas.height;
+      pointer.deltaX = correctDeltaX(pointer.texcoordX - pointer.prevTexcoordX);
+      pointer.deltaY = correctDeltaY(pointer.texcoordY - pointer.prevTexcoordY);
+      pointer.moved = Math.abs(pointer.deltaX) > 0 || Math.abs(pointer.deltaY) > 0;
+      pointer.color = color;
+    }
+
+    function updatePointerUpData(pointer) {
+      pointer.down = false;
+    }
+
+    function correctDeltaX(delta) {
+      let aspectRatio = canvas.width / canvas.height;
+      if (aspectRatio < 1) delta *= aspectRatio;
+      return delta;
+    }
+
+    function correctDeltaY(delta) {
+      let aspectRatio = canvas.width / canvas.height;
+      if (aspectRatio > 1) delta /= aspectRatio;
+      return delta;
     }
 
     function generateColor() {
@@ -813,6 +918,12 @@ function FluidBackground({
       return { r, g, b };
     }
 
+    function wrap(value, min, max) {
+      const range = max - min;
+      if (range === 0) return min;
+      return ((value - min) % range) + min;
+    }
+
     function getResolution(resolution) {
       let aspectRatio = gl.drawingBufferWidth / gl.drawingBufferHeight;
       if (aspectRatio < 1) aspectRatio = 1.0 / aspectRatio;
@@ -837,43 +948,93 @@ function FluidBackground({
       return hash;
     }
 
-    // Smooth moving light point
-    let time = 0;
-    let currentColor = generateColor();
-    let colorChangeTime = 0;
+    // Container-specific event listeners
+    const handleMouseDown = (e) => {
+      const rect = container.getBoundingClientRect();
+      let pointer = pointers[0];
+      let posX = scaleByPixelRatio(e.clientX - rect.left);
+      let posY = scaleByPixelRatio(e.clientY - rect.top);
+      updatePointerDownData(pointer, -1, posX, posY);
+      clickSplat(pointer);
+    };
 
-    function animateSplat() {
-      time += 0.005;
-      
-      // Change color smoothly every few seconds
-      if (time - colorChangeTime > 3) {
-        currentColor = generateColor();
-        colorChangeTime = time;
+    const handleMouseMove = (e) => {
+      const rect = container.getBoundingClientRect();
+      let pointer = pointers[0];
+      let posX = scaleByPixelRatio(e.clientX - rect.left);
+      let posY = scaleByPixelRatio(e.clientY - rect.top);
+      let color = pointer.color;
+      updatePointerMoveData(pointer, posX, posY, color);
+    };
+
+    const handleTouchStart = (e) => {
+      e.preventDefault();
+      const rect = container.getBoundingClientRect();
+      const touches = e.targetTouches;
+      let pointer = pointers[0];
+      for (let i = 0; i < touches.length; i++) {
+        let posX = scaleByPixelRatio(touches[i].clientX - rect.left);
+        let posY = scaleByPixelRatio(touches[i].clientY - rect.top);
+        updatePointerDownData(pointer, touches[i].identifier, posX, posY);
       }
+    };
 
-      // Smooth movement using sine/cosine
-      const x = 0.5 + 0.3 * Math.sin(time * 0.3);
-      const y = 0.5 + 0.3 * Math.cos(time * 0.2);
-      
-      // Calculate velocity based on position change
-      const dx = Math.cos(time * 0.3) * 15;
-      const dy = -Math.sin(time * 0.2) * 15;
+    const handleTouchMove = (e) => {
+      e.preventDefault();
+      const rect = container.getBoundingClientRect();
+      const touches = e.targetTouches;
+      let pointer = pointers[0];
+      for (let i = 0; i < touches.length; i++) {
+        let posX = scaleByPixelRatio(touches[i].clientX - rect.left);
+        let posY = scaleByPixelRatio(touches[i].clientY - rect.top);
+        updatePointerMoveData(pointer, posX, posY, pointer.color);
+      }
+    };
 
-      splat(x, y, dx, dy, currentColor);
-      
-      requestAnimationFrame(animateSplat);
-    }
+    const handleTouchEnd = (e) => {
+      const touches = e.changedTouches;
+      let pointer = pointers[0];
+      for (let i = 0; i < touches.length; i++) {
+        updatePointerUpData(pointer);
+      }
+    };
 
-    animateSplat();
+    container.addEventListener('mousedown', handleMouseDown);
+    container.addEventListener('mousemove', handleMouseMove);
+    container.addEventListener('touchstart', handleTouchStart, { passive: false });
+    container.addEventListener('touchmove', handleTouchMove, { passive: false });
+    container.addEventListener('touchend', handleTouchEnd);
+
     updateFrame();
-  }, [SIM_RESOLUTION, DYE_RESOLUTION, DENSITY_DISSIPATION, VELOCITY_DISSIPATION, PRESSURE, PRESSURE_ITERATIONS, CURL, SPLAT_RADIUS, SPLAT_FORCE, SHADING, COLOR_UPDATE_SPEED]);
+
+    return () => {
+      container.removeEventListener('mousedown', handleMouseDown);
+      container.removeEventListener('mousemove', handleMouseMove);
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+      container.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [
+    SIM_RESOLUTION,
+    DYE_RESOLUTION,
+    DENSITY_DISSIPATION,
+    VELOCITY_DISSIPATION,
+    PRESSURE,
+    PRESSURE_ITERATIONS,
+    CURL,
+    SPLAT_RADIUS,
+    SPLAT_FORCE,
+    SHADING,
+    COLOR_UPDATE_SPEED,
+    TRANSPARENT
+  ]);
 
   return (
-    <div className="fixed inset-0 z-0">
-      <canvas ref={canvasRef} id="fluid-bg" className="w-full h-full block"></canvas>
+    <div ref={containerRef} className="w-full h-full relative">
+      <canvas ref={canvasRef} className="w-full h-full block"></canvas>
     </div>
   );
 }
 
-export default FluidBackground;
+export default SplashCursorContained;
 
