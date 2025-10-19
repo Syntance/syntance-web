@@ -3,6 +3,7 @@
 import VantaBackground from "@/components/vanta-background";
 import NavbarNew from "@/components/navbar-new";
 import InteractiveFluidBox from "@/components/interactive-fluid-box";
+import TiltCard from "@/components/tilt-card";
 import { Wind, Layers, Globe, Twitter, Linkedin, Github } from "lucide-react";
 import Image from "next/image";
 import { useEffect } from "react";
@@ -86,49 +87,55 @@ export default function Page() {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {/* Product 1 */}
-          <div className="product-card rounded-xl p-8">
-            <div className="w-16 h-16 rounded-full bg-blue-500 bg-opacity-20 flex items-center justify-center mb-6">
-              <Wind className="text-blue-300" size={32} />
+          <TiltCard>
+            <div className="product-card rounded-xl p-8">
+              <div className="w-16 h-16 rounded-full bg-blue-500 bg-opacity-20 flex items-center justify-center mb-6">
+                <Wind className="text-blue-300" size={32} />
+              </div>
+              <h3 className="text-xl font-medium tracking-wider mb-3">OZE Asystent</h3>
+              <p className="text-gray-300 font-light tracking-wide mb-6">
+                AI-powered renewable energy optimization
+              </p>
+              <div className="h-1 w-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full mb-6"></div>
+              <button className="text-sm font-medium tracking-wider text-blue-300 hover:text-blue-200 transition-colors">
+                Learn More →
+              </button>
             </div>
-            <h3 className="text-xl font-medium tracking-wider mb-3">OZE Asystent</h3>
-            <p className="text-gray-300 font-light tracking-wide mb-6">
-              AI-powered renewable energy optimization
-            </p>
-            <div className="h-1 w-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full mb-6"></div>
-            <button className="text-sm font-medium tracking-wider text-blue-300 hover:text-blue-200 transition-colors">
-              Learn More →
-            </button>
-          </div>
+          </TiltCard>
 
           {/* Product 2 */}
-          <div className="product-card rounded-xl p-8">
-            <div className="w-16 h-16 rounded-full bg-purple-500 bg-opacity-20 flex items-center justify-center mb-6">
-              <Layers className="text-purple-300" size={32} />
+          <TiltCard>
+            <div className="product-card rounded-xl p-8">
+              <div className="w-16 h-16 rounded-full bg-purple-500 bg-opacity-20 flex items-center justify-center mb-6">
+                <Layers className="text-purple-300" size={32} />
+              </div>
+              <h3 className="text-xl font-medium tracking-wider mb-3">FlowCRM</h3>
+              <p className="text-gray-300 font-light tracking-wide mb-6">
+                Seamless customer relationship orchestration
+              </p>
+              <div className="h-1 w-full bg-gradient-to-r from-purple-400 to-purple-600 rounded-full mb-6"></div>
+              <button className="text-sm font-medium tracking-wider text-purple-300 hover:text-purple-200 transition-colors">
+                Learn More →
+              </button>
             </div>
-            <h3 className="text-xl font-medium tracking-wider mb-3">FlowCRM</h3>
-            <p className="text-gray-300 font-light tracking-wide mb-6">
-              Seamless customer relationship orchestration
-            </p>
-            <div className="h-1 w-full bg-gradient-to-r from-purple-400 to-purple-600 rounded-full mb-6"></div>
-            <button className="text-sm font-medium tracking-wider text-purple-300 hover:text-purple-200 transition-colors">
-              Learn More →
-            </button>
-          </div>
+          </TiltCard>
 
           {/* Product 3 */}
-          <div className="product-card rounded-xl p-8">
-            <div className="w-16 h-16 rounded-full bg-teal-500 bg-opacity-20 flex items-center justify-center mb-6">
-              <Globe className="text-teal-300" size={32} />
+          <TiltCard>
+            <div className="product-card rounded-xl p-8">
+              <div className="w-16 h-16 rounded-full bg-teal-500 bg-opacity-20 flex items-center justify-center mb-6">
+                <Globe className="text-teal-300" size={32} />
+              </div>
+              <h3 className="text-xl font-medium tracking-wider mb-3">Syntance Web</h3>
+              <p className="text-gray-300 font-light tracking-wide mb-6">
+                Intelligent web presence infrastructure
+              </p>
+              <div className="h-1 w-full bg-gradient-to-r from-teal-400 to-teal-600 rounded-full mb-6"></div>
+              <button className="text-sm font-medium tracking-wider text-teal-300 hover:text-teal-200 transition-colors">
+                Learn More →
+              </button>
             </div>
-            <h3 className="text-xl font-medium tracking-wider mb-3">Syntance Web</h3>
-            <p className="text-gray-300 font-light tracking-wide mb-6">
-              Intelligent web presence infrastructure
-            </p>
-            <div className="h-1 w-full bg-gradient-to-r from-teal-400 to-teal-600 rounded-full mb-6"></div>
-            <button className="text-sm font-medium tracking-wider text-teal-300 hover:text-teal-200 transition-colors">
-              Learn More →
-            </button>
-          </div>
+          </TiltCard>
         </div>
       </section>
 
