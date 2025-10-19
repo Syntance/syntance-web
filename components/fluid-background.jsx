@@ -9,7 +9,7 @@ function FluidBackground({
   PRESSURE = 0.8,
   PRESSURE_ITERATIONS = 20,
   CURL = 0,
-  SPLAT_RADIUS = 0.003,
+  SPLAT_RADIUS = 0.001,
   SPLAT_FORCE = 6000,
   SHADING = true,
   COLOR_UPDATE_SPEED = 10,
@@ -843,7 +843,7 @@ function FluidBackground({
     let colorChangeTime = 0;
 
     function animateSplat() {
-      time += 0.01;
+      time += 0.005;
       
       // Change color smoothly every few seconds
       if (time - colorChangeTime > 3) {
