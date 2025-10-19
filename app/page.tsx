@@ -1,7 +1,6 @@
 "use client";
 
-import VantaBackground from "@/components/vanta-background";
-import SplashCursor from "@/components/SplashCursor";
+import FluidBackground from "@/components/fluid-background";
 import NavbarNew from "@/components/navbar-new";
 import { Wind, Layers, Globe, Twitter, Linkedin, Github } from "lucide-react";
 import Image from "next/image";
@@ -67,8 +66,7 @@ export default function Page() {
 
   return (
     <div className="min-h-screen">
-      <VantaBackground />
-      <SplashCursor />
+      <FluidBackground />
 
       <NavbarNew />
 
