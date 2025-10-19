@@ -3,6 +3,59 @@
 @tailwind utilities;
 
 @layer base {
+  body {
+    @apply bg-[#05030C] text-[#F5F3FF] overflow-x-hidden;
+  }
+}
+
+@layer utilities {
+  .glow-text {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  }
+  
+  .glow-box {
+    box-shadow: 0 0 30px rgba(138, 99, 255, 0.3);
+  }
+  
+  .fluid-gradient {
+    background: linear-gradient(135deg, #05030C 0%, #1A103D 50%, #05030C 100%);
+    background-size: 400% 400%;
+    animation: gradientFlow 15s ease infinite;
+  }
+  
+  .product-card {
+    backdrop-filter: blur(10px);
+    background: rgba(20, 15, 45, 0.4);
+    border: 1px solid rgba(138, 99, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(138, 99, 255, 0.2);
+  }
+  
+  .cursor-glow {
+    position: fixed;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(138, 99, 255, 0.8) 0%, rgba(138, 99, 255, 0) 70%);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    mix-blend-mode: screen;
+    transition: transform 0.2s ease;
+  }
+}
+
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@layer base {
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;

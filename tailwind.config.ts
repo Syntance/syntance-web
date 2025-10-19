@@ -16,6 +16,9 @@ const config: Config = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["var(--font-space-grotesk)", "system-ui", "sans-serif"],
+      },
       colors: {
         brand: {
           DEFAULT: "#246BFD",

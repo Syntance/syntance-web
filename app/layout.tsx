@@ -2,6 +2,13 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
 import WhatsAppButton from "@/components/whatsapp-button";
+import { Space_Grotesk } from "next/font/google";
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-space-grotesk",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://syntance.com"),
@@ -30,7 +37,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pl" className="scroll-smooth">
-      <body className="bg-white text-zinc-900 antialiased">
+      <body className={`${spaceGrotesk.variable} font-sans antialiased`}>
         {children}
         <WhatsAppButton />
         <Analytics />
