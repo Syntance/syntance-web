@@ -37,7 +37,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pl" className="scroll-smooth">
-      <body className={`${spaceGrotesk.variable} font-sans antialiased bg-[#05030C] text-[#F5F3FF]`}>
+      <body className={`${spaceGrotesk.variable} font-sans antialiased bg-black text-[#F5F3FF]`}>
         {children}
         <WhatsAppButton />
         <Analytics />
