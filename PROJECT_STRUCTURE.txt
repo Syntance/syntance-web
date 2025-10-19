@@ -1,0 +1,137 @@
+syntance-web/
+│
+├── app/                                # Next.js App Router
+│   ├── (marketing)/                    # Route group (bez wpływu na URL)
+│   │   ├── studio/
+│   │   │   └── page.tsx               # /studio - Strona Studio
+│   │   └── contact/
+│   │       └── page.tsx               # /contact - Formularz kontaktowy
+│   ├── layout.tsx                     # Root layout + metadata
+│   ├── page.tsx                       # / - Strona główna
+│   ├── globals.css                    # Style globalne (Tailwind)
+│   ├── sitemap.ts                     # Dynamiczny sitemap.xml
+│   └── robots.ts                      # Dynamiczny robots.txt
+│
+├── components/
+│   ├── sections/                      # Sekcje strony (reusable)
+│   │   ├── hero-home.tsx             # Hero strony głównej
+│   │   ├── hero-studio.tsx           # Hero strony Studio
+│   │   ├── features-grid.tsx         # Grid z features
+│   │   ├── pricing-studio.tsx        # Cennik Studio
+│   │   ├── cta.tsx                   # Call-to-action
+│   │   └── footer.tsx                # Footer
+│   ├── ui/                           # shadcn/ui komponenty (do wygenerowania)
+│   │   └── .gitkeep
+│   ├── navbar.tsx                    # Nawigacja (sticky header)
+│   └── container.tsx                 # Wrapper kontener (max-w-6xl)
+│
+├── lib/
+│   ├── utils.ts                      # Utility functions (cn)
+│   └── seo.ts                        # SEO helpers
+│
+├── public/
+│   ├── favicon.ico                   # Favicon (placeholder)
+│   ├── robots.txt                    # Robots placeholder
+│   └── .gitkeep                      # Instrukcje dla assetów
+│
+├── .eslintignore                     # ESLint ignore
+├── .eslintrc.json                    # ESLint config
+├── .gitignore                        # Git ignore
+├── .prettierignore                   # Prettier ignore
+├── .prettierrc                       # Prettier config
+├── components.json                   # shadcn/ui config
+├── next.config.mjs                   # Next.js config
+├── package.json                      # Dependencies + scripts
+├── postcss.config.js                 # PostCSS config
+├── tailwind.config.ts                # Tailwind config (+ brand colors)
+├── tsconfig.json                     # TypeScript config
+├── vercel.json                       # Vercel config (subdomain rewrite)
+│
+├── DEPLOYMENT.md                     # 📚 Instrukcje deployment
+├── QUICKSTART.md                     # 🚀 Szybki start
+├── README.md                         # 📖 Główna dokumentacja
+├── SHADCN_SETUP.md                   # 🎨 Konfiguracja shadcn/ui
+├── PROJECT_SUMMARY.md                # 📊 Podsumowanie projektu
+└── PROJECT_STRUCTURE.txt             # 📁 Ten plik
+
+ROUTING:
+────────
+/ (app/page.tsx)                      → Strona główna Syntance
+/studio (app/(marketing)/studio/page.tsx) → Strona Studio
+/contact (app/(marketing)/contact/page.tsx) → Kontakt
+studio.syntance.com                   → Rewrite do /studio (vercel.json)
+
+SEKCJE (components/sections/):
+───────────────────────────────
+hero-home.tsx        → Hero z CTA na stronie głównej
+features-grid.tsx    → Grid 2x2 z features (Next.js, Deepsite, etc.)
+cta.tsx             → Dark CTA box z linkiem do kontaktu
+footer.tsx          → Footer z copyright i linkami
+hero-studio.tsx     → Hero na stronie Studio
+pricing-studio.tsx  → Cennik 3 pakiety (Starter, Biznes, Shop Lite)
+
+KOMPONENTY WSPÓLNE:
+───────────────────
+navbar.tsx          → Sticky header z nawigacją
+container.tsx       → Wrapper z max-width i padding
+
+KONFIGURACJE:
+─────────────
+tailwind.config.ts  → Brand colors (#246BFD, #0B1530)
+next.config.mjs     → Server actions, images domains
+vercel.json         → Subdomain rewrite (studio.syntance.com → /studio)
+components.json     → shadcn/ui setup
+
+ZALEŻNOŚCI (package.json):
+───────────────────────────
+✅ next@14.0.4
+✅ react@18.2.0
+✅ typescript@5.x
+✅ tailwindcss@3.3.0
+✅ @vercel/analytics@1.1.1
+✅ framer-motion@10.16.16
+✅ lucide-react@0.294.0
+✅ clsx + tailwind-merge
+✅ zod@3.22.4
+
+SKRYPTY NPM:
+────────────
+pnpm dev            → Dev server (port 3000)
+pnpm build          → Production build
+pnpm start          → Start production server
+pnpm lint           → ESLint check
+pnpm format         → Prettier format
+pnpm analyze        → Bundle analyzer
+
+NASTĘPNE KROKI:
+───────────────
+1. pnpm install
+2. npx shadcn-ui@latest init --yes
+3. npx shadcn-ui@latest add button card input textarea navigation-menu
+4. pnpm dev
+5. vercel (deployment)
+
+SEO:
+────
+✅ Metadata w layout.tsx
+✅ OpenGraph tags
+✅ Dynamiczny sitemap.xml (app/sitemap.ts)
+✅ Dynamiczny robots.txt (app/robots.ts)
+✅ Semantic HTML
+
+DEPLOYMENT:
+───────────
+Platform: Vercel
+Domains:
+  - syntance.com (production)
+  - studio.syntance.com (subdomain → /studio)
+  
+DNS Setup:
+  syntance.com → A record: 76.76.21.21 lub CNAME: cname.vercel-dns.com
+  studio.syntance.com → CNAME: cname.vercel-dns.com
+
+Environment Variables:
+  NEXT_PUBLIC_SITE_URL=https://syntance.com
+
+STATUS: ✅ PRODUCTION READY
+

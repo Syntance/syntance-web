@@ -1,0 +1,15 @@
+{
+  "rewrites": [
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "studio.syntance.com" }],
+      "destination": "/studio"
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "studio.syntance.com" }],
+      "destination": "/studio/:path*"
+    }
+  ]
+}
+
