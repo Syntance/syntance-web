@@ -4,43 +4,60 @@ import { useState, useRef } from 'react';
 import SplashCursorContained from './splash-cursor-contained';
 
 export default function InteractiveFluidBox() {
-  const [isHovered, setIsHovered] = useState(false);
+  const [showBlur, setShowBlur] = useState(false);
+  const [animateBlur, setAnimateBlur] = useState(false);
   const [isInside, setIsInside] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const resetBlurTimeout = () => {
-    // Clear existing timeout
+    // Clear existing timeouts
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
     }
+    if (animationTimeoutRef.current) {
+      clearTimeout(animationTimeoutRef.current);
+      animationTimeoutRef.current = null;
+    }
     
     // Remove blur immediately when mouse moves
-    setIsHovered(true);
+    setShowBlur(false);
+    setAnimateBlur(false);
     
-    // Set new timeout - blur returns after 3 seconds of no movement
+    // Set new timeout - start blur animation after 3 seconds of no movement
     if (isInside) {
       timeoutRef.current = setTimeout(() => {
-        setIsHovered(false);
+        setShowBlur(true);
+        // Start animation after a tiny delay to trigger CSS transition
+        animationTimeoutRef.current = setTimeout(() => {
+          setAnimateBlur(true);
+        }, 50);
       }, 3000);
     }
   };
 
   const handleMouseEnter = () => {
     setIsInside(true);
-    setIsHovered(true);
+    setShowBlur(false);
+    setAnimateBlur(false);
     resetBlurTimeout();
   };
 
   const handleMouseLeave = () => {
     setIsInside(false);
-    // Clear timeout when leaving
+    // Clear timeouts when leaving
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
     }
+    if (animationTimeoutRef.current) {
+      clearTimeout(animationTimeoutRef.current);
+      animationTimeoutRef.current = null;
+    }
     // Blur returns immediately when mouse leaves
-    setIsHovered(false);
+    setShowBlur(true);
+    setAnimateBlur(true);
   };
 
   const handleMouseMove = () => {
@@ -51,8 +68,10 @@ export default function InteractiveFluidBox() {
 
   return (
     <div 
-      className={`h-96 w-full bg-gray-900 bg-opacity-20 border border-gray-800 rounded-2xl relative overflow-hidden transition-all duration-1000 ${
-        isHovered ? '' : 'backdrop-filter backdrop-blur-sm'
+      className={`h-96 w-full bg-gray-900 bg-opacity-20 border border-gray-800 rounded-2xl relative overflow-hidden ${
+        showBlur ? 'backdrop-filter transition-all duration-[2000ms]' : ''
+      } ${
+        animateBlur ? 'backdrop-blur-sm' : 'backdrop-blur-none'
       }`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
