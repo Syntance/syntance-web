@@ -26,13 +26,13 @@ export default function InteractiveFluidBox() {
         }
         setIsHovered(true);
       } else if (isHovered) {
-        // Delay blur return by 3 seconds
+        // Delay blur return by 9 seconds
         if (timeoutRef.current) {
           clearTimeout(timeoutRef.current);
         }
         timeoutRef.current = setTimeout(() => {
           setIsHovered(false);
-        }, 3000);
+        }, 9000);
       }
     };
 
