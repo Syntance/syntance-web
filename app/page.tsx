@@ -142,7 +142,7 @@ export default function Page() {
             </h2>
           </div>
           <p className="text-lg font-light tracking-wide text-gray-300 max-w-2xl mx-auto mb-12">
-            Porusz myszką, aby zobaczyć nasz inteligentny system w akcji
+            Porusz myszką, i poczuj Flow
           </p>
           <InteractiveFluidBox />
         </div>
