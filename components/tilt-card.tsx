@@ -23,27 +23,36 @@ export default function TiltCard({ children, className = '' }: TiltCardProps) {
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
     
-    // Calculate rotation angles (-15 to 15 degrees)
-    const rotateX = ((y - centerY) / centerY) * -15;
-    const rotateY = ((x - centerX) / centerX) * 15;
+    // Calculate rotation angles (-10 to 10 degrees)
+    const rotateX = ((y - centerY) / centerY) * -10;
+    const rotateY = ((x - centerX) / centerX) * 10;
+    
+    // Calculate shadow offset based on rotation (opposite direction)
+    // Shadow moves in opposite direction to create depth effect
+    const shadowX = -rotateY * 2; // Horizontal shadow offset
+    const shadowY = rotateX * 2;  // Vertical shadow offset
+    const shadowBlur = 40 + Math.abs(rotateX) + Math.abs(rotateY); // Dynamic blur
     
     card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+    card.style.boxShadow = `${shadowX}px ${shadowY}px ${shadowBlur}px rgba(0, 0, 0, 0.4)`;
   };
 
   const handleMouseLeave = () => {
     if (!cardRef.current) return;
     cardRef.current.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+    cardRef.current.style.boxShadow = '0px 20px 40px rgba(0, 0, 0, 0.3)';
   };
 
   return (
     <div
       ref={cardRef}
-      className={`transition-transform duration-300 ease-out ${className}`}
+      className={`transition-all duration-300 ease-out ${className}`}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{
         transformStyle: 'preserve-3d',
         transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg)',
+        boxShadow: '0px 20px 40px rgba(0, 0, 0, 0.3)',
       }}
     >
       {children}
