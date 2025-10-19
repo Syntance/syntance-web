@@ -1,50 +1,22 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-
 export default function VantaBackground() {
-  const vantaRef = useRef<HTMLDivElement>(null);
-  const vantaEffect = useRef<any>(null);
+  return (
+    <div className="fixed inset-0 z-0">
+      {/* Animated gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#05030C] via-[#1A103D] to-[#05030C] animate-gradient-slow"></div>
+      
+      {/* Subtle noise texture */}
+      <div className="absolute inset-0 opacity-5" 
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' /%3E%3C/svg%3E")`,
+        }}
+      ></div>
 
-  useEffect(() => {
-    if (!vantaRef.current) return;
-
-    const loadVanta = async () => {
-      // Load Three.js
-      const THREE = await import("three");
-      (window as any).THREE = THREE;
-
-      // Load Vanta Globe
-      const VANTA = await import("vanta/dist/vanta.globe.min.js");
-
-      if (vantaRef.current && !vantaEffect.current) {
-        vantaEffect.current = (VANTA as any).default({
-          el: vantaRef.current,
-          THREE: THREE,
-          mouseControls: true,
-          touchControls: true,
-          gyroControls: false,
-          minHeight: 200.0,
-          minWidth: 200.0,
-          scale: 1.0,
-          scaleMobile: 1.0,
-          color: 0x8a63ff,
-          backgroundColor: 0x05030c,
-          size: 1.5,
-          showDots: false,
-        });
-      }
-    };
-
-    loadVanta();
-
-    return () => {
-      if (vantaEffect.current) {
-        vantaEffect.current.destroy();
-      }
-    };
-  }, []);
-
-  return <div ref={vantaRef} className="fixed inset-0 z-0" />;
+      {/* Glowing orbs */}
+      <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-screen filter blur-[120px] opacity-20 animate-float"></div>
+      <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-blue-500 rounded-full mix-blend-screen filter blur-[120px] opacity-15 animate-float-delayed"></div>
+    </div>
+  );
 }
 

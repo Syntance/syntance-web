@@ -22,6 +22,10 @@
     background-size: 400% 400%;
     animation: gradientFlow 15s ease infinite;
   }
+
+  .animate-gradient-slow {
+    background-size: 400% 400%;
+  }
   
   .product-card {
     backdrop-filter: blur(10px);
