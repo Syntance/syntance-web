@@ -28,9 +28,10 @@ export default function VantaBackground() {
           minWidth: 200.0,
           scale: 1.0,
           scaleMobile: 1.0,
-          color: 0x6b46c1,
-          backgroundColor: 0x050301,
-          size: 0.8,
+          color: 0x8a63ff,
+          backgroundColor: 0x05030c,
+          size: 1.5,
+          showDots: false,
         });
       }
     };
