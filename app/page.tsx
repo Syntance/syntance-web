@@ -1,7 +1,7 @@
 "use client";
 
 import VantaBackground from "@/components/vanta-background";
-import CursorGlow from "@/components/cursor-glow";
+import SplashCursor from "@/components/SplashCursor";
 import NavbarNew from "@/components/navbar-new";
 import { Wind, Layers, Globe, Twitter, Linkedin, Github } from "lucide-react";
 import Image from "next/image";
@@ -68,7 +68,7 @@ export default function Page() {
   return (
     <div className="min-h-screen">
       <VantaBackground />
-      <CursorGlow />
+      <SplashCursor />
 
       <NavbarNew />
 
