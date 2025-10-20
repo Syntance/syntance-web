@@ -7,6 +7,8 @@ export default function LotusIcon({ className = "", size = 32 }: { className?: s
       viewBox="0 0 24 24"
       fill="currentColor"
       className={className}
+      role="img"
+      aria-label="Spokój zamiast chaosu"
     >
       <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2">
         <path d="M12 20c0-5.5-4.5-10-10-10c0 5.5 4.5 10 10 10"/>

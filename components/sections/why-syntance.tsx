@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { Brain, Heart, Zap } from "lucide-react";
 import TiltCard from "@/components/tilt-card";
 import LotusIcon from "@/components/icons/lotus-icon";
+import DiamondIcon from "@/components/icons/diamond-icon";
 
 const values = [
   {
@@ -114,6 +115,8 @@ export default function WhySyntance() {
                               </span>
                             ) : value.title === "Spokój zamiast chaosu." ? (
                               <LotusIcon className="text-white" size={32} />
+                            ) : value.title === "Technologia, która zachwyca." ? (
+                              <DiamondIcon className="text-white" size={32} />
                             ) : (
                               <Icon className="text-white" size={32} strokeWidth={1.5} />
                             )}
