@@ -3,6 +3,7 @@
 import VantaBackground from "@/components/vanta-background";
 import NavbarNew from "@/components/navbar-new";
 import InteractiveFluidBox from "@/components/interactive-fluid-box";
+import WhySyntance from "@/components/sections/why-syntance";
 import TiltCard from "@/components/tilt-card";
 import { Wind, Layers, Globe, Twitter, Linkedin, Github } from "lucide-react";
 import Image from "next/image";
@@ -143,7 +144,7 @@ export default function Page() {
       <section className="relative z-10 py-32 px-6 lg:px-12">
         <div className="max-w-4xl mx-auto text-center">
           <div className="relative inline-block mb-16">
-            <div className="absolute inset-0 rounded-full bg-purple-400 bg-opacity-20 blur-xl animate-pulse"></div>
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400 to-blue-400 blur-2xl opacity-30 animate-pulse"></div>
             <h2 className="relative text-3xl md:text-5xl font-light tracking-widest glow-text">
               Zobacz spokój w akcji
             </h2>
@@ -154,6 +155,9 @@ export default function Page() {
           <InteractiveFluidBox />
         </div>
       </section>
+
+      {/* Why Syntance Section */}
+      <WhySyntance />
 
       {/* Case Studies */}
       <section id="cases" className="relative z-10 py-32 px-6 lg:px-12">
