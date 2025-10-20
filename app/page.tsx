@@ -95,7 +95,7 @@ export default function Page() {
               </div>
               <h3 className="text-xl font-medium tracking-wider mb-3">OZE Asystent</h3>
               <p className="text-gray-300 font-light tracking-wide mb-6">
-                AI-powered renewable energy optimization
+                Inteligentny system do automatyzacji i optymalizacji procesów w branży OZE.
               </p>
               <div className="h-1 w-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full mb-6"></div>
               <button className="text-sm font-medium tracking-wider text-blue-300 hover:text-blue-200 transition-colors">

@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Sparkles, Brain, Heart, Zap } from "lucide-react";
+import { Brain, Heart, Zap } from "lucide-react";
 import TiltCard from "@/components/tilt-card";
+import LotusIcon from "@/components/icons/lotus-icon";
 
 const values = [
   {
     title: "Spokój zamiast chaosu.",
-    icon: Sparkles,
+    icon: LotusIcon,
     gradient: "from-blue-400 to-cyan-400",
     glowColor: "rgba(56, 189, 248, 0.3)",
   },
@@ -18,13 +19,13 @@ const values = [
     glowColor: "rgba(192, 132, 252, 0.3)",
   },
   {
-    title: "Design, który czuje.",
+    title: "Wyważony design.",
     icon: Heart,
     gradient: "from-pink-400 to-rose-400",
     glowColor: "rgba(244, 114, 182, 0.3)",
   },
   {
-    title: "Technologia, która inspiruje.",
+    title: "Technologia, która zachwyca.",
     icon: Zap,
     gradient: "from-amber-400 to-orange-400",
     glowColor: "rgba(251, 191, 36, 0.3)",
@@ -107,7 +108,15 @@ export default function WhySyntance() {
                         {/* Icon */}
                         <div className="mb-6 relative">
                           <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${value.gradient} bg-opacity-10 flex items-center justify-center transform transition-all duration-500 group-hover:scale-110 group-hover:rotate-3`}>
-                            <Icon className={`text-transparent bg-clip-text bg-gradient-to-br ${value.gradient}`} size={32} strokeWidth={1.5} />
+                            {value.title === "Inteligencja w tle." ? (
+                              <span className="text-2xl font-bold text-white">
+                                AI
+                              </span>
+                            ) : value.title === "Spokój zamiast chaosu." ? (
+                              <LotusIcon className="text-white" size={32} />
+                            ) : (
+                              <Icon className="text-white" size={32} strokeWidth={1.5} />
+                            )}
                           </div>
                           {/* Floating particles on hover */}
                           <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-gradient-to-br opacity-0 group-hover:opacity-100 group-hover:animate-ping"
