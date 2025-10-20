@@ -20,7 +20,7 @@ const values = [
     glowColor: "rgba(192, 132, 252, 0.3)",
   },
   {
-    title: "Wyważony design.",
+    title: "Design tworzony od serca.",
     icon: Heart,
     gradient: "from-pink-400 to-rose-400",
     glowColor: "rgba(244, 114, 182, 0.3)",
