@@ -36,7 +36,7 @@ export default function Page() {
       <NavbarNew />
 
       {/* Hero Section */}
-      <section className="relative z-10 min-h-screen flex items-center justify-center px-6 lg:px-12 pt-32 pb-20">
+      <section id="hero" className="relative z-10 min-h-screen flex items-center justify-center px-6 lg:px-12 pt-32 pb-20">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-5xl md:text-7xl font-light tracking-widest leading-tight mb-6 glow-text">
             Technologia która{" "}
@@ -61,7 +61,7 @@ export default function Page() {
       </section>
 
       {/* Manifest Section */}
-      <section id="manifest" className="relative z-10 py-20 px-6 lg:px-12">
+      <section id="manifest" className="relative z-10 py-20 px-6 lg:px-12 mb-32">
         <div className="max-w-3xl mx-auto space-y-12">
           <div className="opacity-0 transform translate-y-10 transition-all duration-500 ease-out manifest-line">
             <p className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text">
@@ -75,7 +75,7 @@ export default function Page() {
           </div>
           <div className="opacity-0 transform translate-y-10 transition-all duration-500 ease-out delay-400 manifest-line">
             <p className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text">
-              Inteligencja, która nie krzyczy, ale świeci.
+              Innowacyjność, która nie krzyczy.
             </p>
           </div>
         </div>
