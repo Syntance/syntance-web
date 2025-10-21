@@ -21,24 +21,39 @@ export default function Page() {
   useEffect(() => {
     if (!manifestRef.current) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !hasTriggeredAnimation.current) {
-            hasTriggeredAnimation.current = true;
-            setIsScrollLocked(true);
-            document.body.style.overflow = 'hidden';
-            setShowFirstText(true);
-          }
-        });
-      },
-      { threshold: 0.5 }
-    );
+    const handleScroll = () => {
+      if (hasTriggeredAnimation.current || !manifestRef.current) return;
 
-    observer.observe(manifestRef.current);
+      const rect = manifestRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const sectionMiddle = rect.top + rect.height / 2;
+      const viewportMiddle = viewportHeight / 2;
+
+      // Sprawdź czy środek sekcji jest blisko środka ekranu (z tolerancją 100px)
+      if (Math.abs(sectionMiddle - viewportMiddle) < 100) {
+        hasTriggeredAnimation.current = true;
+        setIsScrollLocked(true);
+        document.body.style.overflow = 'hidden';
+        
+        // Scroll do dokładnego środka
+        const targetScroll = window.scrollY + (sectionMiddle - viewportMiddle);
+        window.scrollTo({
+          top: targetScroll,
+          behavior: 'smooth'
+        });
+
+        // Rozpocznij animację po smooth scroll
+        setTimeout(() => {
+          setShowFirstText(true);
+        }, 300);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Sprawdź od razu
 
     return () => {
-      observer.disconnect();
+      window.removeEventListener('scroll', handleScroll);
       document.body.style.overflow = '';
     };
   }, []);
