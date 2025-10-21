@@ -37,43 +37,45 @@ export default function ManifestText({
 
   // Funkcja do renderowania tekstu z gradientem
   const renderTextWithGradient = () => {
+    if (!displayedText) return null;
+
     const parts: React.ReactNode[] = [];
-    let lastIndex = 0;
-
-    // Sortuj słowa według długości (najdłuższe pierwsze) aby unikać konfliktów
-    const sortedWords = [...gradientWords].sort((a, b) => b.length - a.length);
-
-    sortedWords.forEach((word) => {
-      const regex = new RegExp(`(${word})`, 'gi');
-      const matches = Array.from(displayedText.matchAll(regex));
-
-      matches.forEach((match) => {
-        if (match.index !== undefined && match.index >= lastIndex) {
-          // Dodaj tekst przed słowem
-          if (match.index > lastIndex) {
-            parts.push(displayedText.substring(lastIndex, match.index));
-          }
-
-          // Dodaj słowo z gradientem
-          parts.push(
-            <GradientText
-              key={`gradient-${match.index}`}
-              colors={["#a855f7", "#3b82f6", "#a855f7", "#3b82f6"]}
-              animationSpeed={4}
-              className="inline-block"
-            >
-              {match[0]}
-            </GradientText>
-          );
-
-          lastIndex = match.index + match[0].length;
+    let processedText = displayedText;
+    
+    // Dla każdego słowa z gradientem
+    gradientWords.forEach((word, wordIndex) => {
+      const regex = new RegExp(`(${word})`, 'i');
+      const match = processedText.match(regex);
+      
+      if (match && match.index !== undefined) {
+        const beforeMatch = processedText.substring(0, match.index);
+        const matchedWord = match[0];
+        const afterMatch = processedText.substring(match.index + matchedWord.length);
+        
+        // Dodaj część przed dopasowaniem
+        if (beforeMatch) {
+          parts.push(<span key={`before-${wordIndex}`}>{beforeMatch}</span>);
         }
-      });
+        
+        // Dodaj słowo z gradientem
+        parts.push(
+          <GradientText
+            key={`gradient-${wordIndex}`}
+            colors={["#a855f7", "#c4b5fd", "#e0f2fe", "#3b82f6", "#c4b5fd", "#a855f7"]}
+            animationSpeed={4}
+          >
+            {matchedWord}
+          </GradientText>
+        );
+        
+        // Kontynuuj z pozostałą częścią tekstu
+        processedText = afterMatch;
+      }
     });
-
+    
     // Dodaj pozostały tekst
-    if (lastIndex < displayedText.length) {
-      parts.push(displayedText.substring(lastIndex));
+    if (processedText) {
+      parts.push(<span key="remaining">{processedText}</span>);
     }
 
     return parts.length > 0 ? parts : displayedText;

@@ -19,18 +19,18 @@ export default function GradientText({
   };
 
   return (
-    <div
-      className={`relative mx-auto flex max-w-fit flex-row items-center justify-center rounded-[1.25rem] font-medium backdrop-blur transition-shadow duration-500 overflow-hidden ${className}`}
+    <span
+      className={`relative inline-block ${className}`}
     >
       {showBorder && (
-        <div
+        <span
           className="absolute inset-0 bg-cover z-0 pointer-events-none animate-gradient"
           style={{
             ...gradientStyle,
             backgroundSize: '300% 100%'
           }}
         >
-          <div
+          <span
             className="absolute inset-0 bg-black rounded-[1.25rem] z-[-1]"
             style={{
               width: 'calc(100% - 2px)',
@@ -39,11 +39,11 @@ export default function GradientText({
               top: '50%',
               transform: 'translate(-50%, -50%)'
             }}
-          ></div>
-        </div>
+          ></span>
+        </span>
       )}
-      <div
-        className="inline-block relative z-2 text-transparent bg-cover animate-gradient"
+      <span
+        className="relative z-2 text-transparent bg-cover animate-gradient"
         style={{
           ...gradientStyle,
           backgroundClip: 'text',
@@ -52,8 +52,8 @@ export default function GradientText({
         }}
       >
         {children}
-      </div>
-    </div>
+      </span>
+    </span>
   );
 }
 

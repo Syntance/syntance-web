@@ -64,9 +64,9 @@ export default function Page() {
           <h1 className="text-5xl md:text-7xl font-light tracking-widest leading-tight mb-6 glow-text">
             Technologia która{" "}
             <GradientText
-              colors={["#a855f7", "#3b82f6", "#a855f7", "#3b82f6"]}
+              colors={["#a855f7", "#c4b5fd", "#e0f2fe", "#3b82f6", "#c4b5fd", "#a855f7"]}
               animationSpeed={4}
-              className="inline-block font-medium"
+              className="font-medium"
             >
               zachwyca
             </GradientText>
