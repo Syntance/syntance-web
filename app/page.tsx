@@ -34,18 +34,16 @@ export default function Page() {
         hasTriggeredAnimation.current = true;
         setIsScrollLocked(true);
         
-        // Oblicz szerokość scrollbara
+        // Oblicz szerokość scrollbara przed zablokowaniem
         const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
         
-        // Zablokuj scroll bez ukrywania scrollbara
-        const scrollY = window.scrollY;
-        document.body.style.position = 'fixed';
-        document.body.style.top = `-${scrollY}px`;
-        document.body.style.width = '100%';
+        // Zablokuj scroll zachowując miejsce dla scrollbara
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
         document.body.style.paddingRight = `${scrollbarWidth}px`;
         
         // Scroll do dokładnego środka
-        const targetScroll = scrollY + (sectionMiddle - viewportMiddle);
+        const targetScroll = window.scrollY + (sectionMiddle - viewportMiddle);
         window.scrollTo({
           top: targetScroll,
           behavior: 'smooth'
@@ -64,9 +62,8 @@ export default function Page() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
       // Cleanup - przywróć domyślne style
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
       document.body.style.paddingRight = '';
     };
   }, []);
@@ -84,16 +81,9 @@ export default function Page() {
       setIsScrollLocked(false);
       
       // Przywróć scroll
-      const scrollY = document.body.style.top;
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
       document.body.style.paddingRight = '';
-      
-      // Przywróć pozycję scrolla
-      if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY || '0') * -1);
-      }
     }, 300);
   };
 
