@@ -5,7 +5,8 @@ import NavbarNew from "@/components/navbar-new";
 import InteractiveFluidBox from "@/components/interactive-fluid-box";
 import WhySyntance from "@/components/sections/why-syntance";
 import TiltCard from "@/components/tilt-card";
-import TextType from "@/components/TextType";
+import GradientText from "@/components/GradientText";
+import ManifestText from "@/components/ManifestText";
 import { Wind, Layers, Globe, Twitter, Linkedin, Github } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
@@ -62,9 +63,13 @@ export default function Page() {
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-5xl md:text-7xl font-light tracking-widest leading-tight mb-6 glow-text">
             Technologia która{" "}
-            <span className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-blue-300">
+            <GradientText
+              colors={["#a855f7", "#3b82f6", "#a855f7", "#3b82f6"]}
+              animationSpeed={4}
+              className="inline-block font-medium"
+            >
               zachwyca
-            </span>
+            </GradientText>
             ,<br />
             nie przytłacza.
           </h1>
@@ -92,49 +97,34 @@ export default function Page() {
           <div className="max-w-3xl mx-auto space-y-12">
             <div className="min-h-[4rem]">
               {showFirstText && (
-                <TextType
-                  as="p"
+                <ManifestText
                   text="Tworzymy technologię, która inspiruje i uspokaja."
-                  className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text"
+                  gradientWords={["technologię"]}
                   typingSpeed={35}
-                  pauseDuration={200}
-                  initialDelay={200}
-                  showCursor={false}
-                  loop={false}
-                  startOnVisible={false}
-                  onSentenceComplete={handleFirstComplete}
+                  onComplete={handleFirstComplete}
+                  className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text"
                 />
               )}
             </div>
             <div className="min-h-[4rem]">
               {showSecondText && (
-                <TextType
-                  as="p"
+                <ManifestText
                   text="Działamy w tle, zapewniając czyste i piękne doświadczenia."
-                  className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text"
+                  gradientWords={["doświadczenia"]}
                   typingSpeed={35}
-                  pauseDuration={200}
-                  initialDelay={0}
-                  showCursor={false}
-                  loop={false}
-                  startOnVisible={false}
-                  onSentenceComplete={handleSecondComplete}
+                  onComplete={handleSecondComplete}
+                  className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text"
                 />
               )}
             </div>
             <div className="min-h-[4rem]">
               {showThirdText && (
-                <TextType
-                  as="p"
+                <ManifestText
                   text="Innowacyjność, która nie krzyczy."
-                  className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text"
+                  gradientWords={["Innowacyjność"]}
                   typingSpeed={35}
-                  pauseDuration={200}
-                  initialDelay={0}
-                  showCursor={false}
-                  loop={false}
-                  startOnVisible={false}
-                  onSentenceComplete={handleThirdComplete}
+                  onComplete={handleThirdComplete}
+                  className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text"
                 />
               )}
             </div>
