@@ -59,18 +59,18 @@ export default function Page() {
   }, []);
 
   const handleFirstComplete = () => {
-    setTimeout(() => setShowSecondText(true), 300);
+    setTimeout(() => setShowSecondText(true), 150);
   };
 
   const handleSecondComplete = () => {
-    setTimeout(() => setShowThirdText(true), 300);
+    setTimeout(() => setShowThirdText(true), 150);
   };
 
   const handleThirdComplete = () => {
     setTimeout(() => {
       setIsScrollLocked(false);
       document.body.style.overflow = '';
-    }, 500);
+    }, 300);
   };
 
   return (
@@ -118,9 +118,9 @@ export default function Page() {
                   as="p"
                   text="Tworzymy technologię, która inspiruje i uspokaja."
                   className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text"
-                  typingSpeed={50}
-                  pauseDuration={500}
-                  initialDelay={300}
+                  typingSpeed={35}
+                  pauseDuration={200}
+                  initialDelay={200}
                   showCursor={false}
                   loop={false}
                   startOnVisible={false}
@@ -134,8 +134,8 @@ export default function Page() {
                   as="p"
                   text="Działamy w tle, zapewniając czyste i piękne doświadczenia."
                   className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text"
-                  typingSpeed={50}
-                  pauseDuration={500}
+                  typingSpeed={35}
+                  pauseDuration={200}
                   initialDelay={0}
                   showCursor={false}
                   loop={false}
@@ -150,8 +150,8 @@ export default function Page() {
                   as="p"
                   text="Innowacyjność, która nie krzyczy."
                   className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text"
-                  typingSpeed={50}
-                  pauseDuration={500}
+                  typingSpeed={35}
+                  pauseDuration={200}
                   initialDelay={0}
                   showCursor={false}
                   loop={false}
