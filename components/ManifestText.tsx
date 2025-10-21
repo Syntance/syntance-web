@@ -39,46 +39,61 @@ export default function ManifestText({
   const renderTextWithGradient = () => {
     if (!displayedText) return null;
 
-    const parts: React.ReactNode[] = [];
-    let processedText = displayedText;
+    const processedText = displayedText;
     
-    // Dla każdego słowa z gradientem
-    gradientWords.forEach((word, wordIndex) => {
-      const regex = new RegExp(`(${word})`, 'i');
-      const match = processedText.match(regex);
+    // Sprawdź każde słowo z gradientem
+    for (const word of gradientWords) {
+      const wordLower = word.toLowerCase();
+      const textLower = processedText.toLowerCase();
+      const wordIndex = textLower.indexOf(wordLower);
       
-      if (match && match.index !== undefined) {
-        const beforeMatch = processedText.substring(0, match.index);
-        const matchedWord = match[0];
-        const afterMatch = processedText.substring(match.index + matchedWord.length);
+      if (wordIndex !== -1) {
+        // Znaleziono pełne słowo
+        const beforeMatch = processedText.substring(0, wordIndex);
+        const matchedWord = processedText.substring(wordIndex, wordIndex + word.length);
+        const afterMatch = processedText.substring(wordIndex + word.length);
         
-        // Dodaj część przed dopasowaniem
-        if (beforeMatch) {
-          parts.push(<span key={`before-${wordIndex}`}>{beforeMatch}</span>);
-        }
-        
-        // Dodaj słowo z gradientem
-        parts.push(
-          <GradientText
-            key={`gradient-${wordIndex}`}
-            colors={["#a855f7", "#c4b5fd", "#3b82f6", "#c4b5fd", "#a855f7"]}
-            animationSpeed={4}
-          >
-            {matchedWord}
-          </GradientText>
+        return (
+          <>
+            {beforeMatch && <span>{beforeMatch}</span>}
+            <GradientText
+              colors={["#a855f7", "#c4b5fd", "#3b82f6", "#c4b5fd", "#a855f7"]}
+              animationSpeed={4}
+            >
+              {matchedWord}
+            </GradientText>
+            {afterMatch && <span>{afterMatch}</span>}
+          </>
         );
-        
-        // Kontynuuj z pozostałą częścią tekstu
-        processedText = afterMatch;
       }
-    });
-    
-    // Dodaj pozostały tekst
-    if (processedText) {
-      parts.push(<span key="remaining">{processedText}</span>);
+      
+      // Sprawdź częściowe dopasowanie (min. 2 znaki)
+      for (let len = Math.max(2, word.length); len >= 2; len--) {
+        const partialWord = wordLower.substring(0, len);
+        const partialIndex = textLower.lastIndexOf(partialWord);
+        
+        // Sprawdź czy częściowe słowo jest na końcu tekstu
+        if (partialIndex !== -1 && partialIndex + len === processedText.length) {
+          const beforeMatch = processedText.substring(0, partialIndex);
+          const matchedPart = processedText.substring(partialIndex);
+          
+          return (
+            <>
+              {beforeMatch && <span>{beforeMatch}</span>}
+              <GradientText
+                colors={["#a855f7", "#c4b5fd", "#3b82f6", "#c4b5fd", "#a855f7"]}
+                animationSpeed={4}
+              >
+                {matchedPart}
+              </GradientText>
+            </>
+          );
+        }
+      }
     }
-
-    return parts.length > 0 ? parts : displayedText;
+    
+    // Jeśli nie znaleziono dopasowania, zwróć zwykły tekst
+    return <span>{displayedText}</span>;
   };
 
   return (
