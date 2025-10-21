@@ -76,12 +76,28 @@ export default function Page() {
           <p className="text-lg md:text-xl font-light tracking-wider text-gray-300 mb-12">
             Piękno. Inteligencja. Płynność.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <button className="px-8 py-3 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 transition-all glow-box">
+          <div className="flex justify-center">
+            <button 
+              onClick={() => {
+                const element = document.getElementById('manifest');
+                if (element) {
+                  const navbarHeight = 100;
+                  const elementRect = element.getBoundingClientRect();
+                  const elementTop = elementRect.top + window.scrollY;
+                  const viewportHeight = window.innerHeight;
+                  const elementHeight = elementRect.height;
+                  const offset = (viewportHeight - elementHeight) / 2;
+                  const scrollToPosition = elementTop - Math.max(offset, navbarHeight);
+                  
+                  window.scrollTo({
+                    top: scrollToPosition,
+                    behavior: 'smooth'
+                  });
+                }
+              }}
+              className="px-8 py-3 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 transition-all glow-box cursor-pointer"
+            >
               Rozpocznij
-            </button>
-            <button className="px-8 py-3 border border-purple-300 text-purple-300 rounded-full font-medium tracking-wider hover:bg-purple-900 hover:bg-opacity-20 transition-all">
-              Demo
             </button>
           </div>
         </div>
