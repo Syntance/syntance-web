@@ -14,77 +14,41 @@ export default function Page() {
   const [showFirstText, setShowFirstText] = useState(false);
   const [showSecondText, setShowSecondText] = useState(false);
   const [showThirdText, setShowThirdText] = useState(false);
-  const [isScrollLocked, setIsScrollLocked] = useState(false);
   const manifestRef = useRef<HTMLElement>(null);
   const hasTriggeredAnimation = useRef(false);
 
   useEffect(() => {
     if (!manifestRef.current) return;
 
-    const handleScroll = () => {
-      if (hasTriggeredAnimation.current || !manifestRef.current) return;
-
-      const rect = manifestRef.current.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      const sectionMiddle = rect.top + rect.height / 2;
-      const viewportMiddle = viewportHeight / 2;
-
-      // Sprawdź czy środek sekcji jest blisko środka ekranu (z tolerancją 100px)
-      if (Math.abs(sectionMiddle - viewportMiddle) < 100) {
-        hasTriggeredAnimation.current = true;
-        setIsScrollLocked(true);
-        
-        // Oblicz szerokość scrollbara przed zablokowaniem
-        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-        
-        // Zablokuj scroll zachowując miejsce dla scrollbara
-        document.documentElement.style.overflow = 'hidden';
-        document.body.style.overflow = 'hidden';
-        document.body.style.paddingRight = `${scrollbarWidth}px`;
-        
-        // Scroll do dokładnego środka
-        const targetScroll = window.scrollY + (sectionMiddle - viewportMiddle);
-        window.scrollTo({
-          top: targetScroll,
-          behavior: 'smooth'
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !hasTriggeredAnimation.current) {
+            hasTriggeredAnimation.current = true;
+            setShowFirstText(true);
+          }
         });
+      },
+      { threshold: 0.3 }
+    );
 
-        // Rozpocznij animację po smooth scroll
-        setTimeout(() => {
-          setShowFirstText(true);
-        }, 300);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Sprawdź od razu
+    observer.observe(manifestRef.current);
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      // Cleanup - przywróć domyślne style
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
-      document.body.style.paddingRight = '';
+      observer.disconnect();
     };
   }, []);
 
   const handleFirstComplete = () => {
-    setTimeout(() => setShowSecondText(true), 150);
+    setTimeout(() => setShowSecondText(true), 200);
   };
 
   const handleSecondComplete = () => {
-    setTimeout(() => setShowThirdText(true), 150);
+    setTimeout(() => setShowThirdText(true), 200);
   };
 
   const handleThirdComplete = () => {
-    setTimeout(() => {
-      setIsScrollLocked(false);
-      
-      // Przywróć scroll
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
-      document.body.style.paddingRight = '';
-    }, 300);
+    // Animacja zakończona - nic specjalnego nie robimy
   };
 
   return (
