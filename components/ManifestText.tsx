@@ -61,7 +61,7 @@ export default function ManifestText({
         parts.push(
           <GradientText
             key={`gradient-${wordIndex}`}
-            colors={["#a855f7", "#c4b5fd", "#e0f2fe", "#3b82f6", "#c4b5fd", "#a855f7"]}
+            colors={["#a855f7", "#c4b5fd", "#3b82f6", "#c4b5fd", "#a855f7"]}
             animationSpeed={4}
           >
             {matchedWord}
