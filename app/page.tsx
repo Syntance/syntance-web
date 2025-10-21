@@ -209,56 +209,6 @@ export default function Page() {
       {/* Why Syntance Section */}
       <WhySyntance />
 
-      {/* Case Studies */}
-      <section id="cases" className="relative z-10 py-32 px-6 lg:px-12 min-h-screen flex items-center">
-        <div className="w-full">
-          <h2 className="text-3xl md:text-4xl font-light tracking-wider text-center mb-16 glow-text">
-            Portfolio
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-6xl mx-auto">
-          {/* Case 1 */}
-          <div className="group relative overflow-hidden rounded-2xl h-96">
-            <Image
-              src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=630&fit=crop"
-              alt="Case Study"
-              fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
-            <div className="absolute bottom-0 left-0 p-8">
-              <h3 className="text-2xl font-medium tracking-wider mb-2">Nexus Financial</h3>
-              <p className="text-gray-300 font-light tracking-wide">450% ROI in first year</p>
-            </div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <button className="px-6 py-2 bg-white bg-opacity-10 backdrop-filter backdrop-blur-sm border border-white border-opacity-20 rounded-full text-white font-medium tracking-wider hover:bg-opacity-20 transition-all">
-                Zobacz
-              </button>
-            </div>
-          </div>
-
-          {/* Case 2 */}
-          <div className="group relative overflow-hidden rounded-2xl h-96">
-            <Image
-              src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=1200&h=630&fit=crop"
-              alt="Case Study"
-              fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
-            <div className="absolute bottom-0 left-0 p-8">
-              <h3 className="text-2xl font-medium tracking-wider mb-2">Aurora Health</h3>
-              <p className="text-gray-300 font-light tracking-wide">80% process automation</p>
-            </div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <button className="px-6 py-2 bg-white bg-opacity-10 backdrop-filter backdrop-blur-sm border border-white border-opacity-20 rounded-full text-white font-medium tracking-wider hover:bg-opacity-20 transition-all">
-                View Case
-              </button>
-            </div>
-          </div>
-          </div>
-        </div>
-      </section>
-
       {/* Contact Section */}
       <section id="contact" className="relative z-10 px-6 lg:px-12 py-32">
         <div className="max-w-4xl mx-auto">

@@ -15,11 +15,10 @@ export default function NavbarNew() {
     { label: "Filozofia", href: "#manifest" },
     { label: "Produkty", href: "#products" },
     { label: "Dlaczego my", href: "#why-syntance" },
-    { label: "Portfolio", href: "#cases" },
     { label: "Kontakt", href: "#contact" },
   ];
 
-  const sectionIds = ['hero', 'manifest', 'products', 'why-syntance', 'cases', 'contact'];
+  const sectionIds = ['hero', 'manifest', 'products', 'why-syntance', 'contact'];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -209,29 +208,6 @@ export default function NavbarNew() {
           >
             Dlaczego my
           </a>
-          <a 
-            href="#cases" 
-            className="block text-sm font-light tracking-wider hover:text-purple-300 transition-colors"
-            onClick={(e) => {
-              e.preventDefault();
-              setMobileMenuOpen(false);
-              setActiveSection(4);
-              setIsScrolling(true);
-              const element = document.querySelector('#cases') as HTMLElement;
-              if (element) {
-                const navbarHeight = 100;
-                const viewportHeight = window.innerHeight;
-                const elementHeight = element.offsetHeight;
-                const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-                const centerOffset = (viewportHeight - elementHeight) / 2;
-                const offsetPosition = elementPosition - Math.max(navbarHeight, centerOffset);
-                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                setTimeout(() => setIsScrolling(false), 1000);
-              }
-            }}
-          >
-            Portfolio
-          </a>
           <a
             href="#contact"
             className="block text-sm font-light tracking-wider hover:text-purple-300 transition-colors"
@@ -239,7 +215,7 @@ export default function NavbarNew() {
               e.preventDefault();
               setMobileMenuOpen(false);
               setIsScrolling(true);
-              setActiveSection(5);
+              setActiveSection(4);
               
               const element = document.getElementById('contact');
               if (element) {
