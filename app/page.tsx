@@ -182,7 +182,7 @@ export default function Page() {
               </p>
               <div className="h-1 w-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full mb-6"></div>
               <button className="text-sm font-medium tracking-wider text-blue-300 hover:text-blue-200 transition-colors">
-                Learn More →
+                Odkryj więcej →
               </button>
             </div>
           </TiltCard>
@@ -199,7 +199,7 @@ export default function Page() {
               </p>
               <div className="h-1 w-full bg-gradient-to-r from-purple-400 to-purple-600 rounded-full mb-6"></div>
               <button className="text-sm font-medium tracking-wider text-purple-300 hover:text-purple-200 transition-colors">
-                Learn More →
+                Odkryj więcej →
               </button>
             </div>
           </TiltCard>
@@ -210,13 +210,13 @@ export default function Page() {
               <div className="w-16 h-16 rounded-full bg-teal-500 bg-opacity-20 flex items-center justify-center mb-6">
                 <Globe className="text-teal-300" size={32} />
               </div>
-              <h3 className="text-xl font-medium tracking-wider mb-3">Syntance Web</h3>
+              <h3 className="text-xl font-medium tracking-wider mb-3">Syntance Studio</h3>
               <p className="text-gray-300 font-light tracking-wide mb-6">
-                Intelligent web presence infrastructure
+                Projektujemy strony i sklepy, które zachwycają harmonią, lekkością i emocją.
               </p>
               <div className="h-1 w-full bg-gradient-to-r from-teal-400 to-teal-600 rounded-full mb-6"></div>
               <button className="text-sm font-medium tracking-wider text-teal-300 hover:text-teal-200 transition-colors">
-                Learn More →
+                Odkryj więcej →
               </button>
             </div>
           </TiltCard>
