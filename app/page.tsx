@@ -5,30 +5,11 @@ import NavbarNew from "@/components/navbar-new";
 import InteractiveFluidBox from "@/components/interactive-fluid-box";
 import WhySyntance from "@/components/sections/why-syntance";
 import TiltCard from "@/components/tilt-card";
+import TextType from "@/components/TextType";
 import { Wind, Layers, Globe, Twitter, Linkedin, Github } from "lucide-react";
 import Image from "next/image";
-import { useEffect } from "react";
 
 export default function Page() {
-  useEffect(() => {
-    // Manifest animation on scroll
-    const manifestLines = document.querySelectorAll('.manifest-line');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('opacity-100', 'translate-y-0');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1 });
-    
-    manifestLines.forEach(line => observer.observe(line));
-
-    return () => {
-      manifestLines.forEach(line => observer.unobserve(line));
-    };
-  }, []);
-
   return (
     <div className="min-h-screen">
       <VantaBackground />
@@ -64,20 +45,44 @@ export default function Page() {
       <section id="manifest" className="relative z-10 px-6 lg:px-12 py-40 flex items-center justify-center">
         <div className="w-full">
           <div className="max-w-3xl mx-auto space-y-12">
-            <div className="opacity-0 transform translate-y-10 transition-all duration-500 ease-out manifest-line">
-              <p className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text">
-                Tworzymy technologię, która inspiruje i uspokaja.
-              </p>
+            <div className="min-h-[4rem]">
+              <TextType
+                as="p"
+                text="Tworzymy technologię, która inspiruje i uspokaja."
+                className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text"
+                typingSpeed={40}
+                pauseDuration={3000}
+                initialDelay={500}
+                showCursor={false}
+                loop={false}
+                startOnVisible={true}
+              />
             </div>
-            <div className="opacity-0 transform translate-y-10 transition-all duration-500 ease-out delay-200 manifest-line">
-              <p className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text">
-                Działamy w tle, zapewniając czyste i piękne doświadczenia.
-              </p>
+            <div className="min-h-[4rem]">
+              <TextType
+                as="p"
+                text="Działamy w tle, zapewniając czyste i piękne doświadczenia."
+                className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text"
+                typingSpeed={40}
+                pauseDuration={3000}
+                initialDelay={2000}
+                showCursor={false}
+                loop={false}
+                startOnVisible={true}
+              />
             </div>
-            <div className="opacity-0 transform translate-y-10 transition-all duration-500 ease-out delay-400 manifest-line">
-              <p className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text">
-                Innowacyjność, która nie krzyczy.
-              </p>
+            <div className="min-h-[4rem]">
+              <TextType
+                as="p"
+                text="Innowacyjność, która nie krzyczy."
+                className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text"
+                typingSpeed={40}
+                pauseDuration={3000}
+                initialDelay={3500}
+                showCursor={false}
+                loop={false}
+                startOnVisible={true}
+              />
             </div>
           </div>
         </div>
