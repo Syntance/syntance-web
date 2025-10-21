@@ -17,6 +17,7 @@ interface GooeyNavProps {
   colors?: number[];
   initialActiveIndex?: number;
   externalActiveIndex?: number;
+  onNavigate?: (index: number) => void;
 }
 
 const GooeyNav = ({
@@ -28,7 +29,8 @@ const GooeyNav = ({
   timeVariance = 300,
   colors = [1, 2, 3, 1, 2, 3, 1, 4],
   initialActiveIndex = 0,
-  externalActiveIndex
+  externalActiveIndex,
+  onNavigate
 }: GooeyNavProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLUListElement>(null);
@@ -107,6 +109,12 @@ const GooeyNav = ({
     e.preventDefault();
     const liEl = e.currentTarget;
     if (activeIndex === index) return;
+    
+    // Wywołaj callback przed ustawieniem active index
+    if (onNavigate) {
+      onNavigate(index);
+    }
+    
     setActiveIndex(index);
     updateEffectPosition(liEl);
     if (filterRef.current) {
@@ -124,8 +132,22 @@ const GooeyNav = ({
     // Navigate to href
     const href = items[index].href;
     if (href.startsWith('#')) {
-      const element = document.querySelector(href);
-      element?.scrollIntoView({ behavior: 'smooth' });
+      const element = document.querySelector(href) as HTMLElement;
+      if (element) {
+        const navbarHeight = 100; // wysokość fixed navbar + padding
+        const viewportHeight = window.innerHeight;
+        const elementHeight = element.offsetHeight;
+        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+        
+        // Centrowanie sekcji na ekranie
+        const centerOffset = (viewportHeight - elementHeight) / 2;
+        const offsetPosition = elementPosition - Math.max(navbarHeight, centerOffset);
+        
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
     } else {
       window.location.href = href;
     }

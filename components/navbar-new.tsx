@@ -8,54 +8,77 @@ import GooeyNav from "@/components/ui/gooey-nav";
 export default function NavbarNew() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState(0);
+  const [isScrolling, setIsScrolling] = useState(false);
 
   const navItems = [
     { label: "Wizja", href: "#hero" },
     { label: "Filozofia", href: "#manifest" },
     { label: "Produkty", href: "#products" },
-    { label: "Studia Przypadków", href: "#cases" },
+    { label: "Dlaczego my", href: "#why-syntance" },
+    { label: "Portfolio", href: "#cases" },
     { label: "Kontakt", href: "/contact" },
   ];
 
-  const sectionIds = ['hero', 'manifest', 'products', 'cases', 'contact'];
+  const sectionIds = ['hero', 'manifest', 'products', 'why-syntance', 'cases'];
 
   useEffect(() => {
-    const observerOptions = {
-      root: null,
-      rootMargin: '-20% 0px -70% 0px',
-      threshold: 0
-    };
-
-    const observerCallback = (entries: IntersectionObserverEntry[]) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const sectionId = entry.target.id;
-          const index = sectionIds.indexOf(sectionId);
-          if (index !== -1) {
-            setActiveSection(index);
+    const handleScroll = () => {
+      // Nie aktualizuj podczas programowego scrollowania
+      if (isScrolling) return;
+      
+      // Punkt odniesienia - trochę powyżej środka ekranu (30% od góry)
+      const scrollPosition = window.scrollY + window.innerHeight * 0.3;
+      
+      // Znajdź najbliższą sekcję z navbar POWYŻEJ aktualnej pozycji
+      let currentSectionIndex = 0;
+      
+      for (let i = sectionIds.length - 1; i >= 0; i--) {
+        const element = document.getElementById(sectionIds[i]);
+        if (element) {
+          const sectionTop = element.offsetTop;
+          
+          // Jeśli scrollPosition jest poniżej początku tej sekcji, to ta sekcja (lub wcześniejsza) jest aktywna
+          if (scrollPosition >= sectionTop) {
+            currentSectionIndex = i;
+            
+            // Sprawdź czy nie jesteśmy już w następnej sekcji z navbar
+            if (i < sectionIds.length - 1) {
+              const nextElement = document.getElementById(sectionIds[i + 1]);
+              if (nextElement && scrollPosition >= nextElement.offsetTop) {
+                currentSectionIndex = i + 1;
+              }
+            }
+            break;
           }
         }
-      });
-    };
-
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
-
-    sectionIds.forEach((id) => {
-      const element = document.getElementById(id);
-      if (element) {
-        observer.observe(element);
       }
-    });
-
-    return () => {
-      sectionIds.forEach((id) => {
-        const element = document.getElementById(id);
-        if (element) {
-          observer.unobserve(element);
-        }
-      });
+      
+      setActiveSection(currentSectionIndex);
     };
-  }, []);
+
+    // Wywołaj na start
+    handleScroll();
+    
+    // Dodaj listener na scroll z throttle dla lepszej wydajności
+    let ticking = false;
+    const scrollListener = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    
+    window.addEventListener('scroll', scrollListener, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', scrollListener);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [sectionIds, isScrolling, activeSection]);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 py-6 px-6 lg:px-12 backdrop-blur-md bg-black/30 transition-all duration-300">
@@ -75,6 +98,11 @@ export default function NavbarNew() {
             animationTime={600}
             timeVariance={300}
             colors={[1, 2, 3, 1, 2, 3, 1, 4]}
+            onNavigate={(index) => {
+              setActiveSection(index);
+              setIsScrolling(true);
+              setTimeout(() => setIsScrolling(false), 1000);
+            }}
           />
         </div>
         
@@ -92,30 +120,117 @@ export default function NavbarNew() {
           <a 
             href="#hero" 
             className="block text-sm font-light tracking-wider hover:text-purple-300 transition-colors"
-            onClick={() => setMobileMenuOpen(false)}
+            onClick={(e) => {
+              e.preventDefault();
+              setMobileMenuOpen(false);
+              setActiveSection(0);
+              setIsScrolling(true);
+              const element = document.querySelector('#hero') as HTMLElement;
+              if (element) {
+                const navbarHeight = 100;
+                const viewportHeight = window.innerHeight;
+                const elementHeight = element.offsetHeight;
+                const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                const centerOffset = (viewportHeight - elementHeight) / 2;
+                const offsetPosition = elementPosition - Math.max(navbarHeight, centerOffset);
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                setTimeout(() => setIsScrolling(false), 1000);
+              }
+            }}
           >
             Wizja
           </a>
           <a 
             href="#manifest" 
             className="block text-sm font-light tracking-wider hover:text-purple-300 transition-colors"
-            onClick={() => setMobileMenuOpen(false)}
+            onClick={(e) => {
+              e.preventDefault();
+              setMobileMenuOpen(false);
+              setActiveSection(1);
+              setIsScrolling(true);
+              const element = document.querySelector('#manifest') as HTMLElement;
+              if (element) {
+                const navbarHeight = 100;
+                const viewportHeight = window.innerHeight;
+                const elementHeight = element.offsetHeight;
+                const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                const centerOffset = (viewportHeight - elementHeight) / 2;
+                const offsetPosition = elementPosition - Math.max(navbarHeight, centerOffset);
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                setTimeout(() => setIsScrolling(false), 1000);
+              }
+            }}
           >
             Filozofia
           </a>
           <a 
             href="#products" 
             className="block text-sm font-light tracking-wider hover:text-purple-300 transition-colors"
-            onClick={() => setMobileMenuOpen(false)}
+            onClick={(e) => {
+              e.preventDefault();
+              setMobileMenuOpen(false);
+              setActiveSection(2);
+              setIsScrolling(true);
+              const element = document.querySelector('#products') as HTMLElement;
+              if (element) {
+                const navbarHeight = 100;
+                const viewportHeight = window.innerHeight;
+                const elementHeight = element.offsetHeight;
+                const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                const centerOffset = (viewportHeight - elementHeight) / 2;
+                const offsetPosition = elementPosition - Math.max(navbarHeight, centerOffset);
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                setTimeout(() => setIsScrolling(false), 1000);
+              }
+            }}
           >
             Produkty
           </a>
           <a 
+            href="#why-syntance" 
+            className="block text-sm font-light tracking-wider hover:text-purple-300 transition-colors"
+            onClick={(e) => {
+              e.preventDefault();
+              setMobileMenuOpen(false);
+              setActiveSection(3);
+              setIsScrolling(true);
+              const element = document.querySelector('#why-syntance') as HTMLElement;
+              if (element) {
+                const navbarHeight = 100;
+                const viewportHeight = window.innerHeight;
+                const elementHeight = element.offsetHeight;
+                const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                const centerOffset = (viewportHeight - elementHeight) / 2;
+                const offsetPosition = elementPosition - Math.max(navbarHeight, centerOffset);
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                setTimeout(() => setIsScrolling(false), 1000);
+              }
+            }}
+          >
+            Dlaczego my
+          </a>
+          <a 
             href="#cases" 
             className="block text-sm font-light tracking-wider hover:text-purple-300 transition-colors"
-            onClick={() => setMobileMenuOpen(false)}
+            onClick={(e) => {
+              e.preventDefault();
+              setMobileMenuOpen(false);
+              setActiveSection(4);
+              setIsScrolling(true);
+              const element = document.querySelector('#cases') as HTMLElement;
+              if (element) {
+                const navbarHeight = 100;
+                const viewportHeight = window.innerHeight;
+                const elementHeight = element.offsetHeight;
+                const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                const centerOffset = (viewportHeight - elementHeight) / 2;
+                const offsetPosition = elementPosition - Math.max(navbarHeight, centerOffset);
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                setTimeout(() => setIsScrolling(false), 1000);
+              }
+            }}
           >
-            Studia Przypadków
+            Portfolio
           </a>
           <Link 
             href="/contact" 

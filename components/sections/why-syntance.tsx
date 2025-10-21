@@ -58,7 +58,7 @@ export default function WhySyntance() {
   }, []);
 
   return (
-    <section className="relative z-10 py-32 px-6 lg:px-12 overflow-hidden">
+    <section id="why-syntance" className="relative z-10 py-32 px-6 lg:px-12 overflow-hidden">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-20">

@@ -61,28 +61,46 @@ export default function Page() {
       </section>
 
       {/* Manifest Section */}
-      <section id="manifest" className="relative z-10 py-20 px-6 lg:px-12 mb-32">
-        <div className="max-w-3xl mx-auto space-y-12">
-          <div className="opacity-0 transform translate-y-10 transition-all duration-500 ease-out manifest-line">
-            <p className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text">
-              Tworzymy technologię, która inspiruje i uspokaja.
-            </p>
-          </div>
-          <div className="opacity-0 transform translate-y-10 transition-all duration-500 ease-out delay-200 manifest-line">
-            <p className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text">
-              Działamy w tle, zapewniając czyste i piękne doświadczenia.
-            </p>
-          </div>
-          <div className="opacity-0 transform translate-y-10 transition-all duration-500 ease-out delay-400 manifest-line">
-            <p className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text">
-              Innowacyjność, która nie krzyczy.
-            </p>
+      <section id="manifest" className="relative z-10 px-6 lg:px-12 py-40 flex items-center justify-center">
+        <div className="w-full">
+          <div className="max-w-3xl mx-auto space-y-12">
+            <div className="opacity-0 transform translate-y-10 transition-all duration-500 ease-out manifest-line">
+              <p className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text">
+                Tworzymy technologię, która inspiruje i uspokaja.
+              </p>
+            </div>
+            <div className="opacity-0 transform translate-y-10 transition-all duration-500 ease-out delay-200 manifest-line">
+              <p className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text">
+                Działamy w tle, zapewniając czyste i piękne doświadczenia.
+              </p>
+            </div>
+            <div className="opacity-0 transform translate-y-10 transition-all duration-500 ease-out delay-400 manifest-line">
+              <p className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text">
+                Innowacyjność, która nie krzyczy.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
+      {/* Experience Section - Interactive Light */}
+      <section className="relative z-10 pt-96 pb-32 px-6 lg:px-12">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="relative inline-block mb-16">
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400 to-blue-400 blur-2xl opacity-30 animate-pulse"></div>
+            <h2 className="relative text-3xl md:text-5xl font-light tracking-widest glow-text">
+              Zobacz spokój w akcji
+            </h2>
+          </div>
+          <p className="text-lg font-light tracking-wide text-gray-300 max-w-2xl mx-auto mb-12">
+            Porusz myszką, i poczuj Flow
+          </p>
+          <InteractiveFluidBox />
+        </div>
+      </section>
+
       {/* Products Section */}
-      <section id="products" className="relative z-10 py-32 px-6 lg:px-12 overflow-hidden">
+      <section id="products" className="relative z-10 pt-64 pb-32 px-6 lg:px-12 overflow-hidden">
         <h2 className="text-3xl md:text-4xl font-light tracking-wider text-center mb-16 glow-text">
           Nasze Systemy
         </h2>
@@ -140,31 +158,16 @@ export default function Page() {
         </div>
       </section>
 
-      {/* Experience Section - Interactive Light */}
-      <section className="relative z-10 py-32 px-6 lg:px-12">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="relative inline-block mb-16">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400 to-blue-400 blur-2xl opacity-30 animate-pulse"></div>
-            <h2 className="relative text-3xl md:text-5xl font-light tracking-widest glow-text">
-              Zobacz spokój w akcji
-            </h2>
-          </div>
-          <p className="text-lg font-light tracking-wide text-gray-300 max-w-2xl mx-auto mb-12">
-            Porusz myszką, i poczuj Flow
-          </p>
-          <InteractiveFluidBox />
-        </div>
-      </section>
-
       {/* Why Syntance Section */}
       <WhySyntance />
 
       {/* Case Studies */}
-      <section id="cases" className="relative z-10 py-32 px-6 lg:px-12">
-        <h2 className="text-3xl md:text-4xl font-light tracking-wider text-center mb-16 glow-text">
-          Transformacje
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+      <section id="cases" className="relative z-10 py-32 px-6 lg:px-12 min-h-screen flex items-center">
+        <div className="w-full">
+          <h2 className="text-3xl md:text-4xl font-light tracking-wider text-center mb-16 glow-text">
+            Portfolio
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-6xl mx-auto">
           {/* Case 1 */}
           <div className="group relative overflow-hidden rounded-2xl h-96">
             <Image
@@ -203,6 +206,7 @@ export default function Page() {
                 View Case
               </button>
             </div>
+          </div>
           </div>
         </div>
       </section>
