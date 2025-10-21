@@ -53,6 +53,7 @@ const TextType = ({
   const [isVisible, setIsVisible] = useState(!startOnVisible);
   const cursorRef = useRef<HTMLSpanElement>(null);
   const containerRef = useRef<HTMLElement>(null);
+  const hasCalledCallback = useRef(false);
 
   const textArray = useMemo(() => (Array.isArray(text) ? text : [text]), [text]);
 
@@ -135,10 +136,18 @@ const TextType = ({
             },
             variableSpeed ? getRandomSpeed() : typingSpeed
           );
-        } else if (textArray.length > 1) {
-          timeout = setTimeout(() => {
-            setIsDeleting(true);
-          }, pauseDuration);
+        } else {
+          // Tekst zakończony - wywołaj callback
+          if (onSentenceComplete && !loop && !hasCalledCallback.current) {
+            hasCalledCallback.current = true;
+            timeout = setTimeout(() => {
+              onSentenceComplete(textArray[currentTextIndex], currentTextIndex);
+            }, pauseDuration);
+          } else if (textArray.length > 1) {
+            timeout = setTimeout(() => {
+              setIsDeleting(true);
+            }, pauseDuration);
+          }
         }
       }
     };

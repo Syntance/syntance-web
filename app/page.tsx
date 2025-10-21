@@ -8,8 +8,56 @@ import TiltCard from "@/components/tilt-card";
 import TextType from "@/components/TextType";
 import { Wind, Layers, Globe, Twitter, Linkedin, Github } from "lucide-react";
 import Image from "next/image";
+import { useEffect, useState, useRef } from "react";
 
 export default function Page() {
+  const [showFirstText, setShowFirstText] = useState(false);
+  const [showSecondText, setShowSecondText] = useState(false);
+  const [showThirdText, setShowThirdText] = useState(false);
+  const [isScrollLocked, setIsScrollLocked] = useState(false);
+  const manifestRef = useRef<HTMLElement>(null);
+  const hasTriggeredAnimation = useRef(false);
+
+  useEffect(() => {
+    if (!manifestRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !hasTriggeredAnimation.current) {
+            hasTriggeredAnimation.current = true;
+            setIsScrollLocked(true);
+            document.body.style.overflow = 'hidden';
+            setShowFirstText(true);
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    observer.observe(manifestRef.current);
+
+    return () => {
+      observer.disconnect();
+      document.body.style.overflow = '';
+    };
+  }, []);
+
+  const handleFirstComplete = () => {
+    setTimeout(() => setShowSecondText(true), 300);
+  };
+
+  const handleSecondComplete = () => {
+    setTimeout(() => setShowThirdText(true), 300);
+  };
+
+  const handleThirdComplete = () => {
+    setTimeout(() => {
+      setIsScrollLocked(false);
+      document.body.style.overflow = '';
+    }, 500);
+  };
+
   return (
     <div className="min-h-screen">
       <VantaBackground />
@@ -42,47 +90,60 @@ export default function Page() {
       </section>
 
       {/* Manifest Section */}
-      <section id="manifest" className="relative z-10 px-6 lg:px-12 py-40 flex items-center justify-center">
+      <section 
+        ref={manifestRef as any}
+        id="manifest" 
+        className="relative z-10 px-6 lg:px-12 min-h-screen flex items-center justify-center"
+      >
         <div className="w-full">
           <div className="max-w-3xl mx-auto space-y-12">
             <div className="min-h-[4rem]">
-              <TextType
-                as="p"
-                text="Tworzymy technologię, która inspiruje i uspokaja."
-                className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text"
-                typingSpeed={40}
-                pauseDuration={3000}
-                initialDelay={500}
-                showCursor={false}
-                loop={false}
-                startOnVisible={true}
-              />
+              {showFirstText && (
+                <TextType
+                  as="p"
+                  text="Tworzymy technologię, która inspiruje i uspokaja."
+                  className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text"
+                  typingSpeed={50}
+                  pauseDuration={500}
+                  initialDelay={300}
+                  showCursor={false}
+                  loop={false}
+                  startOnVisible={false}
+                  onSentenceComplete={handleFirstComplete}
+                />
+              )}
             </div>
             <div className="min-h-[4rem]">
-              <TextType
-                as="p"
-                text="Działamy w tle, zapewniając czyste i piękne doświadczenia."
-                className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text"
-                typingSpeed={40}
-                pauseDuration={3000}
-                initialDelay={2000}
-                showCursor={false}
-                loop={false}
-                startOnVisible={true}
-              />
+              {showSecondText && (
+                <TextType
+                  as="p"
+                  text="Działamy w tle, zapewniając czyste i piękne doświadczenia."
+                  className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text"
+                  typingSpeed={50}
+                  pauseDuration={500}
+                  initialDelay={0}
+                  showCursor={false}
+                  loop={false}
+                  startOnVisible={false}
+                  onSentenceComplete={handleSecondComplete}
+                />
+              )}
             </div>
             <div className="min-h-[4rem]">
-              <TextType
-                as="p"
-                text="Innowacyjność, która nie krzyczy."
-                className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text"
-                typingSpeed={40}
-                pauseDuration={3000}
-                initialDelay={3500}
-                showCursor={false}
-                loop={false}
-                startOnVisible={true}
-              />
+              {showThirdText && (
+                <TextType
+                  as="p"
+                  text="Innowacyjność, która nie krzyczy."
+                  className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed glow-text"
+                  typingSpeed={50}
+                  pauseDuration={500}
+                  initialDelay={0}
+                  showCursor={false}
+                  loop={false}
+                  startOnVisible={false}
+                  onSentenceComplete={handleThirdComplete}
+                />
+              )}
             </div>
           </div>
         </div>
