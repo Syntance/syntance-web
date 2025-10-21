@@ -16,10 +16,10 @@ export default function NavbarNew() {
     { label: "Produkty", href: "#products" },
     { label: "Dlaczego my", href: "#why-syntance" },
     { label: "Portfolio", href: "#cases" },
-    { label: "Kontakt", href: "/contact" },
+    { label: "Kontakt", href: "#contact" },
   ];
 
-  const sectionIds = ['hero', 'manifest', 'products', 'why-syntance', 'cases'];
+  const sectionIds = ['hero', 'manifest', 'products', 'why-syntance', 'cases', 'contact'];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -232,13 +232,36 @@ export default function NavbarNew() {
           >
             Portfolio
           </a>
-          <Link 
-            href="/contact" 
+          <a
+            href="#contact"
             className="block text-sm font-light tracking-wider hover:text-purple-300 transition-colors"
-            onClick={() => setMobileMenuOpen(false)}
+            onClick={(e) => {
+              e.preventDefault();
+              setMobileMenuOpen(false);
+              setIsScrolling(true);
+              setActiveSection(5);
+              
+              const element = document.getElementById('contact');
+              if (element) {
+                const navbarHeight = 100;
+                const elementRect = element.getBoundingClientRect();
+                const elementTop = elementRect.top + window.scrollY;
+                const viewportHeight = window.innerHeight;
+                const elementHeight = elementRect.height;
+                const offset = (viewportHeight - elementHeight) / 2;
+                const scrollToPosition = elementTop - Math.max(offset, navbarHeight);
+                
+                window.scrollTo({
+                  top: scrollToPosition,
+                  behavior: 'smooth'
+                });
+              }
+              
+              setTimeout(() => setIsScrolling(false), 1000);
+            }}
           >
             Kontakt
-          </Link>
+          </a>
         </div>
       )}
     </nav>
