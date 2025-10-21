@@ -7,7 +7,7 @@ import WhySyntance from "@/components/sections/why-syntance";
 import TiltCard from "@/components/tilt-card";
 import GradientText from "@/components/GradientText";
 import ManifestText from "@/components/ManifestText";
-import { Wind, Layers, Globe, Twitter, Linkedin, Github } from "lucide-react";
+import { Wind, Globe, Twitter, Linkedin, Github } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
 
@@ -169,7 +169,7 @@ export default function Page() {
         <h2 className="text-3xl md:text-4xl font-light tracking-wider text-center mb-16 glow-text">
           Nasze Systemy
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {/* Product 1 */}
           <TiltCard>
             <div className="product-card rounded-xl p-8">
@@ -188,23 +188,6 @@ export default function Page() {
           </TiltCard>
 
           {/* Product 2 */}
-          <TiltCard>
-            <div className="product-card rounded-xl p-8">
-              <div className="w-16 h-16 rounded-full bg-purple-500 bg-opacity-20 flex items-center justify-center mb-6">
-                <Layers className="text-purple-300" size={32} />
-              </div>
-              <h3 className="text-xl font-medium tracking-wider mb-3">FlowCRM</h3>
-              <p className="text-gray-300 font-light tracking-wide mb-6">
-                Seamless customer relationship orchestration
-              </p>
-              <div className="h-1 w-full bg-gradient-to-r from-purple-400 to-purple-600 rounded-full mb-6"></div>
-              <button className="text-sm font-medium tracking-wider text-purple-300 hover:text-purple-200 transition-colors">
-                Odkryj więcej →
-              </button>
-            </div>
-          </TiltCard>
-
-          {/* Product 3 */}
           <TiltCard>
             <div className="product-card rounded-xl p-8">
               <div className="w-16 h-16 rounded-full bg-teal-500 bg-opacity-20 flex items-center justify-center mb-6">
