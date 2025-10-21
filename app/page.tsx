@@ -33,10 +33,19 @@ export default function Page() {
       if (Math.abs(sectionMiddle - viewportMiddle) < 100) {
         hasTriggeredAnimation.current = true;
         setIsScrollLocked(true);
-        document.body.style.overflow = 'hidden';
+        
+        // Oblicz szerokość scrollbara
+        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+        
+        // Zablokuj scroll bez ukrywania scrollbara
+        const scrollY = window.scrollY;
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.width = '100%';
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
         
         // Scroll do dokładnego środka
-        const targetScroll = window.scrollY + (sectionMiddle - viewportMiddle);
+        const targetScroll = scrollY + (sectionMiddle - viewportMiddle);
         window.scrollTo({
           top: targetScroll,
           behavior: 'smooth'
@@ -54,7 +63,11 @@ export default function Page() {
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      document.body.style.overflow = '';
+      // Cleanup - przywróć domyślne style
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.paddingRight = '';
     };
   }, []);
 
@@ -69,7 +82,18 @@ export default function Page() {
   const handleThirdComplete = () => {
     setTimeout(() => {
       setIsScrollLocked(false);
-      document.body.style.overflow = '';
+      
+      // Przywróć scroll
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.paddingRight = '';
+      
+      // Przywróć pozycję scrolla
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
     }, 300);
   };
 
