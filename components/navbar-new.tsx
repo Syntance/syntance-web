@@ -5,20 +5,20 @@ import { Menu } from "lucide-react";
 import { useState, useEffect } from "react";
 import GooeyNav from "@/components/ui/gooey-nav";
 
+const navItems = [
+  { label: "Wizja", href: "#hero" },
+  { label: "Filozofia", href: "#manifest" },
+  { label: "Produkty", href: "#products" },
+  { label: "Dlaczego my", href: "#why-syntance" },
+  { label: "Kontakt", href: "#contact" },
+];
+
+const sectionIds = ['hero', 'manifest', 'products', 'why-syntance', 'contact'];
+
 export default function NavbarNew() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
-
-  const navItems = [
-    { label: "Wizja", href: "#hero" },
-    { label: "Filozofia", href: "#manifest" },
-    { label: "Produkty", href: "#products" },
-    { label: "Dlaczego my", href: "#why-syntance" },
-    { label: "Kontakt", href: "#contact" },
-  ];
-
-  const sectionIds = ['hero', 'manifest', 'products', 'why-syntance', 'contact'];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -77,7 +77,7 @@ export default function NavbarNew() {
       window.removeEventListener('scroll', scrollListener);
       window.removeEventListener('resize', handleScroll);
     };
-  }, [sectionIds, isScrolling, activeSection]);
+  }, [isScrolling, activeSection]);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 py-6 px-6 lg:px-12 backdrop-blur-md bg-black/30 transition-all duration-300">
@@ -89,13 +89,13 @@ export default function NavbarNew() {
         <div className="hidden md:flex">
           <GooeyNav 
             items={navItems}
-            particleCount={15}
+            particleCount={8}
             particleDistances={[90, 10]}
-            particleR={100}
+            particleR={80}
             initialActiveIndex={0}
             externalActiveIndex={activeSection}
-            animationTime={600}
-            timeVariance={300}
+            animationTime={450}
+            timeVariance={200}
             colors={[1, 2, 3, 1, 2, 3, 1, 4]}
             onNavigate={(index) => {
               setActiveSection(index);

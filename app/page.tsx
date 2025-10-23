@@ -2,14 +2,28 @@
 
 import VantaBackground from "@/components/vanta-background";
 import NavbarNew from "@/components/navbar-new";
-import InteractiveFluidBox from "@/components/interactive-fluid-box";
 import WhySyntance from "@/components/sections/why-syntance";
-import TiltCard from "@/components/tilt-card";
 import GradientText from "@/components/GradientText";
 import ManifestText from "@/components/ManifestText";
 import { Wind, Globe, Twitter, Linkedin, Github } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
+import dynamic from "next/dynamic";
+
+// Lazy load ciężkich komponentów z wyłączonym SSR
+const InteractiveFluidBox = dynamic(() => import("@/components/interactive-fluid-box"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-96 w-full border border-gray-800 rounded-2xl flex items-center justify-center bg-black/20">
+      <p className="text-gray-400">Ładowanie animacji...</p>
+    </div>
+  ),
+});
+
+const TiltCard = dynamic(() => import("@/components/tilt-card"), {
+  ssr: false,
+  loading: () => <div className="opacity-50" />,
+});
 
 export default function Page() {
   const [showFirstText, setShowFirstText] = useState(false);
@@ -98,7 +112,10 @@ export default function Page() {
           }
         });
       },
-      { threshold: 0.3 }
+      { 
+        threshold: 0.3,
+        rootMargin: '50px' // Załaduj animację wcześniej dla lepszego UX
+      }
     );
 
     observer.observe(manifestRef.current);
@@ -307,13 +324,13 @@ export default function Page() {
               <div>
                 <h3 className="text-xl font-medium tracking-wider mb-4">Social Media</h3>
                 <div className="flex space-x-4">
-                  <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Twitter/X - Śledź nas na Twitter">
                     <Twitter size={24} />
                   </a>
-                  <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="LinkedIn - Połącz się z nami na LinkedIn">
                     <Linkedin size={24} />
                   </a>
-                  <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="GitHub - Zobacz nasze projekty na GitHub">
                     <Github size={24} />
                   </a>
                 </div>
@@ -410,13 +427,13 @@ export default function Page() {
               Syntance
             </div>
             <div className="flex space-x-6">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Twitter/X">
                 <Twitter size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="LinkedIn">
                 <Linkedin size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="GitHub">
                 <Github size={20} />
               </a>
             </div>

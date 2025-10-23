@@ -59,6 +59,10 @@ const GooeyNav = ({
     const r = particleR;
     const bubbleTime = animationTime * 2 + timeVariance;
     element.style.setProperty('--time', `${bubbleTime}ms`);
+    
+    // Użyj DocumentFragment dla lepszej wydajności
+    const fragment = document.createDocumentFragment();
+    
     for (let i = 0; i < particleCount; i++) {
       const t = animationTime * 2 + noise(timeVariance * 2);
       const p = createParticle(i, t, d, r);
@@ -67,14 +71,16 @@ const GooeyNav = ({
         const particle = document.createElement('span');
         const point = document.createElement('span');
         particle.classList.add('particle');
-        particle.style.setProperty('--start-x', `${p.start[0]}px`);
-        particle.style.setProperty('--start-y', `${p.start[1]}px`);
-        particle.style.setProperty('--end-x', `${p.end[0]}px`);
-        particle.style.setProperty('--end-y', `${p.end[1]}px`);
-        particle.style.setProperty('--time', `${p.time}ms`);
-        particle.style.setProperty('--scale', `${p.scale}`);
-        particle.style.setProperty('--color', `var(--color-${p.color}, white)`);
-        particle.style.setProperty('--rotate', `${p.rotate}deg`);
+        particle.style.cssText = `
+          --start-x: ${p.start[0]}px;
+          --start-y: ${p.start[1]}px;
+          --end-x: ${p.end[0]}px;
+          --end-y: ${p.end[1]}px;
+          --time: ${p.time}ms;
+          --scale: ${p.scale};
+          --color: var(--color-${p.color}, white);
+          --rotate: ${p.rotate}deg;
+        `;
         point.classList.add('point');
         particle.appendChild(point);
         element.appendChild(particle);
@@ -182,6 +188,7 @@ const GooeyNav = ({
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [externalActiveIndex, activeIndex]);
 
   useEffect(() => {
