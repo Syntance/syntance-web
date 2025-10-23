@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Menu } from "lucide-react";
 import { useState, useEffect } from "react";
 import GooeyNav from "@/components/ui/gooey-nav";
@@ -82,9 +81,28 @@ export default function NavbarNew() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 py-6 px-6 lg:px-12 backdrop-blur-md bg-black/30 transition-all duration-300">
       <div className="flex justify-between items-center">
-        <Link href="/" className="text-2xl font-medium tracking-widest glow-text">
+        <button 
+          onClick={() => {
+            const element = document.getElementById('hero');
+            if (element) {
+              const navbarHeight = 100;
+              const elementRect = element.getBoundingClientRect();
+              const elementTop = elementRect.top + window.scrollY;
+              const viewportHeight = window.innerHeight;
+              const elementHeight = elementRect.height;
+              const offset = (viewportHeight - elementHeight) / 2;
+              const scrollToPosition = elementTop - Math.max(offset, navbarHeight);
+              
+              window.scrollTo({
+                top: scrollToPosition,
+                behavior: 'smooth'
+              });
+            }
+          }}
+          className="text-2xl font-medium tracking-widest glow-text cursor-pointer hover:opacity-80 transition-opacity"
+        >
           Syntance
-        </Link>
+        </button>
         
         <div className="hidden md:flex">
           <GooeyNav 
