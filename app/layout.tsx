@@ -1,7 +1,6 @@
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
-import WhatsAppButton from "@/components/whatsapp-button";
 import SeoJsonLd from "@/components/SeoJsonLd";
 import { Space_Grotesk } from "next/font/google";
 
@@ -178,7 +177,6 @@ export default function RootLayout({
       </head>
       <body className={`${spaceGrotesk.variable} font-sans antialiased bg-black text-[#F5F3FF]`}>
         {children}
-        <WhatsAppButton />
         <Analytics />
         <SeoJsonLd json={organizationJsonLd} />
         <SeoJsonLd json={websiteJsonLd} />
