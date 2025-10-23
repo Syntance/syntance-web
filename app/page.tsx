@@ -7,6 +7,7 @@ import GradientText from "@/components/GradientText";
 import ManifestText from "@/components/ManifestText";
 import { Wind, Globe, Twitter, Linkedin, Github } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
 
@@ -161,7 +162,7 @@ export default function Page() {
           <p className="text-lg md:text-xl font-light tracking-wider text-gray-300 mb-12">
             Piękno. Inteligencja. Płynność.
           </p>
-          <div className="flex justify-center">
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
             <button 
               onClick={() => {
                 const element = document.getElementById('manifest');
@@ -184,6 +185,20 @@ export default function Page() {
             >
               Rozpocznij
             </button>
+            
+            <Link 
+              href="/studio"
+              className="group relative px-8 py-3 rounded-full font-medium tracking-wider transition-all cursor-pointer overflow-hidden"
+            >
+              {/* Gradient border */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400 via-blue-400 to-teal-400 opacity-70 group-hover:opacity-100 transition-opacity"></div>
+              <div className="absolute inset-[2px] rounded-full bg-black/80 backdrop-blur-sm"></div>
+              
+              {/* Text */}
+              <span className="relative text-white group-hover:text-purple-100 transition-colors">
+                Studio
+              </span>
+            </Link>
           </div>
         </div>
       </section>
@@ -274,7 +289,7 @@ export default function Page() {
 
           {/* Product 2 */}
           <TiltCard>
-            <div className="product-card rounded-xl p-8">
+            <Link href="/studio" className="block product-card rounded-xl p-8 hover:scale-[1.02] transition-transform duration-300 cursor-pointer">
               <div className="w-16 h-16 rounded-full bg-teal-500 bg-opacity-20 flex items-center justify-center mb-6">
                 <Globe className="text-teal-300" size={32} />
               </div>
@@ -283,10 +298,10 @@ export default function Page() {
                 Projektujemy strony i sklepy, które zachwycają harmonią, lekkością i emocją.
               </p>
               <div className="h-1 w-full bg-gradient-to-r from-teal-400 to-teal-600 rounded-full mb-6"></div>
-              <button className="text-sm font-medium tracking-wider text-teal-300 hover:text-teal-200 transition-colors">
+              <span className="text-sm font-medium tracking-wider text-teal-300 hover:text-teal-200 transition-colors">
                 Odkryj więcej →
-              </button>
-            </div>
+              </span>
+            </Link>
           </TiltCard>
         </div>
       </section>

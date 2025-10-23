@@ -8,7 +8,7 @@ import GooeyNav from "@/components/ui/gooey-nav";
 const navItems = [
   { label: "Wizja", href: "#hero" },
   { label: "Filozofia", href: "#manifest" },
-  { label: "Studio", href: "/studio" },
+  { label: "Produkty", href: "#products" },
   { label: "Dlaczego my", href: "#why-syntance" },
   { label: "Kontakt", href: "#contact" },
 ];
@@ -163,13 +163,27 @@ export default function NavbarNew() {
             Filozofia
           </a>
           <a 
-            href="/studio" 
+            href="#products" 
             className="block text-sm font-light tracking-wider hover:text-purple-300 transition-colors"
             onClick={(e) => {
+              e.preventDefault();
               setMobileMenuOpen(false);
+              setActiveSection(2);
+              setIsScrolling(true);
+              const element = document.querySelector('#products') as HTMLElement;
+              if (element) {
+                const navbarHeight = 100;
+                const viewportHeight = window.innerHeight;
+                const elementHeight = element.offsetHeight;
+                const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                const centerOffset = (viewportHeight - elementHeight) / 2;
+                const offsetPosition = elementPosition - Math.max(navbarHeight, centerOffset);
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                setTimeout(() => setIsScrolling(false), 1000);
+              }
             }}
           >
-            Studio
+            Produkty
           </a>
           <a 
             href="#why-syntance" 

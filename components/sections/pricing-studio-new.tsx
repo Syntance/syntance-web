@@ -46,6 +46,7 @@ export default function PricingStudioNew() {
 
   return (
     <section 
+      id="pricing-studio"
       ref={sectionRef}
       className="relative z-10 py-32 px-6 lg:px-12 overflow-hidden opacity-0 translate-y-8 transition-all duration-1000"
     >

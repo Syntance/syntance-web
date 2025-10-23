@@ -68,7 +68,7 @@ export default function ValuesStudio() {
   }, []);
 
   return (
-    <section className="relative z-10 py-32 px-6 lg:px-12 overflow-hidden">
+    <section id="values-studio" className="relative z-10 py-32 px-6 lg:px-12 overflow-hidden">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-20">

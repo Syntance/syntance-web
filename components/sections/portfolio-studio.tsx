@@ -68,7 +68,7 @@ export default function PortfolioStudio() {
   }, []);
 
   return (
-    <section id="portfolio" className="relative z-10 py-32 px-6 lg:px-12 overflow-hidden">
+    <section id="portfolio-studio" className="relative z-10 py-32 px-6 lg:px-12 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-20">

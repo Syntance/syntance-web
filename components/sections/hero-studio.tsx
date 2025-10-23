@@ -11,7 +11,7 @@ export default function HeroStudio() {
   }, []);
 
   const scrollToPortfolio = () => {
-    const element = document.getElementById('portfolio');
+    const element = document.getElementById('portfolio-studio');
     if (element) {
       const navbarHeight = 100;
       const elementRect = element.getBoundingClientRect();
@@ -41,7 +41,7 @@ export default function HeroStudio() {
   };
 
   return (
-    <section className="relative z-10 min-h-screen flex items-center justify-center px-6 lg:px-12 pt-32 pb-20">
+    <section id="hero-studio" className="relative z-10 min-h-screen flex items-center justify-center px-6 lg:px-12 pt-32 pb-20">
       <div className={`max-w-4xl mx-auto text-center transition-all duration-1000 ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}>

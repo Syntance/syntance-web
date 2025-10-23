@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import VantaBackground from "@/components/vanta-background";
-import NavbarNew from "@/components/navbar-new";
+import NavbarStudio from "@/components/navbar-studio";
 import { Twitter, Linkedin, Github } from "lucide-react";
 
 // Import sections
@@ -16,7 +16,7 @@ export default function StudioPage() {
   return (
     <div className="min-h-screen">
       <VantaBackground />
-      <NavbarNew />
+      <NavbarStudio />
       
       <HeroStudio />
       <ValuesStudio />
