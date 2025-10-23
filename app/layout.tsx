@@ -118,6 +118,10 @@ export default function RootLayout({
     },
     "address": {
       "@type": "PostalAddress",
+      "streetAddress": "Czerniec 72",
+      "addressLocality": "Łącko",
+      "postalCode": "33-390",
+      "addressRegion": "Małopolska",
       "addressCountry": "PL"
     },
     "sameAs": [
@@ -149,21 +153,6 @@ export default function RootLayout({
     },
     "inLanguage": "pl"
   };
-  
-  const productJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "@id": "https://syntance.com/#product-ai",
-    "name": "Syntance AI",
-    "description": "Inteligentne rozwiązania AI, które automatyzują procesy i wspierają decyzje biznesowe",
-    "brand": {
-      "@id": "https://syntance.com/#organization"
-    },
-    "provider": {
-      "@id": "https://syntance.com/#organization"
-    },
-    "category": "Artificial Intelligence Solutions"
-  };
 
   const serviceJsonLd = {
     "@context": "https://schema.org",
@@ -193,7 +182,6 @@ export default function RootLayout({
         <Analytics />
         <SeoJsonLd json={organizationJsonLd} />
         <SeoJsonLd json={websiteJsonLd} />
-        <SeoJsonLd json={productJsonLd} />
         <SeoJsonLd json={serviceJsonLd} />
       </body>
     </html>
