@@ -224,15 +224,15 @@ export default function Page() {
             <div className="space-y-8">
               <div>
                 <h3 className="text-xl font-medium tracking-wider mb-4">Email</h3>
-                <a href="mailto:kontakt@syntance.pl" className="text-gray-300 hover:text-white transition-colors text-lg">
-                  kontakt@syntance.pl
+                <a href="mailto:kontakt@syntance.com" className="text-gray-300 hover:text-white transition-colors text-lg">
+                  kontakt@syntance.com
                 </a>
               </div>
               
               <div>
                 <h3 className="text-xl font-medium tracking-wider mb-4">Telefon</h3>
-                <a href="tel:+48123456789" className="text-gray-300 hover:text-white transition-colors text-lg">
-                  +48 123 456 789
+                <a href="tel:+48662519544" className="text-gray-300 hover:text-white transition-colors text-lg">
+                  +48 662 519 544
                 </a>
               </div>
               
