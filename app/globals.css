@@ -9,6 +9,48 @@
 }
 
 @layer utilities {
+  /* Typography SEO optimization */
+  h1, h2 {
+    text-wrap: balance;
+  }
+  
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .text-pretty {
+    text-wrap: pretty;
+  }
+  
+  /* SEO optimized typography classes */
+  .heading-primary {
+    @apply text-5xl md:text-6xl font-semibold tracking-[-0.02em] leading-none;
+  }
+  
+  .heading-secondary {
+    @apply text-3xl md:text-4xl font-semibold leading-none;
+  }
+  
+  .heading-tertiary {
+    @apply text-2xl md:text-3xl font-medium;
+  }
+  
+  .body-text {
+    @apply text-base md:text-lg leading-relaxed;
+  }
+  
+  .prose-column {
+    @apply max-w-prose md:max-w-[68ch];
+  }
+  
+  .section-padding {
+    @apply py-10 md:py-14;
+  }
+  
+  .section-spacing {
+    @apply space-y-4;
+  }
+  
   .glow-text {
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
   }
