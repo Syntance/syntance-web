@@ -38,6 +38,25 @@ export default function Page() {
     setFormStatus('loading');
     setErrorMessage('');
 
+    // Client-side validation
+    if (formData.name.length < 2) {
+      setFormStatus('error');
+      setErrorMessage('Imię i nazwisko musi mieć co najmniej 2 znaki.');
+      return;
+    }
+
+    if (formData.message.length < 10) {
+      setFormStatus('error');
+      setErrorMessage('Wiadomość musi mieć co najmniej 10 znaków.');
+      return;
+    }
+
+    if (formData.message.length > 2000) {
+      setFormStatus('error');
+      setErrorMessage('Wiadomość może mieć maksymalnie 2000 znaków.');
+      return;
+    }
+
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
@@ -52,13 +71,18 @@ export default function Page() {
       if (response.ok && data.ok) {
         setFormStatus('success');
         setFormData({ name: '', email: '', message: '', hp: '' });
+        setTimeout(() => setFormStatus('idle'), 5000);
       } else {
         setFormStatus('error');
-        setErrorMessage(data.error || 'Wystąpił błąd podczas wysyłania wiadomości.');
+        if (response.status === 429) {
+          setErrorMessage('Zbyt wiele prób. Spróbuj ponownie za chwilę.');
+        } else {
+          setErrorMessage(data.error || 'Wystąpił błąd podczas wysyłania wiadomości.');
+        }
       }
     } catch (error) {
       setFormStatus('error');
-      setErrorMessage('Wystąpił błąd podczas wysyłania wiadomości.');
+      setErrorMessage('Wystąpił błąd podczas wysyłania wiadomości. Sprawdź połączenie internetowe.');
     }
   };
 
@@ -339,12 +363,18 @@ export default function Page() {
                     name="message"
                     value={formData.message}
                     onChange={handleFormChange}
-                    placeholder="Wiadomość"
+                    placeholder="Wiadomość (min. 10 znaków)"
                     rows={5}
                     required
                     disabled={formStatus === 'loading'}
                     className="w-full px-6 py-4 bg-white bg-opacity-5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors resize-none disabled:opacity-50"
                   ></textarea>
+                  <div className="text-sm text-gray-500 mt-1 text-right">
+                    {formData.message.length} / 2000 znaków
+                    {formData.message.length > 0 && formData.message.length < 10 && (
+                      <span className="text-red-400 ml-2">(min. 10)</span>
+                    )}
+                  </div>
                 </div>
                 
                 {formStatus === 'success' && (
