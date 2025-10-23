@@ -3,8 +3,6 @@ import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
 import WhatsAppButton from "@/components/whatsapp-button";
 import SeoJsonLd from "@/components/SeoJsonLd";
-import { faqJsonLd } from "./faq-json-ld";
-import { breadcrumbJsonLd } from "./breadcrumb-json-ld";
 import { Space_Grotesk } from "next/font/google";
 
 const spaceGrotesk = Space_Grotesk({
@@ -21,7 +19,6 @@ export const metadata: Metadata = {
   },
   description:
     "Studio technologiczne specjalizujące się w tworzeniu stron internetowych, sklepów online i rozwiązań AI. Next.js, React, automatyzacja procesów biznesowych. Zobacz nasze realizacje.",
-  keywords: "studio technologiczne, AI-first, strony internetowe, sklepy online, Next.js, React, automatyzacja, web development, Polska, rozwiązania AI, aplikacje webowe",
   authors: [{ name: "Syntance", url: "https://syntance.com" }],
   creator: "Syntance",
   publisher: "Syntance",
@@ -52,8 +49,6 @@ export const metadata: Metadata = {
     title: "Syntance — Studio technologiczne AI-first w Polsce",
     description: "Studio technologiczne specjalizujące się w tworzeniu stron internetowych, sklepów online i rozwiązań AI. Next.js, React, automatyzacja procesów biznesowych. Zobacz nasze realizacje.",
     images: ["https://syntance.com/og/og-home-1200x630.png"],
-    site: "@syntance",
-    creator: "@syntance",
   },
   robots: {
     index: true,
@@ -113,18 +108,20 @@ export default function RootLayout({
     },
     "image": "https://syntance.com/og/og-home-1200x630.png",
     "description": "Studio technologiczne AI-first specjalizujące się w tworzeniu stron internetowych, sklepów online i rozwiązań AI. Next.js, React, automatyzacja procesów biznesowych.",
-    "email": "kontakt@syntance.com",
-    "telephone": "+48662519544",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "email": "kontakt@syntance.com",
+      "telephone": "+48662519544",
+      "contactType": "customer service",
+      "areaServed": "PL",
+      "availableLanguage": ["Polish", "English"]
+    },
     "address": {
       "@type": "PostalAddress",
-      "addressCountry": "PL",
-      "addressLocality": "Polska"
+      "addressCountry": "PL"
     },
     "sameAs": [
-      "https://twitter.com/syntance",
-      "https://linkedin.com/company/syntance",
-      "https://github.com/syntance",
-      "https://facebook.com/syntance"
+      "https://github.com/Kamil0108/syntance-web"
     ],
     "foundingDate": "2023",
     "founders": [{
@@ -150,15 +147,7 @@ export default function RootLayout({
     "publisher": {
       "@id": "https://syntance.com/#organization"
     },
-    "inLanguage": "pl",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": "https://syntance.com/search?q={search_term_string}"
-      },
-      "query-input": "required name=search_term_string"
-    }
+    "inLanguage": "pl"
   };
   
   const productJsonLd = {
@@ -173,19 +162,7 @@ export default function RootLayout({
     "provider": {
       "@id": "https://syntance.com/#organization"
     },
-    "category": "Artificial Intelligence Solutions",
-    "offers": {
-      "@type": "Offer",
-      "priceCurrency": "PLN",
-      "availability": "https://schema.org/InStock",
-      "priceRange": "$$$",
-      "url": "https://syntance.com/#products"
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.9",
-      "reviewCount": "27"
-    }
+    "category": "Artificial Intelligence Solutions"
   };
 
   const serviceJsonLd = {
@@ -201,28 +178,6 @@ export default function RootLayout({
     "areaServed": {
       "@type": "Country",
       "name": "Polska"
-    },
-    "hasOfferCatalog": {
-      "@type": "OfferCatalog",
-      "name": "Usługi Web Development",
-      "itemListElement": [
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Strony internetowe",
-            "description": "Projektowanie i tworzenie stron internetowych w Next.js"
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Sklepy online",
-            "description": "Tworzenie sklepów e-commerce z pełną integracją"
-          }
-        }
-      ]
     }
   };
 
@@ -240,8 +195,6 @@ export default function RootLayout({
         <SeoJsonLd json={websiteJsonLd} />
         <SeoJsonLd json={productJsonLd} />
         <SeoJsonLd json={serviceJsonLd} />
-        <SeoJsonLd json={faqJsonLd} />
-        <SeoJsonLd json={breadcrumbJsonLd} />
       </body>
     </html>
   );
