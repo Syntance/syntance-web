@@ -17,6 +17,50 @@ export default function Page() {
   const [showThirdText, setShowThirdText] = useState(false);
   const manifestRef = useRef<HTMLElement>(null);
   const hasTriggeredAnimation = useRef(false);
+  
+  // Contact form state
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: '',
+    hp: '' // honeypot field
+  });
+  const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormStatus('loading');
+    setErrorMessage('');
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.ok) {
+        setFormStatus('success');
+        setFormData({ name: '', email: '', message: '', hp: '' });
+      } else {
+        setFormStatus('error');
+        setErrorMessage(data.error || 'Wystąpił błąd podczas wysyłania wiadomości.');
+      }
+    } catch (error) {
+      setFormStatus('error');
+      setErrorMessage('Wystąpił błąd podczas wysyłania wiadomości.');
+    }
+  };
 
   useEffect(() => {
     if (!manifestRef.current) return;
@@ -254,33 +298,73 @@ export default function Page() {
             
             {/* Contact Form */}
             <div>
-              <form className="space-y-6">
+              <form onSubmit={handleFormSubmit} className="space-y-6">
+                {/* Honeypot field - hidden from users */}
+                <input
+                  type="text"
+                  name="hp"
+                  value={formData.hp}
+                  onChange={handleFormChange}
+                  style={{ display: 'none' }}
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+                
                 <div>
                   <input
                     type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleFormChange}
                     placeholder="Imię i nazwisko"
-                    className="w-full px-6 py-4 bg-white bg-opacity-5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors"
+                    required
+                    disabled={formStatus === 'loading'}
+                    className="w-full px-6 py-4 bg-white bg-opacity-5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors disabled:opacity-50"
                   />
                 </div>
                 <div>
                   <input
                     type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleFormChange}
                     placeholder="Email"
-                    className="w-full px-6 py-4 bg-white bg-opacity-5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors"
+                    required
+                    disabled={formStatus === 'loading'}
+                    className="w-full px-6 py-4 bg-white bg-opacity-5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors disabled:opacity-50"
                   />
                 </div>
                 <div>
                   <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleFormChange}
                     placeholder="Wiadomość"
                     rows={5}
-                    className="w-full px-6 py-4 bg-white bg-opacity-5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors resize-none"
+                    required
+                    disabled={formStatus === 'loading'}
+                    className="w-full px-6 py-4 bg-white bg-opacity-5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors resize-none disabled:opacity-50"
                   ></textarea>
                 </div>
+                
+                {formStatus === 'success' && (
+                  <div className="p-4 bg-green-500 bg-opacity-20 border border-green-500 rounded-lg text-green-300 text-center">
+                    Wiadomość została wysłana pomyślnie! 🎉
+                  </div>
+                )}
+                
+                {formStatus === 'error' && (
+                  <div className="p-4 bg-red-500 bg-opacity-20 border border-red-500 rounded-lg text-red-300 text-center">
+                    {errorMessage || 'Wystąpił błąd podczas wysyłania wiadomości.'}
+                  </div>
+                )}
+                
                 <button
                   type="submit"
-                  className="w-full px-8 py-4 bg-white text-gray-900 rounded-lg font-medium tracking-wider hover:bg-opacity-90 transition-all glow-box"
+                  disabled={formStatus === 'loading'}
+                  className="w-full px-8 py-4 bg-white text-gray-900 rounded-lg font-medium tracking-wider hover:bg-opacity-90 transition-all glow-box disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Wyślij wiadomość
+                  {formStatus === 'loading' ? 'Wysyłanie...' : 'Wyślij wiadomość'}
                 </button>
               </form>
             </div>
