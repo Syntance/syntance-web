@@ -205,7 +205,7 @@ git add .
 git commit -m "Initial commit"
 
 # 2. Push do GitHub
-git remote add origin https://github.com/Kamil0108/syntance-web.git
+git remote add origin https://github.com/Syntance/syntance-web.git
 git push -u origin main
 
 # 3. Deploy na Vercel

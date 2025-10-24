@@ -14,7 +14,7 @@ git commit -m "Initial commit: Syntance Web - Next.js 14 + TypeScript + Tailwind
 
 #### Opcja A: Przez przeglądarkę
 
-1. Wejdź na https://github.com/Kamil0108
+1. Wejdź na https://github.com/Syntance
 2. Kliknij **New repository**
 3. Nazwa: `syntance-web`
 4. Opis: `Official website for Syntance - Next.js 14 + TypeScript + Tailwind CSS`
@@ -30,7 +30,7 @@ gh repo create syntance-web --public --source=. --remote=origin --push
 ### 3. Połączenie z GitHub
 
 ```bash
-git remote add origin https://github.com/Kamil0108/syntance-web.git
+git remote add origin https://github.com/Syntance/syntance-web.git
 git branch -M main
 git push -u origin main
 ```

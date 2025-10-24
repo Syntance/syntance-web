@@ -125,7 +125,7 @@ export default function RootLayout({
       "addressCountry": "PL"
     },
     "sameAs": [
-      "https://github.com/Kamil0108/syntance-web"
+      "https://github.com/Syntance/syntance-web"
     ],
     "foundingDate": "2023",
     "founders": [{

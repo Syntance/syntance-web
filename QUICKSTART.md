@@ -13,7 +13,7 @@ Szybki start dla projektu Syntance Web.
 ### 1. Sklonuj repozytorium
 
 ```bash
-git clone https://github.com/Kamil0108/syntance-web.git
+git clone https://github.com/Syntance/syntance-web.git
 cd syntance-web
 ```
 

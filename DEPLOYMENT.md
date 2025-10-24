@@ -38,7 +38,7 @@ git init
 git add .
 git commit -m "Initial commit: Syntance Web"
 git branch -M main
-git remote add origin https://github.com/Kamil0108/syntance-web.git
+git remote add origin https://github.com/Syntance/syntance-web.git
 git push -u origin main
 ```
 
@@ -271,7 +271,7 @@ pnpm add next@latest react@latest react-dom@latest
 ### Eksport kodu
 
 ```bash
-git clone https://github.com/Kamil0108/syntance-web.git
+git clone https://github.com/Syntance/syntance-web.git
 ```
 
 ### Eksport bazy danych Vercel

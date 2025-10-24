@@ -135,7 +135,7 @@ git add .
 git commit -m "Initial commit: Syntance Web"
 
 # Push do GitHub
-git remote add origin https://github.com/Kamil0108/syntance-web.git
+git remote add origin https://github.com/Syntance/syntance-web.git
 git push -u origin main
 
 # Deploy na Vercel
@@ -250,7 +250,7 @@ Dostęp: Vercel Dashboard → Analytics
 
 ## 🔗 Linki
 
-- **Repo**: https://github.com/Kamil0108/syntance-web
+- **Repo**: https://github.com/Syntance/syntance-web
 - **Production**: https://syntance.com (po deployment)
 - **Studio**: https://studio.syntance.com (po deployment)
 - **Vercel**: https://vercel.com/dashboard

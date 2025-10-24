@@ -2,7 +2,7 @@
 
 ## ✅ Pre-deployment Checklist
 
-- [x] Kod na GitHub: https://github.com/Kamil0108/syntance-web
+- [x] Kod na GitHub: https://github.com/Syntance/syntance-web
 - [x] Build działa lokalnie: `pnpm build` ✓
 - [x] vercel.json skonfigurowany (subdomena studio.syntance.com)
 - [x] @vercel/analytics zainstalowany
@@ -37,7 +37,7 @@ vercel
 
 Podczas konfiguracji:
 - **Set up and deploy?** → Yes
-- **Which scope?** → Kamil0108 (Twój account)
+- **Which scope?** → Syntance (Twój team)
 - **Link to existing project?** → No (pierwszy raz)
 - **Project name?** → syntance-web
 - **Directory?** → ./
@@ -55,7 +55,7 @@ vercel --prod
 
 1. Przejdź na: https://vercel.com/new
 2. Import Git Repository
-3. Wybierz: `Kamil0108/syntance-web`
+3. Wybierz: `Syntance/syntance-web`
 4. Framework Preset: **Next.js** (auto-detect)
 5. Root Directory: `./`
 6. Build Command: `pnpm build` (auto)
@@ -157,7 +157,7 @@ TTL: Auto lub 3600
 vercel ls
 ```
 
-Lub w dashboard: https://vercel.com/Kamil0108/syntance-web
+Lub w dashboard: https://vercel.com/Syntance/syntance-web
 
 ### 2. Testuj funkcjonalności
 
@@ -280,7 +280,7 @@ Po pierwszym deployu, Vercel automatycznie:
 ## 📝 Notatki
 
 ### Obecna konfiguracja:
-- **Repository:** https://github.com/Kamil0108/syntance-web
+- **Repository:** https://github.com/Syntance/syntance-web
 - **Framework:** Next.js 14.0.4
 - **Node version:** 18+ (auto-detect)
 - **Package manager:** pnpm

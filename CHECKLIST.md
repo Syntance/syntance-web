@@ -252,7 +252,7 @@ Jeśli wszystkie checkboxy są zaznaczone, projekt jest w pełni gotowy i dział
 - **Dokumentacja projektu:** Zobacz pliki .md w repo
 - **Next.js Docs:** https://nextjs.org/docs
 - **Vercel Support:** https://vercel.com/support
-- **GitHub Issues:** https://github.com/Kamil0108/syntance-web/issues
+- **GitHub Issues:** https://github.com/Syntance/syntance-web/issues
 
 ---
 
