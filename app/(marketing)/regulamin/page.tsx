@@ -145,7 +145,7 @@ export default function TermsOfServicePage() {
                   <strong>6.2.</strong> Newsletter zawiera informacje o nowościach, promocjach, artykułach blogowych oraz ofertach Usługodawcy.
                 </p>
                 <p className="text-gray-300 leading-relaxed mb-3">
-                  <strong>6.3.</strong> Użytkownik może w każdej chwili zrezygnować z newslettera, klikając link "Wypisz się" w stopce wiadomości e-mail lub kontaktując się z Usługodawcą.
+                  <strong>6.3.</strong> Użytkownik może w każdej chwili zrezygnować z newslettera, klikając link &quot;Wypisz się&quot; w stopce wiadomości e-mail lub kontaktując się z Usługodawcą.
                 </p>
                 <p className="text-gray-300 leading-relaxed mt-3">
                   <strong>6.4.</strong> Rezygnacja z newslettera jest skuteczna natychmiast i nie wymaga podania przyczyny.
@@ -162,7 +162,7 @@ export default function TermsOfServicePage() {
                   <strong>7.2.</strong> Zabronione jest kopiowanie, modyfikowanie, rozpowszechnianie lub wykorzystywanie Treści bez pisemnej zgody Usługodawcy.
                 </p>
                 <p className="text-gray-300 leading-relaxed mb-3">
-                  <strong>7.3.</strong> Marka "Syntance", logo oraz inne oznaczenia są zastrzeżonymi znakami towarowymi.
+                  <strong>7.3.</strong> Marka &quot;Syntance&quot;, logo oraz inne oznaczenia są zastrzeżonymi znakami towarowymi.
                 </p>
                 <p className="text-gray-300 leading-relaxed mt-3">
                   <strong>7.4.</strong> Użytkownik może korzystać z Treści wyłącznie w celach informacyjnych i osobistych, zgodnie z przepisami prawa autorskiego.
@@ -201,7 +201,7 @@ export default function TermsOfServicePage() {
                   <strong>9.1.</strong> Użytkownik może składać reklamacje dotyczące funkcjonowania Serwisu lub jakości świadczonych Usług Elektronicznych.
                 </p>
                 <p className="text-gray-300 leading-relaxed mb-3">
-                  <strong>9.2.</strong> Reklamację należy przesłać na adres e-mail: <a href="mailto:biuro@syntance.com" className="text-brand hover:underline">biuro@syntance.com</a> z tematem "REKLAMACJA".
+                  <strong>9.2.</strong> Reklamację należy przesłać na adres e-mail: <a href="mailto:biuro@syntance.com" className="text-brand hover:underline">biuro@syntance.com</a> z tematem &quot;REKLAMACJA&quot;.
                 </p>
                 <p className="text-gray-300 leading-relaxed mb-3">
                   <strong>9.3.</strong> Reklamacja powinna zawierać:

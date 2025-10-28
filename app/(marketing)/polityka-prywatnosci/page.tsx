@@ -170,7 +170,7 @@ export default function PrivacyPolicyPage() {
                 <ul className="list-disc pl-6 space-y-2 text-gray-300">
                   <li><strong>Prawo dostępu</strong> – możesz uzyskać informację, jakie dane o Tobie przetwarzamy</li>
                   <li><strong>Prawo do sprostowania</strong> – możesz poprosić o korektę nieprawidłowych danych</li>
-                  <li><strong>Prawo do usunięcia</strong> ("prawo do bycia zapomnianym") – możesz żądać usunięcia danych</li>
+                  <li><strong>Prawo do usunięcia</strong> (&quot;prawo do bycia zapomnianym&quot;) – możesz żądać usunięcia danych</li>
                   <li><strong>Prawo do ograniczenia przetwarzania</strong> – możesz zażądać tymczasowego wstrzymania przetwarzania</li>
                   <li><strong>Prawo do przenoszenia danych</strong> – możesz otrzymać dane w formacie umożliwiającym transfer do innego administratora</li>
                   <li><strong>Prawo sprzeciwu</strong> – możesz wnieść sprzeciw wobec przetwarzania danych na podstawie prawnie uzasadnionego interesu</li>
