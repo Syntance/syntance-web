@@ -42,6 +42,7 @@ export default function Page() {
   });
   const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [consentChecked, setConsentChecked] = useState(false);
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -50,6 +51,14 @@ export default function Page() {
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check consent first
+    if (!consentChecked) {
+      setFormStatus('error');
+      setErrorMessage('Musisz wyrazić zgodę na przetwarzanie danych osobowych.');
+      return;
+    }
+    
     setFormStatus('loading');
     setErrorMessage('');
 
@@ -86,6 +95,7 @@ export default function Page() {
       if (response.ok && data.ok) {
         setFormStatus('success');
         setFormData({ name: '', email: '', message: '', hp: '' });
+        setConsentChecked(false);
         setTimeout(() => setFormStatus('idle'), 5000);
       } else {
         setFormStatus('error');
@@ -409,6 +419,53 @@ export default function Page() {
                   </div>
                 </div>
                 
+                <button
+                  type="submit"
+                  disabled={formStatus === 'loading' || !consentChecked}
+                  className="w-full px-8 py-4 bg-white text-gray-900 rounded-lg font-medium tracking-wider hover:bg-opacity-90 transition-all glow-box disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {formStatus === 'loading' ? 'Wysyłanie...' : 'Wyślij wiadomość'}
+                </button>
+                
+                {/* Checkbox zgody */}
+                <div className="flex items-start space-x-3">
+                  <input
+                    type="checkbox"
+                    id="consent"
+                    checked={consentChecked}
+                    onChange={(e) => setConsentChecked(e.target.checked)}
+                    className="mt-1 h-4 w-4 rounded border-gray-700 bg-white bg-opacity-5 text-purple-500 focus:ring-purple-500 focus:ring-offset-gray-900"
+                    required
+                  />
+                  <label htmlFor="consent" className="text-sm text-gray-300 leading-relaxed">
+                    Oświadczam, że zapoznałem się z <a href="/polityka-prywatnosci" className="text-gray-400 hover:text-gray-300 underline">Polityką Prywatności</a> i wyrażam zgodę na przetwarzanie moich danych osobowych w celu kontaktu zwrotnego przez Syntance P.S.A.
+                    <span className="text-red-400 ml-1">*</span>
+                  </label>
+                </div>
+                
+                {/* Klauzula informacyjna RODO */}
+                <div className="text-xs text-gray-500 space-y-1">
+                  <p>
+                    Administratorem Twoich danych osobowych jest <strong>Syntance P.S.A.</strong>, z siedzibą w Czerniec 72, 33-390 Łącko, e-mail:{" "}
+                    <a href="mailto:biuro@syntance.com" className="text-gray-400 hover:text-gray-300 underline">
+                      biuro@syntance.com
+                    </a>
+                    .
+                  </p>
+                  <p>
+                    Dane podane w formularzu będą przetwarzane wyłącznie w celu udzielenia odpowiedzi na Twoje zapytanie lub przedstawienia oferty, na podstawie art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes administratora).
+                  </p>
+                  <p>
+                    Twoje dane nie będą udostępniane innym podmiotom, z wyjątkiem podmiotów świadczących usługi hostingowe i techniczne na rzecz administratora.
+                  </p>
+                  <p>
+                    Masz prawo dostępu do swoich danych, ich sprostowania, usunięcia, ograniczenia przetwarzania oraz wniesienia sprzeciwu.
+                  </p>
+                  <p>
+                    Więcej informacji znajdziesz w <a href="/polityka-prywatnosci" className="text-gray-400 hover:text-gray-300 underline font-medium">Polityce Prywatności</a> na naszej stronie.
+                  </p>
+                </div>
+                
                 {formStatus === 'success' && (
                   <div className="p-4 bg-green-500 bg-opacity-20 border border-green-500 rounded-lg text-green-300 text-center">
                     Wiadomość została wysłana pomyślnie! 🎉
@@ -420,14 +477,6 @@ export default function Page() {
                     {errorMessage || 'Wystąpił błąd podczas wysyłania wiadomości.'}
                   </div>
                 )}
-                
-                <button
-                  type="submit"
-                  disabled={formStatus === 'loading'}
-                  className="w-full px-8 py-4 bg-white text-gray-900 rounded-lg font-medium tracking-wider hover:bg-opacity-90 transition-all glow-box disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {formStatus === 'loading' ? 'Wysyłanie...' : 'Wyślij wiadomość'}
-                </button>
               </form>
             </div>
           </div>

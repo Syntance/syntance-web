@@ -26,7 +26,8 @@ export default function Footer() {
         </div>
         <div className="flex gap-4">
           <a href="/studio" className="hover:text-white transition-colors">Studio</a>
-          <a href="/contact" className="hover:text-white transition-colors">Kontakt</a>
+          <a href="/polityka-prywatnosci" className="hover:text-white transition-colors">Polityka Prywatności</a>
+          <a href="/regulamin" className="hover:text-white transition-colors">Regulamin</a>
         </div>
       </Container>
     </footer>
