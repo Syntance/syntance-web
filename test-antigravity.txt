@@ -1,0 +1,4 @@
+Test commit from Antigravity AI
+Created at: 2025-12-03 11:36
+This is a test file to verify GitHub integration.
+Testing commit to the main branch.
