@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Menu, ArrowLeft } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import GooeyNav from "@/components/ui/gooey-nav";
 
 const navItems = [
@@ -20,9 +20,31 @@ export default function NavbarStudio() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
+  const [sectionsReady, setSectionsReady] = useState(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Poczekaj aż wszystkie sekcje pojawią się w DOM, żeby nie podświetlać "Kontakt" zanim załaduje się reszta.
+  useEffect(() => {
+    const checkReady = () => sectionIds.every((id) => document.getElementById(id));
+
+    if (checkReady()) {
+      setSectionsReady(true);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      if (checkReady()) {
+        setSectionsReady(true);
+        clearInterval(interval);
+      }
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
+      if (!sectionsReady) return;
       if (isScrolling) return;
       
       const scrollPosition = window.scrollY + window.innerHeight * 0.3;
@@ -70,7 +92,25 @@ export default function NavbarStudio() {
       window.removeEventListener('scroll', scrollListener);
       window.removeEventListener('resize', handleScroll);
     };
-  }, [isScrolling, activeSection]);
+  }, [isScrolling, sectionsReady]);
+
+  // Gdy użytkownik zaczyna ręcznie scrollować (wheel/touch), natychmiast odblokuj
+  useEffect(() => {
+    const handleUserScroll = () => {
+      if (isScrolling) {
+        if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+        setIsScrolling(false);
+      }
+    };
+    
+    window.addEventListener('wheel', handleUserScroll, { passive: true });
+    window.addEventListener('touchmove', handleUserScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('wheel', handleUserScroll);
+      window.removeEventListener('touchmove', handleUserScroll);
+    };
+  }, [isScrolling]);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 py-6 px-6 lg:px-12 backdrop-blur-md bg-black/30 transition-all duration-300">
@@ -112,13 +152,16 @@ export default function NavbarStudio() {
             particleR={80}
             initialActiveIndex={0}
             externalActiveIndex={activeSection}
+            isExternalScrolling={isScrolling}
             animationTime={450}
             timeVariance={200}
             colors={[1, 2, 3, 1, 2, 3, 1, 4]}
             onNavigate={(index) => {
               setActiveSection(index);
               setIsScrolling(true);
-              setTimeout(() => setIsScrolling(false), 1000);
+              // Anuluj poprzedni timeout żeby szybkie kliknięcia nie resetowały isScrolling przedwcześnie
+              if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+              scrollTimeoutRef.current = setTimeout(() => setIsScrolling(false), 1500);
             }}
           />
         </div>
@@ -173,4 +216,3 @@ export default function NavbarStudio() {
     </nav>
   );
 }
-

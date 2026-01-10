@@ -63,12 +63,9 @@ export default function ProcessStudio() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-20">
-          <div className="relative inline-block mb-6">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-pink-400 to-orange-400 blur-2xl opacity-30 animate-pulse"></div>
-            <h2 className="relative text-4xl md:text-5xl font-light tracking-widest glow-text">
-              Jak pracujemy
-            </h2>
-          </div>
+          <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
+            Jak pracujemy
+          </h2>
           <p className="text-lg font-light tracking-wide text-gray-400">
             Proces, który łączy empatię z precyzją
           </p>
@@ -132,10 +129,6 @@ export default function ProcessStudio() {
               );
             })}
           </div>
-
-          {/* Decorative gradient orbs */}
-          <div className="absolute -right-32 top-1/4 w-64 h-64 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full opacity-5 blur-3xl -z-10"></div>
-          <div className="absolute -left-32 bottom-1/4 w-64 h-64 bg-gradient-to-r from-pink-500 to-orange-500 rounded-full opacity-5 blur-3xl -z-10"></div>
         </div>
       </div>
 

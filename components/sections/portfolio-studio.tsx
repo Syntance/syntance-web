@@ -72,12 +72,9 @@ export default function PortfolioStudio() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-20">
-          <div className="relative inline-block mb-6">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 blur-2xl opacity-30 animate-pulse"></div>
-            <h2 className="relative text-4xl md:text-5xl font-light tracking-widest glow-text">
-              Nasze realizacje
-            </h2>
-          </div>
+          <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
+            Nasze realizacje
+          </h2>
           <p className="text-lg font-light tracking-wide text-gray-400">
             Strony i sklepy, które nie tylko wyglądają, ale działają.
           </p>

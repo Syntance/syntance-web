@@ -53,12 +53,9 @@ export default function PricingStudioNew() {
       <div className="max-w-4xl mx-auto text-center">
         {/* Header */}
         <div className="mb-16">
-          <div className="relative inline-block mb-6">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-green-400 to-blue-400 blur-2xl opacity-30 animate-pulse"></div>
-            <h2 className="relative text-4xl md:text-5xl font-light tracking-widest glow-text">
-              Cennik i wycena
-            </h2>
-          </div>
+          <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
+            Cennik i wycena
+          </h2>
           <p className="text-lg font-light tracking-wide text-gray-400 max-w-2xl mx-auto">
             Każdy projekt jest inny. Dlatego cenimy rozmowę, nie sztywne pakiety.
           </p>
@@ -130,10 +127,6 @@ export default function PricingStudioNew() {
           <p className="mt-2">Wycena indywidualna • Płatność etapami • Opieka posprzedażowa</p>
         </div>
       </div>
-
-      {/* Background decorative elements */}
-      <div className="absolute top-1/2 left-0 w-96 h-96 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-5 blur-3xl -z-10"></div>
-      <div className="absolute top-1/4 right-0 w-80 h-80 bg-gradient-to-r from-pink-500 to-orange-500 rounded-full opacity-5 blur-3xl -z-10"></div>
 
       <style jsx>{`
         .section-visible {

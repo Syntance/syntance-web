@@ -17,6 +17,7 @@ interface GooeyNavProps {
   colors?: number[];
   initialActiveIndex?: number;
   externalActiveIndex?: number;
+  isExternalScrolling?: boolean;
   onNavigate?: (index: number) => void;
 }
 
@@ -30,6 +31,7 @@ const GooeyNav = ({
   colors = [1, 2, 3, 1, 2, 3, 1, 4],
   initialActiveIndex = 0,
   externalActiveIndex,
+  isExternalScrolling = false,
   onNavigate
 }: GooeyNavProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -37,6 +39,8 @@ const GooeyNav = ({
   const filterRef = useRef<HTMLSpanElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
   const [activeIndex, setActiveIndex] = useState(initialActiveIndex);
+  const isNavigatingRef = useRef(false);
+  const navigatingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const noise = (n = 1) => n / 2 - Math.random() * n;
   const getXY = (distance: number, pointIndex: number, totalPoints: number) => {
@@ -116,6 +120,12 @@ const GooeyNav = ({
     const liEl = e.currentTarget;
     if (activeIndex === index) return;
     
+    // Blokuj reakcję na externalActiveIndex przez czas scrollowania
+    // Anuluj poprzedni timeout żeby szybkie kliknięcia nie resetowały blokady przedwcześnie
+    isNavigatingRef.current = true;
+    if (navigatingTimeoutRef.current) clearTimeout(navigatingTimeoutRef.current);
+    navigatingTimeoutRef.current = setTimeout(() => { isNavigatingRef.current = false; }, 1200);
+    
     // Wywołaj callback przed ustawieniem active index
     if (onNavigate) {
       onNavigate(index);
@@ -169,6 +179,10 @@ const GooeyNav = ({
   };
   // Obsługa zewnętrznego activeIndex
   useEffect(() => {
+    // Ignoruj zmiany podczas programowego scrollowania (po kliknięciu w navbar)
+    // Używamy ref dla synchronicznego dostępu (props mogą być opóźnione)
+    if (isExternalScrolling || isNavigatingRef.current) return;
+    
     if (externalActiveIndex !== undefined && externalActiveIndex !== activeIndex) {
       const newActiveLi = navRef.current?.querySelectorAll('li')[externalActiveIndex] as HTMLElement;
       if (newActiveLi) {
@@ -189,7 +203,25 @@ const GooeyNav = ({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [externalActiveIndex, activeIndex]);
+  }, [externalActiveIndex, activeIndex, isExternalScrolling]);
+
+  // Gdy użytkownik zaczyna ręcznie scrollować, natychmiast odblokuj
+  useEffect(() => {
+    const handleUserScroll = () => {
+      if (isNavigatingRef.current) {
+        if (navigatingTimeoutRef.current) clearTimeout(navigatingTimeoutRef.current);
+        isNavigatingRef.current = false;
+      }
+    };
+    
+    window.addEventListener('wheel', handleUserScroll, { passive: true });
+    window.addEventListener('touchmove', handleUserScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('wheel', handleUserScroll);
+      window.removeEventListener('touchmove', handleUserScroll);
+    };
+  }, []);
 
   useEffect(() => {
     if (!navRef.current || !containerRef.current) return;
@@ -233,15 +265,11 @@ const GooeyNav = ({
           color: black;
         }
         .gooey-effect.filter {
-          filter: blur(7px) contrast(100) blur(0);
+          filter: blur(3px) contrast(50) blur(0);
           mix-blend-mode: lighten;
         }
         .gooey-effect.filter::before {
-          content: "";
-          position: absolute;
-          inset: -75px;
-          z-index: -2;
-          background: black;
+          content: none;
         }
         .gooey-effect.filter::after {
           content: "";
@@ -360,9 +388,9 @@ const GooeyNav = ({
             }}
           >
             {items.map((item, index) => (
-              <li
+                <li
                 key={index}
-                className={`gooey-nav-item rounded-full relative cursor-pointer transition-[background-color_color_box-shadow] duration-300 ease shadow-[0_0_0.5px_1.5px_transparent] text-white text-sm font-light tracking-wider ${
+                className={`gooey-nav-item rounded-full relative cursor-pointer transition-[background-color_color] duration-300 ease text-white text-sm font-light tracking-wider ${
                   activeIndex === index ? 'active' : ''
                 }`}
                 onClick={(e) => handleClick(e, index)}

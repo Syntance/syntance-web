@@ -1,7 +1,7 @@
 "use client";
 
 import { Menu } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import GooeyNav from "@/components/ui/gooey-nav";
 
 const navItems = [
@@ -18,6 +18,7 @@ export default function NavbarNew() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -78,6 +79,24 @@ export default function NavbarNew() {
     };
   }, [isScrolling, activeSection]);
 
+  // Gdy użytkownik zaczyna ręcznie scrollować (wheel/touch), natychmiast odblokuj
+  useEffect(() => {
+    const handleUserScroll = () => {
+      if (isScrolling) {
+        if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+        setIsScrolling(false);
+      }
+    };
+    
+    window.addEventListener('wheel', handleUserScroll, { passive: true });
+    window.addEventListener('touchmove', handleUserScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('wheel', handleUserScroll);
+      window.removeEventListener('touchmove', handleUserScroll);
+    };
+  }, [isScrolling]);
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 py-6 px-6 lg:px-12 backdrop-blur-md bg-black/30 transition-all duration-300">
       <div className="flex justify-between items-center">
@@ -112,13 +131,16 @@ export default function NavbarNew() {
             particleR={80}
             initialActiveIndex={0}
             externalActiveIndex={activeSection}
+            isExternalScrolling={isScrolling}
             animationTime={450}
             timeVariance={200}
             colors={[1, 2, 3, 1, 2, 3, 1, 4]}
             onNavigate={(index) => {
               setActiveSection(index);
               setIsScrolling(true);
-              setTimeout(() => setIsScrolling(false), 1000);
+              // Anuluj poprzedni timeout żeby szybkie kliknięcia nie resetowały isScrolling przedwcześnie
+              if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+              scrollTimeoutRef.current = setTimeout(() => setIsScrolling(false), 1500);
             }}
           />
         </div>
