@@ -1,19 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useLayoutEffect } from "react";
 import dynamic from "next/dynamic";
-import VantaBackground from "@/components/vanta-background";
 import NavbarStudio from "@/components/navbar-studio";
 import { Twitter, Linkedin, Github } from "lucide-react";
 
-// Import sections
-const HeroStudio = dynamic(() => import("@/components/sections/hero-studio"));
-const ValuesStudio = dynamic(() => import("@/components/sections/values-studio"));
-const PortfolioStudio = dynamic(() => import("@/components/sections/portfolio-studio"));
-const ProcessStudio = dynamic(() => import("@/components/sections/process-studio"));
-const PricingStudioNew = dynamic(() => import("@/components/sections/pricing-studio-new"));
+// Import sections - bez lazy loadingu dla hero, żeby uniknąć flashowania kontaktu
+import HeroStudio from "@/components/sections/hero-studio";
+const ValuesStudio = dynamic(() => import("@/components/sections/values-studio"), { ssr: true });
+const PortfolioStudio = dynamic(() => import("@/components/sections/portfolio-studio"), { ssr: true });
+const ProcessStudio = dynamic(() => import("@/components/sections/process-studio"), { ssr: true });
+const PricingStudioNew = dynamic(() => import("@/components/sections/pricing-studio-new"), { ssr: true });
 
 export default function StudioPage() {
+  // Stan do ukrycia strony na starcie - zapobiega flashowi kontaktu
+  const [isPageReady, setIsPageReady] = useState(false);
+
+  // Zablokuj przywracanie scrolla i ustaw start na górze przy pierwszym wejściu/odświeżeniu.
+  // Używamy useLayoutEffect, żeby scroll wykonał się PRZED renderem wizualnym (synchronicznie).
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined') return;
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    if (!window.location.hash) {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+    setIsPageReady(true);
+  }, []);
+
   // Contact form state
   const [formData, setFormData] = useState({
     name: '',
@@ -93,8 +108,7 @@ export default function StudioPage() {
   };
 
   return (
-    <div className="min-h-screen">
-      <VantaBackground />
+    <div className={`min-h-screen transition-opacity duration-200 ${isPageReady ? 'opacity-100' : 'opacity-0'}`}>
       <NavbarStudio />
       
       <HeroStudio />

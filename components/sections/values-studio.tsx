@@ -72,12 +72,9 @@ export default function ValuesStudio() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-20">
-          <div className="relative inline-block mb-6">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400 to-blue-400 blur-2xl opacity-30 animate-pulse"></div>
-            <h2 className="relative text-4xl md:text-5xl font-light tracking-widest glow-text">
-              Nasze podejście do projektowania
-            </h2>
-          </div>
+          <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
+            Nasze podejście do projektowania
+          </h2>
           <p className="text-lg font-light tracking-wide text-gray-400">
             Design tworzony z serca. Technologia w służbie estetyki.
           </p>
