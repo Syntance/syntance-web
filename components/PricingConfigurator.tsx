@@ -534,19 +534,6 @@ export function PricingConfigurator({ data }: Props) {
                   <ChevronRight size={16} />
                 </a>
 
-                <a
-                  href={config?.calendlyUrl ? `${config.calendlyUrl}?a1=Warsztat%20Discovery` : '#contact'}
-                  target={config?.calendlyUrl ? '_blank' : undefined}
-                  rel={config?.calendlyUrl ? 'noopener noreferrer' : undefined}
-                  className="flex items-center justify-center gap-2 w-full py-3 px-6 bg-white/10 hover:bg-white/15 text-white font-medium rounded-xl transition-all border border-white/10 hover:border-white/20"
-                >
-                  <Sparkles size={16} />
-                  {config?.ctaTexts?.workshop || 'Warsztat Discovery'}
-                  <span className="text-sm text-gray-400">
-                    ({(config?.discoveryWorkshopPrice || 4500).toLocaleString('pl-PL')} PLN)
-                  </span>
-                </a>
-
                 <button
                   onClick={() => {
                     // TODO: Generuj PDF z wyceny
