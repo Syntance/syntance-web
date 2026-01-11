@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { 
   Layout, FileText, Layers, Zap, Plug, CreditCard, Truck, 
   Globe, ShoppingCart, Smartphone, Check, Sparkles, Clock,
@@ -384,70 +384,8 @@ export function PricingConfigurator({ data }: Props) {
   // Aktualny typ projektu
   const currentProjectType = projectTypes.find(pt => pt.id === state.projectType)
 
-  const rootRef = useRef<HTMLDivElement | null>(null)
-  const summaryRef = useRef<HTMLDivElement | null>(null)
-
-  // #region agent log
-  useEffect(() => {
-    const runId = 'run-' + Date.now()
-    const root = rootRef.current
-    const summary = summaryRef.current
-    const makeLog = (hypothesisId: string, message: string, data: Record<string, unknown>) => {
-      fetch('http://127.0.0.1:7242/ingest/c3b5c0ae-54c8-4b42-ab2c-1e5f9a29ff29', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sessionId: 'debug-session',
-          runId,
-          hypothesisId,
-          location: 'components/PricingConfigurator.tsx',
-          message,
-          data,
-          timestamp: Date.now(),
-        }),
-      }).catch(() => {})
-    }
-
-    // Hyp A: transform/overflow on ancestors blokuje sticky
-    if (summary) {
-      let node: HTMLElement | null = summary
-      const ancestors: Array<{ tag: string; transform: string | null; overflow: string | null }> = []
-      while (node) {
-        const cs = getComputedStyle(node)
-        ancestors.push({
-          tag: node.tagName,
-          transform: cs.transform !== 'none' ? cs.transform : null,
-          overflow: cs.overflow !== 'visible' ? cs.overflow : null,
-        })
-        node = node.parentElement
-      }
-      makeLog('A', 'Ancestors transform/overflow', { ancestors })
-    }
-
-    // Hyp B: szerokość kontenera vs viewport
-    if (root) {
-      makeLog('B', 'Root sizes', {
-        viewportW: window.innerWidth,
-        rootClientW: root.clientWidth,
-        rootScrollW: root.scrollWidth,
-      })
-    }
-
-    // Hyp C: sticky top stosowane?
-    if (summary) {
-      const cs = getComputedStyle(summary)
-      makeLog('C', 'Summary sticky info', {
-        position: cs.position,
-        top: cs.top,
-        clientW: summary.clientWidth,
-        scrollW: summary.scrollWidth,
-      })
-    }
-  }, [])
-  // #endregion agent log
-
   return (
-    <div ref={rootRef} className="grid lg:grid-cols-3 gap-4 sm:gap-8 w-full max-w-full box-border overflow-x-hidden lg:overflow-x-visible">
+    <div className="grid lg:grid-cols-3 gap-4 sm:gap-8 w-full max-w-full box-border overflow-x-hidden lg:overflow-x-visible">
       {/* LEWA KOLUMNA: Selektor */}
       <div className="lg:col-span-2 space-y-6 sm:space-y-8 w-full max-w-full min-w-0">
         {/* Typ projektu */}
@@ -681,7 +619,7 @@ export function PricingConfigurator({ data }: Props) {
       </div>
 
       {/* PRAWA KOLUMNA: Podsumowanie */}
-      <div ref={summaryRef} className="lg:col-span-1 w-full max-w-full min-w-0">
+      <div className="lg:col-span-1 w-full max-w-full min-w-0">
         <div className="lg:sticky lg:top-24 max-w-[calc(100vw-2rem)]">
           {/* Main summary card */}
           <div className="relative group">
