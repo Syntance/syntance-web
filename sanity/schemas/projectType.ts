@@ -40,6 +40,13 @@ export default defineType({
       type: 'number',
       initialValue: 0,
     }),
+    defineField({
+      name: 'disabled',
+      title: 'Wyłączony (niedostępny)',
+      type: 'boolean',
+      initialValue: false,
+      description: 'Typ projektu będzie widoczny ale niemożliwy do wybrania',
+    }),
   ],
   orderings: [
     {

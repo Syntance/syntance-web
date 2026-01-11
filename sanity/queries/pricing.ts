@@ -5,14 +5,16 @@ export const pricingDataQuery = groq`{
     "id": id.current,
     name,
     description,
-    icon
+    icon,
+    disabled
   },
   "projectTypes": *[_type == "projectType"] | order(order asc) {
     "id": id.current,
     name,
     description,
     basePrice,
-    icon
+    icon,
+    disabled
   },
   "items": *[_type == "pricingItem"] | order(order asc) {
     "id": id.current,
@@ -30,7 +32,8 @@ export const pricingDataQuery = groq`{
     "dependencies": dependencies[]->id.current,
     "bundledWith": bundledWith[]->id.current,
     popular,
-    new
+    new,
+    disabled
   },
   "config": *[_type == "pricingConfig"][0] {
     vatRate,
@@ -51,6 +54,7 @@ export interface PricingCategory {
   name: string
   description?: string
   icon?: string
+  disabled?: boolean
 }
 
 export interface ProjectType {
@@ -59,6 +63,7 @@ export interface ProjectType {
   description?: string
   basePrice?: number
   icon?: string
+  disabled?: boolean
 }
 
 export interface PricingItem {
@@ -78,6 +83,7 @@ export interface PricingItem {
   bundledWith?: string[]
   popular?: boolean
   new?: boolean
+  disabled?: boolean
 }
 
 export interface PricingConfig {
