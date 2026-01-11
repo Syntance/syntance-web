@@ -26,15 +26,15 @@ export function ConfirmDialog({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onCancel}
       />
       
       {/* Modal */}
-      <div className="relative w-full max-w-md">
+      <div className="relative w-full max-w-md my-auto">
         {/* Glow effect */}
         <div className="absolute -inset-0.5 bg-gradient-to-br from-amber-500 via-orange-500 to-red-500 rounded-2xl opacity-20 blur-xl" />
         
