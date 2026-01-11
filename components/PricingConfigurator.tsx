@@ -53,12 +53,14 @@ export function PricingConfigurator({ data }: Props) {
     title: string
     message: string
     items?: string[]
+    confirmText?: string
     onConfirm: () => void
   }>({
     isOpen: false,
     title: '',
     message: '',
     items: [],
+    confirmText: 'Usuń',
     onConfirm: () => {},
   })
 
@@ -150,6 +152,32 @@ export function PricingConfigurator({ data }: Props) {
       
       if (isCurrentlySelected) {
         // USUWANIE elementu
+        
+        // Sprawdź czy to jest Warsztat Discovery - pokaż ostrzeżenie
+        if (item.defaultSelected && item.name.toLowerCase().includes('discovery')) {
+          setConfirmDialog({
+            isOpen: true,
+            title: '⚠️ Czy na pewno chcesz usunąć Warsztat Discovery?',
+            message: `Warsztat Discovery to kluczowy etap projektu, który:\n\n• Definiuje strategię i cele biznesowe\n• Identyfikuje Twoich idealnych klientów\n• Ustala unikalne wartości i komunikację\n• Projektuje architekturę informacji\n\nUsunięcie tej opcji wymaga dostarczenia kompletnej strategii, persony i UVP z Twojej strony.\n\nJeśli nie masz gotowej strategii, zalecamy pozostawić ten element - zaoszczędzisz czas i unikniesz kosztownych poprawek później.`,
+            confirmText: 'Rozumiem, usuń',
+            onConfirm: () => {
+              // Usuń element
+              const itemsToRemove = [id]
+              if (item.bundledWith?.length) {
+                itemsToRemove.push(...item.bundledWith)
+              }
+              
+              setState(prev => ({
+                ...prev,
+                selectedItems: prev.selectedItems.filter(i => !itemsToRemove.includes(i))
+              }))
+              
+              setConfirmDialog(prev => ({ ...prev, isOpen: false }))
+            }
+          })
+          return prev
+        }
+        
         let itemsToRemove = [id]
         
         // Jeśli element ma bundledWith, usuń też te elementy
@@ -169,6 +197,7 @@ export function PricingConfigurator({ data }: Props) {
             title: `"${item.name}" jest wymagany`,
             message: `"${item.name}" jest wymagany przez inne elementy.\n\nUsunięcie tego elementu spowoduje również usunięcie:`,
             items: parentBundles.map(p => p.name),
+            confirmText: 'Usuń wszystkie',
             onConfirm: () => {
               // Usuń element i jego parenty
               const itemsToRemove = [id]
@@ -563,7 +592,7 @@ export function PricingConfigurator({ data }: Props) {
         title={confirmDialog.title}
         message={confirmDialog.message}
         items={confirmDialog.items}
-        confirmText="Usuń wszystkie"
+        confirmText={confirmDialog.confirmText || 'Usuń wszystkie'}
         cancelText="Anuluj"
         onConfirm={confirmDialog.onConfirm}
         onCancel={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
