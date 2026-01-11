@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { AlertTriangle, X } from 'lucide-react'
 
 interface ConfirmDialogProps {
@@ -23,18 +25,33 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
-  if (!isOpen) return null
+  const [mounted, setMounted] = useState(false)
 
-  return (
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!isOpen || !mounted) return null
+
+  const modalContent = (
     <>
       {/* Backdrop */}
       <div 
         className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm"
         onClick={onCancel}
+        style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
       />
       
       {/* Modal - zawsze w centrum ekranu */}
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[10000] w-full max-w-md px-4">
+      <div 
+        className="fixed z-[10000] w-full max-w-md px-4"
+        style={{ 
+          position: 'fixed',
+          top: '50%', 
+          left: '50%', 
+          transform: 'translate(-50%, -50%)',
+        }}
+      >
         {/* Glow effect */}
         <div className="absolute -inset-0.5 bg-gradient-to-br from-amber-500 via-orange-500 to-red-500 rounded-2xl opacity-20 blur-xl" />
         
@@ -93,4 +110,7 @@ export function ConfirmDialog({
       </div>
     </>
   )
+
+  // Renderuj w document.body przez Portal - poza hierarchią DOM komponentów
+  return createPortal(modalContent, document.body)
 }
