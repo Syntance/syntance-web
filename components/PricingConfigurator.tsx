@@ -449,7 +449,7 @@ export function PricingConfigurator({ data }: Props) {
   return (
     <div ref={rootRef} className="grid lg:grid-cols-3 gap-4 sm:gap-8 w-full max-w-full box-border overflow-x-hidden lg:overflow-x-visible">
       {/* LEWA KOLUMNA: Selektor */}
-      <div className="lg:col-span-2 space-y-6 sm:space-y-8 w-full max-w-full">
+      <div className="lg:col-span-2 space-y-6 sm:space-y-8 w-full max-w-full min-w-0">
         {/* Typ projektu */}
         <div>
           <h3 className="text-lg font-medium tracking-wide mb-4 text-gray-200">
@@ -681,7 +681,7 @@ export function PricingConfigurator({ data }: Props) {
       </div>
 
       {/* PRAWA KOLUMNA: Podsumowanie */}
-      <div ref={summaryRef} className="lg:col-span-1 w-full max-w-full">
+      <div ref={summaryRef} className="lg:col-span-1 w-full max-w-full min-w-0">
         <div className="lg:sticky lg:top-24 max-w-[calc(100vw-2rem)]">
           {/* Main summary card */}
           <div className="relative group">
