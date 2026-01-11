@@ -131,9 +131,12 @@ export function PricingConfigurator({ data }: Props) {
         )
         
         if (parentBundles.length > 0) {
-          const parentNames = parentBundles.map(p => p.name).join(', ')
+          const parentNames = parentBundles.map(p => `"${p.name}"`).join(', ')
           const confirmed = window.confirm(
-            `"${item.name}" jest częścią pakietu z: ${parentNames}.\n\nUsunięcie tego elementu usunie również pakiet główny.\n\nCzy kontynuować?`
+            `⚠️ "${item.name}" jest wymagany przez: ${parentNames}\n\n` +
+            `Nie można usunąć tego elementu bez usunięcia również:\n` +
+            `• ${parentBundles.map(p => p.name).join('\n• ')}\n\n` +
+            `Czy chcesz usunąć wszystkie powiązane elementy?`
           )
           if (!confirmed) return prev
           
@@ -156,19 +159,6 @@ export function PricingConfigurator({ data }: Props) {
         
         // Jeśli element ma bundledWith, dodaj automatycznie te elementy
         if (item.bundledWith?.length) {
-          const bundledNames = item.bundledWith
-            .map(bid => items.find(i => i.id === bid)?.name)
-            .filter(Boolean)
-            .join(', ')
-          
-          // Pokaż informację o automatycznym dodaniu
-          if (bundledNames) {
-            // Używamy setTimeout żeby alert nie blokował setState
-            setTimeout(() => {
-              alert(`Automatycznie dodano elementy pakietu:\n${bundledNames}`)
-            }, 100)
-          }
-          
           itemsToAdd = [...itemsToAdd, ...item.bundledWith]
         }
         
