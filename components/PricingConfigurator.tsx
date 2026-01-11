@@ -95,15 +95,20 @@ export function PricingConfigurator({ data }: Props) {
     let totalPrice = 0
     let totalHours = 0
     let percentageAdd = 0
+    let totalItemsCount = 0
 
     allSelected.forEach(id => {
       const item = items.find(i => i.id === id)
       if (!item) return
 
+      const qty = state.quantities[id] || 1
+      
+      // Licz ilość elementów (każdą podstronę osobno)
+      totalItemsCount += qty
+
       if (item.percentageAdd) {
         percentageAdd += item.percentageAdd
       } else {
-        const qty = state.quantities[id] || 1
         // Nie licz ceny dla elementów wliczonych w bazę (gratis)
         if (!item.includedInBase) {
           totalPrice += item.price * qty
@@ -133,7 +138,7 @@ export function PricingConfigurator({ data }: Props) {
       hours: Math.round(totalHours),
       days,
       percentageAdd,
-      itemsCount: allSelected.length,
+      itemsCount: totalItemsCount,
     }
   }, [requiredItems, state.selectedItems, state.quantities, items, config])
 
