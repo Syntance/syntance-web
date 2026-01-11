@@ -583,7 +583,7 @@ export function PricingConfigurator({ data }: Props) {
                 <div className="text-center p-3 rounded-lg bg-white/5">
                   <Layers size={18} className="mx-auto mb-1 text-purple-400" />
                   <div className="text-lg font-semibold text-white">{calculation.itemsCount}</div>
-                  <div className="text-xs text-gray-500">wybranych funkcji</div>
+                  <div className="text-xs text-gray-500">wybranych elementów</div>
                 </div>
               </div>
 
