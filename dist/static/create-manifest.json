@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "createdAt": "2026-01-11T17:32:46.413Z",
+  "createdAt": "2026-01-11T20:41:34.282Z",
   "workspaces": [
     {
       "name": "syntance-studio",
@@ -12,7 +12,7 @@
       "mediaLibrary": {
         "enabled": false
       },
-      "schema": "3c8382c7.create-schema.json",
+      "schema": "1c66ba4d.create-schema.json",
       "tools": "aab811ae.create-tools.json"
     }
   ]

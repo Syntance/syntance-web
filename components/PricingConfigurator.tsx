@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback } from 'react'
 import { 
   Layout, FileText, Layers, Zap, Plug, CreditCard, Truck, 
   Globe, ShoppingCart, Smartphone, Check, Sparkles, Clock,
-  Calendar, Download, ChevronRight, Package, Link2
+  Calendar, Download, ChevronRight, Link2
 } from 'lucide-react'
 import { PricingData, PricingItem } from '@/sanity/queries/pricing'
 
@@ -351,11 +351,6 @@ export function PricingConfigurator({ data }: Props) {
                             <Sparkles size={10} /> Nowość
                           </span>
                         )}
-                        {item.bundledWith && item.bundledWith.length > 0 && (
-                          <span className="px-2 py-0.5 text-xs rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-medium flex items-center gap-1">
-                            <Package size={10} /> Pakiet
-                          </span>
-                        )}
                         {getParentBundles(item.id).length > 0 && (
                           <span className="px-2 py-0.5 text-xs rounded-full bg-white/10 text-gray-400 font-medium flex items-center gap-1" title={`Część pakietu: ${getParentBundles(item.id).map(p => p.name).join(', ')}`}>
                             <Link2 size={10} /> W pakiecie
@@ -365,11 +360,11 @@ export function PricingConfigurator({ data }: Props) {
                       {item.description && (
                         <p className="text-sm text-gray-500">{item.description}</p>
                       )}
-                      {/* Pokaż elementy pakietu */}
+                      {/* Pokaż wymagane elementy */}
                       {item.bundledWith && item.bundledWith.length > 0 && (
                         <p className="text-xs text-amber-500/80 mt-1 flex items-center gap-1">
-                          <Package size={10} />
-                          Zawiera: {item.bundledWith.map(bid => items.find(i => i.id === bid)?.name).filter(Boolean).join(', ')}
+                          <Link2 size={10} />
+                          Wymaga: {item.bundledWith.map(bid => items.find(i => i.id === bid)?.name).filter(Boolean).join(', ')}
                         </p>
                       )}
                     </div>
