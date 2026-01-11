@@ -255,13 +255,24 @@ export function PricingConfigurator({ data }: Props) {
     }))
   }, [])
 
-  // Sprawdź dependencies
+  // Sprawdź czy element jest wyłączony
   const isDisabled = useCallback((item: PricingItem) => {
-    if (!item.dependencies?.length) return false
-    return !item.dependencies.every(dep => 
-      state.selectedItems.includes(dep) || requiredItems.some(r => r.id === dep)
-    )
-  }, [state.selectedItems, requiredItems])
+    // Element jest jawnie wyłączony
+    if (item.disabled) return true
+    
+    // Kategoria elementu jest wyłączona
+    const category = categories.find(cat => cat.id === item.category)
+    if (category?.disabled) return true
+    
+    // Element nie spełnia dependencies
+    if (item.dependencies?.length) {
+      return !item.dependencies.every(dep => 
+        state.selectedItems.includes(dep) || requiredItems.some(r => r.id === dep)
+      )
+    }
+    
+    return false
+  }, [state.selectedItems, requiredItems, categories])
 
   // Calendly URL z parametrami
   const getCalendlyUrl = useCallback(() => {
@@ -297,19 +308,23 @@ export function PricingConfigurator({ data }: Props) {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {projectTypes.map(type => {
               const isSelected = state.projectType === type.id
+              const isDisabledType = type.disabled
               return (
                 <button
                   key={type.id}
-                  onClick={() => setState(prev => ({ 
+                  disabled={isDisabledType}
+                  onClick={() => !isDisabledType && setState(prev => ({ 
                     ...prev, 
                     projectType: type.id,
                     selectedItems: getDefaultSelectedItems(type.id),
                     quantities: {}
                   }))}
                   className={`relative p-5 rounded-xl border-2 transition-all duration-300 text-left group ${
-                    isSelected 
-                      ? 'border-purple-500/60 bg-purple-500/10' 
-                      : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/8'
+                    isDisabledType
+                      ? 'opacity-30 cursor-not-allowed border-white/5 bg-white/2'
+                      : isSelected 
+                        ? 'border-purple-500/60 bg-purple-500/10' 
+                        : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/8'
                   }`}
                 >
                   {/* Glow effect for selected */}
@@ -319,15 +334,27 @@ export function PricingConfigurator({ data }: Props) {
                   
                   <div className="flex items-center gap-3 mb-2">
                     {getIcon(type.icon)}
-                    <span className={`font-medium tracking-wide ${isSelected ? 'text-white' : 'text-gray-300'}`}>
+                    <span className={`font-medium tracking-wide ${
+                      isDisabledType 
+                        ? 'text-gray-600' 
+                        : isSelected ? 'text-white' : 'text-gray-300'
+                    }`}>
                       {type.name}
                     </span>
                   </div>
                   
                   {type.basePrice && (
-                    <span className="text-sm text-gray-500">
+                    <span className={`text-sm ${isDisabledType ? 'text-gray-700' : 'text-gray-500'}`}>
                       od {type.basePrice.toLocaleString('pl-PL')} PLN
                     </span>
+                  )}
+                  
+                  {isDisabledType && (
+                    <div className="mt-2">
+                      <span className="text-xs text-gray-600 bg-white/5 px-2 py-1 rounded">
+                        Niedostępny
+                      </span>
+                    </div>
                   )}
 
                   {/* Check indicator */}
@@ -438,6 +465,11 @@ export function PricingConfigurator({ data }: Props) {
                         {getParentBundles(item.id).length > 0 && (
                           <span className="px-2 py-0.5 text-xs rounded-full bg-white/10 text-gray-400 font-medium flex items-center gap-1" title={`Część pakietu: ${getParentBundles(item.id).map(p => p.name).join(', ')}`}>
                             <Link2 size={10} /> W pakiecie
+                          </span>
+                        )}
+                        {disabled && (
+                          <span className="px-2 py-0.5 text-xs rounded-full bg-gray-800 text-gray-500 font-medium">
+                            Niedostępny
                           </span>
                         )}
                       </div>

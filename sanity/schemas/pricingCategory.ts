@@ -35,6 +35,13 @@ export default defineType({
       type: 'string',
       description: 'np. Layout, ShoppingCart, Settings',
     }),
+    defineField({
+      name: 'disabled',
+      title: 'Wyłączona (niedostępna)',
+      type: 'boolean',
+      initialValue: false,
+      description: 'Kategoria i wszystkie jej elementy będą niedostępne',
+    }),
   ],
   orderings: [
     {

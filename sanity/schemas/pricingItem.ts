@@ -114,6 +114,13 @@ export default defineType({
       type: 'boolean',
       initialValue: false,
     }),
+    defineField({
+      name: 'disabled',
+      title: 'Wyłączony (niedostępny)',
+      type: 'boolean',
+      initialValue: false,
+      description: 'Element będzie widoczny ale zaciemniony i niemożliwy do wybrania',
+    }),
   ],
   preview: {
     select: {
