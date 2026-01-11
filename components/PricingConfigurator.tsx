@@ -138,8 +138,8 @@ export function PricingConfigurator({ data }: Props) {
       const item = items.find(i => i.id === id)
       if (!item) return
       const qty = state.quantities[id] || 1
-      // Domyślna waga = 0 (brak wpływu na złożoność)
-      const weight = item.complexityWeight ?? 0
+      // Domyślna waga = 1 (standardowa)
+      const weight = item.complexityWeight ?? 1
       totalComplexityWeight += weight * qty
     })
 
