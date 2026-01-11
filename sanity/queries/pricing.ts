@@ -22,6 +22,7 @@ export const pricingDataQuery = groq`{
     description,
     price,
     hours,
+    rateType,
     "category": category->id.current,
     "projectTypes": projectTypes[]->id.current,
     required,
@@ -72,6 +73,7 @@ export interface PricingItem {
   description?: string
   price: number
   hours: number
+  rateType?: 'dev' | 'consulting'
   category: string
   projectTypes: string[]
   required?: boolean

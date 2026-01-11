@@ -35,6 +35,20 @@ export default defineType({
       validation: (Rule) => Rule.required().min(0),
     }),
     defineField({
+      name: 'rateType',
+      title: 'Typ stawki',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Development (programowanie)', value: 'dev' },
+          { title: 'Consulting (konsultacje)', value: 'consulting' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'dev',
+      description: 'Określa czy produkt używa stawki dev czy consulting do kalkulacji',
+    }),
+    defineField({
       name: 'category',
       title: 'Kategoria',
       type: 'reference',
