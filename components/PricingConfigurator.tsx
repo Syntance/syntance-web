@@ -618,9 +618,9 @@ export function PricingConfigurator({ data }: Props) {
         ))}
       </div>
 
-      {/* PRAWA KOLUMNA: Podsumowanie (sticky) */}
+      {/* PRAWA KOLUMNA: Podsumowanie (sticky tylko na desktop) */}
       <div className="lg:col-span-1 w-full max-w-full overflow-hidden">
-        <div className="sticky top-24">
+        <div className="lg:sticky lg:top-24">
           {/* Main summary card */}
           <div className="relative group">
             {/* Gradient border glow */}
