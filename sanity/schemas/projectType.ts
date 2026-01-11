@@ -54,6 +54,26 @@ export default defineType({
       name: 'orderAsc',
       by: [{ field: 'order', direction: 'asc' }],
     },
+    {
+      title: 'Nazwa A-Z',
+      name: 'nameAsc',
+      by: [{ field: 'name', direction: 'asc' }],
+    },
+    {
+      title: 'Nazwa Z-A',
+      name: 'nameDesc',
+      by: [{ field: 'name', direction: 'desc' }],
+    },
+    {
+      title: 'Cena bazowa rosnąco',
+      name: 'basePriceAsc',
+      by: [{ field: 'basePrice', direction: 'asc' }],
+    },
+    {
+      title: 'Cena bazowa malejąco',
+      name: 'basePriceDesc',
+      by: [{ field: 'basePrice', direction: 'desc' }],
+    },
   ],
   preview: {
     select: {
