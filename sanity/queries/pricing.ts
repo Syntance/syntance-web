@@ -34,7 +34,8 @@ export const pricingDataQuery = groq`{
     "bundledWith": bundledWith[]->id.current,
     popular,
     new,
-    disabled
+    disabled,
+    complexityWeight
   },
   "config": *[_type == "pricingConfig"][0] {
     vatRate,
@@ -45,7 +46,8 @@ export const pricingDataQuery = groq`{
     hourlyRateConsulting,
     workHoursPerDay,
     calendlyUrl,
-    ctaTexts
+    ctaTexts,
+    complexitySettings
   }
 }`
 
@@ -86,6 +88,15 @@ export interface PricingItem {
   popular?: boolean
   new?: boolean
   disabled?: boolean
+  complexityWeight?: number
+}
+
+export interface ComplexitySettings {
+  mediumThreshold: number
+  highThreshold: number
+  mediumDays: number
+  highDays: number
+  dayPrice: number
 }
 
 export interface PricingConfig {
@@ -102,6 +113,7 @@ export interface PricingConfig {
     workshop: string
     pdf: string
   }
+  complexitySettings?: ComplexitySettings
 }
 
 export interface PricingData {
@@ -187,6 +199,13 @@ export const defaultPricingData: PricingData = {
       reserve: 'Zarezerwuj termin w tej cenie',
       workshop: 'Zamów Warsztat Discovery',
       pdf: 'Pobierz wycenę PDF',
+    },
+    complexitySettings: {
+      mediumThreshold: 5,
+      highThreshold: 10,
+      mediumDays: 2,
+      highDays: 4,
+      dayPrice: 1200,
     },
   },
 }

@@ -79,6 +79,48 @@ export default defineType({
         }),
       ],
     }),
+    defineField({
+      name: 'complexitySettings',
+      title: 'Ustawienia złożoności',
+      type: 'object',
+      fields: [
+        defineField({
+          name: 'mediumThreshold',
+          title: 'Próg średniej złożoności',
+          type: 'number',
+          initialValue: 5,
+          description: 'Suma wag złożoności od której projekt jest "średnio złożony"',
+        }),
+        defineField({
+          name: 'highThreshold',
+          title: 'Próg wysokiej złożoności',
+          type: 'number',
+          initialValue: 10,
+          description: 'Suma wag złożoności od której projekt jest "wysoko złożony"',
+        }),
+        defineField({
+          name: 'mediumDays',
+          title: 'Dodatkowe dni (średnia)',
+          type: 'number',
+          initialValue: 2,
+          description: 'Ile dni dodać dla średniej złożoności',
+        }),
+        defineField({
+          name: 'highDays',
+          title: 'Dodatkowe dni (wysoka)',
+          type: 'number',
+          initialValue: 4,
+          description: 'Ile dni dodać dla wysokiej złożoności',
+        }),
+        defineField({
+          name: 'dayPrice',
+          title: 'Cena za dzień złożoności (PLN)',
+          type: 'number',
+          initialValue: 1200,
+          description: 'Cena dodawana za każdy dodatkowy dzień wynikający ze złożoności',
+        }),
+      ],
+    }),
   ],
   preview: {
     prepare() {
