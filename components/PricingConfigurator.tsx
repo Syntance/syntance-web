@@ -385,9 +385,9 @@ export function PricingConfigurator({ data }: Props) {
   const currentProjectType = projectTypes.find(pt => pt.id === state.projectType)
 
   return (
-    <div className="grid lg:grid-cols-3 gap-4 sm:gap-8 w-full max-w-full box-border">
+    <div className="grid lg:grid-cols-3 gap-4 sm:gap-8 w-full max-w-full box-border overflow-x-hidden">
       {/* LEWA KOLUMNA: Selektor */}
-      <div className="lg:col-span-2 space-y-6 sm:space-y-8 w-full max-w-full">
+      <div className="lg:col-span-2 space-y-6 sm:space-y-8 w-full max-w-full overflow-x-hidden">
         {/* Typ projektu */}
         <div>
           <h3 className="text-lg font-medium tracking-wide mb-4 text-gray-200">
@@ -618,8 +618,8 @@ export function PricingConfigurator({ data }: Props) {
         ))}
       </div>
 
-      {/* PRAWA KOLUMNA: Podsumowanie (sticky tylko na desktop) */}
-      <div className="lg:col-span-1 w-full max-w-full">
+      {/* PRAWA KOLUMNA: Podsumowanie */}
+      <div className="lg:col-span-1 w-full max-w-full overflow-x-hidden">
         <div className="lg:sticky lg:top-24">
           {/* Main summary card */}
           <div className="relative group">
