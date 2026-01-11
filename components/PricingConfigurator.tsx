@@ -447,7 +447,7 @@ export function PricingConfigurator({ data }: Props) {
   // #endregion agent log
 
   return (
-    <div ref={rootRef} className="grid lg:grid-cols-3 gap-4 sm:gap-8 w-full max-w-full box-border">
+    <div ref={rootRef} className="grid lg:grid-cols-3 gap-4 sm:gap-8 w-full max-w-full box-border overflow-x-hidden lg:overflow-x-visible">
       {/* LEWA KOLUMNA: Selektor */}
       <div className="lg:col-span-2 space-y-6 sm:space-y-8 w-full max-w-full">
         {/* Typ projektu */}
