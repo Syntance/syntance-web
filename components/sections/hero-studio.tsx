@@ -10,23 +10,8 @@ export default function HeroStudio() {
     setIsVisible(true);
   }, []);
 
-  const scrollToPortfolio = () => {
-    const element = document.getElementById('portfolio-studio');
-    if (element) {
-      const navbarHeight = 100;
-      const elementRect = element.getBoundingClientRect();
-      const elementTop = elementRect.top + window.scrollY;
-      const scrollToPosition = elementTop - navbarHeight;
-      
-      window.scrollTo({
-        top: scrollToPosition,
-        behavior: 'smooth'
-      });
-    }
-  };
-
-  const scrollToContact = () => {
-    const element = document.getElementById('contact');
+  const scrollToNext = () => {
+    const element = document.getElementById('anatomy-studio');
     if (element) {
       const navbarHeight = 100;
       const elementRect = element.getBoundingClientRect();
@@ -55,21 +40,21 @@ export default function HeroStudio() {
           </GradientText>
         </h1>
         <p className="text-lg md:text-xl font-light tracking-wider text-gray-300 mb-12 max-w-3xl mx-auto">
-          Projektujemy i wdrażamy strony i sklepy oparte na strategii biznesu, aby generowały wyniki.
+          Projektujemy i wdrażamy strony i sklepy, które realizują cele biznesowe.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button 
-            onClick={scrollToPortfolio}
+            onClick={scrollToNext}
             className="px-8 py-3 bg-white bg-opacity-10 border border-gray-700 text-white rounded-full font-medium tracking-wider hover:bg-opacity-20 transition-all glow-box cursor-pointer"
           >
-            Zobacz realizacje
+            Dowiedz się więcej
           </button>
-          <button 
-            onClick={scrollToContact}
-            className="px-8 py-3 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 transition-all glow-box cursor-pointer"
+          <a 
+            href="/studio/cennik?from=hero-studio"
+            className="px-8 py-3 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 transition-all glow-box cursor-pointer inline-block text-center"
           >
-            Porozmawiajmy
-          </button>
+            Sprawdź cenę
+          </a>
         </div>
       </div>
     </section>

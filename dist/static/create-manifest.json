@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "createdAt": "2026-01-11T17:32:46.413Z",
+  "workspaces": [
+    {
+      "name": "syntance-studio",
+      "title": "Syntance Studio CMS",
+      "basePath": "/",
+      "projectId": "sqgw0wlq",
+      "dataset": "production",
+      "icon": "<style data-styled=\"true\" data-styled-version=\"6.3.5\">.iAYUQi{font-family:Inter,-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,\"Helvetica Neue\",\"Liberation Sans\",Helvetica,Arial,system-ui,sans-serif;font-weight:500;font-size:13px;transform:translateY(1px);}/*!sc*/\ndata-styled.g106[id=\"sc-iqcoih\"]{content:\"iAYUQi,\"}/*!sc*/\n</style><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect width=\"32\" height=\"32\" rx=\"2\" fill=\"#18e2e2\"></rect><text x=\"50%\" y=\"50%\" text-anchor=\"middle\" alignment-baseline=\"middle\" fill=\"hsla(180, 81%, 9%, 1)\" class=\"sc-iqcoih iAYUQi\">SS</text></svg>",
+      "mediaLibrary": {
+        "enabled": false
+      },
+      "schema": "3c8382c7.create-schema.json",
+      "tools": "aab811ae.create-tools.json"
+    }
+  ]
+}

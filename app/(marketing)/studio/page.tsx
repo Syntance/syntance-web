@@ -7,6 +7,7 @@ import { Twitter, Linkedin, Github } from "lucide-react";
 
 // Import sections - bez lazy loadingu dla hero, żeby uniknąć flashowania kontaktu
 import HeroStudio from "@/components/sections/hero-studio";
+const AnatomyStudio = dynamic(() => import("@/components/sections/anatomy-studio"), { ssr: true });
 const ValuesStudio = dynamic(() => import("@/components/sections/values-studio"), { ssr: true });
 const PortfolioStudio = dynamic(() => import("@/components/sections/portfolio-studio"), { ssr: true });
 const ProcessStudio = dynamic(() => import("@/components/sections/process-studio"), { ssr: true });
@@ -112,6 +113,7 @@ export default function StudioPage() {
       <NavbarStudio />
       
       <HeroStudio />
+      <AnatomyStudio />
       <ValuesStudio />
       <PortfolioStudio />
       <ProcessStudio />
