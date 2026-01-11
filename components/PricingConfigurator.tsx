@@ -688,7 +688,7 @@ export function PricingConfigurator({ data }: Props) {
             {/* Gradient border glow */}
             <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-blue-500 to-pink-500 rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity blur-sm" />
             
-            <div className="relative bg-gray-900/90 backdrop-blur-sm border border-white/10 rounded-2xl p-4 sm:p-6 space-y-4 sm:space-y-6">
+            <div className="relative bg-gray-900/90 backdrop-blur-sm border border-white/10 rounded-2xl p-3 sm:p-6 space-y-3 sm:space-y-6 overflow-hidden">
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-medium tracking-wide text-white">Podsumowanie</h3>
                 <span className="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded-full">
@@ -707,9 +707,9 @@ export function PricingConfigurator({ data }: Props) {
 
               {/* Prices */}
               <div className="space-y-2 sm:space-y-3">
-                <div className="flex justify-between items-baseline gap-2">
-                  <span className="text-gray-400 text-sm sm:text-base">Cena netto</span>
-                  <span className="text-xl sm:text-2xl font-semibold text-white">
+                <div className="flex justify-between items-baseline gap-1 sm:gap-2 min-w-0">
+                  <span className="text-gray-400 text-xs sm:text-base shrink-0">Cena netto</span>
+                  <span className="text-lg sm:text-2xl font-semibold text-white whitespace-nowrap">
                     {calculation.priceNetto.toLocaleString('pl-PL')} <span className="text-xs sm:text-sm font-normal text-gray-500">PLN</span>
                   </span>
                 </div>
@@ -719,13 +719,13 @@ export function PricingConfigurator({ data }: Props) {
                     <span className="text-amber-400">+{calculation.complexityPrice.toLocaleString('pl-PL')} PLN</span>
                   </div>
                 )}
-                <div className="flex justify-between text-xs sm:text-sm gap-2">
-                  <span className="text-gray-500">Brutto (+{config?.vatRate || 23}% VAT)</span>
-                  <span className="text-gray-400">{calculation.priceBrutto.toLocaleString('pl-PL')} PLN</span>
+                <div className="flex justify-between text-xs sm:text-sm gap-1 sm:gap-2 min-w-0">
+                  <span className="text-gray-500 truncate">Brutto (+{config?.vatRate || 23}% VAT)</span>
+                  <span className="text-gray-400 whitespace-nowrap">{calculation.priceBrutto.toLocaleString('pl-PL')} PLN</span>
                 </div>
-                <div className="flex justify-between text-xs sm:text-sm gap-2">
-                  <span className="text-gray-500">Zaliczka ({config?.depositPercent || 20}%)</span>
-                  <span className="text-purple-400 font-medium">{calculation.deposit.toLocaleString('pl-PL')} PLN</span>
+                <div className="flex justify-between text-xs sm:text-sm gap-1 sm:gap-2 min-w-0">
+                  <span className="text-gray-500 truncate">Zaliczka ({config?.depositPercent || 20}%)</span>
+                  <span className="text-purple-400 font-medium whitespace-nowrap">{calculation.deposit.toLocaleString('pl-PL')} PLN</span>
                 </div>
               </div>
 
