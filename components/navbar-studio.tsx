@@ -127,28 +127,12 @@ export default function NavbarStudio() {
             <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
             <span className="text-sm font-light tracking-wider">{backLabel}</span>
           </Link>
-          <button 
-            onClick={() => {
-              const element = document.getElementById('hero-studio');
-              if (element) {
-                const navbarHeight = 100;
-                const elementRect = element.getBoundingClientRect();
-                const elementTop = elementRect.top + window.scrollY;
-                const viewportHeight = window.innerHeight;
-                const elementHeight = elementRect.height;
-                const offset = (viewportHeight - elementHeight) / 2;
-                const scrollToPosition = elementTop - Math.max(offset, navbarHeight);
-                
-                window.scrollTo({
-                  top: scrollToPosition,
-                  behavior: 'smooth'
-                });
-              }
-            }}
+          <Link 
+            href={backHref}
             className="text-2xl font-medium tracking-widest glow-text cursor-pointer hover:opacity-80 transition-opacity"
           >
             Syntance <span className="text-teal-300">Studio</span>
-          </button>
+          </Link>
         </div>
         
         {/* Nawigacja tylko na stronie /studio, nie na podstronach jak /studio/cennik */}
