@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback } from 'react'
 import { 
   Layout, FileText, Layers, Zap, Plug, CreditCard, Truck, 
   Globe, ShoppingCart, Smartphone, Check, Sparkles, Clock,
-  Calendar, Download, ChevronRight
+  Calendar, Download, ChevronRight, Package, Link2
 } from 'lucide-react'
 import { PricingData, PricingItem } from '@/sanity/queries/pricing'
 
@@ -103,15 +103,85 @@ export function PricingConfigurator({ data }: Props) {
     }
   }, [requiredItems, state.selectedItems, state.quantities, items, config])
 
-  // Toggle elementu
+  // Znajdź wszystkie produkty, które mają ten element w bundledWith
+  const getParentBundles = useCallback((itemId: string) => {
+    return items.filter(item => item.bundledWith?.includes(itemId))
+  }, [items])
+
+  // Toggle elementu z obsługą bundledWith
   const toggleItem = useCallback((id: string) => {
-    setState(prev => ({
-      ...prev,
-      selectedItems: prev.selectedItems.includes(id)
-        ? prev.selectedItems.filter(i => i !== id)
-        : [...prev.selectedItems, id]
-    }))
-  }, [])
+    const item = items.find(i => i.id === id)
+    if (!item) return
+
+    setState(prev => {
+      const isCurrentlySelected = prev.selectedItems.includes(id)
+      
+      if (isCurrentlySelected) {
+        // USUWANIE elementu
+        let itemsToRemove = [id]
+        
+        // Jeśli element ma bundledWith, usuń też te elementy
+        if (item.bundledWith?.length) {
+          itemsToRemove = [...itemsToRemove, ...item.bundledWith]
+        }
+        
+        // Sprawdź czy ten element jest w bundledWith innego wybranego produktu
+        const parentBundles = getParentBundles(id).filter(parent => 
+          prev.selectedItems.includes(parent.id)
+        )
+        
+        if (parentBundles.length > 0) {
+          const parentNames = parentBundles.map(p => p.name).join(', ')
+          const confirmed = window.confirm(
+            `"${item.name}" jest częścią pakietu z: ${parentNames}.\n\nUsunięcie tego elementu usunie również pakiet główny.\n\nCzy kontynuować?`
+          )
+          if (!confirmed) return prev
+          
+          // Usuń też parenty i ich bundledWith
+          parentBundles.forEach(parent => {
+            itemsToRemove.push(parent.id)
+            if (parent.bundledWith?.length) {
+              itemsToRemove.push(...parent.bundledWith)
+            }
+          })
+        }
+        
+        return {
+          ...prev,
+          selectedItems: prev.selectedItems.filter(i => !itemsToRemove.includes(i))
+        }
+      } else {
+        // DODAWANIE elementu
+        let itemsToAdd = [id]
+        
+        // Jeśli element ma bundledWith, dodaj automatycznie te elementy
+        if (item.bundledWith?.length) {
+          const bundledNames = item.bundledWith
+            .map(bid => items.find(i => i.id === bid)?.name)
+            .filter(Boolean)
+            .join(', ')
+          
+          // Pokaż informację o automatycznym dodaniu
+          if (bundledNames) {
+            // Używamy setTimeout żeby alert nie blokował setState
+            setTimeout(() => {
+              alert(`Automatycznie dodano elementy pakietu:\n${bundledNames}`)
+            }, 100)
+          }
+          
+          itemsToAdd = [...itemsToAdd, ...item.bundledWith]
+        }
+        
+        // Dodaj tylko te, które jeszcze nie są wybrane
+        const newItems = itemsToAdd.filter(i => !prev.selectedItems.includes(i))
+        
+        return {
+          ...prev,
+          selectedItems: [...prev.selectedItems, ...newItems]
+        }
+      }
+    })
+  }, [items, getParentBundles])
 
   // Zmiana ilości
   const setQuantity = useCallback((id: string, qty: number) => {
@@ -291,9 +361,26 @@ export function PricingConfigurator({ data }: Props) {
                             <Sparkles size={10} /> Nowość
                           </span>
                         )}
+                        {item.bundledWith && item.bundledWith.length > 0 && (
+                          <span className="px-2 py-0.5 text-xs rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-medium flex items-center gap-1">
+                            <Package size={10} /> Pakiet
+                          </span>
+                        )}
+                        {getParentBundles(item.id).length > 0 && (
+                          <span className="px-2 py-0.5 text-xs rounded-full bg-white/10 text-gray-400 font-medium flex items-center gap-1" title={`Część pakietu: ${getParentBundles(item.id).map(p => p.name).join(', ')}`}>
+                            <Link2 size={10} /> W pakiecie
+                          </span>
+                        )}
                       </div>
                       {item.description && (
                         <p className="text-sm text-gray-500">{item.description}</p>
+                      )}
+                      {/* Pokaż elementy pakietu */}
+                      {item.bundledWith && item.bundledWith.length > 0 && (
+                        <p className="text-xs text-amber-500/80 mt-1 flex items-center gap-1">
+                          <Package size={10} />
+                          Zawiera: {item.bundledWith.map(bid => items.find(i => i.id === bid)?.name).filter(Boolean).join(', ')}
+                        </p>
                       )}
                     </div>
 

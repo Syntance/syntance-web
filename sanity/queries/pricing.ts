@@ -26,6 +26,7 @@ export const pricingDataQuery = groq`{
     maxQuantity,
     percentageAdd,
     "dependencies": dependencies[]->id.current,
+    "bundledWith": bundledWith[]->id.current,
     popular,
     new
   },
@@ -70,6 +71,7 @@ export interface PricingItem {
   maxQuantity?: number
   percentageAdd?: number
   dependencies?: string[]
+  bundledWith?: string[]
   popular?: boolean
   new?: boolean
 }

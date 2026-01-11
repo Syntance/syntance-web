@@ -69,10 +69,17 @@ export default defineType({
     }),
     defineField({
       name: 'dependencies',
-      title: 'Wymaga elementów',
+      title: 'Wymaga elementów (blokada)',
       type: 'array',
       of: [{ type: 'reference', to: [{ type: 'pricingItem' }] }],
-      description: 'Elementy, które muszą być wybrane, żeby ten był dostępny',
+      description: 'Elementy, które muszą być wybrane PRZED tym elementem (ten będzie zablokowany dopóki tamte nie są wybrane)',
+    }),
+    defineField({
+      name: 'bundledWith',
+      title: 'Automatycznie dodaje (pakiet)',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'pricingItem' }] }],
+      description: 'Elementy które AUTOMATYCZNIE dodadzą się gdy wybierzesz ten element. Usunięcie któregokolwiek z pakietu usunie też ten element.',
     }),
     defineField({
       name: 'order',
