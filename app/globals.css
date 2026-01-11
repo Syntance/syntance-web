@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    @apply overflow-x-hidden;
+  }
   body {
     @apply bg-black text-[#F5F3FF] overflow-x-hidden;
   }
