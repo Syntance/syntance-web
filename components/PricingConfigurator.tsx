@@ -569,17 +569,10 @@ export function PricingConfigurator({ data }: Props) {
               <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
               {/* Time estimates */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-3 rounded-lg bg-white/5">
-                  <Clock size={18} className="mx-auto mb-1 text-blue-400" />
-                  <div className="text-lg font-semibold text-white">{calculation.days}</div>
-                  <div className="text-xs text-gray-500">dni roboczych</div>
-                </div>
-                <div className="text-center p-3 rounded-lg bg-white/5">
-                  <Zap size={18} className="mx-auto mb-1 text-amber-400" />
-                  <div className="text-lg font-semibold text-white">~{calculation.hours}h</div>
-                  <div className="text-xs text-gray-500">godzin pracy</div>
-                </div>
+              <div className="text-center p-3 rounded-lg bg-white/5">
+                <Clock size={18} className="mx-auto mb-1 text-blue-400" />
+                <div className="text-lg font-semibold text-white">{calculation.days}</div>
+                <div className="text-xs text-gray-500">dni roboczych</div>
               </div>
 
               {/* CTAs */}
