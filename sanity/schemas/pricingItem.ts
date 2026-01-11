@@ -144,5 +144,30 @@ export default defineType({
         { field: 'order', direction: 'asc' },
       ],
     },
+    {
+      title: 'Nazwa A-Z',
+      name: 'nameAsc',
+      by: [{ field: 'name', direction: 'asc' }],
+    },
+    {
+      title: 'Nazwa Z-A',
+      name: 'nameDesc',
+      by: [{ field: 'name', direction: 'desc' }],
+    },
+    {
+      title: 'Cena rosnąco',
+      name: 'priceAsc',
+      by: [{ field: 'price', direction: 'asc' }],
+    },
+    {
+      title: 'Cena malejąco',
+      name: 'priceDesc',
+      by: [{ field: 'price', direction: 'desc' }],
+    },
+    {
+      title: 'Czas realizacji',
+      name: 'hoursAsc',
+      by: [{ field: 'hours', direction: 'asc' }],
+    },
   ],
 })
