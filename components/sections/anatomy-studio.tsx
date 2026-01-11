@@ -84,7 +84,7 @@ export default function AnatomyStudio() {
                     Buyer Persony
                   </div>
                   <p className="text-sm text-gray-400 leading-relaxed">
-                    Opisujemy kto jest Twoim idealnym klientem, czego szuka, jakie ma obawy. Strona mówi do konkretnej osoby, nie "do wszystkich".
+                    Opisujemy kto jest Twoim idealnym klientem, czego szuka, jakie ma obawy. Strona mówi do konkretnej osoby, nie &quot;do wszystkich&quot;.
                   </p>
                 </div>
 
@@ -94,7 +94,7 @@ export default function AnatomyStudio() {
                     Unikalna Wartość (UVP)
                   </div>
                   <p className="text-sm text-gray-400 leading-relaxed">
-                    Odpowiadamy na pytanie: "Dlaczego klient ma wybrać Ciebie, a nie konkurencję?" To serce całej komunikacji.
+                    Odpowiadamy na pytanie: &quot;Dlaczego klient ma wybrać Ciebie, a nie konkurencję?&quot; To serce całej komunikacji.
                   </p>
                 </div>
               </div>
@@ -127,7 +127,7 @@ export default function AnatomyStudio() {
                     Copywriting
                   </div>
                   <p className="text-sm text-gray-400 leading-relaxed">
-                    Tekst, który sprzedaje. Nie "ładne słowa", ale komunikaty oparte na psychologii i bólach klienta.
+                    Tekst, który sprzedaje. Nie &quot;ładne słowa&quot;, ale komunikaty oparte na psychologii i bólach klienta.
                   </p>
                 </div>
 
@@ -180,7 +180,7 @@ export default function AnatomyStudio() {
                     Design premium
                   </div>
                   <p className="text-sm text-gray-400 leading-relaxed">
-                    Estetyka, która mówi "tu jest profesjonalista". Dopasowana do Twojej branży i klienta.
+                    Estetyka, która mówi &quot;tu jest profesjonalista&quot;. Dopasowana do Twojej branży i klienta.
                   </p>
                 </div>
 
