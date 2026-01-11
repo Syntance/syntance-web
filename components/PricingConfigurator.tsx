@@ -536,24 +536,19 @@ export function PricingConfigurator({ data }: Props) {
 
                     {/* Quantity selector */}
                     {item.maxQuantity && item.maxQuantity > 1 && selected && (
-                      <div className="flex items-center gap-2">
-                        <select
-                          value={qty}
-                          onChange={(e) => {
-                            e.stopPropagation()
-                            setQuantity(item.id, parseInt(e.target.value))
-                          }}
-                          onClick={(e) => e.stopPropagation()}
-                          className="px-3 py-1.5 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500"
-                        >
-                          {Array.from({ length: item.maxQuantity }, (_, i) => i + 1).map(n => (
-                            <option key={n} value={n} className="bg-gray-900">{n}x</option>
-                          ))}
-                        </select>
-                        <span className="text-xs text-amber-400/70" title="Cena za każdą podstronę osobno">
-                          = {qty} {qty === 1 ? 'szt.' : 'szt.'}
-                        </span>
-                      </div>
+                      <select
+                        value={qty}
+                        onChange={(e) => {
+                          e.stopPropagation()
+                          setQuantity(item.id, parseInt(e.target.value))
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                        className="px-3 py-1.5 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500"
+                      >
+                        {Array.from({ length: item.maxQuantity }, (_, i) => i + 1).map(n => (
+                          <option key={n} value={n} className="bg-gray-900">{n}x</option>
+                        ))}
+                      </select>
                     )}
 
                     {/* Price */}
