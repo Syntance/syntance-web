@@ -127,8 +127,10 @@ export function PricingConfigurator({ data }: Props) {
     const complexitySettings = config?.complexitySettings || {
       mediumThreshold: 5,
       highThreshold: 10,
+      veryHighThreshold: 15,
       mediumDays: 2,
       highDays: 4,
+      veryHighDays: 7,
       dayPrice: 1200,
     }
 
@@ -144,11 +146,14 @@ export function PricingConfigurator({ data }: Props) {
     })
 
     // Określ poziom złożoności na podstawie sumy wag
-    let complexity: 'low' | 'medium' | 'high' = 'low'
+    let complexity: 'low' | 'medium' | 'high' | 'very-high' = 'low'
     let complexityDays = 0
     let complexityPrice = 0
 
-    if (totalComplexityWeight >= complexitySettings.highThreshold) {
+    if (totalComplexityWeight >= complexitySettings.veryHighThreshold) {
+      complexity = 'very-high'
+      complexityDays = complexitySettings.veryHighDays
+    } else if (totalComplexityWeight >= complexitySettings.highThreshold) {
       complexity = 'high'
       complexityDays = complexitySettings.highDays
     } else if (totalComplexityWeight >= complexitySettings.mediumThreshold) {
@@ -687,17 +692,20 @@ export function PricingConfigurator({ data }: Props) {
                   <Activity 
                     size={16} 
                     className={`mx-auto mb-1 ${
+                      calculation.complexity === 'very-high' ? 'text-purple-400' :
                       calculation.complexity === 'high' ? 'text-red-400' :
                       calculation.complexity === 'medium' ? 'text-amber-400' :
                       'text-green-400'
                     }`} 
                   />
                   <div className={`text-base sm:text-lg font-semibold ${
+                    calculation.complexity === 'very-high' ? 'text-purple-400' :
                     calculation.complexity === 'high' ? 'text-red-400' :
                     calculation.complexity === 'medium' ? 'text-amber-400' :
                     'text-green-400'
                   }`}>
-                    {calculation.complexity === 'high' ? 'Wysoka' :
+                    {calculation.complexity === 'very-high' ? 'Bardzo wysoka' :
+                     calculation.complexity === 'high' ? 'Wysoka' :
                      calculation.complexity === 'medium' ? 'Średnia' :
                      'Niska'}
                   </div>

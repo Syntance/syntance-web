@@ -99,6 +99,13 @@ export default defineType({
           description: 'Suma wag złożoności od której projekt jest "wysoko złożony"',
         }),
         defineField({
+          name: 'veryHighThreshold',
+          title: 'Próg bardzo wysokiej złożoności',
+          type: 'number',
+          initialValue: 15,
+          description: 'Suma wag złożoności od której projekt jest "bardzo wysoko złożony"',
+        }),
+        defineField({
           name: 'mediumDays',
           title: 'Dodatkowe dni (średnia)',
           type: 'number',
@@ -111,6 +118,13 @@ export default defineType({
           type: 'number',
           initialValue: 4,
           description: 'Ile dni dodać dla wysokiej złożoności',
+        }),
+        defineField({
+          name: 'veryHighDays',
+          title: 'Dodatkowe dni (bardzo wysoka)',
+          type: 'number',
+          initialValue: 7,
+          description: 'Ile dni dodać dla bardzo wysokiej złożoności',
         }),
         defineField({
           name: 'dayPrice',
