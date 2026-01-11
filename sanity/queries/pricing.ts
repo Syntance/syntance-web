@@ -94,8 +94,10 @@ export interface PricingItem {
 export interface ComplexitySettings {
   mediumThreshold: number
   highThreshold: number
+  veryHighThreshold: number
   mediumDays: number
   highDays: number
+  veryHighDays: number
   dayPrice: number
 }
 
@@ -203,8 +205,10 @@ export const defaultPricingData: PricingData = {
     complexitySettings: {
       mediumThreshold: 5,
       highThreshold: 10,
+      veryHighThreshold: 15,
       mediumDays: 2,
       highDays: 4,
+      veryHighDays: 7,
       dayPrice: 1200,
     },
   },
