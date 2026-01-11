@@ -29,21 +29,6 @@ export default function PricingStudioNew() {
     };
   }, []);
 
-  const scrollToContact = () => {
-    const element = document.getElementById('contact');
-    if (element) {
-      const navbarHeight = 100;
-      const elementRect = element.getBoundingClientRect();
-      const elementTop = elementRect.top + window.scrollY;
-      const scrollToPosition = elementTop - navbarHeight;
-      
-      window.scrollTo({
-        top: scrollToPosition,
-        behavior: 'smooth'
-      });
-    }
-  };
-
   return (
     <section 
       id="pricing-studio"
@@ -101,19 +86,19 @@ export default function PricingStudioNew() {
           
           <div className="relative product-card rounded-3xl p-12 backdrop-blur-sm">
             <h3 className="text-3xl md:text-4xl font-light tracking-wide mb-4 glow-text">
-              Gotowi na rozmowę?
+              Gotowy stworzyć coś wspaniałego?
             </h3>
             <p className="text-gray-400 font-light tracking-wide mb-8 max-w-lg mx-auto">
-              Opowiedz nam o swoim projekcie. Przygotujemy propozycję dopasowaną do Twoich potrzeb.
+              Skonfiguruj projekt i poznaj szacunkową cenę. Zarezerwuj termin od razu.
             </p>
             
-            <button 
-              onClick={scrollToContact}
+            <a 
+              href="/studio/cennik?from=pricing-studio"
               className="px-10 py-4 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 transition-all glow-box cursor-pointer group inline-flex items-center gap-2"
             >
-              Uzyskaj wycenę
+              Konfigurator i zamówienie
               <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
-            </button>
+            </a>
 
             {/* Decorative elements */}
             <div className="absolute top-6 right-6 w-20 h-20 border border-white/5 rounded-full"></div>

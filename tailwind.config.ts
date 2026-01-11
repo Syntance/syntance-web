@@ -85,6 +85,10 @@ const config: Config = {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-20px)" },
         },
+        "fade-in-scale": {
+          "0%": { opacity: "0", transform: "scale(0.98)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -93,6 +97,7 @@ const config: Config = {
         "gradient-slow": "gradient-slow 15s ease infinite",
         float: "float 8s ease-in-out infinite",
         "float-delayed": "float 8s ease-in-out 2s infinite",
+        "fade-in-scale": "fade-in-scale 0.4s ease-out forwards",
       },
     },
   },

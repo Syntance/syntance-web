@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, ArrowLeft } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import GooeyNav from "@/components/ui/gooey-nav";
@@ -17,11 +18,17 @@ const navItems = [
 const sectionIds = ['hero-studio', 'values-studio', 'portfolio-studio', 'process-studio', 'pricing-studio', 'contact'];
 
 export default function NavbarStudio() {
+  const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
   const [sectionsReady, setSectionsReady] = useState(false);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Hierarchiczny powrót: /studio/cennik → /studio, /studio → /
+  const isInCennik = pathname === '/studio/cennik';
+  const backHref = isInCennik ? '/studio' : '/';
+  const backLabel = isInCennik ? 'Powrót' : 'Syntance';
 
   // Poczekaj aż wszystkie sekcje pojawią się w DOM, żeby nie podświetlać "Kontakt" zanim załaduje się reszta.
   useEffect(() => {
@@ -116,9 +123,9 @@ export default function NavbarStudio() {
     <nav className="fixed top-0 left-0 right-0 z-50 py-6 px-6 lg:px-12 backdrop-blur-md bg-black/30 transition-all duration-300">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group">
+          <Link href={backHref} className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group">
             <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-            <span className="text-sm font-light tracking-wider">Powrót</span>
+            <span className="text-sm font-light tracking-wider">{backLabel}</span>
           </Link>
           <button 
             onClick={() => {
@@ -144,45 +151,51 @@ export default function NavbarStudio() {
           </button>
         </div>
         
-        <div className="hidden md:flex">
-          <GooeyNav 
-            items={navItems}
-            particleCount={8}
-            particleDistances={[90, 10]}
-            particleR={80}
-            initialActiveIndex={0}
-            externalActiveIndex={activeSection}
-            isExternalScrolling={isScrolling}
-            animationTime={450}
-            timeVariance={200}
-            colors={[1, 2, 3, 1, 2, 3, 1, 4]}
-            onNavigate={(index) => {
-              setActiveSection(index);
-              setIsScrolling(true);
-              // Anuluj poprzedni timeout żeby szybkie kliknięcia nie resetowały isScrolling przedwcześnie
-              if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
-              scrollTimeoutRef.current = setTimeout(() => setIsScrolling(false), 1500);
-            }}
-          />
-        </div>
+        {/* Nawigacja tylko na stronie /studio, nie na podstronach jak /studio/cennik */}
+        {!isInCennik && (
+          <div className="hidden md:flex">
+            <GooeyNav 
+              items={navItems}
+              particleCount={8}
+              particleDistances={[90, 10]}
+              particleR={80}
+              initialActiveIndex={0}
+              externalActiveIndex={activeSection}
+              isExternalScrolling={isScrolling}
+              animationTime={450}
+              timeVariance={200}
+              colors={[1, 2, 3, 1, 2, 3, 1, 4]}
+              onNavigate={(index) => {
+                setActiveSection(index);
+                setIsScrolling(true);
+                // Anuluj poprzedni timeout żeby szybkie kliknięcia nie resetowały isScrolling przedwcześnie
+                if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+                scrollTimeoutRef.current = setTimeout(() => setIsScrolling(false), 1500);
+              }}
+            />
+          </div>
+        )}
         
-        <button 
-          className="md:hidden text-white"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          <Menu size={24} />
-        </button>
+        {/* Przycisk menu mobilnego tylko na stronie /studio */}
+        {!isInCennik && (
+          <button 
+            className="md:hidden text-white"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            <Menu size={24} />
+          </button>
+        )}
       </div>
 
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
+      {/* Mobile Menu - tylko na stronie /studio */}
+      {!isInCennik && mobileMenuOpen && (
         <div className="md:hidden mt-6 space-y-4">
           <Link 
-            href="/" 
+            href={backHref} 
             className="block text-sm font-light tracking-wider text-gray-400 hover:text-white transition-colors"
             onClick={() => setMobileMenuOpen(false)}
           >
-            ← Powrót do Syntance
+            ← {backLabel}
           </Link>
           
           {navItems.map((item, index) => (
