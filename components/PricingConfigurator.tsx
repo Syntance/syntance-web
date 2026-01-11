@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback } from 'react'
 import { 
   Layout, FileText, Layers, Zap, Plug, CreditCard, Truck, 
   Globe, ShoppingCart, Smartphone, Check, Sparkles, Clock,
-  Calendar, Download, ChevronRight, Link2, Gift, Star
+  Calendar, Download, ChevronRight, Link2, Gift, Star, Target, Lightbulb
 } from 'lucide-react'
 import { PricingData, PricingItem } from '@/sanity/queries/pricing'
 import { ConfirmDialog } from './ConfirmDialog'
@@ -12,7 +12,7 @@ import { ConfirmDialog } from './ConfirmDialog'
 // Mapa ikon - używamy typu LucideIcon
 const iconMap: Record<string, typeof Layout> = {
   Layout, FileText, Layers, Zap, Plug, CreditCard, Truck,
-  Globe, ShoppingCart, Smartphone,
+  Globe, ShoppingCart, Smartphone, Target, Lightbulb,
 }
 
 interface ConfiguratorState {
@@ -290,7 +290,7 @@ export function PricingConfigurator({ data }: Props) {
   const getIcon = (iconName?: string) => {
     if (!iconName) return null
     const IconComponent = iconMap[iconName]
-    return IconComponent ? <IconComponent size={20} className="text-gray-400" /> : null
+    return IconComponent ? <IconComponent size={20} className="text-purple-400" /> : null
   }
 
   // Aktualny typ projektu
