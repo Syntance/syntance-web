@@ -42,7 +42,7 @@ export default async function CennikPage() {
   const data = await getPricingData()
 
   return (
-    <div className="min-h-screen bg-gray-950 w-full overflow-x-hidden">
+    <div className="min-h-screen bg-gray-950 w-full" style={{ overflowX: 'clip' }}>
       <NavbarStudio />
       
       {/* Animated hero wrapper - BEZ konfiguratora (transform blokuje sticky) */}
