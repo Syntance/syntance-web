@@ -50,7 +50,7 @@ export default function HeroStudio() {
             Dowiedz się więcej
           </button>
           <a 
-            href="/studio/cennik?from=hero-studio"
+            href="/studio/cennik"
             className="px-8 py-3 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 transition-all glow-box cursor-pointer inline-block text-center"
           >
             Sprawdź cenę
