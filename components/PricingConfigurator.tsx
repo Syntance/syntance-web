@@ -358,7 +358,7 @@ export function PricingConfigurator({ data }: Props) {
   const currentProjectType = projectTypes.find(pt => pt.id === state.projectType)
 
   return (
-    <div className="grid lg:grid-cols-3 gap-8">
+    <div className="grid lg:grid-cols-3 gap-8 overflow-x-hidden">
       {/* LEWA KOLUMNA: Selektor */}
       <div className="lg:col-span-2 space-y-8">
         {/* Typ projektu */}
@@ -441,10 +441,10 @@ export function PricingConfigurator({ data }: Props) {
             </h3>
             <div className="space-y-2">
               {requiredItems.map(item => (
-                <div 
-                  key={item.id} 
-                  className="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/10"
-                >
+                  <div 
+                    key={item.id} 
+                    className="flex items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-white/5 rounded-xl border border-white/10"
+                  >
                   <div className="w-5 h-5 rounded bg-purple-500/30 flex items-center justify-center flex-shrink-0">
                     <Check size={14} className="text-purple-400" />
                   </div>
@@ -480,7 +480,7 @@ export function PricingConfigurator({ data }: Props) {
                   <div 
                     key={item.id} 
                     onClick={() => !disabled && toggleItem(item.id)}
-                    className={`flex items-center gap-4 p-4 rounded-xl border transition-all duration-200 ${
+                    className={`flex items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border transition-all duration-200 ${
                       disabled 
                         ? 'opacity-40 cursor-not-allowed border-white/5 bg-white/2' 
                         : selected 
@@ -571,7 +571,7 @@ export function PricingConfigurator({ data }: Props) {
                     )}
 
                     {/* Price */}
-                    <span className={`text-sm flex-shrink-0 ${
+                    <span className={`text-sm flex-shrink-0 text-right ${
                       item.includedInBase 
                         ? 'text-emerald-400 font-medium' 
                         : selected ? 'text-purple-400' : 'text-gray-400'
