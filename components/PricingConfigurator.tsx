@@ -123,31 +123,54 @@ export function PricingConfigurator({ data }: Props) {
       totalHours *= (1 + percentageAdd / 100)
     }
 
-    const priceNetto = Math.round(totalPrice)
-    const priceBrutto = Math.round(totalPrice * (1 + (config?.vatRate || 23) / 100))
+    // Pobierz ustawienia złożoności z config
+    const complexitySettings = config?.complexitySettings || {
+      mediumThreshold: 5,
+      highThreshold: 10,
+      mediumDays: 2,
+      highDays: 4,
+      dayPrice: 1200,
+    }
+
+    // Oblicz sumę wag złożoności
+    let totalComplexityWeight = 0
+    allSelected.forEach(id => {
+      const item = items.find(i => i.id === id)
+      if (!item) return
+      const qty = state.quantities[id] || 1
+      // Domyślna waga = 1, chyba że ustawiono inaczej
+      const weight = item.complexityWeight ?? 1
+      totalComplexityWeight += weight * qty
+    })
+
+    // Określ poziom złożoności na podstawie sumy wag
+    let complexity: 'low' | 'medium' | 'high' = 'low'
+    let complexityDays = 0
+    let complexityPrice = 0
+
+    if (totalComplexityWeight >= complexitySettings.highThreshold) {
+      complexity = 'high'
+      complexityDays = complexitySettings.highDays
+    } else if (totalComplexityWeight >= complexitySettings.mediumThreshold) {
+      complexity = 'medium'
+      complexityDays = complexitySettings.mediumDays
+    }
+
+    // Dodaj cenę za dni złożoności
+    complexityPrice = complexityDays * complexitySettings.dayPrice
+
+    // Oblicz finalną cenę (z dodatkiem za złożoność)
+    const basePriceNetto = Math.round(totalPrice)
+    const priceNetto = basePriceNetto + complexityPrice
+    const priceBrutto = Math.round(priceNetto * (1 + (config?.vatRate || 23) / 100))
     const deposit = Math.max(
       config?.depositFixed || 500,
       Math.round(priceNetto * (config?.depositPercent || 20) / 100)
     )
-    const days = Math.ceil(totalHours / (config?.workHoursPerDay || 6))
-
-    // Oblicz złożoność projektu
-    let complexity: 'low' | 'medium' | 'high' = 'low'
     
-    // Policz zaawansowane elementy (integracje, płatności, CMS, itp.)
-    const advancedItems = allSelected.filter(id => {
-      const item = items.find(i => i.id === id)
-      if (!item) return false
-      const category = item.category.toLowerCase()
-      return category.includes('integr') || category.includes('płat') || category.includes('payment') || 
-             category.includes('ship') || category.includes('dostaw')
-    }).length
-
-    if (totalItemsCount > 20 || priceNetto > 25000 || advancedItems > 5) {
-      complexity = 'high'
-    } else if (totalItemsCount > 10 || priceNetto > 10000 || advancedItems > 2) {
-      complexity = 'medium'
-    }
+    // Oblicz dni (bazowe + za złożoność)
+    const baseDays = Math.ceil(totalHours / (config?.workHoursPerDay || 6))
+    const days = baseDays + complexityDays
 
     return {
       priceNetto,
@@ -155,6 +178,10 @@ export function PricingConfigurator({ data }: Props) {
       deposit,
       hours: Math.round(totalHours),
       days,
+      baseDays,
+      complexityDays,
+      complexityPrice,
+      complexityWeight: totalComplexityWeight,
       percentageAdd,
       itemsCount: totalItemsCount,
       complexity,
@@ -624,6 +651,12 @@ export function PricingConfigurator({ data }: Props) {
                     {calculation.priceNetto.toLocaleString('pl-PL')} <span className="text-xs sm:text-sm font-normal text-gray-500">PLN</span>
                   </span>
                 </div>
+                {calculation.complexityPrice > 0 && (
+                  <div className="flex justify-between text-xs sm:text-sm gap-2">
+                    <span className="text-amber-500/80">w tym za złożoność</span>
+                    <span className="text-amber-400">+{calculation.complexityPrice.toLocaleString('pl-PL')} PLN</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-xs sm:text-sm gap-2">
                   <span className="text-gray-500">Brutto (+{config?.vatRate || 23}% VAT)</span>
                   <span className="text-gray-400">{calculation.priceBrutto.toLocaleString('pl-PL')} PLN</span>
@@ -641,7 +674,14 @@ export function PricingConfigurator({ data }: Props) {
                 <div className="text-center p-2 sm:p-3 rounded-lg bg-white/5">
                   <Clock size={16} className="mx-auto mb-1 text-blue-400" />
                   <div className="text-base sm:text-lg font-semibold text-white">{calculation.days}</div>
-                  <div className="text-xs text-gray-500">dni roboczych</div>
+                  <div className="text-xs text-gray-500">
+                    dni roboczych
+                    {calculation.complexityDays > 0 && (
+                      <span className="block text-amber-400/80">
+                        (+{calculation.complexityDays} za złożoność)
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div className="text-center p-2 sm:p-3 rounded-lg bg-white/5">
                   <Activity 

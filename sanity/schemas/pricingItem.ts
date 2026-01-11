@@ -135,6 +135,14 @@ export default defineType({
       initialValue: false,
       description: 'Element będzie widoczny ale zaciemniony i niemożliwy do wybrania',
     }),
+    defineField({
+      name: 'complexityWeight',
+      title: 'Waga złożoności',
+      type: 'number',
+      initialValue: 1,
+      description: 'Mnożnik złożoności (1 = normalna, 2 = podwójna, 3 = potrójna). CMS, CRM, integracje powinny mieć wyższe wartości.',
+      validation: (Rule) => Rule.min(0).max(10),
+    }),
   ],
   preview: {
     select: {
