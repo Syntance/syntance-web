@@ -681,7 +681,7 @@ export function PricingConfigurator({ data }: Props) {
       </div>
 
       {/* PRAWA KOLUMNA: Podsumowanie */}
-      <div ref={summaryRef} className="lg:col-span-1 w-full max-w-full">
+      <div ref={summaryRef} className="lg:col-span-1 w-full max-w-full overflow-hidden">
         <div className="lg:sticky lg:top-24">
           {/* Main summary card */}
           <div className="relative group">
