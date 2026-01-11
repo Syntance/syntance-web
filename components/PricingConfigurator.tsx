@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback } from 'react'
 import { 
   Layout, FileText, Layers, Zap, Plug, CreditCard, Truck, 
   Globe, ShoppingCart, Smartphone, Check, Sparkles, Clock,
-  Calendar, Download, ChevronRight, Link2, Gift, Star, Target, Lightbulb
+  Calendar, Download, ChevronRight, Link2, Gift, Star, Target, Lightbulb, Activity
 } from 'lucide-react'
 import { PricingData, PricingItem } from '@/sanity/queries/pricing'
 import { ConfirmDialog } from './ConfirmDialog'
@@ -131,6 +131,24 @@ export function PricingConfigurator({ data }: Props) {
     )
     const days = Math.ceil(totalHours / (config?.workHoursPerDay || 6))
 
+    // Oblicz złożoność projektu
+    let complexity: 'low' | 'medium' | 'high' = 'low'
+    
+    // Policz zaawansowane elementy (integracje, płatności, CMS, itp.)
+    const advancedItems = allSelected.filter(id => {
+      const item = items.find(i => i.id === id)
+      if (!item) return false
+      const category = item.category.toLowerCase()
+      return category.includes('integr') || category.includes('płat') || category.includes('payment') || 
+             category.includes('ship') || category.includes('dostaw')
+    }).length
+
+    if (totalItemsCount > 20 || priceNetto > 25000 || advancedItems > 5) {
+      complexity = 'high'
+    } else if (totalItemsCount > 10 || priceNetto > 10000 || advancedItems > 2) {
+      complexity = 'medium'
+    }
+
     return {
       priceNetto,
       priceBrutto,
@@ -139,6 +157,7 @@ export function PricingConfigurator({ data }: Props) {
       days,
       percentageAdd,
       itemsCount: totalItemsCount,
+      complexity,
     }
   }, [requiredItems, state.selectedItems, state.quantities, items, config])
 
@@ -625,9 +644,24 @@ export function PricingConfigurator({ data }: Props) {
                   <div className="text-xs text-gray-500">dni roboczych</div>
                 </div>
                 <div className="text-center p-3 rounded-lg bg-white/5">
-                  <Layers size={18} className="mx-auto mb-1 text-purple-400" />
-                  <div className="text-lg font-semibold text-white">{calculation.itemsCount}</div>
-                  <div className="text-xs text-gray-500">wybranych elementów</div>
+                  <Activity 
+                    size={18} 
+                    className={`mx-auto mb-1 ${
+                      calculation.complexity === 'high' ? 'text-red-400' :
+                      calculation.complexity === 'medium' ? 'text-amber-400' :
+                      'text-green-400'
+                    }`} 
+                  />
+                  <div className={`text-lg font-semibold ${
+                    calculation.complexity === 'high' ? 'text-red-400' :
+                    calculation.complexity === 'medium' ? 'text-amber-400' :
+                    'text-green-400'
+                  }`}>
+                    {calculation.complexity === 'high' ? 'Wysokie' :
+                     calculation.complexity === 'medium' ? 'Średnie' :
+                     'Niskie'}
+                  </div>
+                  <div className="text-xs text-gray-500">złożoność</div>
                 </div>
               </div>
 
