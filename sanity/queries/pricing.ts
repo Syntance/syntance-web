@@ -23,6 +23,8 @@ export const pricingDataQuery = groq`{
     "category": category->id.current,
     "projectTypes": projectTypes[]->id.current,
     required,
+    defaultSelected,
+    includedInBase,
     maxQuantity,
     percentageAdd,
     "dependencies": dependencies[]->id.current,
@@ -68,6 +70,8 @@ export interface PricingItem {
   category: string
   projectTypes: string[]
   required?: boolean
+  defaultSelected?: boolean
+  includedInBase?: boolean
   maxQuantity?: number
   percentageAdd?: number
   dependencies?: string[]

@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback } from 'react'
 import { 
   Layout, FileText, Layers, Zap, Plug, CreditCard, Truck, 
   Globe, ShoppingCart, Smartphone, Check, Sparkles, Clock,
-  Calendar, Download, ChevronRight, Link2
+  Calendar, Download, ChevronRight, Link2, Gift, Star
 } from 'lucide-react'
 import { PricingData, PricingItem } from '@/sanity/queries/pricing'
 import { ConfirmDialog } from './ConfirmDialog'
@@ -28,10 +28,24 @@ interface Props {
 export function PricingConfigurator({ data }: Props) {
   const { categories, projectTypes, items, config } = data
 
-  const [state, setState] = useState<ConfiguratorState>({
-    projectType: projectTypes[0]?.id || 'website',
-    selectedItems: [],
-    quantities: {},
+  // Pobierz domyślnie zaznaczone elementy dla typu projektu
+  const getDefaultSelectedItems = useCallback((projectTypeId: string) => {
+    return items
+      .filter(item => 
+        item.projectTypes?.includes(projectTypeId) && 
+        item.defaultSelected && 
+        !item.required
+      )
+      .map(item => item.id)
+  }, [items])
+
+  const [state, setState] = useState<ConfiguratorState>(() => {
+    const initialProjectType = projectTypes[0]?.id || 'website'
+    return {
+      projectType: initialProjectType,
+      selectedItems: getDefaultSelectedItems(initialProjectType),
+      quantities: {},
+    }
   })
 
   const [confirmDialog, setConfirmDialog] = useState<{
@@ -88,7 +102,10 @@ export function PricingConfigurator({ data }: Props) {
         percentageAdd += item.percentageAdd
       } else {
         const qty = state.quantities[id] || 1
-        totalPrice += item.price * qty
+        // Nie licz ceny dla elementów wliczonych w bazę (gratis)
+        if (!item.includedInBase) {
+          totalPrice += item.price * qty
+        }
         totalHours += item.hours * qty
       }
     })
@@ -257,7 +274,7 @@ export function PricingConfigurator({ data }: Props) {
                   onClick={() => setState(prev => ({ 
                     ...prev, 
                     projectType: type.id,
-                    selectedItems: [],
+                    selectedItems: getDefaultSelectedItems(type.id),
                     quantities: {}
                   }))}
                   className={`relative p-5 rounded-xl border-2 transition-all duration-300 text-left group ${
@@ -369,7 +386,17 @@ export function PricingConfigurator({ data }: Props) {
                         <span className={`font-medium ${selected ? 'text-white' : 'text-gray-300'}`}>
                           {item.name}
                         </span>
-                        {item.popular && (
+                        {item.includedInBase && (
+                          <span className="px-2 py-0.5 text-xs rounded-full bg-gradient-to-r from-emerald-500 to-green-500 text-white font-medium flex items-center gap-1">
+                            <Gift size={10} /> W cenie
+                          </span>
+                        )}
+                        {item.defaultSelected && !item.includedInBase && (
+                          <span className="px-2 py-0.5 text-xs rounded-full bg-gradient-to-r from-amber-500 to-yellow-500 text-white font-medium flex items-center gap-1">
+                            <Star size={10} /> Rekomendowane
+                          </span>
+                        )}
+                        {item.popular && !item.defaultSelected && !item.includedInBase && (
                           <span className="px-2 py-0.5 text-xs rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium">
                             Popularne
                           </span>
@@ -415,10 +442,16 @@ export function PricingConfigurator({ data }: Props) {
                     )}
 
                     {/* Price */}
-                    <span className={`text-sm flex-shrink-0 ${selected ? 'text-purple-400' : 'text-gray-400'}`}>
-                      {item.percentageAdd 
-                        ? `+${item.percentageAdd}%`
-                        : `${(item.price * qty).toLocaleString('pl-PL')} PLN`
+                    <span className={`text-sm flex-shrink-0 ${
+                      item.includedInBase 
+                        ? 'text-emerald-400 font-medium' 
+                        : selected ? 'text-purple-400' : 'text-gray-400'
+                    }`}>
+                      {item.includedInBase 
+                        ? 'Gratis'
+                        : item.percentageAdd 
+                          ? `+${item.percentageAdd}%`
+                          : `${(item.price * qty).toLocaleString('pl-PL')} PLN`
                       }
                     </span>
                   </div>
