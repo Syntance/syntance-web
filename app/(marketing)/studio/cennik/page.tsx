@@ -42,7 +42,7 @@ export default async function CennikPage() {
   const data = await getPricingData()
 
   return (
-    <div className="min-h-screen bg-gray-950 overflow-x-hidden w-full max-w-full">
+    <div className="min-h-screen bg-gray-950 w-full">
       <NavbarStudio />
       
       {/* Animated content wrapper */}
@@ -62,7 +62,7 @@ export default async function CennikPage() {
 
         {/* Configurator */}
         <section className="relative z-10 py-12 px-4 sm:px-6 lg:px-12 w-full">
-          <div className="max-w-7xl mx-auto w-full overflow-x-hidden">
+          <div className="max-w-7xl mx-auto w-full">
             <PricingConfigurator data={data} />
           </div>
         </section>
