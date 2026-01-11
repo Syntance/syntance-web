@@ -5,6 +5,9 @@ import { PricingConfigurator } from '@/components/PricingConfigurator'
 import NavbarStudio from '@/components/navbar-studio'
 import { Twitter, Linkedin, Github } from 'lucide-react'
 
+// Wymusza dynamiczne renderowanie - dane zawsze świeże z Sanity
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Konfigurator Cennika — Syntance Studio',
   description: 'Skonfiguruj swój projekt i zobacz orientacyjną wycenę w czasie rzeczywistym. Strony WWW, sklepy e-commerce i aplikacje webowe.',
