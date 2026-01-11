@@ -358,9 +358,9 @@ export function PricingConfigurator({ data }: Props) {
   const currentProjectType = projectTypes.find(pt => pt.id === state.projectType)
 
   return (
-    <div className="grid lg:grid-cols-3 gap-8 overflow-x-hidden">
+    <div className="grid lg:grid-cols-3 gap-4 sm:gap-8 overflow-hidden w-full max-w-full box-border">
       {/* LEWA KOLUMNA: Selektor */}
-      <div className="lg:col-span-2 space-y-8">
+      <div className="lg:col-span-2 space-y-6 sm:space-y-8 w-full max-w-full overflow-hidden">
         {/* Typ projektu */}
         <div>
           <h3 className="text-lg font-medium tracking-wide mb-4 text-gray-200">
