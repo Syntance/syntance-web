@@ -7,6 +7,7 @@ import {
   Calendar, Download, ChevronRight, Link2
 } from 'lucide-react'
 import { PricingData, PricingItem } from '@/sanity/queries/pricing'
+import { ConfirmDialog } from './ConfirmDialog'
 
 // Mapa ikon - używamy typu LucideIcon
 const iconMap: Record<string, typeof Layout> = {
@@ -31,6 +32,20 @@ export function PricingConfigurator({ data }: Props) {
     projectType: projectTypes[0]?.id || 'website',
     selectedItems: [],
     quantities: {},
+  })
+
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean
+    title: string
+    message: string
+    items?: string[]
+    onConfirm: () => void
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    items: [],
+    onConfirm: () => {},
   })
 
   // Filtruj elementy dla wybranego typu projektu
@@ -131,22 +146,35 @@ export function PricingConfigurator({ data }: Props) {
         )
         
         if (parentBundles.length > 0) {
-          const parentNames = parentBundles.map(p => `"${p.name}"`).join(', ')
-          const confirmed = window.confirm(
-            `⚠️ "${item.name}" jest wymagany przez: ${parentNames}\n\n` +
-            `Nie można usunąć tego elementu bez usunięcia również:\n` +
-            `• ${parentBundles.map(p => p.name).join('\n• ')}\n\n` +
-            `Czy chcesz usunąć wszystkie powiązane elementy?`
-          )
-          if (!confirmed) return prev
-          
-          // Usuń też parenty i ich bundledWith
-          parentBundles.forEach(parent => {
-            itemsToRemove.push(parent.id)
-            if (parent.bundledWith?.length) {
-              itemsToRemove.push(...parent.bundledWith)
+          // Pokaż modal z potwierdzeniem
+          setConfirmDialog({
+            isOpen: true,
+            title: `"${item.name}" jest wymagany`,
+            message: `"${item.name}" jest wymagany przez inne elementy.\n\nUsunięcie tego elementu spowoduje również usunięcie:`,
+            items: parentBundles.map(p => p.name),
+            onConfirm: () => {
+              // Usuń element i jego parenty
+              const itemsToRemove = [id]
+              if (item.bundledWith?.length) {
+                itemsToRemove.push(...item.bundledWith)
+              }
+              
+              parentBundles.forEach(parent => {
+                itemsToRemove.push(parent.id)
+                if (parent.bundledWith?.length) {
+                  itemsToRemove.push(...parent.bundledWith)
+                }
+              })
+              
+              setState(prev => ({
+                ...prev,
+                selectedItems: prev.selectedItems.filter(i => !itemsToRemove.includes(i))
+              }))
+              
+              setConfirmDialog(prev => ({ ...prev, isOpen: false }))
             }
           })
+          return prev
         }
         
         return {
@@ -508,6 +536,18 @@ export function PricingConfigurator({ data }: Props) {
           </div>
         </div>
       </div>
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        items={confirmDialog.items}
+        confirmText="Usuń wszystkie"
+        cancelText="Anuluj"
+        onConfirm={confirmDialog.onConfirm}
+        onCancel={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   )
 }
