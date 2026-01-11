@@ -592,14 +592,14 @@ export function PricingConfigurator({ data }: Props) {
       </div>
 
       {/* PRAWA KOLUMNA: Podsumowanie (sticky) */}
-      <div className="lg:col-span-1">
+      <div className="lg:col-span-1 w-full max-w-full overflow-hidden">
         <div className="sticky top-24">
           {/* Main summary card */}
           <div className="relative group">
             {/* Gradient border glow */}
-            <div className="absolute -inset-0.5 bg-gradient-to-br from-purple-500 via-blue-500 to-pink-500 rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity blur-sm" />
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-blue-500 to-pink-500 rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity blur-sm" />
             
-            <div className="relative bg-gray-900/90 backdrop-blur-sm border border-white/10 rounded-2xl p-6 space-y-6">
+            <div className="relative bg-gray-900/90 backdrop-blur-sm border border-white/10 rounded-2xl p-4 sm:p-6 space-y-4 sm:space-y-6">
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-medium tracking-wide text-white">Podsumowanie</h3>
                 <span className="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded-full">
@@ -617,18 +617,18 @@ export function PricingConfigurator({ data }: Props) {
               </div>
 
               {/* Prices */}
-              <div className="space-y-3">
-                <div className="flex justify-between items-baseline">
-                  <span className="text-gray-400">Cena netto</span>
-                  <span className="text-2xl font-semibold text-white">
-                    {calculation.priceNetto.toLocaleString('pl-PL')} <span className="text-sm font-normal text-gray-500">PLN</span>
+              <div className="space-y-2 sm:space-y-3">
+                <div className="flex justify-between items-baseline gap-2">
+                  <span className="text-gray-400 text-sm sm:text-base">Cena netto</span>
+                  <span className="text-xl sm:text-2xl font-semibold text-white">
+                    {calculation.priceNetto.toLocaleString('pl-PL')} <span className="text-xs sm:text-sm font-normal text-gray-500">PLN</span>
                   </span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Cena brutto (+{config?.vatRate || 23}% VAT)</span>
+                <div className="flex justify-between text-xs sm:text-sm gap-2">
+                  <span className="text-gray-500">Brutto (+{config?.vatRate || 23}% VAT)</span>
                   <span className="text-gray-400">{calculation.priceBrutto.toLocaleString('pl-PL')} PLN</span>
                 </div>
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-xs sm:text-sm gap-2">
                   <span className="text-gray-500">Zaliczka ({config?.depositPercent || 20}%)</span>
                   <span className="text-purple-400 font-medium">{calculation.deposit.toLocaleString('pl-PL')} PLN</span>
                 </div>
@@ -637,22 +637,22 @@ export function PricingConfigurator({ data }: Props) {
               <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
               {/* Time estimates */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-3 rounded-lg bg-white/5">
-                  <Clock size={18} className="mx-auto mb-1 text-blue-400" />
-                  <div className="text-lg font-semibold text-white">{calculation.days}</div>
+              <div className="grid grid-cols-2 gap-2 sm:gap-4">
+                <div className="text-center p-2 sm:p-3 rounded-lg bg-white/5">
+                  <Clock size={16} className="mx-auto mb-1 text-blue-400" />
+                  <div className="text-base sm:text-lg font-semibold text-white">{calculation.days}</div>
                   <div className="text-xs text-gray-500">dni roboczych</div>
                 </div>
-                <div className="text-center p-3 rounded-lg bg-white/5">
+                <div className="text-center p-2 sm:p-3 rounded-lg bg-white/5">
                   <Activity 
-                    size={18} 
+                    size={16} 
                     className={`mx-auto mb-1 ${
                       calculation.complexity === 'high' ? 'text-red-400' :
                       calculation.complexity === 'medium' ? 'text-amber-400' :
                       'text-green-400'
                     }`} 
                   />
-                  <div className={`text-lg font-semibold ${
+                  <div className={`text-base sm:text-lg font-semibold ${
                     calculation.complexity === 'high' ? 'text-red-400' :
                     calculation.complexity === 'medium' ? 'text-amber-400' :
                     'text-green-400'
@@ -666,16 +666,16 @@ export function PricingConfigurator({ data }: Props) {
               </div>
 
               {/* CTAs */}
-              <div className="space-y-3 pt-2">
+              <div className="space-y-2 sm:space-y-3 pt-2">
                 <a
                   href={getCalendlyUrl()}
                   target={config?.calendlyUrl ? '_blank' : undefined}
                   rel={config?.calendlyUrl ? 'noopener noreferrer' : undefined}
-                  className="flex items-center justify-center gap-2 w-full py-4 px-6 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-medium rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40"
+                  className="flex items-center justify-center gap-2 w-full py-3 sm:py-4 px-4 sm:px-6 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white text-sm sm:text-base font-medium rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40"
                 >
-                  <Calendar size={18} />
-                  {config?.ctaTexts?.reserve || 'Zarezerwuj termin'}
-                  <ChevronRight size={16} />
+                  <Calendar size={16} className="flex-shrink-0" />
+                  <span className="truncate">{config?.ctaTexts?.reserve || 'Zarezerwuj termin'}</span>
+                  <ChevronRight size={14} className="flex-shrink-0" />
                 </a>
 
                 <button
@@ -684,14 +684,14 @@ export function PricingConfigurator({ data }: Props) {
                     console.log('Generate PDF', { state, calculation })
                     alert('Funkcja generowania PDF zostanie dodana wkrótce!')
                   }}
-                  className="flex items-center justify-center gap-2 w-full py-3 px-6 text-gray-400 hover:text-white font-medium rounded-xl transition-all hover:bg-white/5"
+                  className="flex items-center justify-center gap-2 w-full py-2 sm:py-3 px-4 sm:px-6 text-gray-400 hover:text-white text-sm sm:text-base font-medium rounded-xl transition-all hover:bg-white/5"
                 >
-                  <Download size={16} />
-                  {config?.ctaTexts?.pdf || 'Pobierz wycenę PDF'}
+                  <Download size={14} className="flex-shrink-0" />
+                  <span className="truncate">{config?.ctaTexts?.pdf || 'Pobierz wycenę PDF'}</span>
                 </button>
               </div>
 
-              <p className="text-xs text-gray-500 text-center leading-relaxed">
+              <p className="text-[10px] sm:text-xs text-gray-500 text-center leading-relaxed">
                 * Ceny netto. Finalna wycena po rozmowie.
                 <br />
                 Płatność etapami • Opieka posprzedażowa
