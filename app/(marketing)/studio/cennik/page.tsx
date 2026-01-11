@@ -61,8 +61,8 @@ export default async function CennikPage() {
         </section>
 
         {/* Configurator */}
-        <section className="relative z-10 py-12 px-4 sm:px-6 lg:px-12 overflow-x-hidden w-full">
-          <div className="max-w-7xl mx-auto w-full overflow-hidden">
+        <section className="relative z-10 py-12 px-4 sm:px-6 lg:px-12 w-full">
+          <div className="max-w-7xl mx-auto w-full">
             <PricingConfigurator data={data} />
           </div>
         </section>
