@@ -657,9 +657,9 @@ export function PricingConfigurator({ data }: Props) {
                     calculation.complexity === 'medium' ? 'text-amber-400' :
                     'text-green-400'
                   }`}>
-                    {calculation.complexity === 'high' ? 'Wysokie' :
-                     calculation.complexity === 'medium' ? 'Średnie' :
-                     'Niskie'}
+                    {calculation.complexity === 'high' ? 'Wysoka' :
+                     calculation.complexity === 'medium' ? 'Średnia' :
+                     'Niska'}
                   </div>
                   <div className="text-xs text-gray-500">złożoność</div>
                 </div>
