@@ -53,7 +53,21 @@ export default defineType({
       title: 'Obowiązkowy element?',
       type: 'boolean',
       initialValue: false,
-      description: 'Czy element jest zawsze zawarty w cenie bazowej',
+      description: 'Czy element jest zawsze zawarty w cenie bazowej (nie można usunąć)',
+    }),
+    defineField({
+      name: 'defaultSelected',
+      title: 'Domyślnie zaznaczony?',
+      type: 'boolean',
+      initialValue: false,
+      description: 'Element jest domyślnie zaznaczony, ale klient może go usunąć',
+    }),
+    defineField({
+      name: 'includedInBase',
+      title: 'Wliczony w cenę bazową (gratis)?',
+      type: 'boolean',
+      initialValue: false,
+      description: 'Element jest za darmo gdy wybrany - wliczony w cenę bazową projektu',
     }),
     defineField({
       name: 'maxQuantity',
