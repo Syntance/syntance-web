@@ -9,7 +9,7 @@ interface SanityFetchOptions {
 export async function sanityFetch<T>({
   query,
   tags = [],
-  revalidate = 3600, // domyślnie 1 godzina
+  revalidate = 60, // domyślnie 60 sekund (1 minuta)
 }: SanityFetchOptions): Promise<T> {
   return clientWithoutToken.fetch<T>(query, {}, {
     next: {

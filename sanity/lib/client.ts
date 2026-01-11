@@ -9,10 +9,10 @@ export const client = createClient({
   token: process.env.SANITY_API_WRITE_TOKEN,
 })
 
-// Klient tylko do odczytu (bez tokenu)
+// Klient tylko do odczytu (bez tokenu, bez CDN dla świeższych danych)
 export const clientWithoutToken = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'your-project-id',
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
   apiVersion: '2024-01-01',
-  useCdn: process.env.NODE_ENV === 'production',
+  useCdn: false, // Wyłączone dla świeższych danych
 })
