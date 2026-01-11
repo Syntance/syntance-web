@@ -48,7 +48,7 @@ export default async function CennikPage() {
       {/* Animated content wrapper */}
       <div className="animate-fade-in-scale">
         {/* Hero section */}
-        <section className="relative z-10 pt-40 pb-16 px-6 lg:px-12">
+        <section className="relative z-10 pt-52 pb-16 px-6 lg:px-12">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl md:text-6xl font-light tracking-widest glow-text mb-6">
               Konfigurator wyceny
