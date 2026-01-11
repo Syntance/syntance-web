@@ -35,6 +35,14 @@ export default defineType({
       validation: (Rule) => Rule.required().min(0),
     }),
     defineField({
+      name: 'complexityWeight',
+      title: 'Waga złożoności',
+      type: 'number',
+      initialValue: 1,
+      description: 'Waga wpływająca na poziom złożoności (1 = standard, 2-3 = wyższy dla CMS/CRM/integracji).',
+      validation: (Rule) => Rule.min(0).max(10),
+    }),
+    defineField({
       name: 'rateType',
       title: 'Typ stawki',
       type: 'string',
@@ -135,14 +143,6 @@ export default defineType({
       initialValue: false,
       description: 'Element będzie widoczny ale zaciemniony i niemożliwy do wybrania',
     }),
-    defineField({
-      name: 'complexityWeight',
-      title: 'Waga złożoności',
-      type: 'number',
-      initialValue: 1,
-      description: 'Waga wpływająca na poziom złożoności (1 = standard, 2-3 = wyższy dla CMS/CRM/integracji).',
-      validation: (Rule) => Rule.min(0).max(10),
-    }),
   ],
   preview: {
     select: {
@@ -190,6 +190,16 @@ export default defineType({
       title: 'Czas realizacji',
       name: 'hoursAsc',
       by: [{ field: 'hours', direction: 'asc' }],
+    },
+    {
+      title: 'Złożoność rosnąco',
+      name: 'complexityAsc',
+      by: [{ field: 'complexityWeight', direction: 'asc' }],
+    },
+    {
+      title: 'Złożoność malejąco',
+      name: 'complexityDesc',
+      by: [{ field: 'complexityWeight', direction: 'desc' }],
     },
   ],
 })
