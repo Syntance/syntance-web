@@ -42,10 +42,10 @@ export default async function CennikPage() {
   const data = await getPricingData()
 
   return (
-    <div className="min-h-screen bg-gray-950 w-full max-w-full overflow-x-hidden">
+    <div className="min-h-screen bg-gray-950 w-full">
       <NavbarStudio />
       
-      {/* Animated content wrapper */}
+      {/* Animated hero wrapper - BEZ konfiguratora (transform blokuje sticky) */}
       <div className="animate-fade-in-scale">
         {/* Hero section */}
         <section className="relative z-10 pt-52 pb-16 px-6 lg:px-12">
@@ -59,43 +59,43 @@ export default async function CennikPage() {
             </p>
           </div>
         </section>
+      </div>
 
-        {/* Configurator */}
-        <section className="relative z-10 py-12 px-4 sm:px-6 lg:px-12 w-full">
-          <div className="max-w-7xl mx-auto w-full">
-            <PricingConfigurator data={data} />
-          </div>
-        </section>
+      {/* Configurator - POZA animowanym wrapperem żeby sticky działało */}
+      <section className="relative z-10 py-12 px-4 sm:px-6 lg:px-12 w-full">
+        <div className="max-w-7xl mx-auto w-full">
+          <PricingConfigurator data={data} />
+        </div>
+      </section>
 
-        {/* Info section */}
-        <section className="relative z-10 py-16 px-6 lg:px-12">
-          <div className="max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="text-center p-6 rounded-2xl bg-white/5 border border-white/10">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">🎯</span>
-                </div>
-                <h3 className="font-medium text-white mb-2">Transparentność</h3>
-                <p className="text-sm text-gray-400">Jasna wycena bez ukrytych kosztów</p>
+      {/* Info section */}
+      <section className="relative z-10 py-16 px-6 lg:px-12">
+        <div className="max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="text-center p-6 rounded-2xl bg-white/5 border border-white/10">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">🎯</span>
               </div>
-              <div className="text-center p-6 rounded-2xl bg-white/5 border border-white/10">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">🔧</span>
-                </div>
-                <h3 className="font-medium text-white mb-2">Elastyczność</h3>
-                <p className="text-sm text-gray-400">Dopasowanie do budżetu i potrzeb</p>
+              <h3 className="font-medium text-white mb-2">Transparentność</h3>
+              <p className="text-sm text-gray-400">Jasna wycena bez ukrytych kosztów</p>
+            </div>
+            <div className="text-center p-6 rounded-2xl bg-white/5 border border-white/10">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">🔧</span>
               </div>
-              <div className="text-center p-6 rounded-2xl bg-white/5 border border-white/10">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">💎</span>
-                </div>
-                <h3 className="font-medium text-white mb-2">Wartość</h3>
-                <p className="text-sm text-gray-400">Inwestycja, która się zwraca</p>
+              <h3 className="font-medium text-white mb-2">Elastyczność</h3>
+              <p className="text-sm text-gray-400">Dopasowanie do budżetu i potrzeb</p>
+            </div>
+            <div className="text-center p-6 rounded-2xl bg-white/5 border border-white/10">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">💎</span>
               </div>
+              <h3 className="font-medium text-white mb-2">Wartość</h3>
+              <p className="text-sm text-gray-400">Inwestycja, która się zwraca</p>
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-gray-900 pt-16 pb-12 px-6 lg:px-12">
