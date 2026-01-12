@@ -6,8 +6,9 @@ import { Search, Palette, Code, HeartHandshake } from "lucide-react";
 const steps = [
   {
     number: "01",
-    title: "Poznajemy Twoją markę",
-    description: "Słuchamy, pytamy i rozumiemy. Każdy projekt zaczyna się od głębokiej rozmowy o Twojej wizji i celach.",
+    title: "Poznajemy Twój biznes",
+    subtitle: "(Warsztat Discovery)",
+    description: "Zanim napiszemy linijkę kodu, rozumiemy cel, klienta i rynek.",
     icon: Search,
     gradient: "from-blue-400 to-cyan-400",
   },
@@ -29,6 +30,7 @@ const steps = [
     number: "04",
     title: "Opiekujemy się stroną",
     description: "Nie znikamy po wdrożeniu. Wspieramy, aktualizujemy i rozwijamy Twój projekt.",
+    note: "30 dni gwarancji + opcja opieki w ramach abonamentu",
     icon: HeartHandshake,
     gradient: "from-pink-400 to-rose-400",
   },
@@ -67,7 +69,7 @@ export default function ProcessStudio() {
             Jak pracujemy
           </h2>
           <p className="text-lg font-light tracking-wide text-gray-400">
-            Proces, który łączy empatię z precyzją
+            Proces, który łączy design ze strategią
           </p>
         </div>
 
@@ -110,13 +112,25 @@ export default function ProcessStudio() {
                         <div className={`h-px flex-1 bg-gradient-to-r ${step.gradient} opacity-20`}></div>
                       </div>
                       
-                      <h3 className="text-2xl font-light tracking-wide mb-3 glow-text">
+                      <h3 className="text-2xl font-light tracking-wide mb-2 glow-text">
                         {step.title}
                       </h3>
+                      
+                      {step.subtitle && (
+                        <p className="text-sm text-gray-500 font-light italic mb-3">
+                          {step.subtitle}
+                        </p>
+                      )}
                       
                       <p className="text-gray-400 font-light tracking-wide leading-relaxed">
                         {step.description}
                       </p>
+                      
+                      {step.note && (
+                        <p className="text-sm text-gray-500 font-light italic mt-2">
+                          ({step.note})
+                        </p>
+                      )}
 
                       {/* Decorative element */}
                       <div className="mt-4 inline-flex items-center gap-2 text-sm text-gray-500">
