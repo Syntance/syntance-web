@@ -1,10 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Heart, Sparkles } from "lucide-react";
+import { Zap, Target, Rocket, Lock } from "lucide-react";
 import TiltCard from "@/components/tilt-card";
-import LotusIcon from "@/components/icons/lotus-icon";
-import DiamondIcon from "@/components/icons/diamond-icon";
 import dynamic from "next/dynamic";
 
 const TiltCardLazy = dynamic(() => import("@/components/tilt-card"), {
@@ -14,30 +12,34 @@ const TiltCardLazy = dynamic(() => import("@/components/tilt-card"), {
 
 const values = [
   {
-    title: "Harmonia w każdym detalu",
-    description: "Każdy pixel ma znaczenie. Tworzymy interfejsy, które oddychają i harmonizują.",
-    icon: LotusIcon,
+    title: "Szybciej",
+    description: "Strony w 2-4 tygodnie, sklepy w 4-6 tygodni",
+    proof: "AI + architektura senior-level",
+    icon: Zap,
     gradient: "from-blue-400 to-cyan-400",
     glowColor: "rgba(56, 189, 248, 0.3)",
   },
   {
-    title: "Design tworzony z serca",
-    description: "Projektowanie to nie tylko technika. To emocja i przekaz wplecionе w każdą linię.",
-    icon: Heart,
+    title: "Strategicznie",
+    description: "Warsztat Discovery przed kodem",
+    proof: "Każda złotówka ma uzasadnienie",
+    icon: Target,
     gradient: "from-pink-400 to-rose-400",
     glowColor: "rgba(244, 114, 182, 0.3)",
   },
   {
-    title: "Technologia w służbie estetyki",
-    description: "Kod i design nie walczą - współpracują. Elegancja spotyka wydajność.",
-    icon: DiamondIcon,
+    title: "Wydajniej",
+    description: "PageSpeed 90+ gwarantowany",
+    proof: "Next.js, zero wtyczek",
+    icon: Rocket,
     gradient: "from-purple-400 to-indigo-400",
     glowColor: "rgba(168, 85, 247, 0.3)",
   },
   {
-    title: "Spokój zamiast chaosu",
-    description: "Strony, które nie przytłaczają. Przestrzeń, jasność i intuicyjna nawigacja.",
-    icon: Sparkles,
+    title: "Bez locka",
+    description: "Pełna własność kodu",
+    proof: "Możesz zmienić wykonawcę",
+    icon: Lock,
     gradient: "from-amber-400 to-orange-400",
     glowColor: "rgba(251, 191, 36, 0.3)",
   },
@@ -73,10 +75,10 @@ export default function ValuesStudio() {
         {/* Header */}
         <div className="text-center mb-20">
           <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
-            Nasze podejście do projektowania
+            Dlaczego Syntance?
           </h2>
           <p className="text-lg font-light tracking-wide text-gray-400">
-            Design tworzony z serca. Technologia w służbie estetyki.
+            Jakość agencji w tempie freelancera
           </p>
         </div>
 
@@ -134,9 +136,16 @@ export default function ValuesStudio() {
                         </h3>
 
                         {/* Description */}
-                        <p className="text-gray-400 font-light text-sm tracking-wide leading-relaxed">
+                        <p className="text-gray-400 font-light text-sm tracking-wide leading-relaxed mb-3">
                           {value.description}
                         </p>
+
+                        {/* Proof */}
+                        {value.proof && (
+                          <p className="text-gray-500 font-light text-xs tracking-wide leading-relaxed">
+                            {value.proof}
+                          </p>
+                        )}
 
                         {/* Animated underline */}
                         <div className="mt-6 h-0.5 w-0 group-hover:w-full bg-gradient-to-r transition-all duration-700"
