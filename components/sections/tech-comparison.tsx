@@ -92,39 +92,59 @@ export default function TechComparison() {
             Porównanie z WordPress
           </h3>
           
-          <div className="space-y-4">
-            {comparisonData.map((item, index) => {
-              const Icon = item.icon
-              return (
-                <div 
-                  key={index}
-                  className="grid md:grid-cols-[180px_1fr_1fr] gap-4 p-5 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all group"
-                >
-                  {/* Kryterium */}
-                  <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${item.color} flex items-center justify-center transition-transform group-hover:scale-110`}>
-                      <Icon size={20} className="text-white" />
-                    </div>
-                    <span className="font-medium text-white group-hover:text-gray-100 transition-colors">{item.label}</span>
-                  </div>
-                  
-                  {/* WordPress */}
-                  <div className="flex items-center gap-2 md:border-l md:border-white/10 md:pl-4">
-                    <span className="text-xs text-gray-500 font-medium uppercase tracking-wider md:hidden">WordPress:</span>
-                    <span className="text-sm text-gray-400">{item.wordpress}</span>
-                  </div>
-                  
-                  {/* Next.js */}
-                  <div className="flex items-center gap-2 md:border-l md:border-teal-500/20 md:pl-4">
-                    <span className="text-xs text-gray-500 font-medium uppercase tracking-wider md:hidden">Next.js:</span>
-                    <span className="text-sm font-medium">
-                      <GradientText>{item.nextjs}</GradientText>
-                      {item.nextjsSuffix && <span className="text-gray-400">{item.nextjsSuffix}</span>}
-                    </span>
-                  </div>
+          {/* Jedna duża karta z tabelą */}
+          <div className="relative group">
+            {/* Glow effect */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 via-blue-500 to-teal-500 rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity blur-sm" />
+            
+            <div className="relative bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+              {/* Header */}
+              <div className="grid grid-cols-[180px_1fr_1fr] gap-4 p-5 bg-white/5 border-b border-white/10">
+                <div></div>
+                <div className="text-center">
+                  <span className="text-sm font-medium text-gray-400 uppercase tracking-wider">WordPress</span>
                 </div>
-              )
-            })}
+                <div className="text-center">
+                  <span className="text-sm font-medium uppercase tracking-wider">
+                    <GradientText>Next.js</GradientText>
+                  </span>
+                </div>
+              </div>
+              
+              {/* Rows */}
+              {comparisonData.map((item, index) => {
+                const Icon = item.icon
+                return (
+                  <div 
+                    key={index}
+                    className={`grid grid-cols-[180px_1fr_1fr] gap-4 p-5 hover:bg-white/5 transition-all group/row ${
+                      index < comparisonData.length - 1 ? 'border-b border-white/5' : ''
+                    }`}
+                  >
+                    {/* Kryterium */}
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${item.color} flex items-center justify-center transition-transform group-hover/row:scale-110`}>
+                        <Icon size={20} className="text-white" />
+                      </div>
+                      <span className="font-medium text-white group-hover/row:text-gray-100 transition-colors">{item.label}</span>
+                    </div>
+                    
+                    {/* WordPress */}
+                    <div className="flex items-center justify-center">
+                      <span className="text-sm text-gray-400 text-center">{item.wordpress}</span>
+                    </div>
+                    
+                    {/* Next.js */}
+                    <div className="flex items-center justify-center">
+                      <span className="text-sm font-medium text-center">
+                        <GradientText>{item.nextjs}</GradientText>
+                        {item.nextjsSuffix && <span className="text-gray-400">{item.nextjsSuffix}</span>}
+                      </span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
           </div>
         </div>
 
