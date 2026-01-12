@@ -107,9 +107,9 @@ export default function PricingStudioNew() {
         </div>
 
         {/* Additional info */}
-        <div className="mt-12 text-sm text-gray-500 font-light">
-          <p>Orientacyjny czas realizacji: 2-4 tygodnie</p>
-          <p className="mt-2">Wycena indywidualna • Płatność etapami • Opieka posprzedażowa</p>
+        <div className="mt-12 text-sm text-gray-500 font-light text-center">
+          <p>Gwarancja 30 dni</p>
+          <p className="mt-2">Po tym czasie opcjonalna opieka w ramach abonamentu</p>
         </div>
       </div>
 
