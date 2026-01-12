@@ -57,7 +57,7 @@ export default function ManifestText({
           <>
             {beforeMatch && <span>{beforeMatch}</span>}
             <GradientText
-              colors={["#a855f7", "#c4b5fd", "#3b82f6", "#c4b5fd", "#a855f7"]}
+              colors={["#ffaa40", "#9c40ff", "#ffaa40"]}
               animationSpeed={4}
             >
               {matchedWord}
@@ -81,7 +81,7 @@ export default function ManifestText({
             <>
               {beforeMatch && <span>{beforeMatch}</span>}
               <GradientText
-                colors={["#a855f7", "#c4b5fd", "#3b82f6", "#c4b5fd", "#a855f7"]}
+                colors={["#ffaa40", "#9c40ff", "#ffaa40"]}
                 animationSpeed={4}
               >
                 {matchedPart}
