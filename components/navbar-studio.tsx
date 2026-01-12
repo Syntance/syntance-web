@@ -9,14 +9,14 @@ import GooeyNav from "@/components/ui/gooey-nav";
 const navItems = [
   { label: "O nas", href: "#hero-studio" },
   { label: "Technologia", href: "#tech-comparison" },
+  { label: "Proces", href: "#process-studio" },
   { label: "Wartości", href: "#values-studio" },
   { label: "Portfolio", href: "#portfolio-studio" },
-  { label: "Proces", href: "#process-studio" },
   { label: "Cennik", href: "#pricing-studio" },
   { label: "Kontakt", href: "#contact" },
 ];
 
-const sectionIds = ['hero-studio', 'tech-comparison', 'values-studio', 'portfolio-studio', 'process-studio', 'pricing-studio', 'contact'];
+const sectionIds = ['hero-studio', 'tech-comparison', 'process-studio', 'values-studio', 'portfolio-studio', 'pricing-studio', 'contact'];
 
 export default function NavbarStudio() {
   const pathname = usePathname();

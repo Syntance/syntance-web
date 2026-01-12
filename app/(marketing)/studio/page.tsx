@@ -116,9 +116,9 @@ export default function StudioPage() {
       <HeroStudio />
       <AnatomyStudio />
       <TechComparison />
+      <ProcessStudio />
       <ValuesStudio />
       <PortfolioStudio />
-      <ProcessStudio />
       <PricingStudioNew />
       
       {/* Contact Section - Same as syntance.com */}
