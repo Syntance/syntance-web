@@ -128,12 +128,23 @@ export default function NavbarStudio() {
             <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
             <span className="text-sm font-light tracking-wider">{backLabel}</span>
           </Link>
-          <Link 
-            href={backHref}
-            className="text-2xl font-medium tracking-widest glow-text cursor-pointer hover:opacity-80 transition-opacity"
-          >
-            Syntance <span className="text-teal-300">Studio</span>
-          </Link>
+          {pathname === '/studio' ? (
+            <button
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="text-2xl font-medium tracking-widest glow-text cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              Syntance <span className="text-teal-300">Studio</span>
+            </button>
+          ) : (
+            <Link 
+              href="/studio"
+              className="text-2xl font-medium tracking-widest glow-text cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              Syntance <span className="text-teal-300">Studio</span>
+            </Link>
+          )}
         </div>
         
         {/* Nawigacja tylko na stronie /studio, nie na podstronach jak /studio/cennik */}
