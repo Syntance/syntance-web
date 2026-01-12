@@ -99,7 +99,7 @@ export default function TechComparison() {
             
             <div className="relative bg-black border border-white/10 rounded-2xl overflow-hidden">
               {/* Header */}
-              <div className="grid grid-cols-[180px_1fr_1fr] gap-4 p-5 bg-black border-b border-white/10">
+              <div className="grid grid-cols-[180px_1fr_1fr] gap-4 px-5 pt-5 pb-4 bg-black">
                 <div></div>
                 <div className="text-center">
                   <span className="text-sm font-medium text-gray-400 uppercase tracking-wider">WordPress</span>
@@ -111,16 +111,15 @@ export default function TechComparison() {
                 </div>
               </div>
               
+              {/* Separator po header */}
+              <div className="h-px bg-white/10 mx-5" />
+              
               {/* Rows */}
               {comparisonData.map((item, index) => {
                 const Icon = item.icon
                 return (
-                  <div 
-                    key={index}
-                    className={`grid grid-cols-[180px_1fr_1fr] gap-4 p-5 hover:bg-white/[0.02] transition-all group/row ${
-                      index < comparisonData.length - 1 ? 'border-b border-white/5' : ''
-                    }`}
-                  >
+                  <div key={index}>
+                    <div className="grid grid-cols-[180px_1fr_1fr] gap-4 p-5 hover:bg-white/[0.02] transition-all group/row">
                     {/* Kryterium */}
                     <div className="flex items-center gap-3">
                       <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${item.color} flex items-center justify-center transition-transform group-hover/row:scale-110`}>
@@ -142,6 +141,12 @@ export default function TechComparison() {
                       </span>
                     </div>
                   </div>
+                  
+                  {/* Separator - nie dotyka krawędzi */}
+                  {index < comparisonData.length - 1 && (
+                    <div className="h-px bg-white/5 mx-5" />
+                  )}
+                </div>
                 )
               })}
             </div>
