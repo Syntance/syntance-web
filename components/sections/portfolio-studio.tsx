@@ -23,24 +23,6 @@ const projects = [
     image: "/images/syntance-studio-hero-1920x1080.webp",
     description: "Landing page dla Syntance Studio",
   },
-  {
-    name: "E-commerce Platform",
-    type: "E-commerce",
-    image: "/images/syntance-studio-hero-1920x1080.webp",
-    description: "Nowoczesny sklep online",
-  },
-  {
-    name: "Business Website",
-    type: "Website",
-    image: "/images/syntance-web-development-showcase-1280x720.webp",
-    description: "Strona firmowa z animacjami",
-  },
-  {
-    name: "Custom System",
-    type: "System",
-    image: "/images/syntance-ai-dashboard-1440x900.avif",
-    description: "Dedykowany system CRM",
-  },
 ];
 
 export default function PortfolioStudio() {
