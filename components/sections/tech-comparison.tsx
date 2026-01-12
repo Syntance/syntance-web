@@ -99,8 +99,8 @@ export default function TechComparison() {
             
             <div className="relative bg-black border border-white/10 rounded-2xl overflow-hidden">
               {/* Header */}
-              <div className="grid grid-cols-[100px_1fr_1fr] md:grid-cols-[180px_1fr_1fr] gap-2 md:gap-4 px-3 md:px-5 pt-4 md:pt-5 pb-3 md:pb-4 bg-black">
-                <div></div>
+              <div className="grid grid-cols-2 md:grid-cols-[180px_1fr_1fr] gap-4 px-3 md:px-5 pt-4 md:pt-5 pb-3 md:pb-4 bg-black">
+                <div className="hidden md:block"></div>
                 <div className="text-center">
                   <span className="text-xs md:text-sm font-medium text-gray-400 uppercase tracking-wider">WordPress</span>
                 </div>
@@ -119,13 +119,13 @@ export default function TechComparison() {
                 const Icon = item.icon
                 return (
                   <div key={index}>
-                    <div className="grid grid-cols-[100px_1fr_1fr] md:grid-cols-[180px_1fr_1fr] gap-2 md:gap-4 p-3 md:p-5 hover:bg-white/[0.02] transition-all group/row">
-                    {/* Kryterium */}
-                    <div className="flex items-center gap-2">
-                      <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg bg-gradient-to-br ${item.color} flex items-center justify-center transition-transform group-hover/row:scale-110`}>
-                        <Icon size={16} className="text-white md:w-5 md:h-5" />
+                    <div className="grid grid-cols-2 md:grid-cols-[180px_1fr_1fr] gap-4 p-3 md:p-5 hover:bg-white/[0.02] transition-all group/row">
+                    {/* Kryterium - ukryte na mobile */}
+                    <div className="hidden md:flex items-center gap-2">
+                      <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${item.color} flex items-center justify-center transition-transform group-hover/row:scale-110`}>
+                        <Icon size={20} className="text-white" />
                       </div>
-                      <span className="text-xs md:text-base font-medium text-white group-hover/row:text-gray-100 transition-colors">{item.label}</span>
+                      <span className="font-medium text-white group-hover/row:text-gray-100 transition-colors">{item.label}</span>
                     </div>
                     
                     {/* WordPress */}
