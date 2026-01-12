@@ -1,13 +1,15 @@
 'use client'
 
 import { Zap, Shield, TrendingUp, DollarSign, Wrench, Rocket, Quote } from 'lucide-react'
+import GradientText from '@/components/GradientText'
 
 const comparisonData = [
   {
     icon: Zap,
     label: 'Szybkość',
     wordpress: 'PageSpeed 30-50 (wolny)',
-    nextjs: 'PageSpeed 90+ (błyskawiczny)',
+    nextjs: 'PageSpeed 90+',
+    nextjsSuffix: ' (błyskawiczny)',
     color: 'from-yellow-500 to-orange-500',
   },
   {
@@ -15,6 +17,7 @@ const comparisonData = [
     label: 'Bezpieczeństwo',
     wordpress: 'Wtyczki = dziury w zabezpieczeniach',
     nextjs: 'Zero wtyczek = zero dziur',
+    nextjsSuffix: '',
     color: 'from-blue-500 to-cyan-500',
   },
   {
@@ -22,13 +25,15 @@ const comparisonData = [
     label: 'Konwersja',
     wordpress: 'Każda sekunda opóźnienia = -7% konwersji',
     nextjs: 'Strona ładuje się w <1 sek.',
+    nextjsSuffix: '',
     color: 'from-green-500 to-emerald-500',
   },
   {
     icon: DollarSign,
     label: 'Google Ads',
     wordpress: 'Wysoki CPC (słaby Quality Score)',
-    nextjs: 'Niższy CPC (lepszy PageSpeed)',
+    nextjs: 'Niższy CPC',
+    nextjsSuffix: ' (lepszy PageSpeed)',
     color: 'from-purple-500 to-pink-500',
   },
   {
@@ -36,13 +41,15 @@ const comparisonData = [
     label: 'Utrzymanie',
     wordpress: 'Ciągłe aktualizacje wtyczek',
     nextjs: 'Stabilny, minimalny serwis',
+    nextjsSuffix: '',
     color: 'from-amber-500 to-yellow-500',
   },
   {
     icon: Rocket,
     label: 'Skalowanie',
     wordpress: 'Problemy przy dużym ruchu',
-    nextjs: '100 lub 100k użytkowników — działa',
+    nextjs: '100 lub 100k użytkowników',
+    nextjsSuffix: ' — działa',
     color: 'from-indigo-500 to-purple-500',
   },
 ]
@@ -63,7 +70,7 @@ export default function TechComparison() {
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
             Technologia, która pracuje <br className="hidden sm:block" />
-            <span className="text-teal-300">na Twój wynik</span>
+            <GradientText>na Twój wynik</GradientText>
           </h2>
           <p className="text-xl font-light tracking-wide text-gray-400 max-w-3xl mx-auto mb-4">
             Większość stron działa na WordPressie. My budujemy na Next.js — i oto dlaczego.
@@ -73,7 +80,7 @@ export default function TechComparison() {
           <div className="mt-8 p-6 rounded-2xl bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/20 max-w-3xl mx-auto">
             <p className="text-gray-300 leading-relaxed">
               <span className="font-medium text-white">Next.js</span> to nowoczesny framework do tworzenia stron i aplikacji webowych, 
-              używany przez <span className="text-teal-300 font-medium">Netflix, TikTok, Nike i Notion</span>. 
+              używany przez <GradientText className="font-medium">Netflix, TikTok, Nike i Notion</GradientText>. 
               To standard wśród firm, które traktują web poważnie.
             </p>
           </div>
@@ -110,7 +117,10 @@ export default function TechComparison() {
                   {/* Next.js */}
                   <div className="flex items-center gap-2 md:border-l md:border-teal-500/20 md:pl-4">
                     <span className="text-xs text-gray-500 font-medium uppercase tracking-wider md:hidden">Next.js:</span>
-                    <span className="text-sm text-teal-300 font-medium">{item.nextjs}</span>
+                    <span className="text-sm font-medium">
+                      <GradientText>{item.nextjs}</GradientText>
+                      {item.nextjsSuffix && <span className="text-gray-400">{item.nextjsSuffix}</span>}
+                    </span>
                   </div>
                 </div>
               )
