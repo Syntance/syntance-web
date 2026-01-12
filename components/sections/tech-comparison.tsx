@@ -102,10 +102,10 @@ export default function TechComparison() {
                 >
                   {/* Kryterium */}
                   <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${item.color} flex items-center justify-center`}>
+                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${item.color} flex items-center justify-center transition-transform group-hover:scale-110`}>
                       <Icon size={20} className="text-white" />
                     </div>
-                    <span className="font-medium text-white">{item.label}</span>
+                    <span className="font-medium text-white group-hover:text-gray-100 transition-colors">{item.label}</span>
                   </div>
                   
                   {/* WordPress */}
