@@ -111,15 +111,9 @@ export default function ProcessStudio() {
                         <div className={`h-px flex-1 bg-gradient-to-r ${step.gradient} opacity-20`}></div>
                       </div>
                       
-                      <h3 className="text-2xl font-light tracking-wide mb-2 glow-text">
+                      <h3 className="text-2xl font-light tracking-wide mb-3 glow-text">
                         {step.title}
                       </h3>
-                      
-                      {step.subtitle && (
-                        <p className="text-sm text-gray-500 font-light italic mb-3">
-                          {step.subtitle}
-                        </p>
-                      )}
                       
                       <p className="text-gray-400 font-light tracking-wide leading-relaxed">
                         {step.description}
