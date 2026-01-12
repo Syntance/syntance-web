@@ -70,7 +70,7 @@ export default function TechComparison() {
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
             Technologia, która pracuje <br className="hidden sm:block" />
-            <GradientText colors={["#a855f7", "#c4b5fd", "#3b82f6", "#c4b5fd", "#a855f7"]} animationSpeed={4}>na Twój wynik</GradientText>
+            <GradientText>na Twój wynik</GradientText>
           </h2>
           <p className="text-xl font-light tracking-wide text-gray-400 max-w-3xl mx-auto mb-4">
             Większość stron działa na WordPressie. My budujemy na Next.js — i oto dlaczego.
@@ -80,7 +80,7 @@ export default function TechComparison() {
           <div className="mt-8 p-6 rounded-2xl bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/20 max-w-3xl mx-auto">
             <p className="text-gray-300 leading-relaxed">
               <span className="font-medium text-white">Next.js</span> to nowoczesny framework do tworzenia stron i aplikacji webowych, 
-              używany przez <GradientText colors={["#a855f7", "#c4b5fd", "#3b82f6", "#c4b5fd", "#a855f7"]} animationSpeed={4} className="font-medium">Netflix, TikTok, Nike i Notion</GradientText>. 
+              używany przez <GradientText className="font-medium">Netflix, TikTok, Nike i Notion</GradientText>. 
               To standard wśród firm, które traktują web poważnie.
             </p>
           </div>
@@ -118,7 +118,7 @@ export default function TechComparison() {
                   <div className="flex items-center gap-2 md:border-l md:border-teal-500/20 md:pl-4">
                     <span className="text-xs text-gray-500 font-medium uppercase tracking-wider md:hidden">Next.js:</span>
                     <span className="text-sm font-medium">
-                      <GradientText colors={["#a855f7", "#c4b5fd", "#3b82f6", "#c4b5fd", "#a855f7"]} animationSpeed={4}>{item.nextjs}</GradientText>
+                      <GradientText>{item.nextjs}</GradientText>
                       {item.nextjsSuffix && <span className="text-gray-400">{item.nextjsSuffix}</span>}
                     </span>
                   </div>

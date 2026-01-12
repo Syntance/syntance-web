@@ -32,7 +32,7 @@ export default function HeroStudio() {
       }`}>
         <h1 className="text-5xl md:text-7xl font-light tracking-widest leading-tight mb-6 glow-text">
           <GradientText
-            colors={["#a855f7", "#c4b5fd", "#3b82f6", "#c4b5fd", "#a855f7"]}
+            colors={["#ffaa40", "#9c40ff", "#ffaa40"]}
             animationSpeed={4}
             className="font-medium"
           >
