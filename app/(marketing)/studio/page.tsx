@@ -115,8 +115,8 @@ export default function StudioPage() {
       
       <HeroStudio />
       <AnatomyStudio />
-      <ValuesStudio />
       <TechComparison />
+      <ValuesStudio />
       <PortfolioStudio />
       <ProcessStudio />
       <PricingStudioNew />
