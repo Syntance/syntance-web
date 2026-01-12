@@ -102,7 +102,7 @@ export default function TechComparison() {
                 >
                   {/* Kryterium */}
                   <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${item.color} opacity-20 group-hover:opacity-30 transition-opacity flex items-center justify-center`}>
+                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${item.color} opacity-50 group-hover:opacity-70 transition-opacity flex items-center justify-center`}>
                       <Icon size={20} className="text-white" />
                     </div>
                     <span className="font-medium text-white">{item.label}</span>
