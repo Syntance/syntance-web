@@ -97,9 +97,9 @@ export default function TechComparison() {
             {/* Glow effect */}
             <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 via-blue-500 to-teal-500 rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity blur-sm" />
             
-            <div className="relative bg-transparent border border-white/10 rounded-2xl overflow-hidden">
+            <div className="relative bg-black border border-white/10 rounded-2xl overflow-hidden">
               {/* Header */}
-              <div className="grid grid-cols-[180px_1fr_1fr] gap-4 p-5 bg-transparent border-b border-white/10">
+              <div className="grid grid-cols-[180px_1fr_1fr] gap-4 p-5 bg-black border-b border-white/10">
                 <div></div>
                 <div className="text-center">
                   <span className="text-sm font-medium text-gray-400 uppercase tracking-wider">WordPress</span>
