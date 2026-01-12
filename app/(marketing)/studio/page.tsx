@@ -9,6 +9,7 @@ import { Twitter, Linkedin, Github } from "lucide-react";
 import HeroStudio from "@/components/sections/hero-studio";
 const AnatomyStudio = dynamic(() => import("@/components/sections/anatomy-studio"), { ssr: true });
 const ValuesStudio = dynamic(() => import("@/components/sections/values-studio"), { ssr: true });
+const TechComparison = dynamic(() => import("@/components/sections/tech-comparison"), { ssr: true });
 const PortfolioStudio = dynamic(() => import("@/components/sections/portfolio-studio"), { ssr: true });
 const ProcessStudio = dynamic(() => import("@/components/sections/process-studio"), { ssr: true });
 const PricingStudioNew = dynamic(() => import("@/components/sections/pricing-studio-new"), { ssr: true });
@@ -115,6 +116,7 @@ export default function StudioPage() {
       <HeroStudio />
       <AnatomyStudio />
       <ValuesStudio />
+      <TechComparison />
       <PortfolioStudio />
       <ProcessStudio />
       <PricingStudioNew />
