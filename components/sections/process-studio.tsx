@@ -7,7 +7,6 @@ const steps = [
   {
     number: "01",
     title: "Poznajemy Twój biznes",
-    subtitle: "(Warsztat Discovery)",
     description: "Zanim napiszemy linijkę kodu, rozumiemy cel, klienta i rynek.",
     icon: Search,
     gradient: "from-blue-400 to-cyan-400",
