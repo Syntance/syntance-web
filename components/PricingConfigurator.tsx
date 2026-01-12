@@ -740,9 +740,9 @@ export function PricingConfigurator({ data }: Props) {
               </div>
 
               <p className="text-[10px] sm:text-xs text-gray-500 text-center leading-relaxed">
-                * Ceny netto. Finalna wycena po rozmowie.
+                Gwarancja 30 dni • Po tym czasie opieka w ramach abonamentu
                 <br />
-                Płatność etapami • Opieka posprzedażowa
+                Akceptacja zlecenia telefonicznie po rezerwacji terminu
               </p>
             </div>
           </div>
