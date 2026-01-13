@@ -385,7 +385,7 @@ AKCJE:
       from: "Syntance Konfigurator <konfigurator@syntance.com>",
       to: ["kontakt@syntance.com"],
       replyTo: email,
-      subject: `Rezerwacja realizacji ${projectTypeGenitive} - ${name} ${titleDate}`,
+      subject: `Rezerwacja realizacji ${projectTypeGenitive} - ${titleDate}`,
       text: ownerEmailText,
       html: ownerEmailHtml,
     });
@@ -502,7 +502,7 @@ AKCJE:
     await getResend().emails.send({
       from: "Syntance <kontakt@syntance.com>",
       to: [email],
-      subject: `Rezerwacja realizacji ${projectTypeGenitive} - ${name} ${titleDate}`,
+      subject: `Rezerwacja realizacji ${projectTypeGenitive} - ${titleDate}`,
       html: clientEmailHtml,
     });
 
