@@ -14,7 +14,7 @@ function getResend() {
 // Konwersja typu projektu na formę dopełniacza
 function getProjectTypeGenitive(type: string) {
   const genitiveMap: Record<string, string> = {
-    'Strona internetowa': 'Strony internetowej',
+    'Strona internetowa': 'Strony WWW',
     'Strona WWW': 'Strony WWW',
     'Sklep e-commerce': 'Sklepu e-commerce',
     'Aplikacja webowa': 'Aplikacji webowej',
