@@ -81,6 +81,7 @@ export async function POST(req: Request) {
       bookingId,
       projectType: booking.projectType,
       priceNetto: booking.priceNetto,
+      priceBrutto: booking.priceBrutto,
       deposit: booking.deposit,
       days: booking.days,
       startDate: booking.startDate,
