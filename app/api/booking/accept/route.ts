@@ -11,15 +11,15 @@ function getResend() {
   return resend;
 }
 
-// Konwersja typu projektu na formę dopełniacza
+// Konwersja typu projektu na formę dopełniacza (małe litery)
 function getProjectTypeGenitive(type: string) {
   const genitiveMap: Record<string, string> = {
-    'Strona internetowa': 'Strony WWW',
-    'Strona WWW': 'Strony WWW',
-    'Sklep e-commerce': 'Sklepu e-commerce',
-    'Aplikacja webowa': 'Aplikacji webowej',
+    'Strona internetowa': 'strony WWW',
+    'Strona WWW': 'strony WWW',
+    'Sklep e-commerce': 'sklepu e-commerce',
+    'Aplikacja webowa': 'aplikacji webowej',
   };
-  return genitiveMap[type] || type;
+  return genitiveMap[type] || type.toLowerCase();
 }
 
 // Block calendar after acceptance
@@ -127,7 +127,7 @@ export async function GET(req: NextRequest) {
         await getResend().emails.send({
           from: "Syntance <kontakt@syntance.com>",
           to: [clientData.email],
-          subject: `✅ Rezerwacja realizacji ${projectTypeGenitive} - ${titleDate} potwierdzona!`,
+          subject: `Syntance Studio - Rezerwacja realizacji ${projectTypeGenitive} - ${titleDate} potwierdzona!`,
           html: getClientAcceptedEmailHtml(clientData),
         });
 
@@ -154,7 +154,7 @@ export async function GET(req: NextRequest) {
         await getResend().emails.send({
           from: "Syntance <kontakt@syntance.com>",
           to: [clientData.email],
-          subject: `Rezerwacja realizacji ${projectTypeGenitive} - ${titleDate} - informacja`,
+          subject: `Syntance Studio - Rezerwacja realizacji ${projectTypeGenitive} - ${titleDate} - informacja`,
           html: getClientRejectedEmailHtml(clientData),
         });
 

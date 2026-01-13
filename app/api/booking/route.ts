@@ -368,15 +368,15 @@ AKCJE:
       ? new Date(booking.startDate).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' })
       : new Date().toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-    // Konwersja typu projektu na formę dopełniacza
+    // Konwersja typu projektu na formę dopełniacza (małe litery)
     const getProjectTypeGenitive = (type: string) => {
       const genitiveMap: Record<string, string> = {
-        'Strona internetowa': 'Strony WWW',
-        'Strona WWW': 'Strony WWW',
-        'Sklep e-commerce': 'Sklepu e-commerce',
-        'Aplikacja webowa': 'Aplikacji webowej',
+        'Strona internetowa': 'strony WWW',
+        'Strona WWW': 'strony WWW',
+        'Sklep e-commerce': 'sklepu e-commerce',
+        'Aplikacja webowa': 'aplikacji webowej',
       };
-      return genitiveMap[type] || type;
+      return genitiveMap[type] || type.toLowerCase();
     };
     const projectTypeGenitive = getProjectTypeGenitive(booking.projectType);
 
@@ -385,7 +385,7 @@ AKCJE:
       from: "Syntance Konfigurator <konfigurator@syntance.com>",
       to: ["kontakt@syntance.com"],
       replyTo: email,
-      subject: `Rezerwacja realizacji ${projectTypeGenitive} - ${titleDate}`,
+      subject: `Syntance Studio - Rezerwacja realizacji ${projectTypeGenitive} - ${titleDate}`,
       text: ownerEmailText,
       html: ownerEmailHtml,
     });
@@ -502,7 +502,7 @@ AKCJE:
     await getResend().emails.send({
       from: "Syntance <kontakt@syntance.com>",
       to: [email],
-      subject: `Rezerwacja realizacji ${projectTypeGenitive} - ${titleDate}`,
+      subject: `Syntance Studio - Rezerwacja realizacji ${projectTypeGenitive} - ${titleDate}`,
       html: clientEmailHtml,
     });
 
