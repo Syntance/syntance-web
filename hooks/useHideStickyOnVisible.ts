@@ -1,28 +1,38 @@
 import { useEffect, useState, RefObject } from 'react'
 
 /**
- * Hook który ukrywa sticky bar gdy target element jest widoczny
+ * Hook który pokazuje sticky bar TYLKO gdy scrollujemy powyżej głównego podsumowania
+ * (NIE pokazuje gdy jesteśmy poniżej podsumowania, np. w stopce)
  */
 export function useHideStickyOnVisible(targetRef: RefObject<HTMLElement>) {
-  const [isVisible, setIsVisible] = useState(false) // Na początku podsumowanie nie jest widoczne
+  const [shouldShowBar, setShouldShowBar] = useState(false)
 
   useEffect(() => {
     const target = targetRef.current
     if (!target) return
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting)
-      },
-      {
-        threshold: 0, 
-        rootMargin: '0px 0px -60px 0px' // Wykryj gdy góra podsumowania dotknie góry mini bara (60px od dołu)
-      }
-    )
+    const checkPosition = () => {
+      const rect = target.getBoundingClientRect()
+      const viewportHeight = window.innerHeight
+      
+      // Bar pokazuje się TYLKO gdy podsumowanie jest poniżej viewportu (nie dotarliśmy do niego)
+      // I ukrywa się gdy podsumowanie jest w viewporcie LUB gdy już je minęliśmy (scrollujemy do stopki)
+      const isAboveViewport = rect.top > viewportHeight
+      const isBelowViewport = rect.bottom < 0
+      
+      // Pokazuj bar tylko gdy jesteśmy POWYŻEJ podsumowania (nie dotarliśmy do niego jeszcze)
+      setShouldShowBar(isAboveViewport && !isBelowViewport)
+    }
 
-    observer.observe(target)
-    return () => observer.disconnect()
+    checkPosition()
+    window.addEventListener('scroll', checkPosition, { passive: true })
+    window.addEventListener('resize', checkPosition, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', checkPosition)
+      window.removeEventListener('resize', checkPosition)
+    }
   }, [targetRef])
 
-  return isVisible
+  return shouldShowBar
 }

@@ -32,7 +32,7 @@ export function PricingConfigurator({ data }: Props) {
   
   // Ref do głównego podsumowania
   const summaryRef = useRef<HTMLDivElement>(null)
-  const isSummaryVisible = useHideStickyOnVisible(summaryRef)
+  const shouldShowMiniBar = useHideStickyOnVisible(summaryRef)
 
   // Pobierz domyślnie zaznaczone elementy dla typu projektu
   const getDefaultSelectedItems = useCallback((projectTypeId: string) => {
@@ -401,7 +401,7 @@ export function PricingConfigurator({ data }: Props) {
       <MiniSummaryBar 
         price={calculation.priceNetto}
         itemsCount={calculation.itemsCount}
-        isVisible={!isSummaryVisible}
+        isVisible={shouldShowMiniBar}
       />
 
       <div className="grid lg:grid-cols-3 gap-4 sm:gap-8 w-full max-w-full box-border overflow-x-hidden lg:overflow-x-visible">
