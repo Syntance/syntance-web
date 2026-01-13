@@ -11,6 +11,17 @@ function getResend() {
   return resend;
 }
 
+// Konwersja typu projektu na formę dopełniacza
+function getProjectTypeGenitive(type: string) {
+  const genitiveMap: Record<string, string> = {
+    'Strona internetowa': 'Strony internetowej',
+    'Strona WWW': 'Strony WWW',
+    'Sklep e-commerce': 'Sklepu e-commerce',
+    'Aplikacja webowa': 'Aplikacji webowej',
+  };
+  return genitiveMap[type] || type;
+}
+
 // Block calendar after acceptance
 async function blockGoogleCalendar(data: ClientData): Promise<string | null> {
   if (!process.env.GOOGLE_CLIENT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY || !data.startDate) {
@@ -105,11 +116,18 @@ export async function GET(req: NextRequest) {
         // Block Google Calendar with confirmed event
         calendarEventId = await blockGoogleCalendar(clientData);
         
+        // Format daty dla tytułu
+        const titleDate = clientData.startDate 
+          ? new Date(clientData.startDate).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' })
+          : new Date().toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        
+        const projectTypeGenitive = getProjectTypeGenitive(clientData.projectType);
+        
         // Send confirmation email to client
         await getResend().emails.send({
           from: "Syntance <kontakt@syntance.com>",
           to: [clientData.email],
-          subject: `✅ Twoje zlecenie zostało potwierdzone! - ${clientData.bookingId}`,
+          subject: `✅ Rezerwacja realizacji ${projectTypeGenitive} - ${clientData.name} ${titleDate} potwierdzona!`,
           html: getClientAcceptedEmailHtml(clientData),
         });
 
@@ -125,11 +143,18 @@ export async function GET(req: NextRequest) {
           console.error('Failed to update Attio:', attioError);
         }
       } else {
+        // Format daty dla tytułu
+        const titleDate = clientData.startDate 
+          ? new Date(clientData.startDate).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' })
+          : new Date().toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        
+        const projectTypeGenitive = getProjectTypeGenitive(clientData.projectType);
+        
         // Send rejection email to client
         await getResend().emails.send({
           from: "Syntance <kontakt@syntance.com>",
           to: [clientData.email],
-          subject: `Informacja o Twoim zleceniu - ${clientData.bookingId}`,
+          subject: `Rezerwacja realizacji ${projectTypeGenitive} - ${clientData.name} ${titleDate} - informacja`,
           html: getClientRejectedEmailHtml(clientData),
         });
 
