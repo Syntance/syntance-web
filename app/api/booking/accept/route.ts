@@ -107,7 +107,7 @@ export async function GET(req: NextRequest) {
         
         // Send confirmation email to client
         await getResend().emails.send({
-          from: "Syntance <hello@syntance.com>",
+          from: "Syntance <kontakt@syntance.com>",
           to: [clientData.email],
           subject: `✅ Twoje zlecenie zostało potwierdzone! - ${clientData.bookingId}`,
           html: getClientAcceptedEmailHtml(clientData),
@@ -127,7 +127,7 @@ export async function GET(req: NextRequest) {
       } else {
         // Send rejection email to client
         await getResend().emails.send({
-          from: "Syntance <hello@syntance.com>",
+          from: "Syntance <kontakt@syntance.com>",
           to: [clientData.email],
           subject: `Informacja o Twoim zleceniu - ${clientData.bookingId}`,
           html: getClientRejectedEmailHtml(clientData),
@@ -238,7 +238,7 @@ function getClientAcceptedEmailHtml(data: ClientData): string {
               </p>
               <p style="color: #888; font-size: 14px; line-height: 1.6; margin-top: 16px;">
                 Masz pytania? Odpowiedz na ten email lub napisz na 
-                <a href="mailto:hello@syntance.com" style="color: #a78bfa;">hello@syntance.com</a>.
+                <a href="mailto:kontakt@syntance.com" style="color: #a78bfa;">kontakt@syntance.com</a>.
               </p>
             </td>
           </tr>
@@ -297,7 +297,7 @@ function getClientRejectedEmailHtml(data: ClientData): string {
               
               <p style="color: #888; font-size: 14px; line-height: 1.6;">
                 Przepraszamy za niedogodności. Jeśli masz pytania, odpowiedz na ten email lub napisz na 
-                <a href="mailto:hello@syntance.com" style="color: #a78bfa;">hello@syntance.com</a>.
+                <a href="mailto:kontakt@syntance.com" style="color: #a78bfa;">kontakt@syntance.com</a>.
               </p>
             </td>
           </tr>
