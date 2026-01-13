@@ -363,12 +363,29 @@ AKCJE:
 - Odrzuć: ${rejectUrl}
 `;
 
+    // Format daty dla tytułu
+    const titleDate = booking.startDate 
+      ? new Date(booking.startDate).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' })
+      : new Date().toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+    // Konwersja typu projektu na formę dopełniacza
+    const getProjectTypeGenitive = (type: string) => {
+      const genitiveMap: Record<string, string> = {
+        'Strona internetowa': 'Strony internetowej',
+        'Strona WWW': 'Strony WWW',
+        'Sklep e-commerce': 'Sklepu e-commerce',
+        'Aplikacja webowa': 'Aplikacji webowej',
+      };
+      return genitiveMap[type] || type;
+    };
+    const projectTypeGenitive = getProjectTypeGenitive(booking.projectType);
+
     // Send email to owner
     await getResend().emails.send({
       from: "Syntance Konfigurator <konfigurator@syntance.com>",
-      to: [process.env.CONTACT_TO_EMAIL!],
+      to: ["kontakt@syntance.com"],
       replyTo: email,
-      subject: `${status === 'pending' ? '🔔' : '✅'} Nowe zlecenie: ${name} - ${booking.priceNetto.toLocaleString('pl-PL')} PLN (${booking.days} dni)`,
+      subject: `Rezerwacja realizacji ${projectTypeGenitive} - ${name} ${titleDate}`,
       text: ownerEmailText,
       html: ownerEmailHtml,
     });
@@ -441,6 +458,16 @@ AKCJE:
                 </table>
               </div>
               
+              <div style="background-color: #1a1a1a; border-radius: 12px; padding: 24px; margin: 24px 0;">
+                <h3 style="margin: 0 0 16px; color: #fff; font-size: 16px;">📦 Wybrane elementy (${booking.itemsCount}):</h3>
+                ${booking.items.map(item => `
+                  <div style="display: flex; align-items: center; margin: 8px 0; color: #ccc; font-size: 14px;">
+                    <span style="display: inline-block; width: 6px; height: 6px; background-color: #a78bfa; border-radius: 50%; margin-right: 12px;"></span>
+                    ${item}
+                  </div>
+                `).join('')}
+              </div>
+              
               <div style="background-color: #22c55e15; border-radius: 12px; padding: 16px; margin: 24px 0; border: 1px solid #22c55e30;">
                 <p style="margin: 0; color: #22c55e; font-size: 14px; line-height: 1.6;">
                   💡 <strong>Co dalej?</strong> Po potwierdzeniu terminu otrzymasz email z instrukcjami dotyczącymi płatności zaliczki i rozpoczęcia projektu.
@@ -449,7 +476,7 @@ AKCJE:
               
               <p style="color: #888; font-size: 14px; line-height: 1.6;">
                 Jeśli masz pytania, odpowiedz na ten email lub napisz na 
-                <a href="mailto:hello@syntance.com" style="color: #a78bfa;">hello@syntance.com</a>.
+                <a href="mailto:kontakt@syntance.com" style="color: #a78bfa;">kontakt@syntance.com</a>.
               </p>
             </td>
           </tr>
@@ -469,7 +496,7 @@ AKCJE:
 `;
 
     await getResend().emails.send({
-      from: "Syntance <hello@syntance.com>",
+      from: "Syntance <kontakt@syntance.com>",
       to: [email],
       subject: `Potwierdzenie wyceny - ${bookingId}`,
       html: clientEmailHtml,
