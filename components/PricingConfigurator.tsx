@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useRef } from 'react'
 import { 
   Layout, FileText, Layers, Zap, Plug, CreditCard, Truck, 
   Globe, ShoppingCart, Smartphone, Check, Sparkles, Clock,
@@ -8,6 +8,8 @@ import {
 } from 'lucide-react'
 import { PricingData, PricingItem } from '@/sanity/queries/pricing'
 import { ConfirmDialog } from './ConfirmDialog'
+import { MiniSummaryBar } from './MiniSummaryBar'
+import { useHideStickyOnVisible } from '@/hooks/useHideStickyOnVisible'
 
 // Mapa ikon - używamy typu LucideIcon
 const iconMap: Record<string, typeof Layout> = {
@@ -27,6 +29,10 @@ interface Props {
 
 export function PricingConfigurator({ data }: Props) {
   const { categories, projectTypes, items, config } = data
+  
+  // Ref do głównego podsumowania
+  const summaryRef = useRef<HTMLDivElement>(null)
+  const isSummaryVisible = useHideStickyOnVisible(summaryRef)
 
   // Pobierz domyślnie zaznaczone elementy dla typu projektu
   const getDefaultSelectedItems = useCallback((projectTypeId: string) => {
@@ -390,7 +396,15 @@ export function PricingConfigurator({ data }: Props) {
   const currentProjectType = projectTypes.find(pt => pt.id === state.projectType)
 
   return (
-    <div className="grid lg:grid-cols-3 gap-4 sm:gap-8 w-full max-w-full box-border overflow-x-hidden lg:overflow-x-visible">
+    <>
+      {/* Mini Summary Bar - tylko mobile */}
+      <MiniSummaryBar 
+        price={calculation.priceNetto}
+        itemsCount={calculation.itemsCount}
+        isVisible={!isSummaryVisible}
+      />
+
+      <div className="grid lg:grid-cols-3 gap-4 sm:gap-8 w-full max-w-full box-border overflow-x-hidden lg:overflow-x-visible">
       {/* LEWA KOLUMNA: Selektor */}
       <div className="lg:col-span-2 space-y-6 sm:space-y-8 w-full max-w-full min-w-0">
         {/* Typ projektu */}
@@ -625,7 +639,7 @@ export function PricingConfigurator({ data }: Props) {
 
       {/* PRAWA KOLUMNA: Podsumowanie */}
       <div className="lg:col-span-1 w-full max-w-full min-w-0">
-        <div className="lg:sticky lg:top-24 max-w-[calc(100vw-2rem)]">
+        <div className="lg:sticky lg:top-24 max-w-[calc(100vw-2rem)]" ref={summaryRef}>
           {/* Main summary card */}
           <div className="relative group">
             {/* Gradient border glow */}
@@ -760,7 +774,8 @@ export function PricingConfigurator({ data }: Props) {
         onConfirm={confirmDialog.onConfirm}
         onCancel={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
       />
-    </div>
+      </div>
+    </>
   )
 }
 
