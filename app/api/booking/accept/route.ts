@@ -68,6 +68,7 @@ interface ClientData {
   bookingId: string;
   projectType: string;
   priceNetto: number;
+  priceBrutto: number;
   deposit: number;
   days: number;
   startDate?: string;
