@@ -16,7 +16,7 @@ export function useHideStickyOnVisible(targetRef: RefObject<HTMLElement>) {
       },
       {
         threshold: 0, 
-        rootMargin: '0px 0px 200px 0px' // Wykryj trochę wcześniej (200px przed)
+        rootMargin: '0px 0px -60px 0px' // Wykryj gdy góra podsumowania dotknie góry mini bara (60px od dołu)
       }
     )
 
