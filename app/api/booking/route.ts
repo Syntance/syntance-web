@@ -498,7 +498,7 @@ AKCJE:
     await getResend().emails.send({
       from: "Syntance <kontakt@syntance.com>",
       to: [email],
-      subject: `Potwierdzenie wyceny - ${bookingId}`,
+      subject: `Rezerwacja realizacji ${projectTypeGenitive} - ${name} ${titleDate}`,
       html: clientEmailHtml,
     });
 
