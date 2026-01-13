@@ -9,6 +9,7 @@ import {
 import { PricingData, PricingItem } from '@/sanity/queries/pricing'
 import { ConfirmDialog } from './ConfirmDialog'
 import { MiniSummaryBar } from './MiniSummaryBar'
+import { BookingModal } from './BookingModal'
 import { useHideStickyOnVisible } from '@/hooks/useHideStickyOnVisible'
 
 // Mapa ikon - używamy typu LucideIcon
@@ -69,6 +70,8 @@ export function PricingConfigurator({ data }: Props) {
     confirmText: 'Usuń',
     onConfirm: () => {},
   })
+
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
 
   // Filtruj elementy dla wybranego typu projektu
   const availableItems = useMemo(() => {
@@ -373,17 +376,38 @@ export function PricingConfigurator({ data }: Props) {
     return false
   }, [state.selectedItems, requiredItems, categories])
 
-  // Calendly URL z parametrami
-  const getCalendlyUrl = useCallback(() => {
-    if (!config?.calendlyUrl) return '#contact'
-    
-    const params = new URLSearchParams({
-      name: 'Rezerwacja projektu',
-      a1: `${calculation.priceNetto.toLocaleString('pl-PL')} PLN netto`,
-      a2: `${calculation.days} dni roboczych`,
-    })
-    return `${config.calendlyUrl}?${params.toString()}`
-  }, [config?.calendlyUrl, calculation])
+  // Aktualny typ projektu
+  const currentProjectType = projectTypes.find(pt => pt.id === state.projectType)
+
+  // Pobierz nazwy wszystkich wybranych elementów
+  const getSelectedItemNames = useCallback(() => {
+    const allSelectedIds = [
+      ...requiredItems.map(i => i.id),
+      ...state.selectedItems
+    ]
+    return allSelectedIds.map(id => {
+      const item = items.find(i => i.id === id)
+      if (!item) return null
+      const qty = state.quantities[id] || 1
+      return qty > 1 ? `${item.name} (${qty}x)` : item.name
+    }).filter(Boolean) as string[]
+  }, [requiredItems, state.selectedItems, state.quantities, items])
+
+  // Dane do modalu rezerwacji
+  const getBookingDetails = useCallback(() => {
+    return {
+      projectType: currentProjectType?.name || 'Strona WWW',
+      priceNetto: calculation.priceNetto,
+      priceBrutto: calculation.priceBrutto,
+      deposit: calculation.deposit,
+      days: calculation.days,
+      hours: calculation.hours,
+      complexity: calculation.complexity,
+      itemsCount: calculation.itemsCount,
+      selectedItems: [...requiredItems.map(i => i.id), ...state.selectedItems],
+      itemNames: getSelectedItemNames(),
+    }
+  }, [calculation, currentProjectType, requiredItems, state.selectedItems, getSelectedItemNames])
 
   // Pobierz ikonę
   const getIcon = (iconName?: string) => {
@@ -391,9 +415,6 @@ export function PricingConfigurator({ data }: Props) {
     const IconComponent = iconMap[iconName]
     return IconComponent ? <IconComponent size={20} className="text-purple-400" /> : null
   }
-
-  // Aktualny typ projektu
-  const currentProjectType = projectTypes.find(pt => pt.id === state.projectType)
 
   return (
     <>
@@ -729,16 +750,14 @@ export function PricingConfigurator({ data }: Props) {
 
               {/* CTAs */}
               <div className="space-y-2 sm:space-y-3 pt-2">
-                <a
-                  href={getCalendlyUrl()}
-                  target={config?.calendlyUrl ? '_blank' : undefined}
-                  rel={config?.calendlyUrl ? 'noopener noreferrer' : undefined}
+                <button
+                  onClick={() => setIsBookingModalOpen(true)}
                   className="flex items-center justify-center gap-2 w-full py-3 sm:py-4 px-4 sm:px-6 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white text-sm sm:text-base font-medium rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40"
                 >
                   <Calendar size={16} className="flex-shrink-0" />
                   <span className="truncate">{config?.ctaTexts?.reserve || 'Zarezerwuj termin'}</span>
                   <ChevronRight size={14} className="flex-shrink-0" />
-                </a>
+                </button>
 
                 <button
                   onClick={() => {
@@ -773,6 +792,14 @@ export function PricingConfigurator({ data }: Props) {
         cancelText="Anuluj"
         onConfirm={confirmDialog.onConfirm}
         onCancel={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
+      />
+
+      {/* Booking Modal */}
+      <BookingModal
+        isOpen={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
+        booking={getBookingDetails()}
+        calendlyUrl={config?.calendlyUrl || 'https://calendly.com/syntance/discovery'}
       />
       </div>
     </>
