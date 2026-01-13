@@ -241,7 +241,7 @@ function getClientAcceptedEmailHtml(data: ClientData): string {
                     ${data.deposit.toLocaleString('pl-PL')} PLN
                   </p>
                   <p style="margin: 8px 0 0; color: #888; font-size: 12px;">
-                    Cena całkowita: ${data.priceNetto.toLocaleString('pl-PL')} PLN netto
+                    Cena: ${data.priceNetto.toLocaleString('pl-PL')} PLN netto / ${data.priceBrutto.toLocaleString('pl-PL')} PLN brutto
                   </p>
                 </div>
               </div>

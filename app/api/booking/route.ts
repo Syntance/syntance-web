@@ -448,6 +448,10 @@ AKCJE:
                     <td align="right" style="color: #fff; font-weight: 600;">${booking.priceNetto.toLocaleString('pl-PL')} PLN</td>
                   </tr>
                   <tr>
+                    <td style="padding: 8px 0;">Cena brutto:</td>
+                    <td align="right" style="color: #fff; font-weight: 600;">${booking.priceBrutto.toLocaleString('pl-PL')} PLN</td>
+                  </tr>
+                  <tr>
                     <td style="padding: 8px 0;">Czas realizacji:</td>
                     <td align="right" style="color: #fff; font-weight: 600;">${booking.days} dni roboczych</td>
                   </tr>
