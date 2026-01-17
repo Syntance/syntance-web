@@ -64,8 +64,11 @@ export function generatePricingPDF(data: PDFData) {
   let y = margin
 
   // === HEADER Z LOGO ===
-  // Logo Syntance po lewej
-  doc.addImage(LOGO_BASE64, 'PNG', margin, y, 50, 0)
+  // Logo Syntance - tekst (sygnet jako "S")
+  doc.setTextColor(...hexToRgb(COLORS.black))
+  doc.setFontSize(18)
+  doc.setFont('helvetica', 'bold')
+  doc.text('SYNTANCE', margin, y + 8)
   
   // Data po prawej
   const currentDate = data.date || new Date().toLocaleDateString('pl-PL', {
@@ -78,7 +81,7 @@ export function generatePricingPDF(data: PDFData) {
   doc.setFont('helvetica', 'normal')
   doc.text(currentDate, pageWidth - margin, y + 8, { align: 'right' })
   
-  y += 30
+  y += 25
 
   // Linia oddzielająca
   doc.setDrawColor(...hexToRgb(COLORS.border))
