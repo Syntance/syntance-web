@@ -62,19 +62,47 @@ export function generatePricingPDF(data: PDFData) {
   let y = margin
 
   // === HEADER ===
-  // Sygnet stylizowany (okrąg z S)
+  // Sygnet Syntance - dwa nachodzące równoległoboki
+  const scale = 0.055
+  const offsetX = margin
+  const offsetY = y - 3
+  
   doc.setFillColor(...hexToRgb(COLORS.black))
-  doc.circle(margin + 5, y + 5, 5, 'F')
-  doc.setTextColor(255, 255, 255)
-  doc.setFontSize(7)
-  doc.setFont('helvetica', 'bold')
-  doc.text('S', margin + 3.3, y + 7)
+  
+  // Rysowanie sygnetu jako ścieżka (uproszczona wersja)
+  // Górny równoległobok
+  doc.triangle(
+    offsetX + 271 * scale - 130 * scale, offsetY + 120 * scale,
+    offsetX + 356 * scale - 130 * scale, offsetY + 175 * scale,
+    offsetX + 186 * scale - 130 * scale, offsetY + 265 * scale,
+    'F'
+  )
+  doc.triangle(
+    offsetX + 271 * scale - 130 * scale, offsetY + 120 * scale,
+    offsetX + 186 * scale - 130 * scale, offsetY + 265 * scale,
+    offsetX + 141 * scale - 130 * scale, offsetY + 220 * scale,
+    'F'
+  )
+  
+  // Dolny równoległobok
+  doc.triangle(
+    offsetX + 221 * scale - 130 * scale, offsetY + 360 * scale,
+    offsetX + 136 * scale - 130 * scale, offsetY + 305 * scale,
+    offsetX + 306 * scale - 130 * scale, offsetY + 215 * scale,
+    'F'
+  )
+  doc.triangle(
+    offsetX + 221 * scale - 130 * scale, offsetY + 360 * scale,
+    offsetX + 306 * scale - 130 * scale, offsetY + 215 * scale,
+    offsetX + 351 * scale - 130 * scale, offsetY + 260 * scale,
+    'F'
+  )
   
   // Nazwa firmy
   doc.setTextColor(...hexToRgb(COLORS.black))
-  doc.setFontSize(14)
+  doc.setFontSize(16)
   doc.setFont('helvetica', 'bold')
-  doc.text('Syntance', margin + 14, y + 7.5)
+  doc.text('Syntance', margin + 16, y + 8)
   
   // Data po prawej
   const currentDate = data.date || new Date().toLocaleDateString('pl-PL', {
