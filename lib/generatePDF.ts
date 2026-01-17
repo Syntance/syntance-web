@@ -66,72 +66,78 @@ export function generatePricingPDF(data: PDFData) {
   let y = margin
 
   // === HEADER ===
-  // Logo po lewej z podkresleniem
+  // Funkcja do rysowania sygnetu (kolko z S)
+  const drawSygnet = (x: number, yPos: number, size: number) => {
+    // Czarne kolko
+    doc.setFillColor(...hexToRgb(COLORS.black))
+    doc.circle(x + size/2, yPos + size/2, size/2, 'F')
+    // Biala litera S
+    doc.setTextColor(255, 255, 255)
+    doc.setFontSize(size * 0.7)
+    doc.setFont('helvetica', 'bold')
+    doc.text('S', x + size/2, yPos + size/2 + size * 0.25, { align: 'center' })
+  }
+  
+  // Logo z sygnetem
+  const sygnetSize = 10
+  drawSygnet(margin, y, sygnetSize)
+  
   doc.setTextColor(...hexToRgb(COLORS.black))
-  doc.setFontSize(22)
+  doc.setFontSize(20)
   doc.setFont('helvetica', 'bold')
-  doc.text('Syntance', margin, y + 6)
+  doc.text('Syntance', margin + sygnetSize + 4, y + 7)
   
-  // Podkreslenie logo
-  const logoWidth = doc.getTextWidth('Syntance')
-  doc.setDrawColor(...hexToRgb(COLORS.black))
-  doc.setLineWidth(0.8)
-  doc.line(margin, y + 8, margin + logoWidth, y + 8)
-  
-  // Dane klienta po prawej (jeśli są)
+  // Dane klienta po prawej (z placeholderami)
   const rightX = pageWidth - margin
   let clientY = y
   
-  if (data.clientName) {
-    doc.setFontSize(12)
-    doc.setTextColor(...hexToRgb(COLORS.black))
-    doc.setFont('helvetica', 'bold')
-    doc.text(removePolishChars(data.clientName), rightX, clientY, { align: 'right' })
-    clientY += 6
-  }
-  
-  if (data.clientEmail) {
-    doc.setFontSize(10)
-    doc.setTextColor(...hexToRgb(COLORS.gray))
-    doc.setFont('helvetica', 'normal')
-    doc.text(data.clientEmail, rightX, clientY, { align: 'right' })
-    clientY += 5
-  }
-  
-  if (data.clientPhone) {
-    doc.setFontSize(10)
-    doc.setTextColor(...hexToRgb(COLORS.gray))
-    doc.setFont('helvetica', 'normal')
-    doc.text(data.clientPhone, rightX, clientY, { align: 'right' })
-    clientY += 5
-  }
-  
-  // Data (zawsze wyświetlana)
+  // Data
   const currentDate = data.date || new Date().toLocaleDateString('pl-PL', {
     day: 'numeric',
     month: 'long',
     year: 'numeric'
   })
-  doc.setFontSize(9)
-  doc.setTextColor(...hexToRgb(COLORS.lightGray))
-  doc.text(currentDate, rightX, clientY, { align: 'right' })
+  doc.setFontSize(10)
+  doc.setTextColor(...hexToRgb(COLORS.gray))
+  doc.setFont('helvetica', 'normal')
+  const dateText = data.date ? removePolishChars(currentDate) : '[Data]'
+  doc.text(dateText, rightX, clientY, { align: 'right' })
+  clientY += 5
   
-  y += 18
+  // Imie i Nazwisko
+  doc.setTextColor(...hexToRgb(COLORS.black))
+  doc.setFont('helvetica', 'bold')
+  const nameText = data.clientName ? removePolishChars(data.clientName) : '[Imie i Nazwisko]'
+  doc.text(nameText, rightX, clientY, { align: 'right' })
+  clientY += 5
+  
+  // Telefon
+  doc.setTextColor(...hexToRgb(COLORS.gray))
+  doc.setFont('helvetica', 'normal')
+  const phoneText = data.clientPhone || '[nr.tel]'
+  doc.text(phoneText, rightX, clientY, { align: 'right' })
+  clientY += 5
+  
+  // Email
+  const emailText = data.clientEmail || '[email]'
+  doc.text(emailText, rightX, clientY, { align: 'right' })
+  
+  y += 30
 
-  // === LINIA ODDZIELAJĄCA ===
+  // === TYTUŁ WYŚRODKOWANY ===
+  doc.setTextColor(...hexToRgb(COLORS.black))
+  doc.setFontSize(18)
+  doc.setFont('helvetica', 'bold')
+  doc.text('WYCENA PROJEKTU', pageWidth / 2, y, { align: 'center' })
+  
+  y += 6
+  
+  // Linia pod tytulem
   doc.setDrawColor(...hexToRgb(COLORS.border))
   doc.setLineWidth(0.5)
   doc.line(margin, y, pageWidth - margin, y)
   
   y += 12
-  
-  // === TYTUŁ ===
-  doc.setTextColor(...hexToRgb(COLORS.black))
-  doc.setFontSize(18)
-  doc.setFont('helvetica', 'bold')
-  doc.text('WYCENA PROJEKTU', margin, y)
-  
-  y += 8
   
   // Typ projektu
   doc.setTextColor(...hexToRgb(COLORS.purple))
@@ -139,7 +145,7 @@ export function generatePricingPDF(data: PDFData) {
   doc.setFont('helvetica', 'normal')
   doc.text(removePolishChars(data.projectType), margin, y)
   
-  y += 15
+  y += 12
 
   // Rozdziel elementy na bazę projektu i konfigurację
   const baseItems = data.items.filter(item => item.required || item.includedInBase)
@@ -323,11 +329,21 @@ export function generatePricingPDF(data: PDFData) {
   doc.setLineWidth(0.3)
   doc.line(margin, footerY - 5, pageWidth - margin, footerY - 5)
   
+  // Sygnet w stopce
+  const footerSygnetSize = 5
+  doc.setFillColor(...hexToRgb(COLORS.black))
+  doc.circle(margin + footerSygnetSize/2, footerY - 1, footerSygnetSize/2, 'F')
+  doc.setTextColor(255, 255, 255)
+  doc.setFontSize(footerSygnetSize * 0.7)
+  doc.setFont('helvetica', 'bold')
+  doc.text('S', margin + footerSygnetSize/2, footerY + 0.5, { align: 'center' })
+  
   doc.setTextColor(...hexToRgb(COLORS.gray))
   doc.setFontSize(8)
-  doc.text('Wycena wazna 30 dni od daty wystawienia', margin, footerY)
+  doc.setFont('helvetica', 'normal')
+  doc.text('Wycena wazna 30 dni od daty wystawienia', margin + footerSygnetSize + 4, footerY)
   doc.text('kontakt@syntance.com', pageWidth / 2, footerY, { align: 'center' })
-  doc.text('syntance.com', pageWidth - margin, footerY, { align: 'right' })
+  doc.text('www.syntance.com', pageWidth - margin, footerY, { align: 'right' })
 
   // === ZAPISZ ===
   const fileName = `Wycena_${data.projectType.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`
