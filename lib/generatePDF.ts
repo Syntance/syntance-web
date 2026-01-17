@@ -92,7 +92,8 @@ export function generatePricingPDF(data: PDFData) {
     month: 'long',
     year: 'numeric'
   })
-  const dateY = logoY + (logoHeight / 2)
+  // Tekst jest wyrownywany do baseline, wiec dodajemy korekte (+1.5mm) zeby srodek tekstu byl na srodku logo
+  const dateY = logoY + (logoHeight / 2) + 1.5
   doc.setFontSize(11)
   doc.setTextColor(...hexToRgb(COLORS.black))
   doc.setFont('helvetica', 'normal')
