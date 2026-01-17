@@ -45,6 +45,17 @@ function hexToRgb(hex: string): [number, number, number] {
     : [0, 0, 0]
 }
 
+// Funkcja do zamiany polskich znakow na ASCII (jsPDF nie obsluguje UTF-8)
+function removePolishChars(text: string): string {
+  const polishMap: Record<string, string> = {
+    'ą': 'a', 'ć': 'c', 'ę': 'e', 'ł': 'l', 'ń': 'n',
+    'ó': 'o', 'ś': 's', 'ź': 'z', 'ż': 'z',
+    'Ą': 'A', 'Ć': 'C', 'Ę': 'E', 'Ł': 'L', 'Ń': 'N',
+    'Ó': 'O', 'Ś': 'S', 'Ź': 'Z', 'Ż': 'Z'
+  }
+  return text.replace(/[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/g, char => polishMap[char] || char)
+}
+
 export function generatePricingPDF(data: PDFData) {
   const doc = new jsPDF('p', 'mm', 'a4')
   const pageWidth = doc.internal.pageSize.getWidth()
@@ -55,11 +66,17 @@ export function generatePricingPDF(data: PDFData) {
   let y = margin
 
   // === HEADER ===
-  // Logo po lewej
+  // Logo po lewej z podkresleniem
   doc.setTextColor(...hexToRgb(COLORS.black))
   doc.setFontSize(22)
   doc.setFont('helvetica', 'bold')
   doc.text('Syntance', margin, y + 6)
+  
+  // Podkreslenie logo
+  const logoWidth = doc.getTextWidth('Syntance')
+  doc.setDrawColor(...hexToRgb(COLORS.black))
+  doc.setLineWidth(0.8)
+  doc.line(margin, y + 8, margin + logoWidth, y + 8)
   
   // Dane klienta po prawej (jeśli są)
   const rightX = pageWidth - margin
@@ -69,7 +86,7 @@ export function generatePricingPDF(data: PDFData) {
     doc.setFontSize(12)
     doc.setTextColor(...hexToRgb(COLORS.black))
     doc.setFont('helvetica', 'bold')
-    doc.text(data.clientName, rightX, clientY, { align: 'right' })
+    doc.text(removePolishChars(data.clientName), rightX, clientY, { align: 'right' })
     clientY += 6
   }
   
@@ -120,7 +137,7 @@ export function generatePricingPDF(data: PDFData) {
   doc.setTextColor(...hexToRgb(COLORS.purple))
   doc.setFontSize(14)
   doc.setFont('helvetica', 'normal')
-  doc.text(data.projectType, margin, y)
+  doc.text(removePolishChars(data.projectType), margin, y)
   
   y += 15
 
@@ -134,13 +151,13 @@ export function generatePricingPDF(data: PDFData) {
   const col3 = margin + 110  // Cena
   const col4 = pageWidth - margin  // Suma (wyrównanie do prawej)
 
-  // Funkcja do rysowania nagłówków tabeli
+  // Funkcja do rysowania naglowkow tabeli
   const drawTableHeaders = () => {
     doc.setFontSize(9)
     doc.setFont('helvetica', 'bold')
     doc.setTextColor(...hexToRgb(COLORS.gray))
     doc.text('Element', col1, y)
-    doc.text('Ilość', col2, y)
+    doc.text('Szt.', col2, y)
     doc.text('Cena', col3, y)
     doc.text('Suma', col4, y, { align: 'right' })
     
@@ -159,13 +176,13 @@ export function generatePricingPDF(data: PDFData) {
       y = margin
     }
     
-    // Nazwa elementu
+    // Nazwa elementu (bez polskich znakow)
     doc.setTextColor(...hexToRgb(COLORS.black))
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(10)
     
-    // Skróć nazwę jeśli za długa
-    let itemName = item.name
+    // Usun polskie znaki i skroc nazwe jesli za dluga
+    let itemName = removePolishChars(item.name)
     if (doc.getTextWidth(itemName) > 85) {
       while (doc.getTextWidth(itemName + '...') > 85 && itemName.length > 0) {
         itemName = itemName.slice(0, -1)
@@ -297,6 +314,7 @@ export function generatePricingPDF(data: PDFData) {
   doc.setFontSize(8)
   doc.setFont('helvetica', 'normal')
   doc.text('Baza projektu - elementy wliczone w cene bazowa', margin, y)
+  doc.text('Konfiguracja - dodatkowo wybrane elementy', margin, y + 4)
 
   // === STOPKA ===
   const footerY = pageHeight - 15
@@ -307,7 +325,7 @@ export function generatePricingPDF(data: PDFData) {
   
   doc.setTextColor(...hexToRgb(COLORS.gray))
   doc.setFontSize(8)
-  doc.text('Wycena wazna 30 dni', margin, footerY)
+  doc.text('Wycena wazna 30 dni od daty wystawienia', margin, footerY)
   doc.text('kontakt@syntance.com', pageWidth / 2, footerY, { align: 'center' })
   doc.text('syntance.com', pageWidth - margin, footerY, { align: 'right' })
 
