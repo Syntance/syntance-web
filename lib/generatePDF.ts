@@ -124,51 +124,48 @@ export function generatePricingPDF(data: PDFData) {
   
   y += 15
 
-  // === WYBRANE ELEMENTY ===
-  doc.setTextColor(...hexToRgb(COLORS.black))
-  doc.setFontSize(12)
-  doc.setFont('helvetica', 'bold')
-  doc.text(`Wybrane elementy (${data.items.length})`, margin, y)
+  // Rozdziel elementy na bazę projektu i konfigurację
+  const baseItems = data.items.filter(item => item.required || item.includedInBase)
+  const configItems = data.items.filter(item => !item.required && !item.includedInBase)
   
-  y += 8
-
-  // Nagłówki tabeli
+  // Pozycje kolumn
   const col1 = margin  // Element
   const col2 = margin + 90  // Ilość
   const col3 = margin + 110  // Cena
   const col4 = pageWidth - margin  // Suma (wyrównanie do prawej)
-  
-  doc.setFontSize(9)
-  doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...hexToRgb(COLORS.gray))
-  doc.text('Element', col1, y)
-  doc.text('Ilość', col2, y)
-  doc.text('Cena', col3, y)
-  doc.text('Suma', col4, y, { align: 'right' })
-  
-  y += 4
-  doc.setDrawColor(...hexToRgb(COLORS.border))
-  doc.setLineWidth(0.3)
-  doc.line(margin, y, pageWidth - margin, y)
-  y += 6
 
-  // Elementy
-  doc.setFont('helvetica', 'normal')
-  doc.setFontSize(10)
-  
-  data.items.forEach((item) => {
+  // Funkcja do rysowania nagłówków tabeli
+  const drawTableHeaders = () => {
+    doc.setFontSize(9)
+    doc.setFont('helvetica', 'bold')
+    doc.setTextColor(...hexToRgb(COLORS.gray))
+    doc.text('Element', col1, y)
+    doc.text('Ilość', col2, y)
+    doc.text('Cena', col3, y)
+    doc.text('Suma', col4, y, { align: 'right' })
+    
+    y += 4
+    doc.setDrawColor(...hexToRgb(COLORS.border))
+    doc.setLineWidth(0.3)
+    doc.line(margin, y, pageWidth - margin, y)
+    y += 6
+  }
+
+  // Funkcja do rysowania elementu
+  const drawItem = (item: PDFItem, isBase: boolean) => {
     // Nowa strona jeśli brakuje miejsca
     if (y > pageHeight - 70) {
       doc.addPage()
       y = margin
     }
     
-    // Nazwa elementu (z oznaczeniem jeśli wymagany)
+    // Nazwa elementu
     doc.setTextColor(...hexToRgb(COLORS.black))
-    const displayName = item.required ? `• ${item.name}` : item.name
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(10)
     
     // Skróć nazwę jeśli za długa
-    let itemName = displayName
+    let itemName = item.name
     if (doc.getTextWidth(itemName) > 85) {
       while (doc.getTextWidth(itemName + '...') > 85 && itemName.length > 0) {
         itemName = itemName.slice(0, -1)
@@ -181,28 +178,60 @@ export function generatePricingPDF(data: PDFData) {
     doc.setTextColor(...hexToRgb(COLORS.gray))
     doc.text(item.quantity.toString(), col2, y)
     
-    // Cena jednostkowa
-    if (item.hidePrice) {
-      doc.text('Indywidualna', col3, y)
-    } else if (item.includedInBase) {
+    // Cena jednostkowa i suma dla bazy projektu
+    if (isBase) {
+      doc.setTextColor(...hexToRgb(COLORS.gray))
       doc.text('W cenie', col3, y)
-    } else {
-      doc.text(`${item.price.toLocaleString('pl-PL')} zl`, col3, y)
-    }
-    
-    // Suma
-    if (item.hidePrice) {
-      doc.text('-', col4, y, { align: 'right' })
-    } else if (item.includedInBase) {
       doc.setTextColor(...hexToRgb(COLORS.purple))
       doc.text('Gratis', col4, y, { align: 'right' })
     } else {
-      doc.setTextColor(...hexToRgb(COLORS.black))
-      doc.text(`${item.total.toLocaleString('pl-PL')} zl`, col4, y, { align: 'right' })
+      // Cena jednostkowa
+      if (item.hidePrice) {
+        doc.text('Indywidualna', col3, y)
+        doc.text('-', col4, y, { align: 'right' })
+      } else {
+        doc.text(`${item.price.toLocaleString('pl-PL')} zl`, col3, y)
+        doc.setTextColor(...hexToRgb(COLORS.black))
+        doc.text(`${item.total.toLocaleString('pl-PL')} zl`, col4, y, { align: 'right' })
+      }
     }
     
     y += 7
-  })
+  }
+
+  // === BAZA PROJEKTU ===
+  if (baseItems.length > 0) {
+    doc.setTextColor(...hexToRgb(COLORS.black))
+    doc.setFontSize(12)
+    doc.setFont('helvetica', 'bold')
+    doc.text(`Baza projektu (${baseItems.length})`, margin, y)
+    
+    y += 8
+    drawTableHeaders()
+    
+    baseItems.forEach(item => drawItem(item, true))
+    
+    y += 8
+  }
+
+  // === KONFIGURACJA ===
+  if (configItems.length > 0) {
+    // Nowa strona jeśli brakuje miejsca
+    if (y > pageHeight - 100) {
+      doc.addPage()
+      y = margin
+    }
+    
+    doc.setTextColor(...hexToRgb(COLORS.black))
+    doc.setFontSize(12)
+    doc.setFont('helvetica', 'bold')
+    doc.text(`Konfiguracja (${configItems.length})`, margin, y)
+    
+    y += 8
+    drawTableHeaders()
+    
+    configItems.forEach(item => drawItem(item, false))
+  }
   
   y += 5
   doc.setDrawColor(...hexToRgb(COLORS.border))
@@ -267,7 +296,7 @@ export function generatePricingPDF(data: PDFData) {
   doc.setTextColor(...hexToRgb(COLORS.gray))
   doc.setFontSize(8)
   doc.setFont('helvetica', 'normal')
-  doc.text('• Element wymagany', margin, y)
+  doc.text('Baza projektu - elementy wliczone w cene bazowa', margin, y)
 
   // === STOPKA ===
   const footerY = pageHeight - 15
