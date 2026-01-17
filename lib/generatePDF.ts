@@ -64,29 +64,19 @@ export function generatePricingPDF(data: PDFData) {
   let y = margin
 
   // === HEADER Z LOGO ===
-  // Logo tekstowe "SYNTANCE Studio"
-  doc.setTextColor(...hexToRgb(COLORS.black))
-  doc.setFontSize(20)
-  doc.setFont('helvetica', 'bold')
-  doc.text('SYNTANCE', margin, y + 8)
+  // Logo Syntance po lewej
+  doc.addImage(LOGO_BASE64, 'PNG', margin, y, 50, 0)
   
-  doc.setFontSize(11)
-  doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...hexToRgb(COLORS.gray))
-  doc.text('Studio', margin, y + 14)
-  
-  // Data i numer wyceny po prawej
+  // Data po prawej
   const currentDate = data.date || new Date().toLocaleDateString('pl-PL', {
-    year: 'numeric',
+    day: 'numeric',
     month: 'long',
-    day: 'numeric'
+    year: 'numeric'
   })
   doc.setFontSize(10)
-  doc.setTextColor(...hexToRgb(COLORS.gray))
-  doc.text('WYCENA PROJEKTU', pageWidth - margin, y + 5, { align: 'right' })
   doc.setTextColor(...hexToRgb(COLORS.black))
-  doc.setFontSize(11)
-  doc.text(currentDate, pageWidth - margin, y + 12, { align: 'right' })
+  doc.setFont('helvetica', 'normal')
+  doc.text(currentDate, pageWidth - margin, y + 8, { align: 'right' })
   
   y += 30
 
