@@ -1,17 +1,15 @@
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 
-// Logo Syntance (Sygnet + tekst) w czerni - base64
-const LOGO_BASE64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMcAAAAoCAMAAAB9yR6jAAAAM1BMVEVMaXEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADlf1jlAAAAEHRSTlMALvKhYIi0EMcecdblBUw85kIV8gAAAAlwSFlzAAALEwAACxMBAJqcGAAAA+xJREFUeNrdmemCoyAMgOW+0fd/2lXOBLG1ndmd7fCPRiAfhBx0WVIjQjq/eScFWT63rXrrTa+fimE33MRXJ1TkaOGHMb4OwtMs5t9ikO3c4gdysHIGkSgTS8eHj+MINC1aLzeh33AgP8GRzYoNt0V8HMea1rTd16S+/DscSr1usEGpK4FRIwfYf5+CSFpVHK0HRn50M3ETGcu006zZoT1+l3nO1NqqkaWZHYM2mz7ffwicyX0aPqq8Mpfuq7SDhAidBXU2ky+2mnBkEW8S2SRFFBdOi4dzBVePrq8cwOpApO1b4/ImEl9EniMKMAhJFOsCtwK9W28fHPe23uPgfToaH3Fw9BslmMPQaewaAhtrNtmwN6ChqLtk18F4n3JoelJuzrEOP7bjTxzOnbWaxefqjIyfhTvVf6U7yiscSSVdtZCXHKGcueBWeORXXF+6bgpV8OIew7TH4bms4aXUcAg+JS/MCxzJ1FU5UnLlryKwi7yZDnP4GI67TiFjFtF0wYkE4TmWIWk2CYyxdNrWCHWXQxZLFNh5jxwhStpsKQsVUtbAI9CA3RuUdfB2HHVIVqqeYcQkntzkMCjosAfxQ3GOAq+BHG2J7EuB4s1HK1pXUNgdmOE7zoB55W14ytGjpUbdh/HcQBtMHLT5F9Fdg+tIhYvqI9KUg+KkNn/KP4iVFN7ZpxxiJppzGCsd9G6QQw+eNhkJxenS0uoZO8nPd31Vas2SuesW85SD3+WonmDOIScc4TLNEzMOnblBOqV0U/HbONTJGyMOdslhX+TQ4LvYdmJUVr/LwbaXOZbL88jfUNxkiainezjjoG9yqOLOV3O09R6HH+yEM04eORE5/twT+cFGoXd/iWNFH9/kQHGh9D07zbarAofKESy2PXFY8AYH7op7HEM918u9XMC66quDcxFGZoUyYtr3pF42u73LEWGoIqiOvuYoepXFjeujGFQ4yPrkVi4hlZZzyyjMnku2LTlZud5e5TgmTDad99IfiwVLa3adaqZrjqrXnrqSKCiwmvLA4y0xpKh1rKzc2Zu4AqtnHu45x4rLiZLu7qmxHkPhAw41ZuetbBFzwSmdr/lVM4Ki0u34ETwui1AVpeM9jrFaAkkUmwuUHLYcZNwdRAZ2l2OJQ3kHdpCutX54xrEYZA6+1/UBnQjtApjvavR2ZcqN8TYs9zn6y3dxOLEa73FLypxPOXqWBIqJMn9TmDIkUFEwKZngpwCjIrc8lbyAI6dlATzowCytPNegT4hl+/Qx9O/DeVw4TbMPY1LYeHr7MVwcE3L15guqXj6+/RIO5T6Xg00qlt/BIX4JB/kdHPxD/wLVqLH/9jT+ALx2mAyNGzaMAAAAAElFTkSuQmCC';
-
-// Kolory - czyste, minimalistyczne
+// Kolory - eleganckie, minimalistyczne
 const COLORS = {
   white: '#FFFFFF',
-  black: '#1A1A1A',
+  black: '#111111',
+  darkGray: '#374151',
   gray: '#6B7280',
-  lightGray: '#F3F4F6',
+  lightGray: '#F9FAFB',
   border: '#E5E7EB',
-  purple: '#8B5CF6',
+  accent: '#1F2937',
 }
 
 export interface PDFItem {
@@ -58,17 +56,25 @@ export function generatePricingPDF(data: PDFData) {
   const doc = new jsPDF('p', 'mm', 'a4')
   const pageWidth = doc.internal.pageSize.getWidth()
   const pageHeight = doc.internal.pageSize.getHeight()
-  const margin = 20
+  const margin = 25
   const contentWidth = pageWidth - (margin * 2)
   
   let y = margin
 
-  // === HEADER Z LOGO ===
-  // Logo Syntance - tekst (sygnet jako "S")
-  doc.setTextColor(...hexToRgb(COLORS.black))
-  doc.setFontSize(18)
+  // === HEADER ===
+  // Sygnet stylizowany (okrąg z S)
+  doc.setFillColor(...hexToRgb(COLORS.black))
+  doc.circle(margin + 5, y + 5, 5, 'F')
+  doc.setTextColor(255, 255, 255)
+  doc.setFontSize(7)
   doc.setFont('helvetica', 'bold')
-  doc.text('SYNTANCE', margin, y + 8)
+  doc.text('S', margin + 3.3, y + 7)
+  
+  // Nazwa firmy
+  doc.setTextColor(...hexToRgb(COLORS.black))
+  doc.setFontSize(14)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Syntance', margin + 14, y + 7.5)
   
   // Data po prawej
   const currentDate = data.date || new Date().toLocaleDateString('pl-PL', {
@@ -77,199 +83,195 @@ export function generatePricingPDF(data: PDFData) {
     year: 'numeric'
   })
   doc.setFontSize(10)
-  doc.setTextColor(...hexToRgb(COLORS.black))
+  doc.setTextColor(...hexToRgb(COLORS.gray))
   doc.setFont('helvetica', 'normal')
-  doc.text(currentDate, pageWidth - margin, y + 8, { align: 'right' })
+  doc.text(currentDate, pageWidth - margin, y + 7.5, { align: 'right' })
   
-  y += 25
+  y += 20
 
-  // Linia oddzielająca
-  doc.setDrawColor(...hexToRgb(COLORS.border))
-  doc.setLineWidth(0.5)
-  doc.line(margin, y, pageWidth - margin, y)
+  // === TYTUŁ DOKUMENTU ===
+  doc.setFillColor(...hexToRgb(COLORS.lightGray))
+  doc.rect(margin, y, contentWidth, 28, 'F')
   
-  y += 15
-
-  // === TYP PROJEKTU ===
   doc.setTextColor(...hexToRgb(COLORS.gray))
   doc.setFontSize(9)
   doc.setFont('helvetica', 'normal')
-  doc.text('TYP PROJEKTU', margin, y)
+  doc.text('WYCENA PROJEKTU', margin + 10, y + 10)
   
-  y += 6
   doc.setTextColor(...hexToRgb(COLORS.black))
-  doc.setFontSize(18)
+  doc.setFontSize(20)
   doc.setFont('helvetica', 'bold')
-  doc.text(data.projectType, margin, y)
+  doc.text(data.projectType, margin + 10, y + 21)
   
-  y += 15
+  y += 38
 
   // === TABELA ELEMENTÓW ===
-  doc.setTextColor(...hexToRgb(COLORS.gray))
-  doc.setFontSize(9)
-  doc.setFont('helvetica', 'normal')
-  doc.text('WYBRANE ELEMENTY', margin, y)
-  y += 5
+  doc.setTextColor(...hexToRgb(COLORS.darkGray))
+  doc.setFontSize(10)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Szczegóły wyceny', margin, y)
+  y += 8
 
   const tableBody = data.items.map(item => {
     let priceDisplay: string
     let totalDisplay: string
     
     if (item.hidePrice) {
-      priceDisplay = 'Wycena indywidualna'
+      priceDisplay = 'Indywidualnie'
       totalDisplay = '—'
     } else if (item.includedInBase) {
       priceDisplay = 'W pakiecie'
-      totalDisplay = 'Gratis'
+      totalDisplay = '0 PLN'
     } else {
       priceDisplay = `${item.price.toLocaleString('pl-PL')} PLN`
       totalDisplay = `${item.total.toLocaleString('pl-PL')} PLN`
     }
 
     let itemName = item.name
-    if (item.required) itemName = `● ${itemName}`
+    if (item.required) itemName = `◆ ${itemName}`
 
     return [itemName, item.quantity.toString(), priceDisplay, totalDisplay]
   })
 
   autoTable(doc, {
     startY: y,
-    head: [['Element', 'Ilość', 'Cena jedn.', 'Suma']],
+    head: [['Usługa / Element', 'Ilość', 'Cena jedn.', 'Wartość']],
     body: tableBody,
     theme: 'plain',
     styles: {
       fontSize: 9,
-      cellPadding: 5,
-      textColor: hexToRgb(COLORS.black),
+      cellPadding: 4,
+      textColor: hexToRgb(COLORS.darkGray),
       lineColor: hexToRgb(COLORS.border),
-      lineWidth: 0.3,
+      lineWidth: 0.2,
     },
     headStyles: {
-      fillColor: hexToRgb(COLORS.lightGray),
+      fillColor: hexToRgb(COLORS.white),
       textColor: hexToRgb(COLORS.gray),
       fontSize: 8,
       fontStyle: 'bold',
-      cellPadding: 6,
+      cellPadding: 5,
     },
     bodyStyles: {
       fillColor: hexToRgb(COLORS.white),
     },
     alternateRowStyles: {
-      fillColor: [250, 250, 252],
+      fillColor: [252, 252, 253],
     },
     columnStyles: {
-      0: { cellWidth: 85 },
-      1: { cellWidth: 20, halign: 'center' },
+      0: { cellWidth: 80 },
+      1: { cellWidth: 18, halign: 'center' },
       2: { cellWidth: 35, halign: 'right' },
-      3: { cellWidth: 35, halign: 'right', fontStyle: 'bold' },
+      3: { cellWidth: 35, halign: 'right', fontStyle: 'bold', textColor: hexToRgb(COLORS.black) },
     },
     margin: { left: margin, right: margin },
+    tableLineColor: hexToRgb(COLORS.border),
+    tableLineWidth: 0.2,
   })
 
-  y = (doc as any).lastAutoTable.finalY + 10
+  y = (doc as any).lastAutoTable.finalY + 8
 
   // === ZŁOŻONOŚĆ (jeśli dotyczy) ===
   if (data.complexityDays > 0) {
-    doc.setFillColor(...hexToRgb(COLORS.lightGray))
-    doc.roundedRect(margin, y, contentWidth, 18, 2, 2, 'F')
+    doc.setDrawColor(...hexToRgb(COLORS.border))
+    doc.setLineWidth(0.3)
+    doc.line(margin, y, pageWidth - margin, y)
+    y += 6
     
     doc.setTextColor(...hexToRgb(COLORS.gray))
     doc.setFontSize(8)
-    doc.text('DODATEK ZA ZŁOŻONOŚĆ', margin + 8, y + 7)
+    doc.setFont('helvetica', 'normal')
+    doc.text('Dodatek za złożoność projektu:', margin, y + 4)
     
     doc.setTextColor(...hexToRgb(COLORS.black))
-    doc.setFontSize(10)
+    doc.setFontSize(9)
     doc.setFont('helvetica', 'bold')
     doc.text(
       `${complexityLabels[data.complexity]} (+${data.complexityDays} dni, +${data.complexityPrice.toLocaleString('pl-PL')} PLN)`,
-      margin + 8,
-      y + 13
+      pageWidth - margin,
+      y + 4,
+      { align: 'right' }
     )
-    doc.setFont('helvetica', 'normal')
     
-    y += 25
+    y += 12
   }
 
   // === PODSUMOWANIE ===
   y += 5
   
-  // Box podsumowania
-  doc.setDrawColor(...hexToRgb(COLORS.black))
-  doc.setLineWidth(1)
-  doc.roundedRect(margin, y, contentWidth, 65, 3, 3, 'S')
+  // Ramka podsumowania
+  doc.setFillColor(...hexToRgb(COLORS.accent))
+  doc.roundedRect(margin, y, contentWidth, 55, 2, 2, 'F')
   
   const summaryY = y + 12
-  const col1 = margin + 12
-  const col2 = pageWidth / 2 + 15
+  const col1 = margin + 15
+  const col2 = pageWidth / 2 + 10
   
-  // Lewa kolumna
-  doc.setTextColor(...hexToRgb(COLORS.gray))
+  // Lewa kolumna - czas i zaliczka
+  doc.setTextColor(180, 180, 180)
   doc.setFontSize(8)
+  doc.setFont('helvetica', 'normal')
   doc.text('CZAS REALIZACJI', col1, summaryY)
-  doc.setTextColor(...hexToRgb(COLORS.black))
-  doc.setFontSize(16)
-  doc.setFont('helvetica', 'bold')
-  doc.text(`${data.days} dni roboczych`, col1, summaryY + 8)
   
-  doc.setTextColor(...hexToRgb(COLORS.gray))
+  doc.setTextColor(255, 255, 255)
+  doc.setFontSize(18)
+  doc.setFont('helvetica', 'bold')
+  doc.text(`${data.days} dni`, col1, summaryY + 10)
+  
+  doc.setTextColor(180, 180, 180)
   doc.setFontSize(8)
   doc.setFont('helvetica', 'normal')
-  doc.text('ZALICZKA DO ZAPŁATY', col1, summaryY + 25)
-  doc.setTextColor(...hexToRgb(COLORS.black))
-  doc.setFontSize(16)
-  doc.setFont('helvetica', 'bold')
-  doc.text(`${data.deposit.toLocaleString('pl-PL')} PLN`, col1, summaryY + 33)
+  doc.text('ZALICZKA (50%)', col1, summaryY + 25)
   
-  // Prawa kolumna
-  doc.setTextColor(...hexToRgb(COLORS.gray))
+  doc.setTextColor(255, 255, 255)
+  doc.setFontSize(14)
+  doc.setFont('helvetica', 'bold')
+  doc.text(`${data.deposit.toLocaleString('pl-PL')} PLN`, col1, summaryY + 34)
+  
+  // Prawa kolumna - ceny
+  doc.setTextColor(180, 180, 180)
   doc.setFontSize(8)
   doc.setFont('helvetica', 'normal')
-  doc.text('CENA NETTO', col2, summaryY)
-  doc.setTextColor(...hexToRgb(COLORS.black))
+  doc.text('NETTO', col2, summaryY)
+  
+  doc.setTextColor(255, 255, 255)
   doc.setFontSize(12)
-  doc.text(`${data.priceNetto.toLocaleString('pl-PL')} PLN`, col2, summaryY + 7)
+  doc.setFont('helvetica', 'normal')
+  doc.text(`${data.priceNetto.toLocaleString('pl-PL')} PLN`, col2, summaryY + 8)
   
-  doc.setTextColor(...hexToRgb(COLORS.gray))
+  doc.setTextColor(180, 180, 180)
   doc.setFontSize(8)
-  doc.text(`VAT ${data.vatRate}%`, col2, summaryY + 16)
-  doc.setTextColor(...hexToRgb(COLORS.black))
-  doc.setFontSize(10)
-  doc.text(`+${(data.priceBrutto - data.priceNetto).toLocaleString('pl-PL')} PLN`, col2, summaryY + 22)
+  doc.text(`+ VAT ${data.vatRate}%`, col2, summaryY + 17)
   
   // Cena brutto - główna, wyróżniona
-  doc.setTextColor(...hexToRgb(COLORS.gray))
+  doc.setTextColor(180, 180, 180)
   doc.setFontSize(8)
-  doc.text('CENA BRUTTO', col2, summaryY + 32)
-  doc.setTextColor(...hexToRgb(COLORS.black))
-  doc.setFontSize(22)
-  doc.setFont('helvetica', 'bold')
-  doc.text(`${data.priceBrutto.toLocaleString('pl-PL')} PLN`, col2, summaryY + 43)
+  doc.text('DO ZAPŁATY', col2, summaryY + 28)
   
-  y += 75
+  doc.setTextColor(255, 255, 255)
+  doc.setFontSize(24)
+  doc.setFont('helvetica', 'bold')
+  doc.text(`${data.priceBrutto.toLocaleString('pl-PL')} PLN`, col2, summaryY + 40)
+  
+  y += 65
 
   // === STOPKA ===
-  const footerY = pageHeight - 25
+  const footerY = pageHeight - 20
   
   // Linia
   doc.setDrawColor(...hexToRgb(COLORS.border))
   doc.setLineWidth(0.3)
   doc.line(margin, footerY - 8, pageWidth - margin, footerY - 8)
   
-  // Legenda
+  // Legenda i info
   doc.setTextColor(...hexToRgb(COLORS.gray))
-  doc.setFontSize(8)
-  doc.setFont('helvetica', 'normal')
-  doc.text('● Element wymagany', margin, footerY)
-  
-  // Kontakt
-  doc.text('kontakt@syntance.com  •  syntance.com', pageWidth / 2, footerY, { align: 'center' })
-  
-  // Ważność
   doc.setFontSize(7)
-  doc.text('Wycena ważna 30 dni od daty wystawienia', pageWidth - margin, footerY, { align: 'right' })
+  doc.setFont('helvetica', 'normal')
+  doc.text('◆ Element wymagany', margin, footerY)
+  doc.text('Wycena ważna 30 dni', pageWidth / 2, footerY, { align: 'center' })
+  doc.text('syntance.com', pageWidth - margin, footerY, { align: 'right' })
 
   // === ZAPISZ PDF ===
-  const fileName = `Wycena_Syntance_${data.projectType.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`
+  const fileName = `Wycena_${data.projectType.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`
   doc.save(fileName)
 }
-
