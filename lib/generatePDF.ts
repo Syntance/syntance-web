@@ -66,26 +66,35 @@ export function generatePricingPDF(data: PDFData) {
   let y = margin
 
   // === HEADER ===
-  // Funkcja do rysowania sygnetu (kolko z S)
+  // Funkcja do rysowania sygnetu Syntance (dwa nachylone spinacze)
   const drawSygnet = (x: number, yPos: number, size: number) => {
-    // Czarne kolko
     doc.setFillColor(...hexToRgb(COLORS.black))
-    doc.circle(x + size/2, yPos + size/2, size/2, 'F')
-    // Biala litera S
-    doc.setTextColor(255, 255, 255)
-    doc.setFontSize(size * 0.7)
-    doc.setFont('helvetica', 'bold')
-    doc.text('S', x + size/2, yPos + size/2 + size * 0.25, { align: 'center' })
+    doc.setDrawColor(...hexToRgb(COLORS.black))
+    
+    // Skalowanie proporcji
+    const w = size
+    const h = size * 0.8
+    
+    // Gorny spinacz (nachylony w prawo-dol)
+    // Rysujemy jako gruby path
+    doc.setLineWidth(size * 0.18)
+    doc.setLineCap('round')
+    doc.line(x + w * 0.15, yPos + h * 0.25, x + w * 0.65, yPos + h * 0.55)
+    doc.line(x + w * 0.65, yPos + h * 0.55, x + w * 0.35, yPos + h * 0.55)
+    
+    // Dolny spinacz (nachylony w lewo-gora)
+    doc.line(x + w * 0.85, yPos + h * 0.75, x + w * 0.35, yPos + h * 0.45)
+    doc.line(x + w * 0.35, yPos + h * 0.45, x + w * 0.65, yPos + h * 0.45)
   }
   
   // Logo z sygnetem
-  const sygnetSize = 10
-  drawSygnet(margin, y, sygnetSize)
+  const sygnetSize = 12
+  drawSygnet(margin, y - 2, sygnetSize)
   
   doc.setTextColor(...hexToRgb(COLORS.black))
   doc.setFontSize(20)
   doc.setFont('helvetica', 'bold')
-  doc.text('Syntance', margin + sygnetSize + 4, y + 7)
+  doc.text('Syntance', margin + sygnetSize + 3, y + 7)
   
   // Dane klienta po prawej (z placeholderami)
   const rightX = pageWidth - margin
@@ -329,14 +338,16 @@ export function generatePricingPDF(data: PDFData) {
   doc.setLineWidth(0.3)
   doc.line(margin, footerY - 5, pageWidth - margin, footerY - 5)
   
-  // Sygnet w stopce
-  const footerSygnetSize = 5
-  doc.setFillColor(...hexToRgb(COLORS.black))
-  doc.circle(margin + footerSygnetSize/2, footerY - 1, footerSygnetSize/2, 'F')
-  doc.setTextColor(255, 255, 255)
-  doc.setFontSize(footerSygnetSize * 0.7)
-  doc.setFont('helvetica', 'bold')
-  doc.text('S', margin + footerSygnetSize/2, footerY + 0.5, { align: 'center' })
+  // Mini sygnet w stopce
+  const footerSygnetSize = 6
+  doc.setFillColor(...hexToRgb(COLORS.gray))
+  doc.setDrawColor(...hexToRgb(COLORS.gray))
+  doc.setLineWidth(footerSygnetSize * 0.15)
+  doc.setLineCap('round')
+  const fsx = margin
+  const fsy = footerY - 3
+  doc.line(fsx + footerSygnetSize * 0.1, fsy + footerSygnetSize * 0.2, fsx + footerSygnetSize * 0.5, fsy + footerSygnetSize * 0.45)
+  doc.line(fsx + footerSygnetSize * 0.9, fsy + footerSygnetSize * 0.6, fsx + footerSygnetSize * 0.5, fsy + footerSygnetSize * 0.35)
   
   doc.setTextColor(...hexToRgb(COLORS.gray))
   doc.setFontSize(8)
