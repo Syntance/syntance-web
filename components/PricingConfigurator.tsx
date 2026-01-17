@@ -11,7 +11,6 @@ import { ConfirmDialog } from './ConfirmDialog'
 import { MiniSummaryBar } from './MiniSummaryBar'
 import { BookingModal } from './BookingModal'
 import { useHideStickyOnVisible } from '@/hooks/useHideStickyOnVisible'
-import { generatePricingPDF, PDFData, PDFItem } from '@/lib/generatePDF'
 
 // Mapa ikon - używamy typu LucideIcon
 const iconMap: Record<string, typeof Layout> = {
