@@ -433,6 +433,7 @@ export function PricingConfigurator({ data }: Props) {
         total,
         includedInBase: item.includedInBase,
         required: item.required,
+        hidePrice: item.hidePrice,
       }
     }).filter(Boolean) as PDFItem[]
 
