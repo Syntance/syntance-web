@@ -143,6 +143,13 @@ export default defineType({
       initialValue: false,
       description: 'Element będzie widoczny ale zaciemniony i niemożliwy do wybrania',
     }),
+    defineField({
+      name: 'hidePrice',
+      title: 'Ukryj cenę',
+      type: 'boolean',
+      initialValue: false,
+      description: 'Cena nie będzie wyświetlana klientowi (pokaże się "Wycena indywidualna"), ale będzie doliczana do sumy',
+    }),
   ],
   preview: {
     select: {

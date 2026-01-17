@@ -11,6 +11,7 @@ import { ConfirmDialog } from './ConfirmDialog'
 import { MiniSummaryBar } from './MiniSummaryBar'
 import { BookingModal } from './BookingModal'
 import { useHideStickyOnVisible } from '@/hooks/useHideStickyOnVisible'
+import { generatePricingPDF, PDFData, PDFItem } from '@/lib/generatePDF'
 
 // Mapa ikon - używamy typu LucideIcon
 const iconMap: Record<string, typeof Layout> = {
@@ -409,6 +410,57 @@ export function PricingConfigurator({ data }: Props) {
     }
   }, [calculation, currentProjectType, requiredItems, state.selectedItems, getSelectedItemNames])
 
+  // Generuj PDF z wyceny
+  const handleDownloadPDF = useCallback(() => {
+    const allSelectedIds = [
+      ...requiredItems.map(i => i.id),
+      ...state.selectedItems
+    ]
+
+    // Przygotuj listę itemów dla PDF
+    const pdfItems: PDFItem[] = allSelectedIds.map(id => {
+      const item = items.find(i => i.id === id)
+      if (!item) return null
+      
+      const quantity = state.quantities[id] || 1
+      const price = item.price
+      const total = item.includedInBase ? 0 : price * quantity
+
+      return {
+        name: item.name,
+        quantity,
+        price,
+        total,
+        includedInBase: item.includedInBase,
+        required: item.required,
+      }
+    }).filter(Boolean) as PDFItem[]
+
+    // Dane do PDF
+    const pdfData: PDFData = {
+      projectType: currentProjectType?.name || 'Strona WWW',
+      projectTypeDescription: currentProjectType?.description,
+      items: pdfItems,
+      priceNetto: calculation.priceNetto,
+      priceBrutto: calculation.priceBrutto,
+      deposit: calculation.deposit,
+      vatRate: config?.vatRate || 23,
+      days: calculation.days,
+      hours: calculation.hours,
+      complexity: calculation.complexity,
+      complexityDays: calculation.complexityDays,
+      complexityPrice: calculation.complexityPrice,
+      date: new Date().toLocaleDateString('pl-PL', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }),
+    }
+
+    // Generuj i pobierz PDF
+    generatePricingPDF(pdfData)
+  }, [requiredItems, state.selectedItems, state.quantities, items, calculation, currentProjectType, config])
+
   // Pobierz ikonę
   const getIcon = (iconName?: string) => {
     if (!iconName) return null
@@ -522,7 +574,7 @@ export function PricingConfigurator({ data }: Props) {
                     )}
                   </div>
                   <span className="text-gray-400 text-sm flex-shrink-0">
-                    {item.price.toLocaleString('pl-PL')} PLN
+                    {item.hidePrice ? 'Wycena indywidualna' : `${item.price.toLocaleString('pl-PL')} PLN`}
                   </span>
                 </div>
               ))}
@@ -645,9 +697,11 @@ export function PricingConfigurator({ data }: Props) {
                     }`}>
                       {item.includedInBase 
                         ? 'Gratis'
-                        : item.percentageAdd 
-                          ? `+${item.percentageAdd}%`
-                          : `${(item.price * qty).toLocaleString('pl-PL')} PLN`
+                        : item.hidePrice
+                          ? 'Indywidualna'
+                          : item.percentageAdd 
+                            ? `+${item.percentageAdd}%`
+                            : `${(item.price * qty).toLocaleString('pl-PL')} PLN`
                       }
                     </span>
                   </div>
@@ -760,11 +814,7 @@ export function PricingConfigurator({ data }: Props) {
                 </button>
 
                 <button
-                  onClick={() => {
-                    // TODO: Generuj PDF z wyceny
-                    console.log('Generate PDF', { state, calculation })
-                    alert('Funkcja generowania PDF zostanie dodana wkrótce!')
-                  }}
+                  onClick={handleDownloadPDF}
                   className="flex items-center justify-center gap-2 w-full py-2 sm:py-3 px-4 sm:px-6 text-gray-400 hover:text-white text-sm sm:text-base font-medium rounded-xl transition-all hover:bg-white/5"
                 >
                   <Download size={14} className="flex-shrink-0" />
