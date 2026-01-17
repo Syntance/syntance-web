@@ -1,26 +1,15 @@
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 
-// Kolory spójne z designem strony Syntance
+// Kolory - czyste, minimalistyczne
 const COLORS = {
-  // Tło
-  bgDark: '#05030C',
-  bgCard: '#0D0A1A',
-  bgAccent: '#1A103D',
-  
-  // Tekst
-  textPrimary: '#F5F3FF',
-  textSecondary: '#9CA3AF',
-  textMuted: '#6B7280',
-  
-  // Akcenty
-  brand: '#246BFD',
-  purple: '#8A63FF',
-  orange: '#FFAA40',
-  
-  // Gradienty (używamy środkowego koloru dla PDF)
-  gradientStart: '#FFAA40',
-  gradientEnd: '#9C40FF',
+  white: '#FFFFFF',
+  black: '#1A1A1A',
+  gray: '#6B7280',
+  lightGray: '#F3F4F6',
+  border: '#E5E7EB',
+  purple: '#8B5CF6',
+  blue: '#3B82F6',
 }
 
 export interface PDFItem {
@@ -56,12 +45,26 @@ const complexityLabels = {
   'very-high': 'Bardzo wysoka'
 }
 
-// Helper do konwersji hex na RGB
 function hexToRgb(hex: string): [number, number, number] {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
   return result 
     ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)]
     : [0, 0, 0]
+}
+
+// Logo jako ścieżka SVG - sygnet Syntance (uproszczony)
+function drawLogo(doc: jsPDF, x: number, y: number, size: number) {
+  const scale = size / 120
+  
+  // Gradient circle (symulowany jako fioletowy okrąg)
+  doc.setFillColor(...hexToRgb(COLORS.purple))
+  doc.circle(x + 60 * scale, y + 60 * scale, 50 * scale, 'F')
+  
+  // Litera S w środku
+  doc.setTextColor(255, 255, 255)
+  doc.setFontSize(48 * scale)
+  doc.setFont('helvetica', 'bold')
+  doc.text('S', x + 60 * scale, y + 75 * scale, { align: 'center' })
 }
 
 export function generatePricingPDF(data: PDFData) {
@@ -71,79 +74,72 @@ export function generatePricingPDF(data: PDFData) {
   const margin = 20
   const contentWidth = pageWidth - (margin * 2)
   
-  // === TŁO STRONY ===
-  doc.setFillColor(...hexToRgb(COLORS.bgDark))
-  doc.rect(0, 0, pageWidth, pageHeight, 'F')
-  
   let y = margin
 
-  // === HEADER Z LOGO ===
-  // Accent line na górze
-  const gradient = doc.setFillColor(...hexToRgb(COLORS.purple))
-  doc.rect(0, 0, pageWidth, 4, 'F')
+  // === HEADER ===
+  // Logo (sygnet)
+  drawLogo(doc, margin, y - 5, 35)
   
-  // Logo area
-  doc.setFillColor(...hexToRgb(COLORS.bgCard))
-  doc.roundedRect(margin, y + 6, contentWidth, 45, 4, 4, 'F')
-  
-  // Logo text
-  doc.setTextColor(...hexToRgb(COLORS.textPrimary))
-  doc.setFontSize(32)
+  // Tekst "Syntance Studio" obok sygnetu
+  doc.setTextColor(...hexToRgb(COLORS.black))
+  doc.setFontSize(22)
   doc.setFont('helvetica', 'bold')
-  doc.text('SYNTANCE', margin + 15, y + 28)
+  doc.text('Syntance', margin + 42, y + 10)
   
-  doc.setFontSize(14)
+  doc.setFontSize(12)
   doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...hexToRgb(COLORS.purple))
-  doc.text('Studio', margin + 15, y + 38)
+  doc.setTextColor(...hexToRgb(COLORS.gray))
+  doc.text('Studio', margin + 42, y + 18)
   
-  // Data po prawej
-  doc.setFontSize(10)
-  doc.setTextColor(...hexToRgb(COLORS.textSecondary))
+  // Data i numer wyceny po prawej
   const currentDate = data.date || new Date().toLocaleDateString('pl-PL', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
   })
-  doc.text(currentDate, pageWidth - margin - 15, y + 28, { align: 'right' })
-  doc.text('Wycena projektu', pageWidth - margin - 15, y + 38, { align: 'right' })
-  
-  y += 60
-
-  // === SEKCJA: TYP PROJEKTU ===
-  doc.setFillColor(...hexToRgb(COLORS.bgAccent))
-  doc.roundedRect(margin, y, contentWidth, 35, 4, 4, 'F')
-  
-  // Accent bar
-  doc.setFillColor(...hexToRgb(COLORS.orange))
-  doc.roundedRect(margin, y, 4, 35, 2, 2, 'F')
-  
-  doc.setTextColor(...hexToRgb(COLORS.textSecondary))
   doc.setFontSize(10)
-  doc.setFont('helvetica', 'normal')
-  doc.text('TYP PROJEKTU', margin + 12, y + 12)
+  doc.setTextColor(...hexToRgb(COLORS.gray))
+  doc.text('WYCENA PROJEKTU', pageWidth - margin, y + 5, { align: 'right' })
+  doc.setTextColor(...hexToRgb(COLORS.black))
+  doc.setFontSize(11)
+  doc.text(currentDate, pageWidth - margin, y + 12, { align: 'right' })
   
-  doc.setTextColor(...hexToRgb(COLORS.textPrimary))
+  y += 40
+
+  // Linia oddzielająca
+  doc.setDrawColor(...hexToRgb(COLORS.border))
+  doc.setLineWidth(0.5)
+  doc.line(margin, y, pageWidth - margin, y)
+  
+  y += 15
+
+  // === TYP PROJEKTU ===
+  doc.setTextColor(...hexToRgb(COLORS.gray))
+  doc.setFontSize(9)
+  doc.setFont('helvetica', 'normal')
+  doc.text('TYP PROJEKTU', margin, y)
+  
+  y += 6
+  doc.setTextColor(...hexToRgb(COLORS.black))
   doc.setFontSize(18)
   doc.setFont('helvetica', 'bold')
-  doc.text(data.projectType, margin + 12, y + 26)
+  doc.text(data.projectType, margin, y)
   
-  y += 45
+  y += 15
 
-  // === SEKCJA: ELEMENTY PROJEKTU ===
-  doc.setTextColor(...hexToRgb(COLORS.textSecondary))
-  doc.setFontSize(10)
+  // === TABELA ELEMENTÓW ===
+  doc.setTextColor(...hexToRgb(COLORS.gray))
+  doc.setFontSize(9)
   doc.setFont('helvetica', 'normal')
   doc.text('WYBRANE ELEMENTY', margin, y)
-  y += 8
+  y += 5
 
-  // Przygotuj dane dla tabeli
   const tableBody = data.items.map(item => {
     let priceDisplay: string
     let totalDisplay: string
     
     if (item.hidePrice) {
-      priceDisplay = 'Indywidualna'
+      priceDisplay = 'Wycena indywidualna'
       totalDisplay = '—'
     } else if (item.includedInBase) {
       priceDisplay = 'W pakiecie'
@@ -153,13 +149,8 @@ export function generatePricingPDF(data: PDFData) {
       totalDisplay = `${item.total.toLocaleString('pl-PL')} PLN`
     }
 
-    const badges: string[] = []
-    if (item.required) badges.push('★')
-    if (item.includedInBase) badges.push('✓')
-    
-    const itemName = badges.length > 0 
-      ? `${badges.join(' ')} ${item.name}`
-      : item.name
+    let itemName = item.name
+    if (item.required) itemName = `● ${itemName}`
 
     return [itemName, item.quantity.toString(), priceDisplay, totalDisplay]
   })
@@ -170,22 +161,24 @@ export function generatePricingPDF(data: PDFData) {
     body: tableBody,
     theme: 'plain',
     styles: {
-      fillColor: hexToRgb(COLORS.bgCard),
-      textColor: hexToRgb(COLORS.textPrimary),
       fontSize: 9,
-      cellPadding: 6,
-      lineColor: hexToRgb(COLORS.bgAccent),
-      lineWidth: 0.5,
+      cellPadding: 5,
+      textColor: hexToRgb(COLORS.black),
+      lineColor: hexToRgb(COLORS.border),
+      lineWidth: 0.3,
     },
     headStyles: {
-      fillColor: hexToRgb(COLORS.bgAccent),
-      textColor: hexToRgb(COLORS.textSecondary),
+      fillColor: hexToRgb(COLORS.lightGray),
+      textColor: hexToRgb(COLORS.gray),
       fontSize: 8,
       fontStyle: 'bold',
-      cellPadding: 8,
+      cellPadding: 6,
+    },
+    bodyStyles: {
+      fillColor: hexToRgb(COLORS.white),
     },
     alternateRowStyles: {
-      fillColor: hexToRgb(COLORS.bgDark),
+      fillColor: [250, 250, 252],
     },
     columnStyles: {
       0: { cellWidth: 85 },
@@ -194,132 +187,112 @@ export function generatePricingPDF(data: PDFData) {
       3: { cellWidth: 35, halign: 'right', fontStyle: 'bold' },
     },
     margin: { left: margin, right: margin },
-    tableLineColor: hexToRgb(COLORS.bgAccent),
-    tableLineWidth: 0.5,
   })
 
-  y = (doc as any).lastAutoTable.finalY + 15
+  y = (doc as any).lastAutoTable.finalY + 10
 
-  // === SEKCJA: ZŁOŻONOŚĆ (jeśli dotyczy) ===
+  // === ZŁOŻONOŚĆ (jeśli dotyczy) ===
   if (data.complexityDays > 0) {
-    doc.setFillColor(...hexToRgb(COLORS.bgCard))
-    doc.roundedRect(margin, y, contentWidth, 25, 4, 4, 'F')
+    doc.setFillColor(...hexToRgb(COLORS.lightGray))
+    doc.roundedRect(margin, y, contentWidth, 18, 2, 2, 'F')
     
-    // Purple accent
-    doc.setFillColor(...hexToRgb(COLORS.purple))
-    doc.roundedRect(margin, y, 4, 25, 2, 2, 'F')
+    doc.setTextColor(...hexToRgb(COLORS.gray))
+    doc.setFontSize(8)
+    doc.text('DODATEK ZA ZŁOŻONOŚĆ', margin + 8, y + 7)
     
-    doc.setTextColor(...hexToRgb(COLORS.textSecondary))
-    doc.setFontSize(9)
-    doc.text('DODATEK ZA ZŁOŻONOŚĆ', margin + 12, y + 10)
-    
-    doc.setTextColor(...hexToRgb(COLORS.textPrimary))
-    doc.setFontSize(11)
+    doc.setTextColor(...hexToRgb(COLORS.black))
+    doc.setFontSize(10)
     doc.setFont('helvetica', 'bold')
     doc.text(
-      `${complexityLabels[data.complexity]} • +${data.complexityDays} dni • +${data.complexityPrice.toLocaleString('pl-PL')} PLN`,
-      margin + 12,
-      y + 18
+      `${complexityLabels[data.complexity]} (+${data.complexityDays} dni, +${data.complexityPrice.toLocaleString('pl-PL')} PLN)`,
+      margin + 8,
+      y + 13
     )
+    doc.setFont('helvetica', 'normal')
     
-    y += 35
+    y += 25
   }
 
-  // === SEKCJA: PODSUMOWANIE ===
-  // Box główny
-  doc.setFillColor(...hexToRgb(COLORS.bgAccent))
-  doc.roundedRect(margin, y, contentWidth, 85, 6, 6, 'F')
+  // === PODSUMOWANIE ===
+  y += 5
   
-  // Gradient accent na górze boxa
-  doc.setFillColor(...hexToRgb(COLORS.purple))
-  doc.roundedRect(margin, y, contentWidth, 6, 6, 6, 'F')
-  doc.setFillColor(...hexToRgb(COLORS.bgAccent))
-  doc.rect(margin, y + 3, contentWidth, 3, 'F')
+  // Box podsumowania
+  doc.setDrawColor(...hexToRgb(COLORS.purple))
+  doc.setLineWidth(1)
+  doc.roundedRect(margin, y, contentWidth, 70, 3, 3, 'S')
   
-  const summaryY = y + 20
-  const col1 = margin + 15
-  const col2 = pageWidth / 2 + 10
+  const summaryY = y + 12
+  const col1 = margin + 12
+  const col2 = pageWidth / 2 + 15
   
-  // Lewa kolumna - szczegóły
-  doc.setTextColor(...hexToRgb(COLORS.textSecondary))
-  doc.setFontSize(9)
-  doc.setFont('helvetica', 'normal')
-  
+  // Lewa kolumna
+  doc.setTextColor(...hexToRgb(COLORS.gray))
+  doc.setFontSize(8)
   doc.text('CZAS REALIZACJI', col1, summaryY)
-  doc.setTextColor(...hexToRgb(COLORS.textPrimary))
-  doc.setFontSize(14)
+  doc.setTextColor(...hexToRgb(COLORS.black))
+  doc.setFontSize(16)
   doc.setFont('helvetica', 'bold')
-  doc.text(`${data.days} dni roboczych`, col1, summaryY + 10)
-  doc.setFontSize(10)
-  doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...hexToRgb(COLORS.textSecondary))
-  doc.text(`(${data.hours} godzin pracy)`, col1, summaryY + 18)
-  
-  doc.setTextColor(...hexToRgb(COLORS.textSecondary))
-  doc.setFontSize(9)
-  doc.text('ZALICZKA', col1, summaryY + 35)
-  doc.setTextColor(...hexToRgb(COLORS.orange))
-  doc.setFontSize(14)
-  doc.setFont('helvetica', 'bold')
-  doc.text(`${data.deposit.toLocaleString('pl-PL')} PLN`, col1, summaryY + 45)
-  
-  // Prawa kolumna - ceny
-  doc.setTextColor(...hexToRgb(COLORS.textSecondary))
+  doc.text(`${data.days} dni`, col1, summaryY + 8)
   doc.setFontSize(9)
   doc.setFont('helvetica', 'normal')
-  doc.text('CENA NETTO', col2, summaryY)
-  doc.setTextColor(...hexToRgb(COLORS.textPrimary))
-  doc.setFontSize(14)
-  doc.setFont('helvetica', 'bold')
-  doc.text(`${data.priceNetto.toLocaleString('pl-PL')} PLN`, col2, summaryY + 10)
+  doc.setTextColor(...hexToRgb(COLORS.gray))
+  doc.text(`${data.hours} godzin pracy`, col1, summaryY + 14)
   
-  doc.setTextColor(...hexToRgb(COLORS.textSecondary))
-  doc.setFontSize(9)
-  doc.setFont('helvetica', 'normal')
-  doc.text(`VAT (${data.vatRate}%)`, col2, summaryY + 22)
-  doc.setTextColor(...hexToRgb(COLORS.textMuted))
-  doc.setFontSize(11)
-  doc.text(`+${(data.priceBrutto - data.priceNetto).toLocaleString('pl-PL')} PLN`, col2, summaryY + 30)
-  
-  // Cena brutto - główna
-  doc.setTextColor(...hexToRgb(COLORS.textSecondary))
-  doc.setFontSize(9)
-  doc.setFont('helvetica', 'normal')
-  doc.text('CENA BRUTTO', col2, summaryY + 45)
+  doc.setTextColor(...hexToRgb(COLORS.gray))
+  doc.setFontSize(8)
+  doc.text('ZALICZKA DO ZAPŁATY', col1, summaryY + 30)
   doc.setTextColor(...hexToRgb(COLORS.purple))
-  doc.setFontSize(22)
+  doc.setFontSize(16)
   doc.setFont('helvetica', 'bold')
-  doc.text(`${data.priceBrutto.toLocaleString('pl-PL')} PLN`, col2, summaryY + 58)
+  doc.text(`${data.deposit.toLocaleString('pl-PL')} PLN`, col1, summaryY + 38)
   
-  y += 95
-
-  // === STOPKA ===
-  const footerY = pageHeight - 35
-  
-  // Linia oddzielająca
-  doc.setDrawColor(...hexToRgb(COLORS.bgAccent))
-  doc.setLineWidth(0.5)
-  doc.line(margin, footerY - 10, pageWidth - margin, footerY - 10)
-  
-  // Legenda
-  doc.setTextColor(...hexToRgb(COLORS.textMuted))
+  // Prawa kolumna
+  doc.setTextColor(...hexToRgb(COLORS.gray))
   doc.setFontSize(8)
   doc.setFont('helvetica', 'normal')
-  doc.text('★ Element wymagany   ✓ W cenie pakietu', margin, footerY)
+  doc.text('CENA NETTO', col2, summaryY)
+  doc.setTextColor(...hexToRgb(COLORS.black))
+  doc.setFontSize(12)
+  doc.text(`${data.priceNetto.toLocaleString('pl-PL')} PLN`, col2, summaryY + 7)
+  
+  doc.setTextColor(...hexToRgb(COLORS.gray))
+  doc.setFontSize(8)
+  doc.text(`VAT ${data.vatRate}%`, col2, summaryY + 16)
+  doc.setTextColor(...hexToRgb(COLORS.black))
+  doc.setFontSize(10)
+  doc.text(`+${(data.priceBrutto - data.priceNetto).toLocaleString('pl-PL')} PLN`, col2, summaryY + 22)
+  
+  // Cena brutto - główna, wyróżniona
+  doc.setTextColor(...hexToRgb(COLORS.gray))
+  doc.setFontSize(8)
+  doc.text('CENA BRUTTO', col2, summaryY + 35)
+  doc.setTextColor(...hexToRgb(COLORS.black))
+  doc.setFontSize(22)
+  doc.setFont('helvetica', 'bold')
+  doc.text(`${data.priceBrutto.toLocaleString('pl-PL')} PLN`, col2, summaryY + 46)
+  
+  y += 80
+
+  // === STOPKA ===
+  const footerY = pageHeight - 25
+  
+  // Linia
+  doc.setDrawColor(...hexToRgb(COLORS.border))
+  doc.setLineWidth(0.3)
+  doc.line(margin, footerY - 8, pageWidth - margin, footerY - 8)
+  
+  // Legenda
+  doc.setTextColor(...hexToRgb(COLORS.gray))
+  doc.setFontSize(8)
+  doc.setFont('helvetica', 'normal')
+  doc.text('● Element wymagany', margin, footerY)
   
   // Kontakt
-  doc.setTextColor(...hexToRgb(COLORS.textSecondary))
-  doc.text('kontakt@syntance.com', pageWidth / 2, footerY, { align: 'center' })
-  doc.text('syntance.com', pageWidth / 2, footerY + 6, { align: 'center' })
+  doc.text('kontakt@syntance.com  •  syntance.com', pageWidth / 2, footerY, { align: 'center' })
   
   // Ważność
-  doc.setTextColor(...hexToRgb(COLORS.textMuted))
   doc.setFontSize(7)
-  doc.text('Wycena ważna 30 dni. Szczegóły ustalane indywidualnie.', pageWidth - margin, footerY, { align: 'right' })
-  
-  // Accent line na dole
-  doc.setFillColor(...hexToRgb(COLORS.purple))
-  doc.rect(0, pageHeight - 4, pageWidth, 4, 'F')
+  doc.text('Wycena ważna 30 dni od daty wystawienia', pageWidth - margin, footerY, { align: 'right' })
 
   // === ZAPISZ PDF ===
   const fileName = `Wycena_Syntance_${data.projectType.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`
