@@ -45,6 +45,9 @@ function hexToRgb(hex: string): [number, number, number] {
     : [0, 0, 0]
 }
 
+// Logo Syntance jako JPEG base64 (sygnet + tekst)
+const LOGO_BASE64 = '/9j/4AAQSkZJRgABAQIAHAAcAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/wAALCABAANABAREA/8QAHgABAAIDAQEBAQEAAAAAAAAAAAkIBgcKBQQBAwL/xABEEAABAwMDAgMEBQkHAwUAAAABAAIDBAURBgcIEiETMWFRcYGRCSIyQqEUFSMzQlJicpIWJCU0U4KxFzXBQ2Oi0tH/2gAIAQEAAD8A6poiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIi17urv1ovbbc7X7qagq6mivlXR0tso6WFsr6qqqJBHDG0OIAy5wySQABkqKv0uHJi5cZrJou46o1rqK31W4FJd6OkZpq3VJlp4IZIZHB8rYi0PkIc0BpOAAck9ioPbgaDrtr91aS32k3uKmtjKu7XGup6GJ0jA17Io2Aue8tPcNaMAd+5wRkYciIiIiIiIiIiIiIiIiIiIiIiIiIiIil88Dbl1x0+2/wBN9Tblam1JrfTNZR1NLLfb26tNNUQVEclVTiYkyMge+KNzWOLmjsWgBpAj78R7x7Nc0t7ty6rZjcS2a80xZrfT2qOttVY2pgllp2kTODm9ukv6iO+M9u/dbYREREREREREREREREREREREREREVi+n/wBc3I7p7unQ+w2j9wNWUel7xqC42qpt1HqCqhp5oJal8kTnRtkDHODHDJIJBAPuvb8Ujl7vLy76tHbjcdyLFprTVy0taqm3C02mkmhDJJKmKbrc6aeVxdmMA5GOw7e/f1EREREREREREREREREREREREREXqaY1JqHR+obTq7R97rbHqCyVsNfaLrb53Q1NHVQvEkU0UjCHMe17WuaQQQQCqrchvpTOaO127Fz0ht9pjRmpNH224VFBQaiorrWQ11W2CRzGTzQNgMbRIWh3SA7pDgOo9yRa4REREREREREREREREREREREREX/9k='
+
 // Funkcja do zamiany polskich znakow na ASCII (jsPDF nie obsluguje UTF-8)
 function removePolishChars(text: string): string {
   const polishMap: Record<string, string> = {
@@ -66,35 +69,16 @@ export function generatePricingPDF(data: PDFData) {
   let y = margin
 
   // === HEADER ===
-  // Funkcja do rysowania sygnetu Syntance (dwa nachylone spinacze)
-  const drawSygnet = (x: number, yPos: number, size: number) => {
-    doc.setFillColor(...hexToRgb(COLORS.black))
-    doc.setDrawColor(...hexToRgb(COLORS.black))
-    
-    // Skalowanie proporcji
-    const w = size
-    const h = size * 0.8
-    
-    // Gorny spinacz (nachylony w prawo-dol)
-    // Rysujemy jako gruby path
-    doc.setLineWidth(size * 0.18)
-    doc.setLineCap('round')
-    doc.line(x + w * 0.15, yPos + h * 0.25, x + w * 0.65, yPos + h * 0.55)
-    doc.line(x + w * 0.65, yPos + h * 0.55, x + w * 0.35, yPos + h * 0.55)
-    
-    // Dolny spinacz (nachylony w lewo-gora)
-    doc.line(x + w * 0.85, yPos + h * 0.75, x + w * 0.35, yPos + h * 0.45)
-    doc.line(x + w * 0.35, yPos + h * 0.45, x + w * 0.65, yPos + h * 0.45)
+  // Logo Syntance (JPEG) - sygnet + tekst
+  try {
+    doc.addImage(LOGO_BASE64, 'JPEG', margin, y - 2, 50, 12)
+  } catch {
+    // Fallback do tekstu jesli obrazek nie zadziala
+    doc.setTextColor(...hexToRgb(COLORS.black))
+    doc.setFontSize(20)
+    doc.setFont('helvetica', 'bold')
+    doc.text('Syntance', margin, y + 7)
   }
-  
-  // Logo z sygnetem
-  const sygnetSize = 12
-  drawSygnet(margin, y - 2, sygnetSize)
-  
-  doc.setTextColor(...hexToRgb(COLORS.black))
-  doc.setFontSize(20)
-  doc.setFont('helvetica', 'bold')
-  doc.text('Syntance', margin + sygnetSize + 3, y + 7)
   
   // Dane klienta po prawej (z placeholderami)
   const rightX = pageWidth - margin
@@ -338,21 +322,17 @@ export function generatePricingPDF(data: PDFData) {
   doc.setLineWidth(0.3)
   doc.line(margin, footerY - 5, pageWidth - margin, footerY - 5)
   
-  // Mini sygnet w stopce
-  const footerSygnetSize = 6
-  doc.setFillColor(...hexToRgb(COLORS.gray))
-  doc.setDrawColor(...hexToRgb(COLORS.gray))
-  doc.setLineWidth(footerSygnetSize * 0.15)
-  doc.setLineCap('round')
-  const fsx = margin
-  const fsy = footerY - 3
-  doc.line(fsx + footerSygnetSize * 0.1, fsy + footerSygnetSize * 0.2, fsx + footerSygnetSize * 0.5, fsy + footerSygnetSize * 0.45)
-  doc.line(fsx + footerSygnetSize * 0.9, fsy + footerSygnetSize * 0.6, fsx + footerSygnetSize * 0.5, fsy + footerSygnetSize * 0.35)
+  // Mini logo w stopce
+  try {
+    doc.addImage(LOGO_BASE64, 'JPEG', margin, footerY - 4, 20, 5)
+  } catch {
+    // Fallback
+  }
   
   doc.setTextColor(...hexToRgb(COLORS.gray))
   doc.setFontSize(8)
   doc.setFont('helvetica', 'normal')
-  doc.text('Wycena wazna 30 dni od daty wystawienia', margin + footerSygnetSize + 4, footerY)
+  doc.text('Wycena wazna 30 dni od daty wystawienia', margin + 25, footerY)
   doc.text('kontakt@syntance.com', pageWidth / 2, footerY, { align: 'center' })
   doc.text('www.syntance.com', pageWidth - margin, footerY, { align: 'right' })
 
