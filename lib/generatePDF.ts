@@ -56,8 +56,8 @@ function hexToRgb(hex: string): [number, number, number] {
 function drawLogo(doc: jsPDF, x: number, y: number, size: number) {
   const scale = size / 120
   
-  // Gradient circle (symulowany jako fioletowy okrąg)
-  doc.setFillColor(...hexToRgb(COLORS.purple))
+  // Czarny okrąg
+  doc.setFillColor(...hexToRgb(COLORS.black))
   doc.circle(x + 60 * scale, y + 60 * scale, 50 * scale, 'F')
   
   // Litera S w środku
@@ -232,11 +232,7 @@ export function generatePricingPDF(data: PDFData) {
   doc.setTextColor(...hexToRgb(COLORS.black))
   doc.setFontSize(16)
   doc.setFont('helvetica', 'bold')
-  doc.text(`${data.days} dni`, col1, summaryY + 8)
-  doc.setFontSize(9)
-  doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...hexToRgb(COLORS.gray))
-  doc.text(`${data.hours} godzin pracy`, col1, summaryY + 14)
+  doc.text(`${data.days} dni roboczych`, col1, summaryY + 8)
   
   doc.setTextColor(...hexToRgb(COLORS.gray))
   doc.setFontSize(8)
