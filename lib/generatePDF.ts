@@ -92,7 +92,7 @@ export function generatePricingPDF(data: PDFData) {
     month: 'long',
     year: 'numeric'
   })
-  const dateY = logoY + (logoHeight / 2) + 2
+  const dateY = logoY + (logoHeight / 2)
   doc.setFontSize(11)
   doc.setTextColor(...hexToRgb(COLORS.black))
   doc.setFont('helvetica', 'normal')
