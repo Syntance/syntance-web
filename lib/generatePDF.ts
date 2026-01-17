@@ -1,8 +1,5 @@
 import { jsPDF } from 'jspdf'
 
-// Logo Syntance jako JPEG
-const LOGO_BASE64 = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQIAHAAcAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/wAALCAHgBaABAREA/8QAHgABAAIDAQEBAQEAAAAAAAAAAAgJBgcKBQQBAwL/xABjEAABAwMDAgIEBA4IEgcIAwAAAQIDBAUGBwgREiEJMRMUQVEiOGF2FRYZIzIzNkJxdYGVs7QYN0RSYpHT1BdTVVZXWGhydIKSlqGmsrXR5CRDc4WTlNIlR2NkhqKxxYOEw//aAAgBAQAAPwC1MAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB//Z';
-
 // Kolory
 const COLORS = {
   black: '#1A1A1A',
@@ -60,198 +57,209 @@ export function generatePricingPDF(data: PDFData) {
   // === HEADER ===
   // Logo po lewej
   doc.setTextColor(...hexToRgb(COLORS.black))
-  doc.setFontSize(20)
+  doc.setFontSize(22)
   doc.setFont('helvetica', 'bold')
-  doc.text('Syntance', margin, y + 7)
+  doc.text('Syntance', margin, y + 6)
   
-  // Dane klienta po prawej
+  // Dane klienta po prawej (jeśli są)
+  const rightX = pageWidth - margin
   let clientY = y
   
   if (data.clientName) {
-    doc.setFontSize(11)
+    doc.setFontSize(12)
     doc.setTextColor(...hexToRgb(COLORS.black))
     doc.setFont('helvetica', 'bold')
-    doc.text(data.clientName, pageWidth - margin, clientY, { align: 'right' })
-    clientY += 5
+    doc.text(data.clientName, rightX, clientY, { align: 'right' })
+    clientY += 6
   }
   
   if (data.clientEmail) {
-    doc.setFontSize(9)
+    doc.setFontSize(10)
     doc.setTextColor(...hexToRgb(COLORS.gray))
     doc.setFont('helvetica', 'normal')
-    doc.text(data.clientEmail, pageWidth - margin, clientY, { align: 'right' })
-    clientY += 4
-  }
-  
-  if (data.clientPhone) {
-    doc.setFontSize(9)
-    doc.setTextColor(...hexToRgb(COLORS.gray))
-    doc.setFont('helvetica', 'normal')
-    doc.text(data.clientPhone, pageWidth - margin, clientY, { align: 'right' })
+    doc.text(data.clientEmail, rightX, clientY, { align: 'right' })
     clientY += 5
   }
   
-  // Data
+  if (data.clientPhone) {
+    doc.setFontSize(10)
+    doc.setTextColor(...hexToRgb(COLORS.gray))
+    doc.setFont('helvetica', 'normal')
+    doc.text(data.clientPhone, rightX, clientY, { align: 'right' })
+    clientY += 5
+  }
+  
+  // Data (zawsze wyświetlana)
   const currentDate = data.date || new Date().toLocaleDateString('pl-PL', {
     day: 'numeric',
     month: 'long',
     year: 'numeric'
   })
-  doc.setFontSize(8)
+  doc.setFontSize(9)
   doc.setTextColor(...hexToRgb(COLORS.lightGray))
-  doc.text(currentDate, pageWidth - margin, clientY, { align: 'right' })
+  doc.text(currentDate, rightX, clientY, { align: 'right' })
   
-  y += 20
+  y += 18
 
   // === LINIA ODDZIELAJĄCA ===
   doc.setDrawColor(...hexToRgb(COLORS.border))
   doc.setLineWidth(0.5)
   doc.line(margin, y, pageWidth - margin, y)
   
-  y += 10
+  y += 12
   
   // === TYTUŁ ===
   doc.setTextColor(...hexToRgb(COLORS.black))
-  doc.setFontSize(16)
+  doc.setFontSize(18)
   doc.setFont('helvetica', 'bold')
   doc.text('WYCENA PROJEKTU', margin, y)
   
-  y += 5
+  y += 8
   
   // Typ projektu
   doc.setTextColor(...hexToRgb(COLORS.purple))
-  doc.setFontSize(12)
+  doc.setFontSize(14)
   doc.setFont('helvetica', 'normal')
-  doc.text(data.projectType, margin, y + 5)
+  doc.text(data.projectType, margin, y)
   
   y += 15
 
-  // === WYBRANE ELEMENTY (PRZED PODSUMOWANIEM) ===
+  // === WYBRANE ELEMENTY ===
   doc.setTextColor(...hexToRgb(COLORS.black))
-  doc.setFontSize(11)
+  doc.setFontSize(12)
   doc.setFont('helvetica', 'bold')
   doc.text(`Wybrane elementy (${data.items.length})`, margin, y)
   
   y += 8
 
-  // Tabela elementów
-  doc.setFontSize(8)
+  // Nagłówki tabeli
+  const col1 = margin  // Element
+  const col2 = margin + 90  // Ilość
+  const col3 = margin + 110  // Cena
+  const col4 = pageWidth - margin  // Suma (wyrównanie do prawej)
+  
+  doc.setFontSize(9)
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(...hexToRgb(COLORS.gray))
+  doc.text('Element', col1, y)
+  doc.text('Ilość', col2, y)
+  doc.text('Cena', col3, y)
+  doc.text('Suma', col4, y, { align: 'right' })
   
-  // Nagłówki tabeli
-  doc.text('Element', margin, y)
-  doc.text('Ilość', margin + 100, y)
-  doc.text('Cena', margin + 120, y)
-  doc.text('Suma', pageWidth - margin, y, { align: 'right' })
-  
-  y += 3
+  y += 4
   doc.setDrawColor(...hexToRgb(COLORS.border))
   doc.setLineWidth(0.3)
   doc.line(margin, y, pageWidth - margin, y)
-  y += 5
+  y += 6
 
   // Elementy
   doc.setFont('helvetica', 'normal')
-  doc.setFontSize(9)
+  doc.setFontSize(10)
   
   data.items.forEach((item) => {
-    // Sprawdź czy trzeba nową stronę
-    if (y > pageHeight - 60) {
+    // Nowa strona jeśli brakuje miejsca
+    if (y > pageHeight - 70) {
       doc.addPage()
       y = margin
     }
     
-    // Nazwa
+    // Nazwa elementu (z oznaczeniem jeśli wymagany)
     doc.setTextColor(...hexToRgb(COLORS.black))
-    const itemName = item.required ? `• ${item.name}` : item.name
-    doc.text(itemName, margin, y)
+    const displayName = item.required ? `• ${item.name}` : item.name
+    
+    // Skróć nazwę jeśli za długa
+    let itemName = displayName
+    if (doc.getTextWidth(itemName) > 85) {
+      while (doc.getTextWidth(itemName + '...') > 85 && itemName.length > 0) {
+        itemName = itemName.slice(0, -1)
+      }
+      itemName += '...'
+    }
+    doc.text(itemName, col1, y)
     
     // Ilość
     doc.setTextColor(...hexToRgb(COLORS.gray))
-    doc.text(item.quantity.toString(), margin + 100, y)
+    doc.text(item.quantity.toString(), col2, y)
     
     // Cena jednostkowa
     if (item.hidePrice) {
-      doc.text('Indywidualna', margin + 115, y)
+      doc.text('Indywidualna', col3, y)
     } else if (item.includedInBase) {
-      doc.text('W pakiecie', margin + 115, y)
+      doc.text('W cenie', col3, y)
     } else {
-      doc.text(`${item.price.toLocaleString('pl-PL')} zł`, margin + 115, y)
+      doc.text(`${item.price.toLocaleString('pl-PL')} zl`, col3, y)
     }
     
     // Suma
     if (item.hidePrice) {
-      doc.text('—', pageWidth - margin, y, { align: 'right' })
+      doc.text('-', col4, y, { align: 'right' })
     } else if (item.includedInBase) {
       doc.setTextColor(...hexToRgb(COLORS.purple))
-      doc.text('Gratis', pageWidth - margin, y, { align: 'right' })
+      doc.text('Gratis', col4, y, { align: 'right' })
     } else {
       doc.setTextColor(...hexToRgb(COLORS.black))
-      doc.text(`${item.total.toLocaleString('pl-PL')} zł`, pageWidth - margin, y, { align: 'right' })
+      doc.text(`${item.total.toLocaleString('pl-PL')} zl`, col4, y, { align: 'right' })
     }
     
-    y += 6
+    y += 7
   })
   
   y += 5
   doc.setDrawColor(...hexToRgb(COLORS.border))
   doc.line(margin, y, pageWidth - margin, y)
-  y += 10
+  y += 12
 
   // === PODSUMOWANIE ===
-  // Sprawdź czy trzeba nową stronę dla podsumowania
   if (y > pageHeight - 80) {
     doc.addPage()
     y = margin
   }
   
-  // Box podsumowania
-  const summaryBoxHeight = 55
+  const summaryBoxHeight = 60
   doc.setDrawColor(...hexToRgb(COLORS.border))
   doc.setLineWidth(0.5)
   doc.roundedRect(margin, y, contentWidth, summaryBoxHeight, 3, 3, 'S')
   
-  const boxY = y + 10
-  const labelX = margin + 10
-  const valueX = pageWidth - margin - 10
-  const lineHeight = 10
+  const boxStartY = y + 12
+  const labelX = margin + 15
+  const valueX = pageWidth - margin - 15
+  const rowHeight = 11
   
   // Cena netto
   doc.setTextColor(...hexToRgb(COLORS.gray))
   doc.setFontSize(10)
   doc.setFont('helvetica', 'normal')
-  doc.text('Cena netto:', labelX, boxY)
+  doc.text('Cena netto:', labelX, boxStartY)
   doc.setTextColor(...hexToRgb(COLORS.black))
   doc.setFont('helvetica', 'bold')
-  doc.text(`${data.priceNetto.toLocaleString('pl-PL')} PLN`, valueX, boxY, { align: 'right' })
+  doc.text(`${data.priceNetto.toLocaleString('pl-PL')} PLN`, valueX, boxStartY, { align: 'right' })
   
   // Cena brutto
   doc.setTextColor(...hexToRgb(COLORS.gray))
   doc.setFont('helvetica', 'normal')
-  doc.text('Cena brutto (z VAT):', labelX, boxY + lineHeight)
+  doc.text('Cena brutto (z VAT):', labelX, boxStartY + rowHeight)
   doc.setTextColor(...hexToRgb(COLORS.black))
-  doc.setFontSize(12)
+  doc.setFontSize(13)
   doc.setFont('helvetica', 'bold')
-  doc.text(`${data.priceBrutto.toLocaleString('pl-PL')} PLN`, valueX, boxY + lineHeight, { align: 'right' })
+  doc.text(`${data.priceBrutto.toLocaleString('pl-PL')} PLN`, valueX, boxStartY + rowHeight, { align: 'right' })
   
   // Czas realizacji
   doc.setTextColor(...hexToRgb(COLORS.gray))
   doc.setFontSize(10)
   doc.setFont('helvetica', 'normal')
-  doc.text('Czas realizacji:', labelX, boxY + lineHeight * 2)
+  doc.text('Czas realizacji:', labelX, boxStartY + rowHeight * 2)
   doc.setTextColor(...hexToRgb(COLORS.black))
   doc.setFont('helvetica', 'bold')
-  doc.text(`${data.days} dni roboczych`, valueX, boxY + lineHeight * 2, { align: 'right' })
+  doc.text(`${data.days} dni roboczych`, valueX, boxStartY + rowHeight * 2, { align: 'right' })
   
   // Zaliczka
   doc.setTextColor(...hexToRgb(COLORS.gray))
   doc.setFont('helvetica', 'normal')
-  doc.text('Zaliczka (50%):', labelX, boxY + lineHeight * 3)
+  doc.text('Zaliczka (50%):', labelX, boxStartY + rowHeight * 3)
   doc.setTextColor(...hexToRgb(COLORS.purple))
-  doc.setFontSize(11)
+  doc.setFontSize(12)
   doc.setFont('helvetica', 'bold')
-  doc.text(`${data.deposit.toLocaleString('pl-PL')} PLN`, valueX, boxY + lineHeight * 3, { align: 'right' })
+  doc.text(`${data.deposit.toLocaleString('pl-PL')} PLN`, valueX, boxStartY + rowHeight * 3, { align: 'right' })
   
   y += summaryBoxHeight + 10
 
