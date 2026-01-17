@@ -35,6 +35,7 @@ export const pricingDataQuery = groq`{
     popular,
     new,
     disabled,
+    hidePrice,
     complexityWeight
   },
   "config": *[_type == "pricingConfig"][0] {
@@ -88,6 +89,7 @@ export interface PricingItem {
   popular?: boolean
   new?: boolean
   disabled?: boolean
+  hidePrice?: boolean
   complexityWeight?: number
 }
 
