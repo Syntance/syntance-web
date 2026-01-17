@@ -37,6 +37,10 @@ export interface PDFData {
   complexityDays: number
   complexityPrice: number
   date?: string
+  // Dane klienta
+  clientName?: string
+  clientEmail?: string
+  clientPhone?: string
 }
 
 function hexToRgb(hex: string): [number, number, number] {
@@ -55,12 +59,10 @@ export function generatePricingPDF(data: PDFData) {
   
   let y = margin
 
-  // === HEADER - Logo + Data ===
+  // === HEADER - Logo + Dane klienta ===
   // Próba dodania logo jako obrazek
-  let logoAdded = false
   try {
-    doc.addImage(LOGO_BASE64, 'PNG', margin, y - 5, 55, 18)
-    logoAdded = true
+    doc.addImage(LOGO_BASE64, 'JPEG', margin, y - 5, 55, 18)
   } catch (e) {
     // Jeśli logo nie zadziała, użyj tekstu
     doc.setTextColor(...hexToRgb(COLORS.black))
@@ -69,16 +71,46 @@ export function generatePricingPDF(data: PDFData) {
     doc.text('Syntance', margin, y + 9)
   }
   
-  // Data po prawej
+  // Dane klienta po prawej
+  let clientY = y
+  
+  // Imię i nazwisko
+  if (data.clientName) {
+    doc.setFontSize(12)
+    doc.setTextColor(...hexToRgb(COLORS.black))
+    doc.setFont('helvetica', 'bold')
+    doc.text(data.clientName, pageWidth - margin, clientY, { align: 'right' })
+    clientY += 6
+  }
+  
+  // Email
+  if (data.clientEmail) {
+    doc.setFontSize(10)
+    doc.setTextColor(...hexToRgb(COLORS.gray))
+    doc.setFont('helvetica', 'normal')
+    doc.text(data.clientEmail, pageWidth - margin, clientY, { align: 'right' })
+    clientY += 5
+  }
+  
+  // Telefon
+  if (data.clientPhone) {
+    doc.setFontSize(10)
+    doc.setTextColor(...hexToRgb(COLORS.gray))
+    doc.setFont('helvetica', 'normal')
+    doc.text(data.clientPhone, pageWidth - margin, clientY, { align: 'right' })
+    clientY += 6
+  }
+  
+  // Data
   const currentDate = data.date || new Date().toLocaleDateString('pl-PL', {
     day: 'numeric',
     month: 'long',
     year: 'numeric'
   })
-  doc.setFontSize(11)
-  doc.setTextColor(...hexToRgb(COLORS.gray))
+  doc.setFontSize(9)
+  doc.setTextColor(...hexToRgb(COLORS.lightGray))
   doc.setFont('helvetica', 'normal')
-  doc.text(currentDate, pageWidth - margin, y + 9, { align: 'right' })
+  doc.text(currentDate, pageWidth - margin, clientY, { align: 'right' })
   
   y += 35
 
