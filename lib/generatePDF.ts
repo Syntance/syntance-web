@@ -64,8 +64,16 @@ export function generatePricingPDF(data: PDFData) {
   let y = margin
 
   // === HEADER Z LOGO ===
-  // Logo obrazek (Sygnet + Syntance)
-  doc.addImage(LOGO_BASE64, 'PNG', margin, y, 55, 15)
+  // Logo tekstowe "SYNTANCE Studio"
+  doc.setTextColor(...hexToRgb(COLORS.black))
+  doc.setFontSize(20)
+  doc.setFont('helvetica', 'bold')
+  doc.text('SYNTANCE', margin, y + 8)
+  
+  doc.setFontSize(11)
+  doc.setFont('helvetica', 'normal')
+  doc.setTextColor(...hexToRgb(COLORS.gray))
+  doc.text('Studio', margin, y + 14)
   
   // Data i numer wyceny po prawej
   const currentDate = data.date || new Date().toLocaleDateString('pl-PL', {
