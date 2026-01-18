@@ -13,11 +13,11 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   metadataBase: new URL("https://syntance.com"),
   title: {
-    default: "Syntance — Studio technologiczne AI-first w Polsce",
+    default: "Syntance — Strony i sklepy Next.js",
     template: "%s | Syntance",
   },
   description:
-    "Studio technologiczne specjalizujące się w tworzeniu stron internetowych, sklepów online i rozwiązań AI. Next.js, React, automatyzacja procesów biznesowych. Zobacz nasze realizacje.",
+    "Strony i sklepy Next.js z gwarancją PageSpeed 90+. Strategia przed kodem. Headless CMS, MedusaJS, Vercel. Własność kodu od pierwszego dnia.",
   authors: [{ name: "Syntance", url: "https://syntance.com" }],
   creator: "Syntance",
   publisher: "Syntance",
@@ -27,8 +27,8 @@ export const metadata: Metadata = {
     telephone: false,
   },
   openGraph: {
-    title: "Syntance — Studio technologiczne AI-first w Polsce",
-    description: "Studio technologiczne specjalizujące się w tworzeniu stron internetowych, sklepów online i rozwiązań AI. Next.js, React, automatyzacja procesów biznesowych. Zobacz nasze realizacje.",
+    title: "Syntance — Strony i sklepy Next.js",
+    description: "Strony i sklepy Next.js z gwarancją PageSpeed 90+. Strategia przed kodem. Headless CMS, MedusaJS, Vercel. Własność kodu od pierwszego dnia.",
     url: "https://syntance.com",
     siteName: "Syntance",
     images: [
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
         url: "https://syntance.com/og/og-home-1200x630.png",
         width: 1200,
         height: 630,
-        alt: "Syntance - Studio technologiczne AI-first w Polsce",
+        alt: "Syntance - Strony i sklepy Next.js",
         type: "image/png",
       }
     ],
@@ -45,8 +45,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Syntance — Studio technologiczne AI-first w Polsce",
-    description: "Studio technologiczne specjalizujące się w tworzeniu stron internetowych, sklepów online i rozwiązań AI. Next.js, React, automatyzacja procesów biznesowych. Zobacz nasze realizacje.",
+    title: "Syntance — Strony i sklepy Next.js",
+    description: "Strony i sklepy Next.js z gwarancją PageSpeed 90+. Strategia przed kodem. Headless CMS, MedusaJS, Vercel. Własność kodu od pierwszego dnia.",
     images: ["https://syntance.com/og/og-home-1200x630.png"],
   },
   robots: {
@@ -97,8 +97,8 @@ export default function RootLayout({
     "@type": "Organization",
     "@id": "https://syntance.com/#organization",
     "name": "Syntance",
-    "legalName": "Syntance Studio",
-    "alternateName": "Syntance AI-first Studio",
+    "legalName": "Syntance P.S.A.",
+    "alternateName": "Syntance - Strony i sklepy Next.js",
     "url": "https://syntance.com",
     "logo": {
       "@type": "ImageObject",
@@ -107,7 +107,7 @@ export default function RootLayout({
       "height": 512
     },
     "image": "https://syntance.com/og/og-home-1200x630.png",
-    "description": "Studio technologiczne AI-first specjalizujące się w tworzeniu stron internetowych, sklepów online i rozwiązań AI. Next.js, React, automatyzacja procesów biznesowych.",
+    "description": "Strony i sklepy Next.js z gwarancją PageSpeed 90+. Strategia przed kodem. Headless CMS, MedusaJS, Vercel.",
     "contactPoint": {
       "@type": "ContactPoint",
       "email": "kontakt@syntance.com",
@@ -137,8 +137,8 @@ export default function RootLayout({
       "@type": "Country",
       "name": "Polska"
     },
-    "knowsAbout": ["Next.js", "React", "AI", "Machine Learning", "Web Development", "E-commerce"],
-    "slogan": "Technologia która zachwyca, nie przytłacza"
+    "knowsAbout": ["Next.js", "React", "Headless CMS", "MedusaJS", "Vercel", "E-commerce", "Web Development"],
+    "slogan": "Strony i sklepy Next.js - Ultra-szybkie, bezpieczne i gotowe na przyszłość"
   };
 
   const websiteJsonLd = {
@@ -147,7 +147,7 @@ export default function RootLayout({
     "@id": "https://syntance.com/#website",
     "name": "Syntance",
     "url": "https://syntance.com",
-    "description": "Studio technologiczne AI-first - strony internetowe, sklepy online, rozwiązania AI",
+    "description": "Strony i sklepy Next.js z gwarancją PageSpeed 90+. Strategia przed kodem.",
     "publisher": {
       "@id": "https://syntance.com/#organization"
     },
@@ -157,9 +157,9 @@ export default function RootLayout({
   const serviceJsonLd = {
     "@context": "https://schema.org",
     "@type": "Service",
-    "@id": "https://syntance.com/#service-studio",
-    "name": "Syntance Studio",
-    "description": "Projektujemy strony i sklepy, które zachwycają harmonią, lekkością i emocją",
+    "@id": "https://syntance.com/#service-webdev",
+    "name": "Strony i sklepy Next.js",
+    "description": "Ultra-szybkie, bezpieczne i gotowe na przyszłość. Strategia przed kodem. Headless CMS, MedusaJS, Vercel.",
     "provider": {
       "@id": "https://syntance.com/#organization"
     },

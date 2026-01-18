@@ -9,12 +9,12 @@ import { Twitter, Linkedin, Github } from 'lucide-react'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Konfigurator Cennika — Syntance Studio',
+  title: 'Konfigurator Cennika — Syntance',
   description: 'Skonfiguruj swój projekt i zobacz orientacyjną wycenę w czasie rzeczywistym. Strony WWW, sklepy e-commerce i aplikacje webowe.',
   openGraph: {
-    title: 'Konfigurator Cennika — Syntance Studio',
+    title: 'Konfigurator Cennika — Syntance',
     description: 'Skonfiguruj swój projekt i zobacz orientacyjną wycenę w czasie rzeczywistym.',
-    url: 'https://syntance.com/studio/cennik',
+    url: 'https://syntance.com/cennik',
   },
 }
 
@@ -102,8 +102,8 @@ export default async function CennikPage() {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-6 md:mb-0">
-              <a href="/studio" className="text-gray-400 hover:text-white transition-colors font-medium">
-                ← Powrót do Syntance Studio
+              <a href="/" className="text-gray-400 hover:text-white transition-colors font-medium">
+                ← Powrót do strony głównej
               </a>
             </div>
             <div className="flex space-x-6">
@@ -120,7 +120,7 @@ export default async function CennikPage() {
           </div>
           <div className="mt-12 pt-8 border-t border-gray-900">
             <p className="text-center text-sm font-light tracking-wider text-gray-500">
-              © Syntance Studio — Strony i sklepy, które działają.
+              © Syntance — Strony i sklepy, które działają.
             </p>
           </div>
         </div>
