@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, ReactNode } from 'react';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface TiltCardProps {
   children: ReactNode;
@@ -9,6 +10,7 @@ interface TiltCardProps {
 
 export default function TiltCard({ children, className = '' }: TiltCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
@@ -47,8 +49,8 @@ export default function TiltCard({ children, className = '' }: TiltCardProps) {
     <div
       ref={cardRef}
       className={`transition-all duration-75 ease-out ${className}`}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      onMouseMove={isMobile ? undefined : handleMouseMove}
+      onMouseLeave={isMobile ? undefined : handleMouseLeave}
       style={{
         transformStyle: 'preserve-3d',
         transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg)',
