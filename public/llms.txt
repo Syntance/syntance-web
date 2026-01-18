@@ -1,0 +1,25 @@
+# Syntance — Strony i sklepy Next.js
+
+> Ultra-szybkie, bezpieczne i gotowe na przyszłość. Strategia przed kodem.
+
+## O nas
+
+Syntance to studio technologiczne specjalizujące się w tworzeniu stron internetowych i sklepów e-commerce opartych na Next.js. Oferujemy:
+
+- Strony WWW i landing page z gwarancją PageSpeed 90+
+- Sklepy e-commerce na MedusaJS
+- Headless CMS (Sanity, Contentful)
+- Hosting na Vercel
+- Własność kodu od pierwszego dnia
+
+## Kontakt
+
+- Email: kontakt@syntance.com
+- Telefon: +48 662 519 544
+- Strona: https://syntance.com
+
+## Linki
+
+- Strona główna: https://syntance.com
+- Cennik: https://syntance.com/cennik
+- Polityka prywatności: https://syntance.com/polityka-prywatnosci

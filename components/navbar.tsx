@@ -10,10 +10,10 @@ export default function Navbar() {
           Syntance
         </Link>
         <nav className="flex items-center gap-6 text-sm">
-          <Link href="/studio">Studio</Link>
-          <Link href="/contact">Kontakt</Link>
+          <Link href="/#o-nas">O nas</Link>
+          <Link href="/cennik">Cennik</Link>
           <Link
-            href="/contact"
+            href="#contact"
             className="rounded-lg bg-brand px-4 py-2 text-white hover:bg-brand/90 transition-colors"
           >
             Wyceń projekt

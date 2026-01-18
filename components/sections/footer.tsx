@@ -25,7 +25,7 @@ export default function Footer() {
           <SyntanceLogo />
         </div>
         <div className="flex gap-4">
-          <a href="/studio" className="hover:text-white transition-colors">Studio</a>
+          <a href="/#o-nas" className="hover:text-white transition-colors">O nas</a>
           <a href="/polityka-prywatnosci" className="hover:text-white transition-colors">Polityka Prywatności</a>
           <a href="/regulamin" className="hover:text-white transition-colors">Regulamin</a>
         </div>

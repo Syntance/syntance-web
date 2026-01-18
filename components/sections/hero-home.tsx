@@ -14,12 +14,12 @@ export default function HeroHome() {
           </p>
           <div className="mt-8 flex gap-3">
             <a
-              href="/studio"
+              href="/cennik"
               className="rounded-lg bg-brand px-5 py-3 text-white"
             >
-              Poznaj Studio
+              Sprawdź cenę
             </a>
-            <a href="/contact" className="rounded-lg border px-5 py-3">
+            <a href="#contact" className="rounded-lg border px-5 py-3">
               Porozmawiajmy
             </a>
           </div>

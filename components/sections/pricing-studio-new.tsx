@@ -42,7 +42,7 @@ export default function PricingStudioNew() {
             Cennik i wycena
           </h2>
           <p className="text-lg font-light tracking-wide text-gray-400 max-w-2xl mx-auto">
-            Każdy projekt jest inny. Dlatego cenimy rozmowę, nie sztywne pakiety.
+            Każdy projekt jest unikalny — dlatego zaprojektowaliśmy interaktywny konfigurator, który pomoże Ci oszacować koszt i czas realizacji w kilka minut.
           </p>
         </div>
 
@@ -93,7 +93,7 @@ export default function PricingStudioNew() {
             </p>
             
             <a 
-              href="/studio/cennik"
+              href="/cennik"
               className="px-10 py-4 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 transition-all glow-box cursor-pointer group inline-flex items-center gap-2"
             >
               Konfigurator i zamówienie

@@ -25,10 +25,10 @@ export default function NavbarSimple() {
             Strona główna
           </Link>
           <Link 
-            href="/studio" 
+            href="/#o-nas" 
             className="text-sm font-light tracking-wider text-white hover:text-purple-300 transition-colors"
           >
-            Studio
+            O nas
           </Link>
         </div>
         
@@ -52,11 +52,11 @@ export default function NavbarSimple() {
             Strona główna
           </Link>
           <Link 
-            href="/studio" 
+            href="/#o-nas" 
             className="block text-sm font-light tracking-wider hover:text-purple-300 transition-colors"
             onClick={() => setMobileMenuOpen(false)}
           >
-            Studio
+            O nas
           </Link>
         </div>
       )}

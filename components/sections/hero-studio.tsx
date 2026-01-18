@@ -31,16 +31,17 @@ export default function HeroStudio() {
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}>
         <h1 className="text-5xl md:text-7xl font-light tracking-widest leading-tight mb-6 glow-text">
+          Strony i sklepy{" "}
           <GradientText
             colors={["#ffaa40", "#9c40ff", "#ffaa40"]}
             animationSpeed={4}
             className="font-medium"
           >
-            Syntance Studio
+            Next.js
           </GradientText>
         </h1>
         <p className="text-lg md:text-xl font-light tracking-wider text-gray-300 mb-12 max-w-3xl mx-auto">
-          Projektujemy i wdrażamy strony i sklepy, które realizują cele biznesowe.
+          Ultra-szybkie, bezpieczne i gotowe na przyszłość. Strategia przed kodem.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button 
@@ -50,7 +51,7 @@ export default function HeroStudio() {
             Dowiedz się więcej
           </button>
           <a 
-            href="/studio/cennik"
+            href="/cennik"
             className="px-8 py-3 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 transition-all glow-box cursor-pointer inline-block text-center"
           >
             Sprawdź cenę
