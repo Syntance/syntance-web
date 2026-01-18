@@ -68,7 +68,12 @@ export const metadata: Metadata = {
     title: "Syntance — Strony i sklepy Next.js | PageSpeed 90+",
     description:
       "Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia przed kodem. Strony od 5k PLN. Realizacja w 2-4 tygodnie.",
-    images: ["https://syntance.com/og/og-home-1200x630.png"],
+    images: [
+      {
+        url: "https://syntance.com/og/og-home-1200x630.png",
+        alt: "Syntance - Studio tworzące szybkie strony i sklepy internetowe Next.js",
+      },
+    ],
   },
   alternates: {
     canonical: "https://syntance.com",
