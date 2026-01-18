@@ -411,7 +411,7 @@ export function PricingConfigurator({ data }: Props) {
   }, [calculation, currentProjectType, requiredItems, state.selectedItems, getSelectedItemNames])
 
   // Generuj PDF z wyceny
-  const handleDownloadPDF = useCallback(() => {
+  const handleDownloadPDF = useCallback(async () => {
     const allSelectedIds = [
       ...requiredItems.map(i => i.id),
       ...state.selectedItems
@@ -459,7 +459,7 @@ export function PricingConfigurator({ data }: Props) {
     }
 
     // Generuj i pobierz PDF
-    generatePricingPDF(pdfData)
+    await generatePricingPDF(pdfData)
   }, [requiredItems, state.selectedItems, state.quantities, items, calculation, currentProjectType, config])
 
   // Pobierz ikonę
