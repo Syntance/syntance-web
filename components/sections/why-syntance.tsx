@@ -5,6 +5,7 @@ import { Brain, Heart, Zap } from "lucide-react";
 import TiltCard from "@/components/tilt-card";
 import LotusIcon from "@/components/icons/lotus-icon";
 import DiamondIcon from "@/components/icons/diamond-icon";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 const values = [
   {
@@ -35,6 +36,7 @@ const values = [
 
 export default function WhySyntance() {
   const cardsRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const cards = document.querySelectorAll('.value-card');
@@ -87,17 +89,23 @@ export default function WhySyntance() {
                     {/* Card background with gradient border */}
                     <div className="relative h-full">
                       {/* Animated gradient border */}
-                      <div className="absolute -inset-0.5 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl blur-sm"
+                      <div className={`absolute -inset-0.5 bg-gradient-to-r transition-opacity duration-500 rounded-2xl blur-sm ${
+                        isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                      }`}
                         style={{
                           backgroundImage: `linear-gradient(to right, var(--tw-gradient-stops))`,
                         }}
                       ></div>
                       
                       {/* Card content */}
-                      <div className="relative h-full product-card rounded-2xl p-10 transition-all duration-500 group-hover:border-transparent">
+                      <div className={`relative h-full product-card rounded-2xl p-10 transition-all duration-500 ${
+                        isMobile ? 'border-transparent' : 'group-hover:border-transparent'
+                      }`}>
                         {/* Glow effect on hover */}
                         <div 
-                          className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"
+                          className={`absolute inset-0 rounded-2xl transition-opacity duration-500 -z-10 ${
+                            isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                          }`}
                           style={{
                             boxShadow: `0 0 60px ${value.glowColor}`,
                           }}
@@ -105,7 +113,9 @@ export default function WhySyntance() {
 
                         {/* Icon */}
                         <div className="mb-6 relative">
-                          <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${value.gradient} bg-opacity-10 flex items-center justify-center transform transition-all duration-500 group-hover:scale-110 group-hover:rotate-3`}>
+                          <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${value.gradient} bg-opacity-10 flex items-center justify-center transform transition-all duration-500 ${
+                            isMobile ? 'scale-110 rotate-3' : 'group-hover:scale-110 group-hover:rotate-3'
+                          }`}>
                             {value.title === "Inteligencja w tle." ? (
                               <span className="text-2xl font-bold text-white">
                                 AI
@@ -119,7 +129,9 @@ export default function WhySyntance() {
                             )}
                           </div>
                           {/* Floating particles on hover */}
-                          <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-gradient-to-br opacity-0 group-hover:opacity-100 group-hover:animate-ping"
+                          <div className={`absolute -top-1 -right-1 w-2 h-2 rounded-full bg-gradient-to-br transition-opacity duration-500 ${
+                            isMobile ? 'opacity-100 animate-ping' : 'opacity-0 group-hover:opacity-100 group-hover:animate-ping'
+                          }`}
                             style={{
                               backgroundImage: `linear-gradient(to bottom right, var(--tw-gradient-stops))`,
                             }}
@@ -127,26 +139,34 @@ export default function WhySyntance() {
                         </div>
 
                         {/* Title */}
-                        <h3 className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed">
-                          <span className={`bg-gradient-to-br ${value.gradient} bg-clip-text text-transparent transition-all duration-500 group-hover:tracking-wider`}>
+                        <h3 className="text-2xl md:text-3xl font-light leading-relaxed">
+                          <span className={`bg-gradient-to-br ${value.gradient} bg-clip-text text-transparent transition-all duration-500 ${
+                            isMobile ? 'tracking-wider' : 'tracking-wide group-hover:tracking-wider'
+                          }`}>
                             {value.title}
                           </span>
                         </h3>
 
                         {/* Animated underline */}
-                        <div className="mt-6 h-0.5 w-0 group-hover:w-full bg-gradient-to-r transition-all duration-700"
+                        <div className={`mt-6 h-0.5 bg-gradient-to-r transition-all duration-700 ${
+                          isMobile ? 'w-full' : 'w-0 group-hover:w-full'
+                        }`}
                           style={{
                             backgroundImage: `linear-gradient(to right, var(--tw-gradient-stops))`,
                           }}
                         ></div>
 
                         {/* Decorative corner elements */}
-                        <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 opacity-0 group-hover:opacity-30 transition-opacity duration-500"
+                        <div className={`absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 transition-opacity duration-500 ${
+                          isMobile ? 'opacity-30' : 'opacity-0 group-hover:opacity-30'
+                        }`}
                           style={{
                             borderImage: `linear-gradient(to bottom right, var(--tw-gradient-stops)) 1`,
                           }}
                         ></div>
-                        <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 opacity-0 group-hover:opacity-30 transition-opacity duration-500"
+                        <div className={`absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 transition-opacity duration-500 ${
+                          isMobile ? 'opacity-30' : 'opacity-0 group-hover:opacity-30'
+                        }`}
                           style={{
                             borderImage: `linear-gradient(to top left, var(--tw-gradient-stops)) 1`,
                           }}
