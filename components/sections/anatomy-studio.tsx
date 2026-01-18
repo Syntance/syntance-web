@@ -2,9 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import { Target, Users, Zap, MessageSquare, Brain, GitBranch, Sparkles, Gauge, Bot } from "lucide-react";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 export default function AnatomyStudio() {
   const sectionRef = useRef<HTMLElement>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -50,7 +52,9 @@ export default function AnatomyStudio() {
         <div className="space-y-8">
           {/* Layer 1: Fundament - Strategia */}
           <div className="relative group">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity blur-sm"></div>
+            <div className={`absolute -inset-0.5 bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 rounded-2xl transition-opacity blur-sm ${
+              isMobile ? 'opacity-30' : 'opacity-20 group-hover:opacity-30'
+            }`}></div>
             
             <div className="relative product-card rounded-2xl p-8">
               <div className="flex items-center gap-4 mb-6">
@@ -103,7 +107,9 @@ export default function AnatomyStudio() {
 
           {/* Layer 2: Mechanika - Konwersja */}
           <div className="relative group">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity blur-sm"></div>
+            <div className={`absolute -inset-0.5 bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 rounded-2xl transition-opacity blur-sm ${
+              isMobile ? 'opacity-30' : 'opacity-20 group-hover:opacity-30'
+            }`}></div>
             
             <div className="relative product-card rounded-2xl p-8">
               <div className="flex items-center gap-4 mb-6">
@@ -156,7 +162,9 @@ export default function AnatomyStudio() {
 
           {/* Layer 3: Efekt końcowy - Tech & Design */}
           <div className="relative group">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity blur-sm"></div>
+            <div className={`absolute -inset-0.5 bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 rounded-2xl transition-opacity blur-sm ${
+              isMobile ? 'opacity-30' : 'opacity-20 group-hover:opacity-30'
+            }`}></div>
             
             <div className="relative product-card rounded-2xl p-8">
               <div className="flex items-center gap-4 mb-6">

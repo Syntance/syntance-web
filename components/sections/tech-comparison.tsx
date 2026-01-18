@@ -2,6 +2,7 @@
 
 import { Zap, Shield, TrendingUp, DollarSign, Wrench, Rocket, Quote } from 'lucide-react'
 import GradientText from '@/components/GradientText'
+import { useIsMobile } from '@/hooks/useIsMobile'
 
 const comparisonData = [
   {
@@ -63,6 +64,8 @@ const benefits = [
 ]
 
 export default function TechComparison() {
+  const isMobile = useIsMobile();
+  
   return (
     <section id="tech-comparison" className="relative z-10 py-24 px-6 lg:px-12">
       <div className="max-w-6xl mx-auto">
@@ -94,7 +97,9 @@ export default function TechComparison() {
           {/* Jedna duża karta z tabelą */}
           <div className="relative group">
             {/* Glow effect */}
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 via-blue-500 to-teal-500 rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity blur-sm" />
+            <div className={`absolute -inset-0.5 bg-gradient-to-r from-purple-500 via-blue-500 to-teal-500 rounded-2xl transition-opacity blur-sm ${
+              isMobile ? 'opacity-30' : 'opacity-20 group-hover:opacity-30'
+            }`} />
             
             <div className="relative bg-black border border-white/10 rounded-2xl overflow-hidden">
               {/* Header */}

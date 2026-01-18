@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import TiltCard from "@/components/tilt-card";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 export default function OfferCards() {
   const [isVisible, setIsVisible] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -60,7 +62,11 @@ export default function OfferCards() {
               >
                 <div className="text-5xl mb-6">🌐</div>
                 
-                <h3 className="text-2xl font-medium mb-4 text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-cyan-400 transition-all">
+                <h3 className={`text-2xl font-medium mb-4 transition-all ${
+                  isMobile 
+                    ? 'text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400' 
+                    : 'text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-cyan-400'
+                }`}>
                   Strony WWW
                 </h3>
                 
@@ -79,7 +85,9 @@ export default function OfferCards() {
                   </div>
                 </div>
                 
-                <div className="flex items-center text-blue-400 font-medium tracking-wide group-hover:translate-x-2 transition-transform">
+                <div className={`flex items-center text-blue-400 font-medium tracking-wide transition-transform ${
+                  isMobile ? 'translate-x-2' : 'group-hover:translate-x-2'
+                }`}>
                   Dowiedz się więcej 
                   <span className="ml-2">→</span>
                 </div>
@@ -94,7 +102,11 @@ export default function OfferCards() {
               >
                 <div className="text-5xl mb-6">🛒</div>
                 
-                <h3 className="text-2xl font-medium mb-4 text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-pink-400 transition-all">
+                <h3 className={`text-2xl font-medium mb-4 transition-all ${
+                  isMobile 
+                    ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400' 
+                    : 'text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-pink-400'
+                }`}>
                   Sklepy e-commerce
                 </h3>
                 
@@ -113,7 +125,9 @@ export default function OfferCards() {
                   </div>
                 </div>
                 
-                <div className="flex items-center text-purple-400 font-medium tracking-wide group-hover:translate-x-2 transition-transform">
+                <div className={`flex items-center text-purple-400 font-medium tracking-wide transition-transform ${
+                  isMobile ? 'translate-x-2' : 'group-hover:translate-x-2'
+                }`}>
                   Dowiedz się więcej 
                   <span className="ml-2">→</span>
                 </div>

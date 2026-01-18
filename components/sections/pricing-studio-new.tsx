@@ -2,9 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import { Check } from "lucide-react";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 export default function PricingStudioNew() {
   const sectionRef = useRef<HTMLElement>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -82,7 +84,9 @@ export default function PricingStudioNew() {
         {/* CTA Box */}
         <div className="relative group">
           {/* Gradient border effect */}
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-400 via-blue-400 to-pink-400 rounded-3xl opacity-20 group-hover:opacity-40 transition-opacity duration-500 blur-sm"></div>
+          <div className={`absolute -inset-0.5 bg-gradient-to-r from-purple-400 via-blue-400 to-pink-400 rounded-3xl transition-opacity duration-500 blur-sm ${
+            isMobile ? 'opacity-40' : 'opacity-20 group-hover:opacity-40'
+          }`}></div>
           
           <div className="relative product-card rounded-3xl p-12 backdrop-blur-sm">
             <h3 className="text-3xl md:text-4xl font-light tracking-wide mb-4 glow-text">
@@ -97,7 +101,9 @@ export default function PricingStudioNew() {
               className="px-10 py-4 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 transition-all glow-box cursor-pointer group inline-flex items-center gap-2"
             >
               Konfigurator i zamówienie
-              <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
+              <span className={`inline-block transition-transform ${
+                isMobile ? 'translate-x-1' : 'group-hover:translate-x-1'
+              }`}>→</span>
             </a>
 
             {/* Decorative elements */}
