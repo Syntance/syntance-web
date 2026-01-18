@@ -5,7 +5,6 @@ import { Zap, Target, Rocket, Lock } from "lucide-react";
 import TiltCard from "@/components/tilt-card";
 import dynamic from "next/dynamic";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { useIsMobile } from "@/hooks/useIsMobile";
 
 const TiltCardLazy = dynamic(() => import("@/components/tilt-card"), {
   ssr: false,
