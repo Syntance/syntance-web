@@ -14,7 +14,7 @@ const values = [
   {
     title: "Szybciej",
     description: "Strony w 2-4 tygodnie, sklepy w 4-6 tygodni",
-    proof: "AI + architektura senior-level",
+    proof: "AI + architektura senior level",
     icon: Zap,
     gradient: "from-blue-400 to-cyan-400",
     glowColor: "rgba(56, 189, 248, 0.3)",
