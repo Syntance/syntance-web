@@ -1,25 +1,50 @@
-# Syntance — Strony i sklepy Next.js
+# Strony i sklepy Next.js | Syntance
 
-> Ultra-szybkie, bezpieczne i gotowe na przyszłość. Strategia przed kodem.
+> Tworzymy strony internetowe i sklepy e-commerce w Next.js. Ultra-szybkie, bezpieczne i gotowe na przyszłość.
 
-## O nas
+## Czym się zajmujemy
 
-Syntance to studio technologiczne specjalizujące się w tworzeniu stron internetowych i sklepów e-commerce opartych na Next.js. Oferujemy:
+Syntance to studio specjalizujące się w tworzeniu stron internetowych i sklepów e-commerce w technologii Next.js. Oferujemy:
 
-- Strony WWW i landing page z gwarancją PageSpeed 90+
-- Sklepy e-commerce na MedusaJS
+### Strony internetowe Next.js
+- Strony wizytówkowe, landing page, strony firmowe
+- Dla: lekarzy, prawników, firm usługowych, deweloperów
+- Cena: od 5 000 PLN
+- Czas realizacji: 2-4 tygodnie
+- Gwarancja PageSpeed 90+
+
+### Sklepy e-commerce Next.js
+- Headless e-commerce na MedusaJS
+- Dla: butików, marek D2C, niszowych sprzedawców
+- Cena: od 20 000 PLN
+- Czas realizacji: 4-6 tygodni
+- Skalowalne i ultra-szybkie
+
+## Technologie
+
+- Next.js (React)
+- MedusaJS (e-commerce)
 - Headless CMS (Sanity, Contentful)
-- Hosting na Vercel
-- Własność kodu od pierwszego dnia
+- Vercel (hosting)
+- TypeScript
+- Tailwind CSS
+
+## Dlaczego Next.js?
+
+Next.js to nowoczesny framework używany przez Netflix, TikTok, Nike i Notion. Zapewnia:
+- Szybkość ładowania (PageSpeed 90+)
+- SEO-friendly (SSR/SSG)
+- Skalowalność
+- Bezpieczeństwo
 
 ## Kontakt
 
 - Email: kontakt@syntance.com
 - Telefon: +48 662 519 544
 - Strona: https://syntance.com
+- Konfigurator wyceny: https://syntance.com/cennik
 
-## Linki
+## Lokalizacja
 
-- Strona główna: https://syntance.com
-- Cennik: https://syntance.com/cennik
-- Polityka prywatności: https://syntance.com/polityka-prywatnosci
+Polska, Małopolska
+Obsługujemy klientów z całej Polski.
