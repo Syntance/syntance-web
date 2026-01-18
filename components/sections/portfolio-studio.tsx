@@ -11,18 +11,21 @@ const projects = [
     type: "System",
     image: "/images/syntance-ai-dashboard-1440x900.avif",
     description: "Dashboard AI do zarządzania projektami",
+    alt: "Dashboard AI do zarządzania projektami - interfejs aplikacji webowej Next.js z wykresami i statystykami",
   },
   {
     name: "Syntance Web Showcase",
     type: "Website",
     image: "/images/syntance-web-development-showcase-1280x720.webp",
     description: "Showcase technologii webowych",
+    alt: "Showcase technologii webowych - responsywna strona internetowa Next.js z nowoczesnym designem",
   },
   {
     name: "Syntance Studio",
     type: "Website",
     image: "/images/syntance-studio-hero-1920x1080.webp",
     description: "Landing page dla Syntance Studio",
+    alt: "Landing page Syntance Studio - minimalistyczna strona firmowa z ciemnym motywem i gradientami",
   },
 ];
 
@@ -81,7 +84,7 @@ export default function PortfolioStudio() {
                 <div className="relative h-64 overflow-hidden bg-gray-900">
                   <Image
                     src={project.image}
-                    alt={project.name}
+                    alt={project.alt}
                     fill
                     className={`object-cover transition-transform duration-700 ${
                       isMobile ? 'scale-110' : 'group-hover:scale-110'
