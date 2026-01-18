@@ -1,26 +1,45 @@
 # Syntance — Strony i sklepy Next.js
 
 ## Kim jesteśmy
-Tworzymy ultra-szybkie strony i sklepy internetowe na Next.js. Strategia przed kodem, PageSpeed 90+ gwarantowany, pełna własność kodu.
+Studio oferujące strony, sklepy i aplikacje SaaS. Specjalizujemy się w Next.js, headless CMS i nowoczesnym e-commerce. Każdy projekt zaczynamy od strategii, nie od kodu.
 
-## UVP
-Jakość agencji w tempie freelancera. Strategia przed kodem. Strony w 2-4 tygodnie, sklepy w 4-6 tygodni.
+## UVP (Unique Value Proposition)
+Jakość agencji w tempie freelancera. Strony w 2-4 tygodnie, sklepy w 4-6 tygodni. PageSpeed 90+ gwarantowany. Pełna własność kodu, zero vendor lock-in.
 
-## Usługi
-- Strony WWW (5-15k PLN)
-- Sklepy E-commerce (od 20k PLN)
-- Warsztat Discovery (4.5k PLN)
-- Aplikacje Webowe (od 50k PLN)
+## Usługi i ceny
+- Strony WWW: 5 000 - 15 000 PLN (realizacja: 2-4 tygodnie)
+- Sklepy E-commerce: od 20 000 PLN (realizacja: 4-6 tygodni)
+- Warsztat Discovery: 4 500 PLN (strategia przed kodem)
+- Aplikacje Webowe: od 50 000 PLN (wycena indywidualna)
 
 ## Technologia
-Next.js, MedusaJS, Sanity CMS, Vercel
+- Frontend: Next.js 14+, TypeScript, Tailwind CSS, shadcn/ui
+- E-commerce: MedusaJS, headless Shopify
+- CMS: Sanity (headless, Time Machine)
+- Hosting: Vercel (99.99% uptime, globalny CDN)
+- Płatności: Stripe, Przelewy24
+- Analytics: PostHog, Google Analytics 4
+
+## Dla kogo pracujemy
+- Lekarze specjaliści (prywatne praktyki, gabinety)
+- Premium Home Services (budowlanka, wnętrza, studia kuchni)
+- Lokalni deweloperzy (strony inwestycji)
+- Producenci D2C (meble, fashion, kosmetyki)
+- Marki subskrypcyjne (kawa, suplementy, diety)
+
+## Nasze produkty (dogfooding)
+- OZE Asystent: Inteligentny system automatyzacji dla branży OZE (oze-asystent.pl)
+
+## Dlaczego Syntance?
+- PageSpeed 90+ gwarantowany (Next.js, zero wtyczek)
+- Strategia przed kodem (Warsztat Discovery)
+- Pełna własność kodu (możesz zmienić wykonawcę)
+- AI-Augmented Speed (strony w 2-4 tygodnie)
+- AEO-ready (struktura czytelna dla ChatGPT/Perplexity)
 
 ## Kontakt
 - Email: kontakt@syntance.com
 - Telefon: +48 662 519 544
+- Adres: Czerniec 72, 33-390 Łącko, Polska
 - Strona: https://syntance.com
-- Konfigurator: https://syntance.com/cennik
-
-## Lokalizacja
-Polska, Małopolska
-Czerniec 72, 33-390 Łącko
+- Cennik: https://syntance.com/cennik
