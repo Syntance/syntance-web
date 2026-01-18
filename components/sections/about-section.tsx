@@ -34,7 +34,7 @@ export default function AboutSection() {
           
           <div className="space-y-8 text-center">
             <p className="text-xl md:text-2xl font-light tracking-wide text-gray-200 leading-relaxed">
-              Jesteśmy studiem technologicznym, <span className="text-white font-medium">najlepsza technologia jest niewidoczna</span> — działa płynnie, wygląda pięknie i nie przeszkadza.
+            Studio oferujące strony, sklepy i aplikacje SaaS.
             </p>
             
             <p className="text-lg font-light tracking-wide text-gray-400 leading-relaxed max-w-3xl mx-auto">
