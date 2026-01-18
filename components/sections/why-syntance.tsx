@@ -63,7 +63,7 @@ export default function WhySyntance() {
         {/* Header */}
         <div className="text-center mb-20">
           <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
-            Dlaczego Syntance?
+            Dlaczego My?
           </h2>
           <p className="text-lg font-light tracking-wide text-gray-400">
             Wartości i podejście
