@@ -198,3 +198,74 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Wyłączenie hover efektów na urządzeniach dotykowych (bez myszy) */
+@media (hover: none) and (pointer: coarse) {
+  /* Wyłącz hover na product-card */
+  .product-card:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  
+  /* Wyłącz wszystkie group-hover efekty przez usunięcie pointer-events z group */
+  .group {
+    pointer-events: auto;
+  }
+  
+  /* Nadpisz group-hover opacity */
+  .group:hover .group-hover\:opacity-100,
+  .group:active .group-hover\:opacity-100 {
+    opacity: inherit;
+  }
+  
+  .group:hover .group-hover\:opacity-30,
+  .group:active .group-hover\:opacity-30 {
+    opacity: inherit;
+  }
+  
+  /* Nadpisz group-hover scale i rotate */
+  .group:hover .group-hover\:scale-110,
+  .group:active .group-hover\:scale-110 {
+    transform: none;
+  }
+  
+  .group:hover .group-hover\:rotate-3,
+  .group:active .group-hover\:rotate-3 {
+    transform: none;
+  }
+  
+  /* Nadpisz group-hover width */
+  .group:hover .group-hover\:w-full,
+  .group:active .group-hover\:w-full {
+    width: inherit;
+  }
+  
+  /* Nadpisz group-hover translate */
+  .group:hover .group-hover\:translate-x-1,
+  .group:active .group-hover\:translate-x-1 {
+    transform: none;
+  }
+  
+  .group:hover .group-hover\:translate-y-0,
+  .group:active .group-hover\:translate-y-0 {
+    transform: none;
+  }
+  
+  /* Nadpisz group-hover tracking */
+  .group:hover .group-hover\:tracking-wider,
+  .group:active .group-hover\:tracking-wider {
+    letter-spacing: inherit;
+  }
+  
+  /* Nadpisz group-hover border */
+  .group:hover .group-hover\:border-transparent,
+  .group:active .group-hover\:border-transparent {
+    border-color: inherit;
+  }
+  
+  /* Nadpisz group-hover animate-ping */
+  .group:hover .group-hover\:animate-ping,
+  .group:active .group-hover\:animate-ping {
+    animation: none;
+  }
+}
