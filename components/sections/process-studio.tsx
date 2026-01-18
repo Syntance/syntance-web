@@ -60,55 +60,55 @@ export default function ProcessStudio() {
   }, []);
 
   return (
-    <section id="process-studio" className="relative z-10 py-32 px-6 lg:px-12 overflow-hidden">
+    <section id="process-studio" aria-labelledby="process-heading" className="relative z-10 py-32 px-6 lg:px-12 overflow-hidden">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
+        <header className="text-center mb-20">
+          <h2 id="process-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
             Jak pracujemy
           </h2>
           <p className="text-lg font-light tracking-wide text-gray-400">
             Proces, który łączy design ze strategią
           </p>
-        </div>
+        </header>
 
         {/* Timeline */}
         <div ref={timelineRef} className="relative">
           {/* Connecting Line */}
-          <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-400 via-purple-400 to-pink-400 opacity-20"></div>
+          <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-400 via-purple-400 to-pink-400 opacity-20" aria-hidden="true"></div>
 
-          {/* Steps */}
-          <div className="space-y-16">
+          {/* Steps - semantic ordered list */}
+          <ol className="space-y-16 list-none" aria-label="Etapy naszego procesu">
             {steps.map((step, index) => {
               const Icon = step.icon;
               return (
-                <div
+                <li
                   key={index}
                   className="process-step opacity-0 translate-x-8 transition-all duration-700 ease-out relative"
                   style={{ 
                     transitionDelay: `${index * 150}ms`,
                   }}
                 >
-                  <div className="flex items-start gap-6">
+                  <article className="flex items-start gap-6">
                     {/* Icon Circle */}
-                    <div className="relative flex-shrink-0">
+                    <div className="relative flex-shrink-0" aria-hidden="true">
                       {/* Glow */}
                       <div 
                         className={`absolute inset-0 rounded-full bg-gradient-to-br ${step.gradient} blur-xl opacity-30`}
                       ></div>
                       {/* Icon container */}
                       <div className={`relative w-16 h-16 rounded-full bg-gradient-to-br ${step.gradient} bg-opacity-10 border-2 border-white/10 flex items-center justify-center backdrop-blur-sm`}>
-                        <Icon className="text-white" size={24} strokeWidth={1.5} />
+                        <Icon className="text-white" size={24} strokeWidth={1.5} aria-hidden="true" />
                       </div>
                     </div>
 
                     {/* Content */}
                     <div className="flex-1 pt-1">
                       <div className="flex items-center gap-3 mb-3">
-                        <span className={`text-sm font-mono font-medium bg-gradient-to-br ${step.gradient} bg-clip-text text-transparent`}>
+                        <span className={`text-sm font-mono font-medium bg-gradient-to-br ${step.gradient} bg-clip-text text-transparent`} aria-hidden="true">
                           {step.number}
                         </span>
-                        <div className={`h-px flex-1 bg-gradient-to-r ${step.gradient} opacity-20`}></div>
+                        <div className={`h-px flex-1 bg-gradient-to-r ${step.gradient} opacity-20`} aria-hidden="true"></div>
                       </div>
                       
                       <h3 className="text-2xl font-light tracking-wide mb-3 glow-text">
@@ -126,16 +126,16 @@ export default function ProcessStudio() {
                       )}
 
                       {/* Decorative element */}
-                      <div className="mt-4 inline-flex items-center gap-2 text-sm text-gray-500">
+                      <div className="mt-4 inline-flex items-center gap-2 text-sm text-gray-500" aria-hidden="true">
                         <div className={`w-8 h-0.5 bg-gradient-to-r ${step.gradient}`}></div>
                         <span className="font-light">Krok {index + 1} z 4</span>
                       </div>
                     </div>
-                  </div>
-                </div>
+                  </article>
+                </li>
               );
             })}
-          </div>
+          </ol>
         </div>
       </div>
 

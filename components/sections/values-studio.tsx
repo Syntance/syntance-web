@@ -72,17 +72,17 @@ export default function ValuesStudio() {
   }, []);
 
   return (
-    <section id="values-studio" className="relative z-10 py-32 px-6 lg:px-12 overflow-hidden">
+    <section id="values-studio" aria-labelledby="values-heading" className="relative z-10 py-32 px-6 lg:px-12 overflow-hidden">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
+        <header className="text-center mb-20">
+          <h2 id="values-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
             Dlaczego My?
           </h2>
           <p className="text-lg font-light tracking-wide text-gray-400">
             Jakość agencji w tempie freelancera
           </p>
-        </div>
+        </header>
 
         {/* Cards Grid */}
         <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-2 gap-8">

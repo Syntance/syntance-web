@@ -52,17 +52,17 @@ export default function PortfolioStudio() {
   }, []);
 
   return (
-    <section id="portfolio-studio" className="relative z-10 py-32 px-6 lg:px-12 overflow-hidden">
+    <section id="portfolio-studio" aria-labelledby="portfolio-heading" className="relative z-10 py-32 px-6 lg:px-12 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
+        <header className="text-center mb-20">
+          <h2 id="portfolio-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
             Nasze realizacje
           </h2>
           <p className="text-lg font-light tracking-wide text-gray-400">
             Strony i sklepy, które nie tylko wyglądają, ale działają.
           </p>
-        </div>
+        </header>
 
         {/* Portfolio Grid */}
         <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
