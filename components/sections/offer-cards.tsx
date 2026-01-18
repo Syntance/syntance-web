@@ -45,11 +45,12 @@ export default function OfferCards() {
   return (
     <section 
       id="offer-cards" 
+      aria-labelledby="offer-heading"
       className="relative z-10 py-32 px-6 lg:px-12"
     >
       <div className="max-w-5xl mx-auto">
         <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-          <h2 className="text-4xl md:text-5xl font-light tracking-wider mb-16 text-center glow-text">
+          <h2 id="offer-heading" className="text-4xl md:text-5xl font-light tracking-wider mb-16 text-center glow-text">
             Co możemy dla Ciebie zbudować?
           </h2>
           

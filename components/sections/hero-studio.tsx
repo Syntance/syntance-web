@@ -26,11 +26,11 @@ export default function HeroStudio() {
   };
 
   return (
-    <section id="hero-studio" className="relative z-10 min-h-screen flex items-center justify-center px-6 lg:px-12 pt-32 pb-20">
+    <section id="hero-studio" aria-labelledby="hero-heading" className="relative z-10 min-h-screen flex items-center justify-center px-6 lg:px-12 pt-32 pb-20">
       <div className={`max-w-4xl mx-auto text-center transition-all duration-1000 ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}>
-        <h1 className="text-5xl md:text-7xl font-light tracking-widest leading-tight mb-6 glow-text">
+        <h1 id="hero-heading" className="text-5xl md:text-7xl font-light tracking-widest leading-tight mb-6 glow-text">
           Strony i sklepy{" "}
           <GradientText
             colors={["#ffaa40", "#9c40ff", "#ffaa40"]}

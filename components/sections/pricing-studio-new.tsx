@@ -35,18 +35,19 @@ export default function PricingStudioNew() {
     <section 
       id="pricing-studio"
       ref={sectionRef}
+      aria-labelledby="pricing-heading"
       className="relative z-10 py-32 px-6 lg:px-12 overflow-hidden opacity-0 translate-y-8 transition-all duration-1000"
     >
       <div className="max-w-4xl mx-auto text-center">
         {/* Header */}
-        <div className="mb-16">
-          <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
+        <header className="mb-16">
+          <h2 id="pricing-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
             Cennik i wycena
           </h2>
           <p className="text-lg font-light tracking-wide text-gray-400 max-w-2xl mx-auto">
             Każdy projekt jest unikalny — dlatego zaprojektowaliśmy interaktywny konfigurator, który pomoże Ci oszacować koszt i czas realizacji w kilka minut.
           </p>
-        </div>
+        </header>
 
         {/* Value propositions */}
         <div className="grid md:grid-cols-3 gap-6 mb-16">

@@ -67,11 +67,11 @@ export default function TechComparison() {
   const isMobile = useIsMobile();
   
   return (
-    <section id="tech-comparison" className="relative z-10 py-24 px-6 lg:px-12">
+    <section id="tech-comparison" aria-labelledby="tech-heading" className="relative z-10 py-24 px-6 lg:px-12">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
+        <header className="text-center mb-16">
+          <h2 id="tech-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
             Dlaczego <GradientText>NEXT.JS</GradientText>?
           </h2>
           <p className="text-xl font-light tracking-wide text-gray-400 max-w-3xl mx-auto mb-4">
@@ -86,7 +86,7 @@ export default function TechComparison() {
               To standard wśród firm, które traktują web poważnie.
             </p>
           </div>
-        </div>
+        </header>
 
         {/* Comparison Table */}
         <div className="mb-16">

@@ -35,18 +35,19 @@ export default function AnatomyStudio() {
     <section 
       id="anatomy-studio"
       ref={sectionRef}
+      aria-labelledby="anatomy-heading"
       className="relative z-10 py-32 px-6 lg:px-12 overflow-hidden opacity-0 translate-y-8 transition-all duration-1000"
     >
       <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
+        <header className="text-center mb-20">
+          <h2 id="anatomy-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
             Większość agencji zaczyna od grafiki.<br />My zaczynamy od biznesu.
           </h2>
           <p className="text-xl font-light tracking-wide text-gray-400 max-w-2xl mx-auto">
             Dobra strona to wierzchołek góry lodowej.
           </p>
-        </div>
+        </header>
 
         {/* Layers */}
         <div className="space-y-8">
