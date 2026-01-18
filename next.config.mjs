@@ -2,7 +2,18 @@
 const nextConfig = {
   experimental: { 
     serverActions: { bodySizeLimit: '2mb' },
+    outputFileTracingExcludes: {
+      '*': [
+        './node_modules/@swc/core-linux-x64-gnu',
+        './node_modules/@swc/core-linux-x64-musl',
+        './node_modules/@esbuild/linux-x64',
+        './node_modules/@sanity/visual-editing/**',
+        './node_modules/sanity/**',
+      ],
+    },
   },
+  // Wyłącz output file tracing dla standalone mode
+  output: undefined,
   images: { 
     domains: [],
     remotePatterns: [
