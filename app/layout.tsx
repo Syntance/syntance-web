@@ -13,11 +13,11 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   metadataBase: new URL("https://syntance.com"),
   title: {
-    default: "Strony i sklepy Next.js | Syntance",
+    default: "Syntance — Strony i sklepy Next.js | PageSpeed 90+ | Polska",
     template: "%s | Syntance",
   },
   description:
-    "Tworzymy strony internetowe i sklepy e-commerce w Next.js. PageSpeed 90+, MedusaJS, Headless CMS. Strony od 5000 PLN, sklepy od 20000 PLN. Własność kodu od dnia pierwszego.",
+    "Strony i sklepy Next.js z gwarancją PageSpeed 90+. Strategia przed kodem. Headless CMS, MedusaJS, Vercel. Własność kodu, zero vendor lock-in. Strony od 5k PLN, sklepy od 20k PLN.",
   keywords: [
     "strony Next.js",
     "sklepy Next.js", 
@@ -35,6 +35,8 @@ export const metadata: Metadata = {
     "nowoczesne strony www",
     "strony dla firm",
     "sklepy online",
+    "PageSpeed 90",
+    "Sanity CMS",
   ],
   authors: [{ name: "Syntance", url: "https://syntance.com" }],
   creator: "Syntance",
@@ -45,8 +47,8 @@ export const metadata: Metadata = {
     telephone: false,
   },
   openGraph: {
-    title: "Strony i sklepy Next.js | Syntance",
-    description: "Tworzymy strony internetowe i sklepy e-commerce w Next.js. PageSpeed 90+, MedusaJS, Headless CMS. Strony od 5000 PLN, sklepy od 20000 PLN.",
+    title: "Syntance — Strony i sklepy Next.js | PageSpeed 90+",
+    description: "Strony i sklepy Next.js z gwarancją PageSpeed 90+. Strategia przed kodem. Headless CMS, MedusaJS, Vercel. Własność kodu, zero vendor lock-in. Strony od 5k PLN, sklepy od 20k PLN.",
     url: "https://syntance.com",
     siteName: "Syntance",
     images: [
@@ -54,7 +56,7 @@ export const metadata: Metadata = {
         url: "https://syntance.com/og/og-home-1200x630.png",
         width: 1200,
         height: 630,
-        alt: "Strony i sklepy Next.js - Syntance",
+        alt: "Syntance — Strony i sklepy Next.js",
         type: "image/png",
       }
     ],
@@ -63,8 +65,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Strony i sklepy Next.js | Syntance",
-    description: "Tworzymy strony internetowe i sklepy e-commerce w Next.js. PageSpeed 90+, MedusaJS, Headless CMS. Strony od 5000 PLN, sklepy od 20000 PLN.",
+    title: "Syntance — Strony i sklepy Next.js | PageSpeed 90+",
+    description: "Strony i sklepy Next.js z gwarancją PageSpeed 90+. Strategia przed kodem. Headless CMS, MedusaJS, Vercel. Własność kodu, zero vendor lock-in.",
     images: ["https://syntance.com/og/og-home-1200x630.png"],
   },
   robots: {
@@ -82,9 +84,6 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: "https://syntance.com",
-    languages: {
-      "pl": "https://syntance.com",
-    },
   },
   icons: { 
     icon: "/favicon.ico",
@@ -170,20 +169,44 @@ export default function RootLayout({
           "@type": "Offer",
           "itemOffered": {
             "@type": "Service",
-            "name": "Strony internetowe Next.js",
+            "name": "Strony WWW",
             "description": "Strony wizytówkowe, landing page, strony firmowe w Next.js"
           },
-          "price": "5000",
+          "priceSpecification": {
+            "@type": "PriceSpecification",
+            "minPrice": "5000",
+            "maxPrice": "15000",
+            "priceCurrency": "PLN"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Sklepy E-commerce",
+            "description": "Sklepy online na MedusaJS i Next.js"
+          },
+          "price": "20000",
           "priceCurrency": "PLN"
         },
         {
           "@type": "Offer",
           "itemOffered": {
             "@type": "Service",
-            "name": "Sklepy e-commerce Next.js",
-            "description": "Sklepy online na MedusaJS i Next.js"
+            "name": "Warsztat Discovery",
+            "description": "Strategia przed kodem - analiza potrzeb i specyfikacja"
           },
-          "price": "20000",
+          "price": "4500",
+          "priceCurrency": "PLN"
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Aplikacje Webowe",
+            "description": "Dedykowane aplikacje webowe i SaaS"
+          },
+          "price": "50000",
           "priceCurrency": "PLN"
         }
       ]
@@ -213,8 +236,8 @@ export default function RootLayout({
       "@context": "https://schema.org",
       "@type": "Service",
       "@id": "https://syntance.com/#service-websites",
-      "name": "Strony internetowe Next.js",
-      "description": "Tworzymy szybkie strony internetowe w Next.js. Strony wizytówkowe, landing page, strony firmowe. PageSpeed 90+, Headless CMS, Vercel.",
+      "name": "Strony WWW Next.js",
+      "description": "Strony wizytówkowe, landing page, strony firmowe w Next.js. PageSpeed 90+ gwarantowany. Czas realizacji 2-4 tygodnie.",
       "provider": {
         "@id": "https://syntance.com/#organization"
       },
@@ -224,23 +247,18 @@ export default function RootLayout({
         "name": "Polska"
       },
       "offers": {
-        "@type": "Offer",
-        "price": "5000",
-        "priceCurrency": "PLN",
-        "priceSpecification": {
-          "@type": "PriceSpecification",
-          "price": "5000",
-          "priceCurrency": "PLN",
-          "minPrice": "5000"
-        }
+        "@type": "AggregateOffer",
+        "lowPrice": "5000",
+        "highPrice": "15000",
+        "priceCurrency": "PLN"
       }
     },
     {
       "@context": "https://schema.org",
       "@type": "Service",
       "@id": "https://syntance.com/#service-ecommerce",
-      "name": "Sklepy e-commerce Next.js",
-      "description": "Tworzymy sklepy internetowe na MedusaJS i Next.js. Headless e-commerce, szybkie i skalowalne sklepy online.",
+      "name": "Sklepy E-commerce Next.js",
+      "description": "Sklepy internetowe na MedusaJS i Next.js. Headless e-commerce, szybkie i skalowalne. Czas realizacji 4-6 tygodni.",
       "provider": {
         "@id": "https://syntance.com/#organization"
       },
@@ -255,13 +273,88 @@ export default function RootLayout({
         "priceCurrency": "PLN",
         "priceSpecification": {
           "@type": "PriceSpecification",
-          "price": "20000",
-          "priceCurrency": "PLN",
-          "minPrice": "20000"
+          "minPrice": "20000",
+          "priceCurrency": "PLN"
+        }
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "@id": "https://syntance.com/#service-discovery",
+      "name": "Warsztat Discovery",
+      "description": "Strategia przed kodem. Analiza potrzeb, projektowanie UX, specyfikacja techniczna.",
+      "provider": {
+        "@id": "https://syntance.com/#organization"
+      },
+      "serviceType": "Consulting",
+      "areaServed": {
+        "@type": "Country",
+        "name": "Polska"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "4500",
+        "priceCurrency": "PLN"
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "@id": "https://syntance.com/#service-webapp",
+      "name": "Aplikacje Webowe",
+      "description": "Dedykowane aplikacje webowe i SaaS na Next.js. Skalowalne rozwiązania dla biznesu.",
+      "provider": {
+        "@id": "https://syntance.com/#organization"
+      },
+      "serviceType": "Software Development",
+      "areaServed": {
+        "@type": "Country",
+        "name": "Polska"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "50000",
+        "priceCurrency": "PLN",
+        "priceSpecification": {
+          "@type": "PriceSpecification",
+          "minPrice": "50000",
+          "priceCurrency": "PLN"
         }
       }
     }
   ];
+
+  const localBusinessJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": "https://syntance.com/#localbusiness",
+    "name": "Syntance",
+    "description": "Strony i sklepy Next.js z gwarancją PageSpeed 90+",
+    "url": "https://syntance.com",
+    "telephone": "+48662519544",
+    "email": "kontakt@syntance.com",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Czerniec 72",
+      "addressLocality": "Łącko",
+      "postalCode": "33-390",
+      "addressRegion": "Małopolska",
+      "addressCountry": "PL"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 49.5669,
+      "longitude": 20.4259
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "opens": "09:00",
+      "closes": "17:00"
+    },
+    "priceRange": "5000-50000 PLN"
+  };
 
   return (
     <html lang="pl" className="scroll-smooth">
@@ -275,6 +368,7 @@ export default function RootLayout({
         <Analytics />
         <SeoJsonLd json={organizationJsonLd} />
         <SeoJsonLd json={websiteJsonLd} />
+        <SeoJsonLd json={localBusinessJsonLd} />
         {serviceJsonLd.map((service, index) => (
           <SeoJsonLd key={index} json={service} />
         ))}
