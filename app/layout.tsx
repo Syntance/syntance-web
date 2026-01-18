@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     template: "%s | Syntance",
   },
   description:
-    "Strony i sklepy Next.js z gwarancją PageSpeed 90+. Strategia przed kodem. Headless CMS, MedusaJS, Vercel. Własność kodu, zero vendor lock-in. Strony od 5k PLN, sklepy od 20k PLN.",
+    "Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia przed kodem. Strony od 5k PLN, sklepy od 20k PLN. Pełna własność kodu. Realizacja w 2-4 tygodnie.",
   keywords: [
     "strony Next.js",
     "sklepy Next.js",
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Syntance — Strony i sklepy Next.js | PageSpeed 90+",
     description:
-      "Strony i sklepy Next.js z gwarancją PageSpeed 90+. Strategia przed kodem. Własność kodu, zero vendor lock-in.",
+      "Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia przed kodem. Strony od 5k PLN. Realizacja w 2-4 tygodnie.",
     url: "https://syntance.com",
     siteName: "Syntance",
     images: [
@@ -67,7 +67,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Syntance — Strony i sklepy Next.js | PageSpeed 90+",
     description:
-      "Strony i sklepy Next.js z gwarancją PageSpeed 90+. Strategia przed kodem.",
+      "Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia przed kodem. Strony od 5k PLN. Realizacja w 2-4 tygodnie.",
     images: ["https://syntance.com/og/og-home-1200x630.png"],
   },
   alternates: {
