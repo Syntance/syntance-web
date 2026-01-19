@@ -192,13 +192,11 @@ export function PricingFAQ() {
           <p className="text-gray-400 mb-6 text-center">
             Nie znalazłeś odpowiedzi na swoje pytanie?
           </p>
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8">
-            <ContactForm 
-              idPrefix="faq" 
-              showFullRodo={false} 
-              source="pricing-faq"
-            />
-          </div>
+          <ContactForm 
+            idPrefix="faq" 
+            showFullRodo={true} 
+            source="pricing-faq"
+          />
         </div>
       </div>
     </section>
