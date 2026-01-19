@@ -35,10 +35,17 @@ const structure = (S: any) =>
             .documentId('pricingConfig')
             .title('Ustawienia cennika')
         ),
+      S.listItem()
+        .title('❓ FAQ Cennika')
+        .id('pricingFaq')
+        .child(
+          S.documentTypeList('pricingFaq')
+            .title('FAQ Cennika')
+        ),
       S.divider(),
       // Pozostałe dokumenty
       ...S.documentTypeListItems().filter(
-        (listItem: any) => !['pricingConfig', 'seoSettings', 'pageSeo'].includes(listItem.getId())
+        (listItem: any) => !['pricingConfig', 'seoSettings', 'pageSeo', 'pricingFaq'].includes(listItem.getId())
       ),
     ])
 

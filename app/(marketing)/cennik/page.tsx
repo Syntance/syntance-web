@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import { pricingDataQuery, PricingData, defaultPricingData } from '@/sanity/queries/pricing'
+import { pricingFaqQuery, PricingFaqItem, defaultFaqItems } from '@/sanity/queries/faq'
 import { PricingConfigurator } from '@/components/PricingConfigurator'
 import NavbarStudio from '@/components/navbar-studio'
 import PricingFAQ from '@/components/sections/pricing-faq'
@@ -39,8 +40,31 @@ async function getPricingData(): Promise<PricingData> {
   }
 }
 
+async function getFaqData(): Promise<PricingFaqItem[]> {
+  try {
+    const data = await sanityFetch<PricingFaqItem[]>({
+      query: pricingFaqQuery,
+      tags: ['faq'],
+    })
+    
+    // Jeśli brak danych z Sanity, użyj domyślnych
+    if (!data?.length) {
+      console.log('Using default FAQ data (Sanity not configured)')
+      return defaultFaqItems
+    }
+    
+    return data
+  } catch (error) {
+    console.error('Error fetching FAQ data:', error)
+    return defaultFaqItems
+  }
+}
+
 export default async function CennikPage() {
-  const data = await getPricingData()
+  const [data, faqData] = await Promise.all([
+    getPricingData(),
+    getFaqData(),
+  ])
 
   return (
     <div className="min-h-screen bg-gray-950 w-full" style={{ overflowX: 'clip' }}>
@@ -70,7 +94,7 @@ export default async function CennikPage() {
       </section>
 
       {/* FAQ Section */}
-      <PricingFAQ />
+      <PricingFAQ items={faqData} />
 
       {/* Info section */}
       <section className="relative z-10 py-16 px-6 lg:px-12">
