@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { ChevronDown, DollarSign, Clock, Shield, Scale } from 'lucide-react'
+import { ContactForm } from '@/components/contact-form'
 
 interface FAQItem {
   question: string
@@ -186,17 +187,18 @@ export function PricingFAQ() {
           ))}
         </div>
 
-        {/* CTA */}
-        <div className="mt-12 text-center">
-          <p className="text-gray-400 mb-4">
+        {/* Formularz kontaktowy */}
+        <div className="mt-16 max-w-xl mx-auto">
+          <p className="text-gray-400 mb-6 text-center">
             Nie znalazłeś odpowiedzi na swoje pytanie?
           </p>
-          <a
-            href="/#contact"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-medium rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40"
-          >
-            Napisz do mnie
-          </a>
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8">
+            <ContactForm 
+              idPrefix="faq" 
+              showFullRodo={false} 
+              source="pricing-faq"
+            />
+          </div>
         </div>
       </div>
     </section>
