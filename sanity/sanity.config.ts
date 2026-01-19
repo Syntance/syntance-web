@@ -2,14 +2,24 @@ import { defineConfig } from 'sanity'
 import { deskTool } from 'sanity/desk'
 import { schemaTypes } from './schemas'
 
-// Konfiguracja struktury dla singletona pricingConfig
+// Konfiguracja struktury dla singletonów
 const structure = (S: any) =>
   S.list()
     .title('Zawartość')
     .items([
+      // Singleton: Ustawienia SEO
+      S.listItem()
+        .title('🔍 Ustawienia SEO')
+        .id('seoSettings')
+        .child(
+          S.document()
+            .schemaType('seoSettings')
+            .documentId('seoSettings')
+            .title('Ustawienia SEO')
+        ),
       // Singleton: Ustawienia cennika
       S.listItem()
-        .title('Ustawienia cennika')
+        .title('💰 Ustawienia cennika')
         .id('pricingConfig')
         .child(
           S.document()
@@ -20,7 +30,7 @@ const structure = (S: any) =>
       S.divider(),
       // Pozostałe dokumenty
       ...S.documentTypeListItems().filter(
-        (listItem: any) => !['pricingConfig'].includes(listItem.getId())
+        (listItem: any) => !['pricingConfig', 'seoSettings'].includes(listItem.getId())
       ),
     ])
 
