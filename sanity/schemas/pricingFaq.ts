@@ -55,7 +55,9 @@ export default defineType({
       category: 'category',
       isActive: 'isActive',
     },
-    prepare({ title, category, isActive }: { title: string; category: string; isActive: boolean }) {
+    prepare(selection: { title?: string; category?: string; isActive?: boolean }) {
+      const { title = '', category = '', isActive = true } = selection
+      
       const categoryEmoji: Record<string, string> = {
         pricing: '💰',
         time: '⏱️',
