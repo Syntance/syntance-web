@@ -3,6 +3,7 @@ import { sanityFetch } from '@/sanity/lib/fetch'
 import { pricingDataQuery, PricingData, defaultPricingData } from '@/sanity/queries/pricing'
 import { PricingConfigurator } from '@/components/PricingConfigurator'
 import NavbarStudio from '@/components/navbar-studio'
+import PricingFAQ from '@/components/sections/pricing-faq'
 import { Twitter, Linkedin, Github } from 'lucide-react'
 
 // Wymusza dynamiczne renderowanie - dane zawsze świeże z Sanity
@@ -67,6 +68,9 @@ export default async function CennikPage() {
           <PricingConfigurator data={data} />
         </div>
       </section>
+
+      {/* FAQ Section */}
+      <PricingFAQ />
 
       {/* Info section */}
       <section className="relative z-10 py-16 px-6 lg:px-12">
