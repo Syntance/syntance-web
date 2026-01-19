@@ -36,7 +36,14 @@ export const pricingDataQuery = groq`{
     new,
     disabled,
     hidePrice,
-    complexityWeight
+    complexityWeight,
+    // Notyfikacje
+    notificationOnAdd,
+    notificationAddTitle,
+    notificationAddText,
+    notificationOnRemove,
+    notificationRemoveTitle,
+    notificationRemoveText
   },
   "config": *[_type == "pricingConfig"][0] {
     vatRate,
@@ -91,6 +98,13 @@ export interface PricingItem {
   disabled?: boolean
   hidePrice?: boolean
   complexityWeight?: number
+  // Notyfikacje
+  notificationOnAdd?: boolean
+  notificationAddTitle?: string
+  notificationAddText?: string
+  notificationOnRemove?: boolean
+  notificationRemoveTitle?: string
+  notificationRemoveText?: string
 }
 
 export interface ComplexitySettings {

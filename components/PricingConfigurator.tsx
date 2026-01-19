@@ -218,7 +218,41 @@ export function PricingConfigurator({ data }: Props) {
     )
   }, [items])
 
-  // Toggle elementu z obsługą bundledWith
+  // Helper do usuwania elementu (z bundledWith)
+  const performRemoveItem = useCallback((id: string, currentSelectedItems: string[]) => {
+    const item = items.find(i => i.id === id)
+    if (!item) return currentSelectedItems
+    
+    let itemsToRemove = [id]
+    
+    if (item.bundledWith?.length) {
+      const remainingSelected = currentSelectedItems.filter(i => i !== id)
+      item.bundledWith.forEach(bid => {
+        if (!isStillNeededByOthers(bid, id, remainingSelected)) {
+          itemsToRemove.push(bid)
+        }
+      })
+    }
+    
+    return currentSelectedItems.filter(i => !itemsToRemove.includes(i))
+  }, [items, isStillNeededByOthers])
+
+  // Helper do dodawania elementu (z bundledWith)
+  const performAddItem = useCallback((id: string, currentSelectedItems: string[]) => {
+    const item = items.find(i => i.id === id)
+    if (!item) return currentSelectedItems
+    
+    let itemsToAdd = [id]
+    
+    if (item.bundledWith?.length) {
+      itemsToAdd = [...itemsToAdd, ...item.bundledWith]
+    }
+    
+    const newItems = itemsToAdd.filter(i => !currentSelectedItems.includes(i))
+    return [...currentSelectedItems, ...newItems]
+  }, [items])
+
+  // Toggle elementu z obsługą bundledWith i notyfikacji
   const toggleItem = useCallback((id: string) => {
     const item = items.find(i => i.id === id)
     if (!item) return
@@ -229,30 +263,18 @@ export function PricingConfigurator({ data }: Props) {
       if (isCurrentlySelected) {
         // USUWANIE elementu
         
-        // Sprawdź czy to jest Warsztat Discovery - pokaż ostrzeżenie
-        if (item.defaultSelected && item.name.toLowerCase().includes('discovery')) {
+        // Sprawdź czy element ma własną notyfikację przy usunięciu (z Sanity)
+        if (item.notificationOnRemove && item.notificationRemoveText) {
           setConfirmDialog({
             isOpen: true,
-            title: '⚠️ Czy na pewno chcesz usunąć Warsztat Discovery?',
-            message: `Warsztat Discovery to kluczowy etap projektu, który:\n\n• Definiuje strategię i cele biznesowe\n• Identyfikuje Twoich idealnych klientów\n• Ustala unikalne wartości i komunikację\n• Projektuje architekturę informacji\n\nUsunięcie tej opcji wymaga dostarczenia kompletnej strategii, persony i UVP z Twojej strony.\n\nJeśli nie masz gotowej strategii, zalecamy pozostawić ten element - zaoszczędzisz czas i unikniesz kosztownych poprawek później.`,
-            confirmText: 'Rozumiem, usuń',
+            title: item.notificationRemoveTitle || '⚠️ Uwaga',
+            message: item.notificationRemoveText.replace(/\\n/g, '\n'),
+            confirmText: 'Akceptuję',
             onConfirm: () => {
-              // Usuń element - ale zachowaj bundled items jeśli są potrzebne przez inne produkty
-              const itemsToRemove = [id]
-              if (item.bundledWith?.length) {
-                const remainingSelected = prev.selectedItems.filter(i => i !== id)
-                item.bundledWith.forEach(bid => {
-                  if (!isStillNeededByOthers(bid, id, remainingSelected)) {
-                    itemsToRemove.push(bid)
-                  }
-                })
-              }
-              
               setState(currentPrev => ({
                 ...currentPrev,
-                selectedItems: currentPrev.selectedItems.filter(i => !itemsToRemove.includes(i))
+                selectedItems: performRemoveItem(id, currentPrev.selectedItems)
               }))
-              
               setConfirmDialog(prev => ({ ...prev, isOpen: false }))
             }
           })
@@ -273,39 +295,20 @@ export function PricingConfigurator({ data }: Props) {
             items: parentBundles.map(p => p.name),
             confirmText: 'Usuń wszystkie',
             onConfirm: () => {
-              // Usuń element i jego parenty
-              const itemsToRemove = new Set<string>([id])
-              
-              // Dodaj bundled items tylko jeśli nie są potrzebne przez inne produkty
-              if (item.bundledWith?.length) {
-                const remainingSelected = prev.selectedItems.filter(i => 
-                  i !== id && !parentBundles.some(p => p.id === i)
-                )
-                item.bundledWith.forEach(bid => {
-                  if (!isStillNeededByOthers(bid, id, remainingSelected)) {
-                    itemsToRemove.add(bid)
-                  }
+              setState(currentPrev => {
+                // Usuń element i jego parenty
+                let newSelected = performRemoveItem(id, currentPrev.selectedItems)
+                
+                // Usuń też wszystkie parent bundles
+                parentBundles.forEach(parent => {
+                  newSelected = performRemoveItem(parent.id, newSelected)
                 })
-              }
-              
-              parentBundles.forEach(parent => {
-                itemsToRemove.add(parent.id)
-                if (parent.bundledWith?.length) {
-                  const remainingAfterParent = prev.selectedItems.filter(i => 
-                    !itemsToRemove.has(i)
-                  )
-                  parent.bundledWith.forEach(bid => {
-                    if (!isStillNeededByOthers(bid, parent.id, remainingAfterParent)) {
-                      itemsToRemove.add(bid)
-                    }
-                  })
+                
+                return {
+                  ...currentPrev,
+                  selectedItems: newSelected
                 }
               })
-              
-              setState(currentPrev => ({
-                ...currentPrev,
-                selectedItems: currentPrev.selectedItems.filter(i => !itemsToRemove.has(i))
-              }))
               
               setConfirmDialog(prev => ({ ...prev, isOpen: false }))
             }
@@ -313,42 +316,40 @@ export function PricingConfigurator({ data }: Props) {
           return prev
         }
         
-        // Przygotuj listę elementów do usunięcia
-        let itemsToRemove = [id]
-        
-        // Jeśli element ma bundledWith, usuń tylko te które nie są potrzebne przez inne produkty
-        if (item.bundledWith?.length) {
-          const remainingSelected = prev.selectedItems.filter(i => i !== id)
-          item.bundledWith.forEach(bid => {
-            if (!isStillNeededByOthers(bid, id, remainingSelected)) {
-              itemsToRemove.push(bid)
-            }
-          })
-        }
-        
+        // Usuń element używając helpera
         return {
           ...prev,
-          selectedItems: prev.selectedItems.filter(i => !itemsToRemove.includes(i))
+          selectedItems: performRemoveItem(id, prev.selectedItems)
         }
       } else {
         // DODAWANIE elementu
-        let itemsToAdd = [id]
         
-        // Jeśli element ma bundledWith, dodaj automatycznie te elementy
-        if (item.bundledWith?.length) {
-          itemsToAdd = [...itemsToAdd, ...item.bundledWith]
+        // Sprawdź czy element ma notyfikację przy dodaniu (z Sanity)
+        if (item.notificationOnAdd && item.notificationAddText) {
+          setConfirmDialog({
+            isOpen: true,
+            title: item.notificationAddTitle || '⚠️ Uwaga',
+            message: item.notificationAddText.replace(/\\n/g, '\n'),
+            confirmText: 'Akceptuję',
+            onConfirm: () => {
+              setState(currentPrev => ({
+                ...currentPrev,
+                selectedItems: performAddItem(id, currentPrev.selectedItems)
+              }))
+              setConfirmDialog(prev => ({ ...prev, isOpen: false }))
+            }
+          })
+          return prev
         }
         
-        // Dodaj tylko te, które jeszcze nie są wybrane
-        const newItems = itemsToAdd.filter(i => !prev.selectedItems.includes(i))
-        
+        // Dodaj element używając helpera
         return {
           ...prev,
-          selectedItems: [...prev.selectedItems, ...newItems]
+          selectedItems: performAddItem(id, prev.selectedItems)
         }
       }
     })
-  }, [items, getParentBundles, isStillNeededByOthers])
+  }, [items, getParentBundles, isStillNeededByOthers, performRemoveItem, performAddItem])
 
   // Zmiana ilości
   const setQuantity = useCallback((id: string, qty: number) => {
