@@ -13,7 +13,7 @@ const client = createClient({
   token: process.env.SANITY_API_WRITE_TOKEN,
 })
 
-const defaultPages = [
+const defaultPages: any[] = [
   {
     _id: 'page-seo-home',
     _type: 'pageSeo',

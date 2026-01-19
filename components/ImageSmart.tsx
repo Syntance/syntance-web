@@ -5,6 +5,7 @@ import Image, { ImageProps } from 'next/image';
 interface ImageSmartProps extends Omit<ImageProps, 'loading' | 'decoding'> {
   loading?: 'lazy' | 'eager';
   decoding?: 'sync' | 'async' | 'auto';
+  alt: string; // Wymagane dla SEO i accessibility
 }
 
 export default function ImageSmart(props: ImageSmartProps) {
