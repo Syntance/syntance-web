@@ -4,7 +4,7 @@ import { useEffect, useState, RefObject } from 'react'
  * Hook który pokazuje sticky bar TYLKO gdy scrollujemy powyżej głównego podsumowania
  * (NIE pokazuje gdy jesteśmy poniżej podsumowania, np. w stopce)
  */
-export function useHideStickyOnVisible(targetRef: RefObject<HTMLElement>) {
+export function useHideStickyOnVisible(targetRef: RefObject<HTMLElement | null>) {
   const [shouldShowBar, setShouldShowBar] = useState(false)
 
   useEffect(() => {
