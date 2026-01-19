@@ -148,7 +148,7 @@ export default defineType({
       title: 'Ukryj cenę',
       type: 'boolean',
       initialValue: false,
-      description: 'Cena nie będzie wyświetlana klientowi (pokaże się "Wycena indywidualna"), ale będzie doliczana do sumy',
+      description: 'Cena nie będzie wyświetlana klientowi (puste miejsce zamiast ceny), ale będzie doliczana do sumy',
     }),
   ],
   preview: {

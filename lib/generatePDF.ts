@@ -212,8 +212,9 @@ export async function generatePricingPDF(data: PDFData) {
     } else {
       // Cena jednostkowa
       if (item.hidePrice) {
-        doc.text('Indywidualna', col3, y)
-        doc.text('-', col4, y, { align: 'right' })
+        // Puste miejsce zamiast ceny
+        doc.text('', col3, y)
+        doc.text('', col4, y, { align: 'right' })
       } else {
         doc.text(`${item.price.toLocaleString('pl-PL')} zl`, col3, y)
         doc.setTextColor(...hexToRgb(COLORS.black))

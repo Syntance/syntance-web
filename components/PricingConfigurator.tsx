@@ -574,9 +574,11 @@ export function PricingConfigurator({ data }: Props) {
                       <p className="text-sm text-gray-500 truncate">{item.description}</p>
                     )}
                   </div>
-                  <span className="text-gray-400 text-sm flex-shrink-0">
-                    {item.hidePrice ? 'Wycena indywidualna' : `${item.price.toLocaleString('pl-PL')} PLN`}
-                  </span>
+                  {!item.hidePrice && (
+                    <span className="text-gray-400 text-sm flex-shrink-0">
+                      {item.price.toLocaleString('pl-PL')} PLN
+                    </span>
+                  )}
                 </div>
               ))}
             </div>
@@ -691,20 +693,20 @@ export function PricingConfigurator({ data }: Props) {
                     )}
 
                     {/* Price */}
-                    <span className={`text-sm flex-shrink-0 text-right ${
-                      item.includedInBase 
-                        ? 'text-emerald-400 font-medium' 
-                        : selected ? 'text-purple-400' : 'text-gray-400'
-                    }`}>
-                      {item.includedInBase 
-                        ? 'Gratis'
-                        : item.hidePrice
-                          ? 'Indywidualna'
+                    {!item.hidePrice && (
+                      <span className={`text-sm flex-shrink-0 text-right ${
+                        item.includedInBase 
+                          ? 'text-emerald-400 font-medium' 
+                          : selected ? 'text-purple-400' : 'text-gray-400'
+                      }`}>
+                        {item.includedInBase 
+                          ? 'Gratis'
                           : item.percentageAdd 
                             ? `+${item.percentageAdd}%`
                             : `${(item.price * qty).toLocaleString('pl-PL')} PLN`
-                      }
-                    </span>
+                        }
+                      </span>
+                    )}
                   </div>
                 )
               })}
