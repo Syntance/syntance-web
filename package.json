@@ -11,7 +11,8 @@
     "lint": "next lint",
     "format": "prettier --write .",
     "analyze": "cross-env ANALYZE=true next build",
-    "seed:seo": "tsx sanity/seed-seo.ts"
+    "seed:seo": "tsx sanity/seed-seo.ts",
+    "sanity:deploy": "sanity deploy"
   },
   "dependencies": {
     "@radix-ui/react-icons": "^1.3.2",
