@@ -55,17 +55,17 @@ export default defineType({
       category: 'category',
       isActive: 'isActive',
     },
-    prepare({ title, category, isActive }) {
-      const categoryEmoji = {
+    prepare({ title, category, isActive }: { title: string; category: string; isActive: boolean }) {
+      const categoryEmoji: Record<string, string> = {
         pricing: '💰',
         time: '⏱️',
         trust: '🔒',
         comparison: '⚖️',
-      }[category] || '❓'
+      }
       
       return {
         title: `${isActive ? '✅' : '⚠️'} ${title}`,
-        subtitle: `${categoryEmoji} ${category}`,
+        subtitle: `${categoryEmoji[category] || '❓'} ${category}`,
       }
     },
   },
