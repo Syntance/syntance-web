@@ -531,7 +531,7 @@ export function PricingConfigurator({ data }: Props) {
                   
                   {type.basePrice && (
                     <span className={`text-sm ${isDisabledType ? 'text-gray-700' : 'text-gray-500'}`}>
-                      od {type.basePrice.toLocaleString('pl-PL')} PLN
+                      od {type.basePrice.toLocaleString('pl-PL')} PLN netto
                     </span>
                   )}
                   
@@ -581,7 +581,7 @@ export function PricingConfigurator({ data }: Props) {
                   </div>
                   {!item.hidePrice && (
                     <span className="text-gray-400 text-sm flex-shrink-0">
-                      {item.price.toLocaleString('pl-PL')} PLN
+                      {item.price.toLocaleString('pl-PL')} PLN netto
                     </span>
                   )}
                 </div>
@@ -708,7 +708,7 @@ export function PricingConfigurator({ data }: Props) {
                           ? 'Gratis'
                           : item.percentageAdd 
                             ? `+${item.percentageAdd}%`
-                            : `${(item.price * qty).toLocaleString('pl-PL')} PLN`
+                            : `${(item.price * qty).toLocaleString('pl-PL')} PLN netto`
                         }
                       </span>
                     )}
