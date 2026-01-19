@@ -216,9 +216,9 @@ export async function generatePricingPDF(data: PDFData) {
         doc.text('', col3, y)
         doc.text('', col4, y, { align: 'right' })
       } else {
-        doc.text(`${item.price.toLocaleString('pl-PL')} zl`, col3, y)
+        doc.text(`${item.price.toLocaleString('pl-PL')} zl netto`, col3, y)
         doc.setTextColor(...hexToRgb(COLORS.black))
-        doc.text(`${item.total.toLocaleString('pl-PL')} zl`, col4, y, { align: 'right' })
+        doc.text(`${item.total.toLocaleString('pl-PL')} zl netto`, col4, y, { align: 'right' })
       }
     }
     
