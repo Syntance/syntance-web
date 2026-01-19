@@ -44,7 +44,7 @@ export default function PricingConfiguratorSection({ data }: Props) {
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
-            Konfigurator wyceny
+            Ile kosztuje strona internetowa?
           </h2>
           <p className="text-lg font-light tracking-wide text-gray-400 max-w-2xl mx-auto">
             Wybierz elementy projektu i zobacz orientacyjną wycenę w czasie rzeczywistym.
