@@ -10,7 +10,7 @@ import { Twitter, Linkedin, Github } from 'lucide-react'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Konfigurator Cennika — Syntance',
+  title: 'Ile kosztuje strona internetowa? Cennik 2026 | Syntance',
   description: 'Skonfiguruj swój projekt i zobacz orientacyjną wycenę w czasie rzeczywistym. Strony WWW, sklepy e-commerce i aplikacje webowe.',
   openGraph: {
     title: 'Konfigurator Cennika — Syntance',
@@ -71,35 +71,6 @@ export default async function CennikPage() {
 
       {/* FAQ Section */}
       <PricingFAQ />
-
-      {/* Info section */}
-      <section className="relative z-10 py-16 px-6 lg:px-12">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="text-center p-6 rounded-2xl bg-white/5 border border-white/10">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🎯</span>
-              </div>
-              <h3 className="font-medium text-white mb-2">Transparentność</h3>
-              <p className="text-sm text-gray-400">Jasna wycena bez ukrytych kosztów</p>
-            </div>
-            <div className="text-center p-6 rounded-2xl bg-white/5 border border-white/10">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🔧</span>
-              </div>
-              <h3 className="font-medium text-white mb-2">Elastyczność</h3>
-              <p className="text-sm text-gray-400">Dopasowanie do budżetu i potrzeb</p>
-            </div>
-            <div className="text-center p-6 rounded-2xl bg-white/5 border border-white/10">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">💎</span>
-              </div>
-              <h3 className="font-medium text-white mb-2">Wartość</h3>
-              <p className="text-sm text-gray-400">Inwestycja, która się zwraca</p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-gray-900 pt-16 pb-12 px-6 lg:px-12">
