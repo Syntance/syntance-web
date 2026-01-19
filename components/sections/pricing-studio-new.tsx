@@ -101,7 +101,7 @@ export default function PricingStudioNew() {
               href="/cennik"
               className="px-10 py-4 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 transition-all glow-box cursor-pointer group inline-flex items-center gap-2"
             >
-              Konfigurator i zamówienie
+              Sprawdź cenę strony
               <span className={`inline-block transition-transform ${
                 isMobile ? 'translate-x-1' : 'group-hover:translate-x-1'
               }`}>→</span>
