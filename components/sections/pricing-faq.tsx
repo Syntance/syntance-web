@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown, DollarSign, Clock, Shield, Scale } from 'lucide-react'
+import { ChevronDown, DollarSign, Clock, Shield, Scale, Twitter, Linkedin, Github } from 'lucide-react'
 import { ContactForm } from '@/components/contact-form'
 
 interface FAQItem {
@@ -188,15 +188,53 @@ export function PricingFAQ() {
         </div>
 
         {/* Formularz kontaktowy */}
-        <div className="mt-16 max-w-xl mx-auto">
-          <p className="text-gray-400 mb-6 text-center">
+        <div className="mt-16">
+          <p className="text-gray-400 mb-8 text-center">
             Nie znalazłeś odpowiedzi na swoje pytanie?
           </p>
-          <ContactForm 
-            idPrefix="faq" 
-            showFullRodo={true} 
-            source="pricing-faq"
-          />
+          
+          <div className="grid md:grid-cols-2 gap-12">
+            {/* Contact Info */}
+            <address className="space-y-8 not-italic">
+              <div>
+                <h3 className="text-xl font-medium tracking-wider mb-4">Email</h3>
+                <a href="mailto:kontakt@syntance.com" className="text-gray-300 hover:text-white transition-colors text-lg">
+                  kontakt@syntance.com
+                </a>
+              </div>
+              
+              <div>
+                <h3 className="text-xl font-medium tracking-wider mb-4">Telefon</h3>
+                <a href="tel:+48662519544" className="text-gray-300 hover:text-white transition-colors text-lg">
+                  +48 662 519 544
+                </a>
+              </div>
+              
+              <div>
+                <h3 className="text-xl font-medium tracking-wider mb-4">Social Media</h3>
+                <nav aria-label="Social media" className="flex space-x-4">
+                  <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Twitter/X">
+                    <Twitter size={24} aria-hidden="true" />
+                  </a>
+                  <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="LinkedIn">
+                    <Linkedin size={24} aria-hidden="true" />
+                  </a>
+                  <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="GitHub">
+                    <Github size={24} aria-hidden="true" />
+                  </a>
+                </nav>
+              </div>
+            </address>
+            
+            {/* Contact Form */}
+            <div>
+              <ContactForm 
+                idPrefix="faq" 
+                showFullRodo={true} 
+                source="pricing-faq"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </section>
