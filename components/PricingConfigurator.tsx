@@ -62,6 +62,7 @@ export function PricingConfigurator({ data }: Props) {
     message: string
     items?: string[]
     confirmText?: string
+    cancelText?: string
     onConfirm: () => void
   }>({
     isOpen: false,
@@ -69,6 +70,7 @@ export function PricingConfigurator({ data }: Props) {
     message: '',
     items: [],
     confirmText: 'Usuń',
+    cancelText: 'Anuluj',
     onConfirm: () => {},
   })
 
@@ -269,7 +271,8 @@ export function PricingConfigurator({ data }: Props) {
             isOpen: true,
             title: item.notificationRemoveTitle || '⚠️ Uwaga',
             message: item.notificationRemoveText.replace(/\\n/g, '\n'),
-            confirmText: 'Akceptuję',
+            confirmText: item.notificationRemoveConfirmText || 'Akceptuję',
+            cancelText: item.notificationRemoveCancelText || 'Anuluj',
             onConfirm: () => {
               setState(currentPrev => ({
                 ...currentPrev,
@@ -330,7 +333,8 @@ export function PricingConfigurator({ data }: Props) {
             isOpen: true,
             title: item.notificationAddTitle || '⚠️ Uwaga',
             message: item.notificationAddText.replace(/\\n/g, '\n'),
-            confirmText: 'Akceptuję',
+            confirmText: item.notificationAddConfirmText || 'Akceptuję',
+            cancelText: item.notificationAddCancelText || 'Anuluj',
             onConfirm: () => {
               setState(currentPrev => ({
                 ...currentPrev,
@@ -843,7 +847,7 @@ export function PricingConfigurator({ data }: Props) {
         message={confirmDialog.message}
         items={confirmDialog.items}
         confirmText={confirmDialog.confirmText || 'Usuń wszystkie'}
-        cancelText="Anuluj"
+        cancelText={confirmDialog.cancelText || 'Anuluj'}
         onConfirm={confirmDialog.onConfirm}
         onCancel={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
       />
