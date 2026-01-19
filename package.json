@@ -12,6 +12,7 @@
     "format": "prettier --write .",
     "analyze": "cross-env ANALYZE=true next build",
     "seed:seo": "tsx sanity/seed-seo.ts",
+    "seed:pages": "tsx sanity/seed-page-seo.ts",
     "sanity:deploy": "sanity deploy"
   },
   "dependencies": {

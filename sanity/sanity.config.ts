@@ -7,17 +7,25 @@ const structure = (S: any) =>
   S.list()
     .title('Zawartość')
     .items([
-      // Singleton: Ustawienia SEO
+      // === SEO ===
       S.listItem()
-        .title('🔍 Ustawienia SEO')
+        .title('🔍 SEO Globalne (domyślne)')
         .id('seoSettings')
         .child(
           S.document()
             .schemaType('seoSettings')
             .documentId('seoSettings')
-            .title('Ustawienia SEO')
+            .title('SEO Globalne')
         ),
-      // Singleton: Ustawienia cennika
+      S.listItem()
+        .title('📄 SEO Podstron')
+        .id('pageSeo')
+        .child(
+          S.documentTypeList('pageSeo')
+            .title('SEO Podstron')
+        ),
+      S.divider(),
+      // === CENNIK ===
       S.listItem()
         .title('💰 Ustawienia cennika')
         .id('pricingConfig')
@@ -30,7 +38,7 @@ const structure = (S: any) =>
       S.divider(),
       // Pozostałe dokumenty
       ...S.documentTypeListItems().filter(
-        (listItem: any) => !['pricingConfig', 'seoSettings'].includes(listItem.getId())
+        (listItem: any) => !['pricingConfig', 'seoSettings', 'pageSeo'].includes(listItem.getId())
       ),
     ])
 

@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { clientWithoutToken } from '@/sanity/lib/client'
-import { seoSettingsQuery, SeoSettings } from '@/sanity/queries/seo'
+import { seoSettingsQuery, SeoSettings, pageSeoQuery, PageSeo } from '@/sanity/queries/seo'
 
 // Domyślne wartości SEO (fallback)
 const defaultSeo: SeoSettings = {
@@ -116,9 +116,60 @@ export async function getSeoSettings(): Promise<SeoSettings> {
   }
 }
 
+// Pobierz SEO dla konkretnej strony (z cache)
+export async function getPageSeo(slug: string): Promise<PageSeo | null> {
+  try {
+    const pageSeo = await clientWithoutToken.fetch<PageSeo | null>(
+      pageSeoQuery,
+      { slug },
+      { 
+        next: { 
+          revalidate: 60 // Cache na 60 sekund
+        } 
+      }
+    )
+    
+    return pageSeo
+  } catch (error) {
+    console.error(`Error fetching page SEO for slug "${slug}":`, error)
+    return null
+  }
+}
+
+// Merguj SEO strony z globalnym SEO (strona ma priorytet)
+export function mergeSeoSettings(global: SeoSettings, page: PageSeo | null): SeoSettings {
+  if (!page) return global
+  
+  return {
+    ...global,
+    // Override z page SEO (jeśli istnieje)
+    metaTitle: page.metaTitle || global.metaTitle,
+    metaDescription: page.metaDescription || global.metaDescription,
+    canonicalUrl: page.canonicalUrl || global.canonicalUrl,
+    keywords: page.keywords?.length ? page.keywords : global.keywords,
+    ogTitle: page.ogTitle || page.metaTitle || global.ogTitle,
+    ogDescription: page.ogDescription || page.metaDescription || global.ogDescription,
+    ogImage: page.ogImage || global.ogImage,
+    ogImageUrl: page.ogImageUrl || global.ogImageUrl,
+    twitterTitle: page.twitterTitle || page.metaTitle || global.twitterTitle,
+    twitterDescription: page.twitterDescription || page.metaDescription || global.twitterDescription,
+  }
+}
+
 // Generuj Metadata z Next.js na podstawie ustawień Sanity
-export async function generateSeoMetadata(): Promise<Metadata> {
-  const seo = await getSeoSettings()
+export async function generateSeoMetadata(pathname?: string): Promise<Metadata> {
+  const globalSeo = await getSeoSettings()
+  
+  // Jeśli podano pathname, spróbuj pobrać SEO dla tej strony
+  let pageSeo: PageSeo | null = null
+  if (pathname) {
+    // Zamień pathname na slug (usuń trailing slash)
+    const slug = pathname === '/' ? '/' : pathname.replace(/\/$/, '')
+    pageSeo = await getPageSeo(slug)
+  }
+  
+  // Merguj global SEO z page SEO
+  const seo = mergeSeoSettings(globalSeo, pageSeo)
   
   const ogImageUrl = seo.ogImage?.asset?.url || seo.ogImageUrl || defaultSeo.ogImageUrl
   

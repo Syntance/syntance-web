@@ -1,5 +1,47 @@
 import { groq } from 'next-sanity'
 
+// Zapytanie do pobrania SEO dla konkretnej strony (po slug)
+export const pageSeoQuery = groq`
+  *[_type == "pageSeo" && slug.current == $slug && isActive == true][0] {
+    pageName,
+    "slug": slug.current,
+    isActive,
+    
+    // Meta tagi
+    metaTitle,
+    metaDescription,
+    canonicalUrl,
+    
+    // Słowa kluczowe
+    focusKeyword,
+    keywords,
+    keywordDensity,
+    
+    // Social media
+    ogTitle,
+    ogDescription,
+    ogImage {
+      asset-> {
+        url,
+        metadata {
+          dimensions {
+            width,
+            height
+          }
+        }
+      },
+      alt
+    },
+    ogImageUrl,
+    twitterTitle,
+    twitterDescription,
+    
+    // Notatki
+    seoNotes,
+    lastUpdated
+  }
+`
+
 // Zapytanie do pobrania wszystkich ustawień SEO
 export const seoSettingsQuery = groq`
   *[_type == "seoSettings" && _id == "seoSettings"][0] {
@@ -67,6 +109,38 @@ export const seoSettingsQuery = groq`
     }
   }
 `
+
+// Typ dla SEO podstrony
+export interface PageSeo {
+  pageName: string
+  slug: string
+  isActive: boolean
+  metaTitle?: string
+  metaDescription?: string
+  canonicalUrl?: string
+  focusKeyword?: string
+  keywords?: string[]
+  keywordDensity?: string
+  ogTitle?: string
+  ogDescription?: string
+  ogImage?: {
+    asset: {
+      url: string
+      metadata: {
+        dimensions: {
+          width: number
+          height: number
+        }
+      }
+    }
+    alt: string
+  }
+  ogImageUrl?: string
+  twitterTitle?: string
+  twitterDescription?: string
+  seoNotes?: string
+  lastUpdated?: string
+}
 
 // Typ dla ustawień SEO
 export interface SeoSettings {
