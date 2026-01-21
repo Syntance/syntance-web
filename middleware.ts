@@ -11,6 +11,11 @@ const redirects: Record<string, string> = {
   // Stare anchor linki (bez hash - Next.js nie obsługuje hash w middleware)
   '/o-nas': '/',
   
+  // Nieistniejące wersje językowe
+  '/en': '/',
+  '/de': '/',
+  '/pl': '/',
+  
   // Inne potencjalne stare URL-e
   '/kontakt': '/#kontakt',
   '/uslugi': '/cennik',
@@ -48,6 +53,9 @@ export const config = {
     // Dopasuj tylko konkretne ścieżki do przekierowań
     '/studio/:path*',
     '/o-nas',
+    '/en',
+    '/de',
+    '/pl',
     '/kontakt',
     '/uslugi',
     '/oferta',
