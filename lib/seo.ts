@@ -225,11 +225,7 @@ export async function generateSeoMetadata(pathname?: string): Promise<Metadata> 
     alternates: {
       canonical: seo.canonicalUrl,
     },
-    icons: {
-      icon: '/favicon.ico',
-      shortcut: '/favicon-16x16.png',
-      apple: '/apple-touch-icon.png',
-    },
+    // Icons są automatycznie wykrywane z app/icon.svg i app/apple-icon.svg
     category: 'technology',
   }
 }
