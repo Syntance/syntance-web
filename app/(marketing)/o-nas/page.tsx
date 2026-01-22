@@ -40,11 +40,14 @@ const values = [
 ]
 
 const technologies = [
-  { category: "Frontend", items: ["Next.js", "React", "TypeScript", "Tailwind CSS"] },
-  { category: "CMS", items: ["Sanity CMS", "Contentful"] },
-  { category: "E-commerce", items: ["MedusaJS", "Shopify Headless"] },
-  { category: "Hosting", items: ["Vercel", "Cloudflare"] },
-  { category: "Płatności", items: ["Stripe", "Przelewy24"] },
+  { name: "Next.js", color: "bg-white" },
+  { name: "React", color: "bg-cyan-400" },
+  { name: "TypeScript", color: "bg-blue-500" },
+  { name: "Tailwind CSS", color: "bg-teal-400" },
+  { name: "Sanity CMS", color: "bg-red-500" },
+  { name: "Vercel", color: "bg-white" },
+  { name: "MedusaJS", color: "bg-purple-500" },
+  { name: "Stripe", color: "bg-indigo-500" },
 ]
 
 const stats = [
@@ -205,7 +208,7 @@ export default function ONasPage() {
 
         {/* Technologie */}
         <section className="relative z-10 py-24 px-6 lg:px-12 bg-white/[0.02]">
-          <div className="max-w-5xl mx-auto">
+          <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-light tracking-wide text-white mb-4">
                 Technologie, które znamy
@@ -215,22 +218,14 @@ export default function ONasPage() {
               </p>
             </div>
 
-            <div className="space-y-6">
+            <div className="flex flex-wrap justify-center gap-3">
               {technologies.map((tech, index) => (
-                <div key={index} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
-                  <div className="text-sm font-medium text-gray-500 uppercase tracking-wider w-24 flex-shrink-0">
-                    {tech.category}
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {tech.items.map((item, itemIndex) => (
-                      <span 
-                        key={itemIndex}
-                        className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-sm text-gray-300"
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
+                <div 
+                  key={index}
+                  className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full"
+                >
+                  <div className={`w-2 h-2 rounded-full ${tech.color}`} />
+                  <span className="text-sm text-gray-300">{tech.name}</span>
                 </div>
               ))}
             </div>
