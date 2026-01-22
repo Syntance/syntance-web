@@ -1,5 +1,4 @@
 import { Metadata } from 'next'
-import NavbarStudio from '@/components/navbar-studio'
 import { Target, Users, Zap, AlertCircle, CheckCircle2, XCircle, ArrowRight, FileText, Clock, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
 import { StrategyCTA } from '@/components/StrategyCTA'
@@ -65,8 +64,6 @@ export default function StrategiaPage() {
 
   return (
     <div className="min-h-screen bg-gray-950 w-full" style={{ overflowX: 'clip' }}>
-      <NavbarStudio />
-      
       {/* Schema.org JSON-LD */}
       <script
         type="application/ld+json"

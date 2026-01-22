@@ -2,7 +2,6 @@
 
 import { useState, useLayoutEffect } from "react";
 import dynamic from "next/dynamic";
-import NavbarStudio from "@/components/navbar-studio";
 import SectionScrollbar from "@/components/SectionScrollbar";
 import { ContactForm } from "@/components/contact-form";
 import { Twitter, Linkedin, Github } from "lucide-react";
@@ -35,7 +34,6 @@ export default function HomePage() {
 
   return (
     <div className={`min-h-screen transition-opacity duration-200 ${isPageReady ? 'opacity-100' : 'opacity-0'}`}>
-      <NavbarStudio />
       <SectionScrollbar />
       
       <main id="main-content">
