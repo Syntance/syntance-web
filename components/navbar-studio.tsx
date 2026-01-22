@@ -19,7 +19,7 @@ const navItems = [
   },
   { label: "Cennik", href: "/cennik" },
   { label: "O nas", href: "/o-nas" },
-  { label: "Kontakt", href: "/#contact" },
+  { label: "Kontakt", href: "/kontakt" },
 ];
 
 // Mapowanie pathname na indeks aktywnego elementu
