@@ -327,7 +327,7 @@ const GooeyNav = ({
         }
         .gooey-effect.text.active {
           color: #000000;
-          font-weight: 400;
+          font-weight: 500;
         }
         .gooey-effect.filter {
           filter: blur(3px) contrast(50) blur(0);
