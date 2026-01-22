@@ -87,7 +87,7 @@ export default function StrategiaPage() {
               href="/cennik#discovery" 
               className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-105"
             >
-              <span>Zamów Warsztat Discovery</span>
+              <span>Zamów stronę ze strategią</span>
               <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
             <Link 
