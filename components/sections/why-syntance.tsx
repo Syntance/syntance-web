@@ -130,7 +130,7 @@ export default function WhySyntance() {
                           </div>
                           {/* Floating particles on hover */}
                           <div className={`absolute -top-1 -right-1 w-2 h-2 rounded-full bg-gradient-to-br transition-opacity duration-500 ${
-                            isMobile ? 'opacity-100 animate-ping' : 'opacity-0 group-hover:opacity-100 group-hover:animate-ping'
+                            isMobile ? 'opacity-0' : 'opacity-0 group-hover:opacity-100'
                           }`}
                             style={{
                               backgroundImage: `linear-gradient(to bottom right, var(--tw-gradient-stops))`,
