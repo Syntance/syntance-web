@@ -123,8 +123,8 @@ export default function HomePage() {
         <AnatomyStudio />
         <OfferCards />
         <TechComparison />
-        <ProcessStudio />
         <CMSSection />
+        <ProcessStudio />
         <ValuesStudio />
         <PortfolioStudio />
         <PricingStudioNew />
