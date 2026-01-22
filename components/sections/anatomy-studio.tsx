@@ -120,7 +120,7 @@ export default function AnatomyStudio() {
                       <div className="relative bg-gray-900/80 backdrop-blur-sm border border-white/10 rounded-2xl p-6 md:p-8">
                         {/* Level badge */}
                         <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r ${layer.gradient} bg-opacity-10 border border-white/10 mb-4`}>
-                          <span className={`text-xs font-medium ${layer.textColor} tracking-wider uppercase`}>
+                          <span className="text-xs font-medium text-white tracking-wider uppercase">
                             Poziom {layer.level}
                           </span>
                         </div>
@@ -147,7 +147,7 @@ export default function AnatomyStudio() {
                                 <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${layer.gradient} bg-opacity-10 flex items-center justify-center flex-shrink-0 transition-transform duration-300 ${
                                   isMobile ? '' : 'group-hover/item:scale-110'
                                 }`}>
-                                  <Icon size={18} className={layer.textColor} />
+                                  <Icon size={18} className="text-white" />
                                 </div>
                                 <div>
                                   <span className="text-white font-medium">{item.label}</span>
