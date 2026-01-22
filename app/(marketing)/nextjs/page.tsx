@@ -115,7 +115,7 @@ const comparisonTable = [
 
 export default function NextjsPage() {
   return (
-    <div className="min-h-screen bg-gray-950 w-full" style={{ overflowX: 'clip' }}>
+    <div className="min-h-screen bg-gray-900 w-full" style={{ overflowX: 'clip' }}>
       <NavbarStudio />
       
       {/* Hero */}
