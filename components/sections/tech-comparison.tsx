@@ -60,7 +60,6 @@ const benefits = [
   'Lepsze pozycje w Google (PageSpeed to ranking factor)',
   'Tańsze reklamy (wyższy Quality Score = niższy CPC)',
   '99.99% uptime (hosting Vercel z globalnym CDN)',
-  'Gotowość na przyszłość (AI-ready, Edge Network)',
 ]
 
 export default function TechComparison() {
