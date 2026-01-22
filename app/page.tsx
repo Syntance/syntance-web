@@ -249,7 +249,7 @@ export default function HomePage() {
                     required
                   />
                   <label htmlFor="consent-home" className="text-sm text-gray-300 leading-relaxed">
-                    Oświadczam, że zapoznałem się z <a href="/polityka-prywatnosci" className="text-gray-400 hover:text-gray-300 underline">Polityką Prywatności</a> i wyrażam zgodę na przetwarzanie moich danych osobowych w celu kontaktu zwrotnego przez Syntance P.S.A.
+                    Akceptuję <a href="/polityka-prywatnosci" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-300 underline">Politykę Prywatności</a>
                     <span className="text-red-400 ml-1">*</span>
                   </label>
                 </div>
