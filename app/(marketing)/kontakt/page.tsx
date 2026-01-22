@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { Mail, Phone, Calendar, MapPin, Clock, ArrowRight, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 import { ContactForm } from '@/components/contact-form'
-import { PageTransition } from '@/components/page-transition'
+import { HeroTransition } from '@/components/page-transition'
 
 export const metadata: Metadata = {
   title: 'Kontakt — Syntance | Strony i sklepy Next.js',
@@ -70,9 +70,9 @@ export default function KontaktPage() {
         }}
       />
       
-      <PageTransition>
       <div className="min-h-screen bg-[#05030C] w-full" style={{ overflowX: 'clip' }}>
         {/* Hero Section */}
+        <HeroTransition>
         <section className="relative z-10 pt-52 pb-16 px-6 lg:px-12">
           <div className="max-w-5xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-wide text-white mb-6 leading-tight">
@@ -83,6 +83,7 @@ export default function KontaktPage() {
             </p>
           </div>
         </section>
+        </HeroTransition>
 
         {/* Main Content - 2 columns */}
         <section className="relative z-10 py-16 px-6 lg:px-12">
@@ -289,7 +290,6 @@ export default function KontaktPage() {
           </div>
         </footer>
       </div>
-      </PageTransition>
     </>
   )
 }
