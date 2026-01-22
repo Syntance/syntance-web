@@ -9,6 +9,8 @@ const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-space-grotesk",
+  display: "swap", // Pokazuj tekst natychmiast, nie czekaj na font
+  preload: true,
 });
 
 // Dynamiczne generowanie metadata z Sanity

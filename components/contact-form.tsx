@@ -138,7 +138,7 @@ export function ContactForm({
           disabled={formStatus === 'loading'}
           className="w-full px-6 py-4 bg-white bg-opacity-5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors resize-none disabled:opacity-50"
         ></textarea>
-        <div className="text-sm text-gray-500 mt-1 text-right">
+        <div className="text-sm text-gray-400 mt-1 text-right">
           {formData.message.length} / 2000 znaków
           {formData.message.length > 0 && formData.message.length < 10 && (
             <span className="text-red-400 ml-2">(min. 10)</span>
@@ -172,7 +172,7 @@ export function ContactForm({
       
       {/* Klauzula informacyjna RODO */}
       {showFullRodo && (
-        <div className="text-xs text-gray-500 space-y-1">
+        <div className="text-xs text-gray-400 space-y-1">
           <p>
             Administratorem Twoich danych osobowych jest <strong>Syntance P.S.A.</strong>, z siedzibą w Czerniec 72, 33-390 Łącko, e-mail:{" "}
             <a href="mailto:biuro@syntance.com" className="text-gray-400 hover:text-gray-300 underline">
