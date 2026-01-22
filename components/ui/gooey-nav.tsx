@@ -53,9 +53,11 @@ const GooeyNav = ({
   const isNavigatingRef = useRef(false);
   const navigatingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Zamknij dropdown przy zmianie pathname (nawigacja)
+  // Zamknij dropdown przy zmianie pathname (nawigacja) i resetuj blokadę nawigacji
   useEffect(() => {
     setOpenDropdown(null);
+    // Resetuj blokadę nawigacji - pathname się zmienił, więc nawigacja zakończona
+    isNavigatingRef.current = false;
   }, [pathname]);
 
   // Zamknij dropdown po kliknięciu poza nim
@@ -232,15 +234,14 @@ const GooeyNav = ({
       }
     }
   };
-  // Obsługa zewnętrznego activeIndex
+  // Obsługa zewnętrznego activeIndex - reaguj na zmianę pathname
   useEffect(() => {
     // Ignoruj zmiany podczas programowego scrollowania (po kliknięciu w navbar)
-    // Używamy ref dla synchronicznego dostępu (props mogą być opóźnione)
-    if (isExternalScrolling || isNavigatingRef.current) return;
+    if (isExternalScrolling) return;
     
-    if (externalActiveIndex !== undefined && externalActiveIndex !== activeIndex) {
+    if (externalActiveIndex !== undefined && externalActiveIndex >= 0) {
       const newActiveLi = navRef.current?.querySelectorAll('li')[externalActiveIndex] as HTMLElement;
-      if (newActiveLi) {
+      if (newActiveLi && externalActiveIndex !== activeIndex) {
         setActiveIndex(externalActiveIndex);
         updateEffectPosition(newActiveLi);
         
@@ -255,10 +256,13 @@ const GooeyNav = ({
           void textRef.current.offsetWidth;
           textRef.current.classList.add('active');
         }
+      } else if (newActiveLi && externalActiveIndex === activeIndex) {
+        // Jeśli indeks się nie zmienił, ale pathname tak - zaktualizuj pozycję
+        updateEffectPosition(newActiveLi);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [externalActiveIndex, activeIndex, isExternalScrolling]);
+  }, [externalActiveIndex, pathname, isExternalScrolling]);
 
   // Gdy użytkownik zaczyna ręcznie scrollować, natychmiast odblokuj
   useEffect(() => {
