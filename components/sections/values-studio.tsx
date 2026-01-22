@@ -77,7 +77,7 @@ export default function ValuesStudio() {
           <h2 id="values-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
             Dlaczego My?
           </h2>
-          <p className="text-lg font-light tracking-wide text-gray-300">
+          <p className="text-lg font-light tracking-wide text-gray-400">
             Jakość agencji w tempie freelancera
           </p>
         </header>
@@ -148,13 +148,13 @@ export default function ValuesStudio() {
                         </h3>
 
                         {/* Description */}
-                        <p className="text-gray-300 font-light text-sm tracking-wide leading-relaxed mb-3">
+                        <p className="text-gray-400 font-light text-sm tracking-wide leading-relaxed mb-3">
                           {value.description}
                         </p>
 
                         {/* Proof */}
                         {value.proof && (
-                          <p className="text-gray-300 font-light text-xs tracking-wide leading-relaxed">
+                          <p className="text-gray-400 font-light text-xs tracking-wide leading-relaxed">
                             {value.proof}
                           </p>
                         )}

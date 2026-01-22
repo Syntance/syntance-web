@@ -68,13 +68,13 @@ export default function CMSSection() {
           >
             Edytuj sam z <GradientText>Sanity CMS</GradientText>
           </h2>
-          <p className="text-xl font-light tracking-wide text-gray-300 max-w-3xl mx-auto mb-4">
+          <p className="text-xl font-light tracking-wide text-gray-400 max-w-3xl mx-auto mb-4">
             Chcesz edytować treści bez programisty? Panel CMS — prosty jak Word.
           </p>
           
           {/* Info box - jak w tech-comparison */}
           <div className="mt-8 p-6 rounded-2xl bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/20 max-w-3xl mx-auto">
-            <p className="text-gray-300 leading-relaxed">
+            <p className="text-gray-400 leading-relaxed">
               <span className="font-medium text-white">Sanity CMS</span> to nowoczesny panel administracyjny 
               używany przez <GradientText className="font-medium">Figma, Shopify i Sonos</GradientText>. 
               Szybki, intuicyjny i bezpieczny.
@@ -129,7 +129,7 @@ export default function CMSSection() {
                     </h3>
 
                     {/* Description */}
-                    <p className="text-gray-300 font-light text-sm tracking-wide leading-relaxed">
+                    <p className="text-gray-400 font-light text-sm tracking-wide leading-relaxed">
                       {feature.description}
                     </p>
 
@@ -160,7 +160,7 @@ export default function CMSSection() {
 
               {/* Content */}
               <div className="flex-1 text-center md:text-left">
-                <p className="text-lg text-gray-300 leading-relaxed mb-4">
+                <p className="text-lg text-gray-400 leading-relaxed mb-4">
                   <span className="font-medium text-white">Panel CMS to opcja w konfiguratorze.</span>{' '}
                   Decydujesz czy chcesz samodzielnie zarządzać treścią.
                 </p>

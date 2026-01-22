@@ -64,7 +64,7 @@ export function ConfirmDialog({
             <h3 className="text-lg font-medium text-white flex-1">{title}</h3>
             <button
               onClick={onCancel}
-              className="text-gray-300 hover:text-white transition-colors"
+              className="text-gray-400 hover:text-white transition-colors"
             >
               <X size={20} />
             </button>
@@ -72,7 +72,7 @@ export function ConfirmDialog({
           
           {/* Content */}
           <div className="px-6 py-5 space-y-4">
-            <p className="text-gray-300 leading-relaxed whitespace-pre-line">
+            <p className="text-gray-400 leading-relaxed whitespace-pre-line">
               {message}
             </p>
             
@@ -81,7 +81,7 @@ export function ConfirmDialog({
                 {items.map((item, idx) => (
                   <div 
                     key={idx}
-                    className="flex items-center gap-2 text-sm text-gray-300 pl-4"
+                    className="flex items-center gap-2 text-sm text-gray-400 pl-4"
                   >
                     <div className="w-1.5 h-1.5 rounded-full bg-amber-500/60 flex-shrink-0" />
                     {item}

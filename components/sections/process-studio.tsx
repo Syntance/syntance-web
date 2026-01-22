@@ -67,7 +67,7 @@ export default function ProcessStudio() {
           <h2 id="process-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
             Jak pracujemy
           </h2>
-          <p className="text-lg font-light tracking-wide text-gray-300">
+          <p className="text-lg font-light tracking-wide text-gray-400">
             Proces, który łączy design ze strategią
           </p>
         </header>
@@ -115,18 +115,18 @@ export default function ProcessStudio() {
                         {step.title}
                       </h3>
                       
-                      <p className="text-gray-300 font-light tracking-wide leading-relaxed">
+                      <p className="text-gray-400 font-light tracking-wide leading-relaxed">
                         {step.description}
                       </p>
                       
                       {step.note && (
-                        <p className="text-sm text-gray-300 font-light italic mt-2">
+                        <p className="text-sm text-gray-400 font-light italic mt-2">
                           ({step.note})
                         </p>
                       )}
 
                       {/* Decorative element */}
-                      <div className="mt-4 inline-flex items-center gap-2 text-sm text-gray-300" aria-hidden="true">
+                      <div className="mt-4 inline-flex items-center gap-2 text-sm text-gray-400" aria-hidden="true">
                         <div className={`w-8 h-0.5 bg-gradient-to-r ${step.gradient}`}></div>
                         <span className="font-light">Krok {index + 1} z 4</span>
                       </div>

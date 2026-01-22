@@ -84,7 +84,7 @@ export default function AnatomyStudio() {
           <h2 id="anatomy-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
             Większość agencji zaczyna od grafiki.
           </h2>
-          <p className="text-2xl md:text-3xl font-light tracking-wide text-gray-300">
+          <p className="text-2xl md:text-3xl font-light tracking-wide text-gray-400">
             My zaczynamy od biznesu.
           </p>
         </header>
@@ -130,11 +130,11 @@ export default function AnatomyStudio() {
                           <span className={`bg-gradient-to-r ${layer.gradient} bg-clip-text text-transparent`}>
                             {layer.title}
                           </span>
-                          <span className="text-gray-300"> — {layer.subtitle}</span>
+                          <span className="text-gray-400"> — {layer.subtitle}</span>
                         </h3>
 
                         {/* Tagline */}
-                        <p className="text-gray-300 italic mb-8">
+                        <p className="text-gray-400 italic mb-8">
                           {layer.tagline}
                         </p>
 
@@ -151,7 +151,7 @@ export default function AnatomyStudio() {
                                 </div>
                                 <div>
                                   <span className="text-white font-medium">{item.label}</span>
-                                  <span className="text-gray-300 ml-2">— {item.desc}</span>
+                                  <span className="text-gray-400 ml-2">— {item.desc}</span>
                                 </div>
                               </div>
                             );
@@ -168,7 +168,7 @@ export default function AnatomyStudio() {
 
         {/* Bottom Quote + CTA */}
         <div className="mt-32 text-center anatomy-card opacity-0 translate-y-12 transition-all duration-1000 ease-out" style={{ transitionDelay: '300ms' }}>
-          <p className="text-xl md:text-2xl font-light text-gray-300 mb-8">
+          <p className="text-xl md:text-2xl font-light text-gray-400 mb-8">
             Efekt? <span className="text-white">Strona, która pracuje na Twój wynik.</span>
           </p>
           

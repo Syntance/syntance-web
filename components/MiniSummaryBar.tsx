@@ -18,7 +18,7 @@ export function MiniSummaryBar({ price, itemsCount, isVisible }: Props) {
     >
       <div className="flex items-center justify-between px-4 py-3">
         {/* Lewo: Ilość elementów */}
-        <div className="flex items-center gap-2 text-gray-300">
+        <div className="flex items-center gap-2 text-gray-400">
           <ShoppingCart size={16} className="text-purple-400" />
           <span className="text-sm">
             {itemsCount} {itemsCount === 1 ? 'element' : 'elementów'}
@@ -28,9 +28,9 @@ export function MiniSummaryBar({ price, itemsCount, isVisible }: Props) {
         {/* Prawo: Cena */}
         <div className="text-right">
           <div className="text-lg font-semibold text-white">
-            {price.toLocaleString('pl-PL')} <span className="text-xs font-normal text-gray-300">PLN</span>
+            {price.toLocaleString('pl-PL')} <span className="text-xs font-normal text-gray-400">PLN</span>
           </div>
-          <div className="text-xs text-gray-300">netto</div>
+          <div className="text-xs text-gray-400">netto</div>
         </div>
       </div>
     </div>

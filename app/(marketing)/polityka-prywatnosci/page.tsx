@@ -31,7 +31,7 @@ export default function PrivacyPolicyPage() {
         <Container>
           <div className="max-w-4xl mx-auto">
             <h1 className="text-4xl font-bold mb-4 text-white glow-text">Polityka Prywatności</h1>
-            <p className="text-lg text-gray-300 mb-8">
+            <p className="text-lg text-gray-400 mb-8">
               Ostatnia aktualizacja: {new Date().toLocaleDateString('pl-PL')}
             </p>
 
@@ -39,11 +39,11 @@ export default function PrivacyPolicyPage() {
               {/* Sekcja 1 */}
               <section>
                 <h2 className="text-2xl font-semibold mb-4 text-white">1. Administrator danych osobowych</h2>
-                <p className="text-gray-300 leading-relaxed">
+                <p className="text-gray-400 leading-relaxed">
                   Administratorem Twoich danych osobowych jest <strong>Syntance P.S.A.</strong> (Prosta Spółka Akcyjna), 
                   z siedzibą w Czerniec 72, 33-390 Łącko, Polska.
                 </p>
-                <p className="text-gray-300 leading-relaxed mt-2">
+                <p className="text-gray-400 leading-relaxed mt-2">
                   <strong>Kontakt:</strong>
                   <br />
                   E-mail: <a href="mailto:biuro@syntance.com" className="text-brand hover:underline">biuro@syntance.com</a>
@@ -55,10 +55,10 @@ export default function PrivacyPolicyPage() {
               {/* Sekcja 2 */}
               <section>
                 <h2 className="text-2xl font-semibold mb-4">2. Podstawa prawna przetwarzania danych</h2>
-                <p className="text-gray-300 leading-relaxed">
+                <p className="text-gray-400 leading-relaxed">
                   Przetwarzamy Twoje dane osobowe na podstawie:
                 </p>
-                <ul className="list-disc pl-6 space-y-2 text-gray-300">
+                <ul className="list-disc pl-6 space-y-2 text-gray-400">
                   <li><strong>Art. 6 ust. 1 lit. a RODO</strong> – zgoda osoby, której dane dotyczą (np. formularz kontaktowy, newsletter)</li>
                   <li><strong>Art. 6 ust. 1 lit. b RODO</strong> – niezbędność do wykonania umowy (realizacja zamówień, świadczenie usług)</li>
                   <li><strong>Art. 6 ust. 1 lit. c RODO</strong> – obowiązek prawny (np. wystawianie faktur, archiwizacja dokumentów księgowych)</li>
@@ -69,40 +69,40 @@ export default function PrivacyPolicyPage() {
               {/* Sekcja 3 */}
               <section>
                 <h2 className="text-2xl font-semibold mb-4">3. Cele przetwarzania danych</h2>
-                <p className="text-gray-300 leading-relaxed mb-3">
+                <p className="text-gray-400 leading-relaxed mb-3">
                   Dane osobowe przetwarzamy w następujących celach:
                 </p>
                 <div className="space-y-4">
                   <div>
                     <h3 className="text-xl font-medium mb-2">3.1. Kontakt i obsługa zapytań</h3>
-                    <p className="text-gray-300">
+                    <p className="text-gray-400">
                       Przetwarzamy dane podane w formularzach kontaktowych w celu udzielenia odpowiedzi na zapytania, 
                       przygotowania oferty oraz komunikacji z klientami.
                     </p>
                   </div>
                   <div>
                     <h3 className="text-xl font-medium mb-2">3.2. Realizacja umów i świadczenie usług</h3>
-                    <p className="text-gray-300">
+                    <p className="text-gray-400">
                       Dane są niezbędne do wykonania umowy, dostarczenia zamówionych usług, wystawiania faktur oraz archiwizacji dokumentów zgodnie z przepisami prawa.
                     </p>
                   </div>
                   <div>
                     <h3 className="text-xl font-medium mb-2">3.3. Marketing i komunikacja</h3>
-                    <p className="text-gray-300">
+                    <p className="text-gray-400">
                       Na podstawie zgody lub prawnie uzasadnionego interesu wysyłamy informacje marketingowe, 
                       newsletter oraz prezentujemy dopasowane treści reklamowe.
                     </p>
                   </div>
                   <div>
                     <h3 className="text-xl font-medium mb-2">3.4. Analityka i optymalizacja</h3>
-                    <p className="text-gray-300">
+                    <p className="text-gray-400">
                       Wykorzystujemy dane do analizy ruchu na stronie (Google Analytics, Microsoft Clarity), 
                       poprawy UX, testowania funkcjonalności oraz optymalizacji wydajności serwisu.
                     </p>
                   </div>
                   <div>
                     <h3 className="text-xl font-medium mb-2">3.5. Bezpieczeństwo i ochrona przed nadużyciami</h3>
-                    <p className="text-gray-300">
+                    <p className="text-gray-400">
                       Przetwarzamy dane w celu ochrony przed atakami (honeypot, rate limiting), 
                       wykrywania nadużyć oraz zapewnienia bezpieczeństwa infrastruktury IT.
                     </p>
@@ -113,10 +113,10 @@ export default function PrivacyPolicyPage() {
               {/* Sekcja 4 */}
               <section>
                 <h2 className="text-2xl font-semibold mb-4">4. Zakres przetwarzanych danych</h2>
-                <p className="text-gray-300 leading-relaxed mb-3">
+                <p className="text-gray-400 leading-relaxed mb-3">
                   W zależności od celu przetwarzamy następujące dane:
                 </p>
-                <ul className="list-disc pl-6 space-y-2 text-gray-300">
+                <ul className="list-disc pl-6 space-y-2 text-gray-400">
                   <li><strong>Dane identyfikacyjne:</strong> imię, nazwisko</li>
                   <li><strong>Dane kontaktowe:</strong> adres e-mail, numer telefonu</li>
                   <li><strong>Dane firmowe:</strong> nazwa firmy, NIP, adres siedziby (w przypadku umów B2B)</li>
@@ -129,10 +129,10 @@ export default function PrivacyPolicyPage() {
               {/* Sekcja 5 */}
               <section>
                 <h2 className="text-2xl font-semibold mb-4">5. Udostępnianie danych podmiotom trzecim</h2>
-                <p className="text-gray-300 leading-relaxed mb-3">
+                <p className="text-gray-400 leading-relaxed mb-3">
                   Twoje dane mogą być udostępniane następującym kategoriom odbiorców:
                 </p>
-                <ul className="list-disc pl-6 space-y-2 text-gray-300">
+                <ul className="list-disc pl-6 space-y-2 text-gray-400">
                   <li><strong>Vercel Inc.</strong> (USA) – hosting strony internetowej (zgodnie z Standard Contractual Clauses)</li>
                   <li><strong>Google LLC</strong> (USA) – Google Analytics, Google Workspace (e-mail)</li>
                   <li><strong>Microsoft Corporation</strong> (USA) – Microsoft Clarity (analityka UX)</li>
@@ -141,7 +141,7 @@ export default function PrivacyPolicyPage() {
                   <li><strong>Kancelarie prawne</strong> – w przypadku sporów lub roszczeń prawnych</li>
                   <li><strong>Organy publiczne</strong> – na żądanie uprawnionych organów (np. sądy, organy podatkowe)</li>
                 </ul>
-                <p className="text-gray-300 leading-relaxed mt-3">
+                <p className="text-gray-400 leading-relaxed mt-3">
                   Wszystkie podmioty przetwarzają dane zgodnie z RODO i stosują odpowiednie zabezpieczenia.
                 </p>
               </section>
@@ -149,10 +149,10 @@ export default function PrivacyPolicyPage() {
               {/* Sekcja 6 */}
               <section>
                 <h2 className="text-2xl font-semibold mb-4">6. Okres przechowywania danych</h2>
-                <p className="text-gray-300 leading-relaxed mb-3">
+                <p className="text-gray-400 leading-relaxed mb-3">
                   Przechowujemy dane przez następujące okresy:
                 </p>
-                <ul className="list-disc pl-6 space-y-2 text-gray-300">
+                <ul className="list-disc pl-6 space-y-2 text-gray-400">
                   <li><strong>Dane z formularzy kontaktowych:</strong> do 24 miesięcy od ostatniego kontaktu lub do cofnięcia zgody</li>
                   <li><strong>Dane związane z umowami:</strong> przez okres obowiązywania umowy + okresy wymagane przepisami (np. 5 lat dla dokumentów księgowych)</li>
                   <li><strong>Dane marketingowe:</strong> do momentu cofnięcia zgody lub wyrażenia sprzeciwu</li>
@@ -164,10 +164,10 @@ export default function PrivacyPolicyPage() {
               {/* Sekcja 7 */}
               <section>
                 <h2 className="text-2xl font-semibold mb-4">7. Twoje prawa</h2>
-                <p className="text-gray-300 leading-relaxed mb-3">
+                <p className="text-gray-400 leading-relaxed mb-3">
                   Zgodnie z RODO przysługują Ci następujące prawa:
                 </p>
-                <ul className="list-disc pl-6 space-y-2 text-gray-300">
+                <ul className="list-disc pl-6 space-y-2 text-gray-400">
                   <li><strong>Prawo dostępu</strong> – możesz uzyskać informację, jakie dane o Tobie przetwarzamy</li>
                   <li><strong>Prawo do sprostowania</strong> – możesz poprosić o korektę nieprawidłowych danych</li>
                   <li><strong>Prawo do usunięcia</strong> (&quot;prawo do bycia zapomnianym&quot;) – możesz żądać usunięcia danych</li>
@@ -177,7 +177,7 @@ export default function PrivacyPolicyPage() {
                   <li><strong>Prawo do cofnięcia zgody</strong> – w każdej chwili możesz wycofać zgodę (nie wpływa to na legalność przetwarzania przed cofnięciem)</li>
                   <li><strong>Prawo do skargi</strong> – możesz złożyć skargę do Prezesa Urzędu Ochrony Danych Osobowych (PUODO)</li>
                 </ul>
-                <p className="text-gray-300 leading-relaxed mt-4">
+                <p className="text-gray-400 leading-relaxed mt-4">
                   Aby skorzystać z powyższych praw, skontaktuj się z nami: <a href="mailto:biuro@syntance.com" className="text-brand hover:underline">biuro@syntance.com</a>
                 </p>
               </section>
@@ -185,16 +185,16 @@ export default function PrivacyPolicyPage() {
               {/* Sekcja 8 */}
               <section>
                 <h2 className="text-2xl font-semibold mb-4">8. Cookies i technologie śledzące</h2>
-                <p className="text-gray-300 leading-relaxed mb-3">
+                <p className="text-gray-400 leading-relaxed mb-3">
                   Nasza strona wykorzystuje pliki cookies i podobne technologie w celu:
                 </p>
-                <ul className="list-disc pl-6 space-y-2 text-gray-300">
+                <ul className="list-disc pl-6 space-y-2 text-gray-400">
                   <li>Zapewnienia prawidłowego działania serwisu (cookies techniczne)</li>
                   <li>Analizy ruchu i optymalizacji UX (Google Analytics, Microsoft Clarity)</li>
                   <li>Personalizacji treści i reklam</li>
                   <li>Integracji z mediami społecznościowymi</li>
                 </ul>
-                <p className="text-gray-300 leading-relaxed mt-3">
+                <p className="text-gray-400 leading-relaxed mt-3">
                   Możesz zarządzać cookies w ustawieniach przeglądarki. Wyłączenie cookies może wpłynąć na funkcjonalność strony.
                 </p>
               </section>
@@ -202,10 +202,10 @@ export default function PrivacyPolicyPage() {
               {/* Sekcja 9 */}
               <section>
                 <h2 className="text-2xl font-semibold mb-4">9. Bezpieczeństwo danych</h2>
-                <p className="text-gray-300 leading-relaxed">
+                <p className="text-gray-400 leading-relaxed">
                   Stosujemy zaawansowane środki techniczne i organizacyjne w celu ochrony danych:
                 </p>
-                <ul className="list-disc pl-6 space-y-2 text-gray-300 mt-2">
+                <ul className="list-disc pl-6 space-y-2 text-gray-400 mt-2">
                   <li>Szyfrowanie połączeń (HTTPS/TLS)</li>
                   <li>Zabezpieczenia serwerów i infrastruktury (firewall, monitoring)</li>
                   <li>Ograniczony dostęp do danych (tylko autoryzowany personel)</li>
@@ -218,7 +218,7 @@ export default function PrivacyPolicyPage() {
               {/* Sekcja 10 */}
               <section>
                 <h2 className="text-2xl font-semibold mb-4">10. Zmiany w Polityce Prywatności</h2>
-                <p className="text-gray-300 leading-relaxed">
+                <p className="text-gray-400 leading-relaxed">
                   Zastrzegamy sobie prawo do aktualizacji niniejszej Polityki Prywatności. 
                   O istotnych zmianach poinformujemy na stronie oraz (jeśli to możliwe) drogą mailową. 
                   Data ostatniej aktualizacji zawsze znajduje się na górze dokumentu.
@@ -228,11 +228,11 @@ export default function PrivacyPolicyPage() {
               {/* Sekcja 11 */}
               <section>
                 <h2 className="text-2xl font-semibold mb-4">11. Kontakt</h2>
-                <p className="text-gray-300 leading-relaxed">
+                <p className="text-gray-400 leading-relaxed">
                   W sprawach związanych z ochroną danych osobowych prosimy o kontakt:
                 </p>
                 <div className="mt-3 p-4 bg-white/10 backdrop-blur-sm rounded-lg">
-                  <p className="text-gray-300">
+                  <p className="text-gray-400">
                     <strong>Syntance P.S.A.</strong>
                     <br />
                     Czerniec 72, 33-390 Łącko

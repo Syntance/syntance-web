@@ -19,7 +19,7 @@ export function StrategyCTA() {
               <h2 className="text-3xl md:text-4xl font-light tracking-wide text-white mb-6">
                 Gotowy na stronę, która pracuje na Twój wynik?
               </h2>
-              <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+              <p className="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
                 Nie musisz znać odpowiedzi na wszystkie pytania. Wystarczy, że masz wizję — strategię zbudujemy razem.
               </p>
               
@@ -61,7 +61,7 @@ export function StrategyCTA() {
               className="absolute top-6 right-6 p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
               aria-label="Zamknij"
             >
-              <X className="w-6 h-6 text-gray-300" />
+              <X className="w-6 h-6 text-gray-400" />
             </button>
 
             {/* Modal content */}
@@ -69,7 +69,7 @@ export function StrategyCTA() {
               <h3 className="text-2xl md:text-3xl font-light text-white mb-4">
                 Umów bezpłatną konsultację
               </h3>
-              <p className="text-gray-300">
+              <p className="text-gray-400">
                 Wypełnij formularz, a odezwiemy się w ciągu 24h, aby ustalić termin 15-minutowej rozmowy o Twoim projekcie.
               </p>
             </div>
@@ -80,7 +80,7 @@ export function StrategyCTA() {
               source="strategy-page-cta"
             />
 
-            <div className="mt-6 text-xs text-gray-300 text-center">
+            <div className="mt-6 text-xs text-gray-400 text-center">
               Twoje dane są bezpieczne. Sprawdź naszą{' '}
               <Link href="/polityka-prywatnosci" className="text-purple-400 hover:text-purple-300 underline">
                 Politykę Prywatności
