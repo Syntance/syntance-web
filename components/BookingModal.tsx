@@ -225,7 +225,7 @@ export function BookingModal({
                 {step === 'calendar' && 'Wybierz termin realizacji'}
                 {step === 'success' && 'Rezerwacja wysłana!'}
               </h3>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-300">
                 {step === 'summary' && 'Sprawdź szczegóły przed rezerwacją terminu'}
                 {step === 'calendar' && `Projekt wymaga ${booking.days} dni roboczych`}
                 {step === 'success' && 'Otrzymasz potwierdzenie na email'}
@@ -233,7 +233,7 @@ export function BookingModal({
             </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg"
+              className="text-gray-300 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg"
             >
               <X size={20} />
             </button>
@@ -246,25 +246,25 @@ export function BookingModal({
                 {/* Summary cards */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                    <div className="flex items-center gap-2 text-gray-400 text-sm mb-2">
+                    <div className="flex items-center gap-2 text-gray-300 text-sm mb-2">
                       <CreditCard size={16} />
                       Cena netto
                     </div>
                     <div className="text-2xl font-bold text-white">
-                      {booking.priceNetto.toLocaleString('pl-PL')} <span className="text-sm font-normal text-gray-400">PLN</span>
+                      {booking.priceNetto.toLocaleString('pl-PL')} <span className="text-sm font-normal text-gray-300">PLN</span>
                     </div>
-                    <div className="text-sm text-gray-400 mt-1">
+                    <div className="text-sm text-gray-300 mt-1">
                       Brutto: {booking.priceBrutto.toLocaleString('pl-PL')} PLN
                     </div>
                   </div>
 
                   <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                    <div className="flex items-center gap-2 text-gray-400 text-sm mb-2">
+                    <div className="flex items-center gap-2 text-gray-300 text-sm mb-2">
                       <Clock size={16} />
                       Czas realizacji
                     </div>
                     <div className="text-2xl font-bold text-white">
-                      {booking.days} <span className="text-sm font-normal text-gray-400">dni roboczych</span>
+                      {booking.days} <span className="text-sm font-normal text-gray-300">dni roboczych</span>
                     </div>
                     <div className={`text-sm mt-1 ${getComplexityColor(booking.complexity)}`}>
                       Złożoność: {getComplexityLabel(booking.complexity)}
@@ -280,14 +280,14 @@ export function BookingModal({
                       {booking.deposit.toLocaleString('pl-PL')} PLN
                     </span>
                   </div>
-                  <p className="text-xs text-gray-400 mt-1">
+                  <p className="text-xs text-gray-300 mt-1">
                     Płatność po akceptacji zlecenia, przed rozpoczęciem prac
                   </p>
                 </div>
 
                 {/* Selected items */}
                 <div>
-                  <div className="flex items-center gap-2 text-gray-400 text-sm mb-3">
+                  <div className="flex items-center gap-2 text-gray-300 text-sm mb-3">
                     <Layers size={16} />
                     Wybrane elementy ({booking.itemsCount})
                   </div>
@@ -307,7 +307,7 @@ export function BookingModal({
                 <form onSubmit={handleProceedToCalendar} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm text-gray-400 mb-1">
+                      <label className="block text-sm text-gray-300 mb-1">
                         Imię i nazwisko *
                       </label>
                       <input
@@ -322,7 +322,7 @@ export function BookingModal({
                       />
                     </div>
                     <div>
-                      <label className="block text-sm text-gray-400 mb-1">
+                      <label className="block text-sm text-gray-300 mb-1">
                         Email *
                       </label>
                       <input
@@ -345,7 +345,7 @@ export function BookingModal({
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">
+                    <label className="block text-sm text-gray-300 mb-1">
                       Telefon (opcjonalnie)
                     </label>
                     <input
@@ -380,7 +380,7 @@ export function BookingModal({
                 {/* Back button */}
                 <button
                   onClick={() => setStep('summary')}
-                  className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm"
+                  className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors text-sm"
                 >
                   <ArrowLeft size={16} />
                   Wróć do podsumowania
@@ -430,17 +430,17 @@ export function BookingModal({
                   <h4 className="text-2xl font-medium text-white mb-2">
                     Świetnie! Rezerwacja przesłana
                   </h4>
-                  <p className="text-gray-400">
+                  <p className="text-gray-300">
                     Otrzymasz email z potwierdzeniem.<br />
                     Skontaktujemy się w celu finalizacji zlecenia.
                   </p>
                 </div>
 
                 <div className="bg-white/5 rounded-xl p-4 border border-white/10 text-left">
-                  <div className="text-sm text-gray-400 mb-2">Szczegóły rezerwacji:</div>
+                  <div className="text-sm text-gray-300 mb-2">Szczegóły rezerwacji:</div>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-400">Start projektu:</span>
+                      <span className="text-gray-300">Start projektu:</span>
                       <span className="text-white font-medium">
                         {selectedDate && new Date(selectedDate).toLocaleDateString('pl-PL', {
                           weekday: 'short',
@@ -450,7 +450,7 @@ export function BookingModal({
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-400">Szacowany koniec:</span>
+                      <span className="text-gray-300">Szacowany koniec:</span>
                       <span className="text-white font-medium">
                         {selectedDate && new Date(calculateEndDate(selectedDate, booking.days)).toLocaleDateString('pl-PL', {
                           weekday: 'short',
@@ -461,21 +461,21 @@ export function BookingModal({
                     </div>
                     <div className="h-px bg-white/10 my-2" />
                     <div className="flex justify-between">
-                      <span className="text-gray-400">Cena netto:</span>
+                      <span className="text-gray-300">Cena netto:</span>
                       <span className="text-white font-medium">{booking.priceNetto.toLocaleString('pl-PL')} PLN</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-400">Czas realizacji:</span>
+                      <span className="text-gray-300">Czas realizacji:</span>
                       <span className="text-white font-medium">{booking.days} dni roboczych</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-400">Zaliczka:</span>
+                      <span className="text-gray-300">Zaliczka:</span>
                       <span className="text-purple-400 font-medium">{booking.deposit.toLocaleString('pl-PL')} PLN</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 justify-center text-sm text-gray-400">
+                <div className="flex items-center gap-2 justify-center text-sm text-gray-300">
                   <Mail size={14} />
                   Wysłaliśmy szczegóły na {email}
                 </div>

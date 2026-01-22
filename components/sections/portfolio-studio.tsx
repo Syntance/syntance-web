@@ -62,7 +62,7 @@ export default function PortfolioStudio() {
           <h2 id="portfolio-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
             Nasze realizacje
           </h2>
-          <p className="text-lg font-light tracking-wide text-gray-400">
+          <p className="text-lg font-light tracking-wide text-gray-300">
             Strony i sklepy, które nie tylko wyglądają, ale działają.
           </p>
         </header>
@@ -109,11 +109,11 @@ export default function PortfolioStudio() {
                     <h3 className="text-lg font-medium tracking-wide text-white">
                       {project.name}
                     </h3>
-                    <span className="text-xs px-3 py-1 rounded-full bg-white/5 text-gray-400 border border-gray-800">
+                    <span className="text-xs px-3 py-1 rounded-full bg-white/5 text-gray-300 border border-gray-800">
                       {project.type}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-400 font-light">
+                  <p className="text-sm text-gray-300 font-light">
                     {project.description}
                   </p>
 

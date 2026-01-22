@@ -78,7 +78,7 @@ export default async function CennikPage() {
             <h1 className="text-5xl md:text-6xl font-light tracking-widest glow-text mb-6">
               Ile kosztuje strona internetowa?
             </h1>
-            <p className="text-xl font-light tracking-wide text-gray-400 max-w-2xl mx-auto">
+            <p className="text-xl font-light tracking-wide text-gray-300 max-w-2xl mx-auto">
               Wybierz elementy projektu i zobacz orientacyjną wycenę w czasie rzeczywistym.
               Finalna cena po szczegółowej rozmowie.
             </p>
@@ -105,21 +105,21 @@ export default async function CennikPage() {
                 <span className="text-2xl">🎯</span>
               </div>
               <h3 className="font-medium text-white mb-2">Transparentność</h3>
-              <p className="text-sm text-gray-400">Jasna wycena bez ukrytych kosztów</p>
+              <p className="text-sm text-gray-300">Jasna wycena bez ukrytych kosztów</p>
             </div>
             <div className="text-center p-6 rounded-2xl bg-white/5 border border-white/10">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">🔧</span>
               </div>
               <h3 className="font-medium text-white mb-2">Elastyczność</h3>
-              <p className="text-sm text-gray-400">Dopasowanie do budżetu i potrzeb</p>
+              <p className="text-sm text-gray-300">Dopasowanie do budżetu i potrzeb</p>
             </div>
             <div className="text-center p-6 rounded-2xl bg-white/5 border border-white/10">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">💎</span>
               </div>
               <h3 className="font-medium text-white mb-2">Wartość</h3>
-              <p className="text-sm text-gray-400">Inwestycja, która się zwraca</p>
+              <p className="text-sm text-gray-300">Inwestycja, która się zwraca</p>
             </div>
           </div>
         </div>
@@ -130,24 +130,24 @@ export default async function CennikPage() {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-6 md:mb-0">
-              <a href="/" className="text-gray-400 hover:text-white transition-colors font-medium">
+              <a href="/" className="text-gray-300 hover:text-white transition-colors font-medium">
                 ← Powrót do strony głównej
               </a>
             </div>
             <div className="flex space-x-6">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Twitter/X">
+              <a href="#" className="text-gray-300 hover:text-white transition-colors" aria-label="Twitter/X">
                 <Twitter size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="LinkedIn">
+              <a href="#" className="text-gray-300 hover:text-white transition-colors" aria-label="LinkedIn">
                 <Linkedin size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="GitHub">
+              <a href="#" className="text-gray-300 hover:text-white transition-colors" aria-label="GitHub">
                 <Github size={20} />
               </a>
             </div>
           </div>
           <div className="mt-12 pt-8 border-t border-gray-900">
-            <p className="text-center text-sm font-light tracking-wider text-gray-400">
+            <p className="text-center text-sm font-light tracking-wider text-gray-300">
               © Syntance — Strony i sklepy, które działają.
             </p>
           </div>

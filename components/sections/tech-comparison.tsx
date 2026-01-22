@@ -50,7 +50,7 @@ export default function TechComparison() {
           <h2 id="tech-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
             Dlaczego <GradientText>NEXT.JS</GradientText>?
           </h2>
-          <p className="text-xl font-light tracking-wide text-gray-400 max-w-3xl mx-auto mb-4">
+          <p className="text-xl font-light tracking-wide text-gray-300 max-w-3xl mx-auto mb-4">
             Większość stron działa na WordPressie. My budujemy na Next.js — i oto dlaczego.
           </p>
           
@@ -82,7 +82,7 @@ export default function TechComparison() {
               <div className="grid grid-cols-2 md:grid-cols-[180px_1fr_1fr] gap-4 px-3 md:px-5 pt-4 md:pt-5 pb-3 md:pb-4 bg-black">
                 <div className="hidden md:block"></div>
                 <div className="text-center">
-                  <span className="text-xs md:text-sm font-medium text-gray-400 uppercase tracking-wider">WordPress</span>
+                  <span className="text-xs md:text-sm font-medium text-gray-300 uppercase tracking-wider">WordPress</span>
                 </div>
                 <div className="text-center">
                   <span className="text-xs md:text-sm font-medium uppercase tracking-wider">
@@ -110,14 +110,14 @@ export default function TechComparison() {
                     
                     {/* WordPress */}
                     <div className="flex items-center justify-center">
-                      <span className="text-xs md:text-sm text-gray-400 text-center">{item.wordpress}</span>
+                      <span className="text-xs md:text-sm text-gray-300 text-center">{item.wordpress}</span>
                     </div>
                     
                     {/* Next.js */}
                     <div className="flex items-center justify-center">
                       <span className="text-xs md:text-sm font-medium text-center">
                         <GradientText>{item.nextjs}</GradientText>
-                        {item.nextjsSuffix && <span className="text-gray-400">{item.nextjsSuffix}</span>}
+                        {item.nextjsSuffix && <span className="text-gray-300">{item.nextjsSuffix}</span>}
                       </span>
                     </div>
                   </div>
@@ -141,7 +141,7 @@ export default function TechComparison() {
             <p className="text-lg text-gray-300 leading-relaxed mb-3">
               <span className="font-medium text-white">Kiedy WordPress ma sens?</span>
             </p>
-            <p className="text-gray-400 leading-relaxed">
+            <p className="text-gray-300 leading-relaxed">
               Prosty blog, niski budżet, zero ambicji wzrostu. We wszystkich innych przypadkach — Next.js.
             </p>
           </div>

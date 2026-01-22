@@ -152,7 +152,7 @@ export default function SectionScrollbar() {
               className={`text-xs font-light tracking-wider whitespace-nowrap ${
                 isActive 
                   ? 'opacity-100 translate-x-0 text-white' 
-                  : 'opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 text-gray-400'
+                  : 'opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 text-gray-300'
               }`}
               style={{
                 transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
