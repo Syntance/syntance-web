@@ -1,10 +1,13 @@
-# Syntance — Strony i sklepy Next.js
+# Syntance — Agencja interaktywna i software house
 
 ## Kim jesteśmy
-Studio oferujące strony, sklepy i aplikacje SaaS. Specjalizujemy się w Next.js, headless CMS i nowoczesnym e-commerce. Każdy projekt zaczynamy od strategii, nie od kodu.
+- Typ: Agencja interaktywna / Software house
+- Lokalizacja: Polska (praca zdalna, klienci z EU)
+- Specjalizacja: Tworzenie stron internetowych, sklepy e-commerce
+- Technologie: Next.js, React, TypeScript, Sanity CMS, MedusaJS
 
 ## UVP (Unique Value Proposition)
-Jakość agencji w tempie freelancera. Strony w 2-4 tygodnie, sklepy w 4-6 tygodni. PageSpeed 90+ gwarantowany. Pełna własność kodu, zero vendor lock-in.
+Jakość agencji w tempie freelancera. Strony w 2-4 tygodnie, sklepy w 4-8 tygodni. PageSpeed 90+ gwarantowany. Pełna własność kodu, zero vendor lock-in. Gwarancja 30 dni.
 
 ## Usługi i ceny
 - Strony WWW: 5 000 - 15 000 PLN (realizacja: 2-4 tygodnie)
