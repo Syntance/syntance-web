@@ -150,7 +150,7 @@ export default function TechComparison() {
         </div>
 
         {/* Quote - Kiedy WordPress ma sens */}
-        <div className="relative max-w-3xl mx-auto">
+        <div className="relative max-w-3xl mx-auto mb-12">
           <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl opacity-20 blur-lg" />
           <div className="relative p-8 rounded-2xl bg-gray-900 border border-amber-500/30">
             <Quote size={32} className="text-amber-500/30 mb-4" />
@@ -161,6 +161,24 @@ export default function TechComparison() {
               Prosty blog, niski budżet, zero ambicji wzrostu. We wszystkich innych przypadkach — Next.js.
             </p>
           </div>
+        </div>
+
+        {/* CTA Button */}
+        <div className="text-center">
+          <a 
+            href="/nextjs" 
+            className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30 hover:scale-105"
+          >
+            <span>Sprawdź, dlaczego Next.js zmienia zasady gry</span>
+            <svg 
+              className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
         </div>
       </div>
     </section>
