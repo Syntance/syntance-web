@@ -340,7 +340,7 @@ const GooeyNav = ({
           content: "";
           position: absolute;
           inset: 0;
-          background: #f0f0f0;
+          background: #e5e5e5;
           transform: scale(0);
           opacity: 0;
           z-index: -1;
@@ -437,7 +437,7 @@ const GooeyNav = ({
           position: absolute;
           inset: 0;
           border-radius: 8px;
-          background: #f0f0f0;
+          background: #e5e5e5;
           opacity: 0;
           transform: scale(0);
           transition: all 0.3s ease;
