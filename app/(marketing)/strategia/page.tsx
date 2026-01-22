@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 const faqItems = [
   {
     question: "Czy mogę pominąć strategię i od razu zacząć od projektu?",
-    answer: "Możesz, ale ryzykujesz, że strona będzie ładna, ale nieskuteczna. 80% naszych klientów, którzy przyszli \"tylko po stronę\", po Discovery zmienili całą koncepcję."
+    answer: "Możesz, ale ryzykujesz, że strona będzie ładna, ale nieskuteczna. 80% naszych klientów, którzy przyszli &ldquo;tylko po stronę&rdquo;, po Discovery zmienili całą koncepcję."
   },
   {
     question: "Ile trwa Warsztat Discovery?",
@@ -104,7 +104,7 @@ export default function StrategiaPage() {
       <section id="problem" className="relative z-10 py-24 px-6 lg:px-12 bg-gray-900/30">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-light tracking-wide text-white mb-12 text-center">
-            Czy Twoja strona to „ładny obrazek" czy narzędzie sprzedaży?
+            Czy Twoja strona to &ldquo;ładny obrazek&rdquo; czy narzędzie sprzedaży?
           </h2>
           
           <div className="bg-red-500/5 border border-red-500/20 rounded-2xl p-8 mb-8">
@@ -123,7 +123,7 @@ export default function StrategiaPage() {
               </li>
               <li className="text-gray-400 flex items-start gap-3">
                 <span className="text-red-400 flex-shrink-0">•</span>
-                <span>Nagłówek brzmi: „Jesteśmy liderem" lub „Kompleksowe rozwiązania"</span>
+                <span>Nagłówek brzmi: &ldquo;Jesteśmy liderem&rdquo; lub &ldquo;Kompleksowe rozwiązania&rdquo;</span>
               </li>
               <li className="text-gray-400 flex items-start gap-3">
                 <span className="text-red-400 flex-shrink-0">•</span>
@@ -224,7 +224,7 @@ export default function StrategiaPage() {
                     2. Buyer Persona — do kogo mówisz?
                   </h3>
                   <p className="text-gray-400">
-                    Strona „dla wszystkich" jest stroną dla nikogo.
+                    Strona &ldquo;dla wszystkich&rdquo; jest stroną dla nikogo.
                   </p>
                 </div>
               </div>
@@ -236,11 +236,11 @@ export default function StrategiaPage() {
                     <ul className="space-y-2">
                       <li className="flex items-start gap-3 text-gray-400">
                         <XCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-                        <span>„Mężczyzna 35-50 lat, mieszka w mieście"</span>
+                        <span>&ldquo;Mężczyzna 35-50 lat, mieszka w mieście&rdquo;</span>
                       </li>
                       <li className="flex items-start gap-3 text-gray-400">
                         <XCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-                        <span>„Firmy z sektora MŚP"</span>
+                        <span>&ldquo;Firmy z sektora MŚP&rdquo;</span>
                       </li>
                     </ul>
                   </div>
@@ -250,19 +250,19 @@ export default function StrategiaPage() {
                     <ul className="space-y-2">
                       <li className="flex items-start gap-3 text-gray-400">
                         <CheckCircle2 className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-                        <span>Co go boli? (np. „Konkurencja ma lepszą stronę")</span>
+                        <span>Co go boli? (np. &ldquo;Konkurencja ma lepszą stronę&rdquo;)</span>
                       </li>
                       <li className="flex items-start gap-3 text-gray-400">
                         <CheckCircle2 className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-                        <span>Czego się boi? (np. „Ostatnia strona była porażką")</span>
+                        <span>Czego się boi? (np. &ldquo;Ostatnia strona była porażką&rdquo;)</span>
                       </li>
                       <li className="flex items-start gap-3 text-gray-400">
                         <CheckCircle2 className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-                        <span>Co wyzwala decyzję? (np. „Nowa inwestycja")</span>
+                        <span>Co wyzwala decyzję? (np. &ldquo;Nowa inwestycja&rdquo;)</span>
                       </li>
                       <li className="flex items-start gap-3 text-gray-400">
                         <CheckCircle2 className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-                        <span>Jakie obiekcje? (np. „To pewnie drogie")</span>
+                        <span>Jakie obiekcje? (np. &ldquo;To pewnie drogie&rdquo;)</span>
                       </li>
                     </ul>
                   </div>
@@ -293,7 +293,7 @@ export default function StrategiaPage() {
                     3. Propozycja Wartości (UVP) — dlaczego Ty, a nie konkurencja?
                   </h3>
                   <p className="text-gray-400">
-                    UVP to odpowiedź na pytanie: „Dlaczego klient ma wybrać Ciebie?"
+                    UVP to odpowiedź na pytanie: &ldquo;Dlaczego klient ma wybrać Ciebie?&rdquo;
                   </p>
                 </div>
               </div>
@@ -326,7 +326,7 @@ export default function StrategiaPage() {
               Strona = mapa procesu decyzyjnego klienta
             </h2>
             <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-              Zamiast projektować „ładny layout", projektujesz proces decyzyjny w formie scrolla. Każda sekcja odpowiada na pytanie, które klient ma w głowie.
+                  Zamiast projektować &ldquo;ładny layout&rdquo;, projektujesz proces decyzyjny w formie scrolla. Każda sekcja odpowiada na pytanie, które klient ma w głowie.
             </p>
           </div>
 
@@ -475,7 +475,7 @@ export default function StrategiaPage() {
               <ul className="space-y-3">
                 <li className="flex items-start gap-3 text-gray-400">
                   <span className="text-red-400 mt-1">•</span>
-                  <span>Potrzebujesz „prostej wizytówki za 2000 zł"</span>
+                  <span>Potrzebujesz &ldquo;prostej wizytówki za 2000 zł&rdquo;</span>
                 </li>
                 <li className="flex items-start gap-3 text-gray-400">
                   <span className="text-red-400 mt-1">•</span>
@@ -500,7 +500,7 @@ export default function StrategiaPage() {
               <ul className="space-y-3">
                 <li className="flex items-start gap-3 text-gray-400">
                   <span className="text-green-400 mt-1">•</span>
-                  <span>Chcesz, żeby strona generowała leady, nie tylko „wyglądała ładnie"</span>
+                  <span>Chcesz, żeby strona generowała leady, nie tylko &ldquo;wyglądała ładnie&rdquo;</span>
                 </li>
                 <li className="flex items-start gap-3 text-gray-400">
                   <span className="text-green-400 mt-1">•</span>
