@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 interface DropdownItem {
   label: string;
@@ -42,6 +42,7 @@ const GooeyNav = ({
   onNavigate
 }: GooeyNavProps) => {
   const router = useRouter();
+  const pathname = usePathname();
   const containerRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLUListElement>(null);
   const filterRef = useRef<HTMLSpanElement>(null);
@@ -51,6 +52,11 @@ const GooeyNav = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const isNavigatingRef = useRef(false);
   const navigatingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Zamknij dropdown przy zmianie pathname (nawigacja)
+  useEffect(() => {
+    setOpenDropdown(null);
+  }, [pathname]);
 
   // Zamknij dropdown po kliknięciu poza nim
   useEffect(() => {
