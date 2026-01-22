@@ -64,7 +64,7 @@ export default function StrategiaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 w-full" style={{ overflowX: 'clip' }}>
+    <div className="min-h-screen bg-gray-950 w-full" style={{ overflowX: 'clip' }}>
       <NavbarStudio />
       
       {/* Schema.org JSON-LD */}
