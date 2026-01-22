@@ -154,7 +154,7 @@ export default function StrategiaPage() {
             <p className="text-xl text-gray-400 mb-2">
               (zanim napiszesz linijkę kodu)
             </p>
-            <p className="text-gray-500 max-w-2xl mx-auto">
+            <p className="text-gray-400 max-w-2xl mx-auto">
               Zanim zaprojektujesz pierwszy piksel, musisz odpowiedzieć na 3 pytania. Bez nich strona będzie ładna, ale martwa.
             </p>
           </div>
@@ -565,7 +565,7 @@ export default function StrategiaPage() {
             </div>
           </div>
           <div className="mt-12 pt-8 border-t border-gray-900">
-            <p className="text-center text-sm font-light tracking-wider text-gray-500">
+            <p className="text-center text-sm font-light tracking-wider text-gray-400">
               © Syntance — Strony i sklepy, które działają.
             </p>
           </div>

@@ -30,7 +30,7 @@ export function MiniSummaryBar({ price, itemsCount, isVisible }: Props) {
           <div className="text-lg font-semibold text-white">
             {price.toLocaleString('pl-PL')} <span className="text-xs font-normal text-gray-400">PLN</span>
           </div>
-          <div className="text-xs text-gray-500">netto</div>
+          <div className="text-xs text-gray-400">netto</div>
         </div>
       </div>
     </div>

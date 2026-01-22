@@ -147,7 +147,7 @@ export default async function CennikPage() {
             </div>
           </div>
           <div className="mt-12 pt-8 border-t border-gray-900">
-            <p className="text-center text-sm font-light tracking-wider text-gray-500">
+            <p className="text-center text-sm font-light tracking-wider text-gray-400">
               © Syntance — Strony i sklepy, które działają.
             </p>
           </div>

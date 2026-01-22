@@ -75,14 +75,14 @@ export default function OfferCards() {
                   Strony wizytówkowe, landing page, strony firmowe
                 </p>
                 
-                <p className="text-sm text-gray-500 font-light mb-6">
+                <p className="text-sm text-gray-400 font-light mb-6">
                   Dla: lekarzy, prawników, firm usługowych, deweloperów
                 </p>
                 
                 <div className="flex items-center justify-between mb-6 pb-6 border-b border-white/10">
                   <div>
                     <div className="text-2xl font-light text-white">Od 5 000 PLN</div>
-                    <div className="text-sm text-gray-500 font-light mt-1">2-4 tygodnie</div>
+                    <div className="text-sm text-gray-400 font-light mt-1">2-4 tygodnie</div>
                   </div>
                 </div>
                 
@@ -115,14 +115,14 @@ export default function OfferCards() {
                   Headless e-commerce na MedusaJS
                 </p>
                 
-                <p className="text-sm text-gray-500 font-light mb-6">
+                <p className="text-sm text-gray-400 font-light mb-6">
                   Dla: butików, marek D2C, niszowych sprzedawców
                 </p>
                 
                 <div className="flex items-center justify-between mb-6 pb-6 border-b border-white/10">
                   <div>
                     <div className="text-2xl font-light text-white">Od 20 000 PLN</div>
-                    <div className="text-sm text-gray-500 font-light mt-1">4-6 tygodni</div>
+                    <div className="text-sm text-gray-400 font-light mt-1">4-6 tygodni</div>
                   </div>
                 </div>
                 

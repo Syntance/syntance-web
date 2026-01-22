@@ -114,7 +114,7 @@ export default function PricingStudioNew() {
         </div>
 
         {/* Additional info */}
-        <div className="mt-12 text-sm text-gray-500 font-light text-center">
+        <div className="mt-12 text-sm text-gray-400 font-light text-center">
           <p>Gwarancja 30 dni</p>
           <p className="mt-2">Po tym czasie opcjonalna opieka w ramach abonamentu</p>
         </div>
