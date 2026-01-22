@@ -66,7 +66,7 @@ export default function CMSSection() {
             id="cms-heading" 
             className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6"
           >
-            Edytuj sam z <GradientText>CMS</GradientText>
+            Edytuj sam z <GradientText>Sanity CMS</GradientText>
           </h2>
           <p className="text-xl font-light tracking-wide text-gray-400 max-w-3xl mx-auto mb-4">
             Chcesz edytować treści bez programisty? Panel CMS — prosty jak Word.
