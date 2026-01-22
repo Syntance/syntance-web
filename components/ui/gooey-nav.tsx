@@ -319,6 +319,11 @@ const GooeyNav = ({
         .gooey-effect.text {
           color: white;
           transition: color 0.3s ease;
+          font-size: 0.875rem;
+          font-weight: 300;
+          letter-spacing: 0.05em;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
         }
         .gooey-effect.text.active {
           color: black;
@@ -417,8 +422,10 @@ const GooeyNav = ({
           }
         }
         .gooey-nav-item.active {
-          color: black;
           text-shadow: none;
+        }
+        .gooey-nav-item.active a {
+          color: transparent;
         }
         .gooey-nav-item.active::after {
           opacity: 1;
