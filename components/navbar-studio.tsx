@@ -151,7 +151,7 @@ export default function NavbarStudio() {
         <div className="flex items-center gap-6">
           {/* Przycisk powrotu tylko na podstronie cennika */}
           {isInCennik && (
-            <Link href="/" className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors group">
+            <Link href="/" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group">
               <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
               <span className="text-sm font-light tracking-wider">Powrót</span>
             </Link>

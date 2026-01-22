@@ -124,10 +124,10 @@ export default function NextjsPage() {
           <h1 className="text-5xl md:text-6xl font-light tracking-widest glow-text mb-6">
             Next.js nie jest &ldquo;tylko frameworkiem&rdquo;
           </h1>
-          <p className="text-2xl md:text-3xl font-light tracking-wide text-gray-300 mb-12">
+          <p className="text-2xl md:text-3xl font-light tracking-wide text-gray-400 mb-12">
             To przewaga konkurencyjna, która przynosi realne pieniądze
           </p>
-          <p className="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed">
             Netflix, TikTok, Nike, Notion — nie wybrali Next.js przypadkowo. Wybrali szybkość, bezpieczeństwo i skalowalność, 
             których WordPress nigdy nie zapewni. Poznaj technologię, która zmienia zasady gry.
           </p>
@@ -138,17 +138,17 @@ export default function NextjsPage() {
       <section className="relative z-10 py-16 px-6 lg:px-12 bg-gray-900/30">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-light tracking-wide text-center mb-12">
-            <span className="text-gray-300">WordPress vs. </span>
+            <span className="text-gray-400">WordPress vs. </span>
             <span className="bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">Next.js</span>
-            <span className="text-gray-300"> w liczbach</span>
+            <span className="text-gray-400"> w liczbach</span>
           </h2>
           
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
                 <tr className="border-b border-white/10">
-                  <th className="text-left py-4 px-4 text-gray-300 font-medium">Kryterium</th>
-                  <th className="text-center py-4 px-4 text-gray-300 font-medium">WordPress</th>
+                  <th className="text-left py-4 px-4 text-gray-400 font-medium">Kryterium</th>
+                  <th className="text-center py-4 px-4 text-gray-400 font-medium">WordPress</th>
                   <th className="text-center py-4 px-4 font-medium bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">Next.js</th>
                 </tr>
               </thead>
@@ -156,10 +156,10 @@ export default function NextjsPage() {
                 {comparisonTable.map((row, index) => (
                   <tr key={index} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
                     <td className="py-4 px-4 text-white font-medium">{row.feature}</td>
-                    <td className={`py-4 px-4 text-center ${row.winner === 'wordpress' ? 'text-green-400' : 'text-gray-300'}`}>
+                    <td className={`py-4 px-4 text-center ${row.winner === 'wordpress' ? 'text-green-400' : 'text-gray-400'}`}>
                       {row.wordpress}
                     </td>
-                    <td className={`py-4 px-4 text-center font-medium ${row.winner === 'nextjs' ? 'text-green-400' : 'text-gray-300'}`}>
+                    <td className={`py-4 px-4 text-center font-medium ${row.winner === 'nextjs' ? 'text-green-400' : 'text-gray-400'}`}>
                       {row.nextjs}
                     </td>
                   </tr>
@@ -197,7 +197,7 @@ export default function NextjsPage() {
 
                 {/* Content */}
                 <div className="flex-1">
-                  <p className="text-gray-300 leading-relaxed mb-6">
+                  <p className="text-gray-400 leading-relaxed mb-6">
                     {tech.description.split('**').map((part, i) => 
                       i % 2 === 1 ? <strong key={i} className="text-white font-medium">{part}</strong> : part
                     )}
@@ -207,14 +207,14 @@ export default function NextjsPage() {
                     {tech.bullets.map((bullet, bulletIndex) => (
                       <li key={bulletIndex} className="flex items-start gap-3">
                         <CheckCircle2 size={20} className={`flex-shrink-0 mt-0.5 ${tech.textColor}`} />
-                        <span className="text-gray-300">{bullet}</span>
+                        <span className="text-gray-400">{bullet}</span>
                       </li>
                     ))}
                   </ul>
 
                   {/* Real World Example */}
                   <div className={`p-4 rounded-xl bg-gradient-to-br ${tech.gradient} bg-opacity-5 border border-white/10`}>
-                    <p className="text-sm text-gray-300">
+                    <p className="text-sm text-gray-400">
                       <span className="font-medium text-white">Real world: </span>
                       {tech.realWorld}
                     </p>
@@ -236,11 +236,11 @@ export default function NextjsPage() {
               <h3 className="text-2xl font-light text-white mb-4">
                 Kiedy WordPress NIE jest problemem?
               </h3>
-              <p className="text-gray-300 leading-relaxed mb-4">
+              <p className="text-gray-400 leading-relaxed mb-4">
                 Tylko w jednym przypadku: **prosty blog, zero ambicji wzrostu, minimalna inwestycja**. 
                 Jeśli potrzebujesz strony &ldquo;bo trzeba mieć stronę&rdquo; — WordPress wystarczy.
               </p>
-              <p className="text-gray-300 leading-relaxed">
+              <p className="text-gray-400 leading-relaxed">
                 Ale jeśli Twoja strona ma **generować leady, sprzedawać produkty, lub budować markę** — 
                 WordPress to kula u nogi. Next.js to rakieta.
               </p>
@@ -259,7 +259,7 @@ export default function NextjsPage() {
               <h2 className="text-3xl md:text-4xl font-light tracking-wide text-white mb-6">
                 Przekonany? Sprawdźmy, ile kosztuje strona na <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Next.js</span>
               </h2>
-              <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+              <p className="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
                 Transparentny konfigurator cenowy — zobacz orientacyjną wycenę w 2 minuty.
               </p>
               
@@ -289,13 +289,13 @@ export default function NextjsPage() {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-6 md:mb-0">
-              <Link href="/" className="text-gray-300 hover:text-white transition-colors font-medium">
+              <Link href="/" className="text-gray-400 hover:text-white transition-colors font-medium">
                 ← Powrót do strony głównej
               </Link>
             </div>
           </div>
           <div className="mt-12 pt-8 border-t border-gray-900">
-            <p className="text-center text-sm font-light tracking-wider text-gray-300">
+            <p className="text-center text-sm font-light tracking-wider text-gray-400">
               © Syntance — Strony i sklepy, które działają.
             </p>
           </div>

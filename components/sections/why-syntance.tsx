@@ -67,7 +67,7 @@ export default function WhySyntance() {
           <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
             Dlaczego My?
           </h2>
-          <p className="text-lg font-light tracking-wide text-gray-300">
+          <p className="text-lg font-light tracking-wide text-gray-400">
             Wartości i podejście
           </p>
         </div>

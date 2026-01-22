@@ -44,7 +44,7 @@ export default function PricingStudioNew() {
           <h2 id="pricing-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
             Cennik i wycena
           </h2>
-          <p className="text-lg font-light tracking-wide text-gray-300 max-w-2xl mx-auto">
+          <p className="text-lg font-light tracking-wide text-gray-400 max-w-2xl mx-auto">
             Każdy projekt jest unikalny — dlatego zaprojektowaliśmy interaktywny konfigurator, który pomoże Ci oszacować koszt i czas realizacji w kilka minut.
           </p>
         </header>
@@ -56,7 +56,7 @@ export default function PricingStudioNew() {
               <Check className="text-blue-400" size={24} />
             </div>
             <h3 className="text-lg font-medium mb-2">Transparentność</h3>
-            <p className="text-sm text-gray-300 font-light">
+            <p className="text-sm text-gray-400 font-light">
               Jasna wycena bez ukrytych kosztów
             </p>
           </div>
@@ -66,7 +66,7 @@ export default function PricingStudioNew() {
               <Check className="text-purple-400" size={24} />
             </div>
             <h3 className="text-lg font-medium mb-2">Elastyczność</h3>
-            <p className="text-sm text-gray-300 font-light">
+            <p className="text-sm text-gray-400 font-light">
               Dopasowanie do budżetu i potrzeb
             </p>
           </div>
@@ -76,7 +76,7 @@ export default function PricingStudioNew() {
               <Check className="text-amber-400" size={24} />
             </div>
             <h3 className="text-lg font-medium mb-2">Wartość</h3>
-            <p className="text-sm text-gray-300 font-light">
+            <p className="text-sm text-gray-400 font-light">
               Inwestycja, która się zwraca
             </p>
           </div>
@@ -93,7 +93,7 @@ export default function PricingStudioNew() {
             <h3 className="text-3xl md:text-4xl font-light tracking-wide mb-4 glow-text">
               Gotowy stworzyć coś wspaniałego?
             </h3>
-            <p className="text-gray-300 font-light tracking-wide mb-8 max-w-lg mx-auto">
+            <p className="text-gray-400 font-light tracking-wide mb-8 max-w-lg mx-auto">
               Skonfiguruj projekt i poznaj szacunkową cenę. Zarezerwuj termin od razu.
             </p>
             
@@ -114,7 +114,7 @@ export default function PricingStudioNew() {
         </div>
 
         {/* Additional info */}
-        <div className="mt-12 text-sm text-gray-300 font-light text-center">
+        <div className="mt-12 text-sm text-gray-400 font-light text-center">
           <p>Gwarancja 30 dni</p>
           <p className="mt-2">Po tym czasie opcjonalna opieka w ramach abonamentu</p>
         </div>

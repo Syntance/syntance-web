@@ -56,7 +56,7 @@ export default function HomePage() {
             <h2 id="contact-heading" className="text-4xl md:text-5xl font-light tracking-wider mb-8 text-center glow-text">
               Porozmawiajmy
             </h2>
-            <p className="text-xl text-gray-300 font-light tracking-wide text-center mb-16">
+            <p className="text-xl text-gray-400 font-light tracking-wide text-center mb-16">
               Jeśli masz pytania, na które nie znalazłeś odpowiedzi, skontaktuj się z nami.
             </p>
             
@@ -65,14 +65,14 @@ export default function HomePage() {
               <address className="space-y-8 not-italic">
                 <div>
                   <h3 className="text-xl font-medium tracking-wider mb-4">Email</h3>
-                  <a href="mailto:kontakt@syntance.com" className="text-gray-300 hover:text-white transition-colors text-lg">
+                  <a href="mailto:kontakt@syntance.com" className="text-gray-400 hover:text-white transition-colors text-lg">
                     kontakt@syntance.com
                   </a>
                 </div>
                 
                 <div>
                   <h3 className="text-xl font-medium tracking-wider mb-4">Telefon</h3>
-                  <a href="tel:+48662519544" className="text-gray-300 hover:text-white transition-colors text-lg">
+                  <a href="tel:+48662519544" className="text-gray-400 hover:text-white transition-colors text-lg">
                     +48 662 519 544
                   </a>
                 </div>
@@ -80,13 +80,13 @@ export default function HomePage() {
                 <div>
                   <h3 className="text-xl font-medium tracking-wider mb-4">Social Media</h3>
                   <nav aria-label="Social media" className="flex space-x-4">
-                    <a href="#" className="text-gray-300 hover:text-white transition-colors" aria-label="Twitter/X">
+                    <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Twitter/X">
                       <Twitter size={24} aria-hidden="true" />
                     </a>
-                    <a href="#" className="text-gray-300 hover:text-white transition-colors" aria-label="LinkedIn">
+                    <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="LinkedIn">
                       <Linkedin size={24} aria-hidden="true" />
                     </a>
-                    <a href="#" className="text-gray-300 hover:text-white transition-colors" aria-label="GitHub">
+                    <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="GitHub">
                       <Github size={24} aria-hidden="true" />
                     </a>
                   </nav>
@@ -112,19 +112,19 @@ export default function HomePage() {
               </svg>
             </div>
             <nav aria-label="Social media w stopce" className="flex space-x-6">
-              <a href="#" className="text-gray-300 hover:text-white transition-colors" aria-label="Twitter/X">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Twitter/X">
                 <Twitter size={20} aria-hidden="true" />
               </a>
-              <a href="#" className="text-gray-300 hover:text-white transition-colors" aria-label="LinkedIn">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="LinkedIn">
                 <Linkedin size={20} aria-hidden="true" />
               </a>
-              <a href="#" className="text-gray-300 hover:text-white transition-colors" aria-label="GitHub">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="GitHub">
                 <Github size={20} aria-hidden="true" />
               </a>
             </nav>
           </div>
           <div className="mt-12 pt-8 border-t border-gray-900">
-            <p className="text-center text-sm font-light tracking-wider text-gray-300">
+            <p className="text-center text-sm font-light tracking-wider text-gray-400">
               © Syntance — Strony i sklepy, które działają.
             </p>
           </div>
