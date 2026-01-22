@@ -1,5 +1,4 @@
 import { Metadata } from 'next'
-import NavbarStudio from '@/components/navbar-studio'
 import { Code, Zap, Target, Users, Award, Sparkles, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
@@ -50,8 +49,6 @@ const technologies = [
 export default function ONasPage() {
   return (
     <div className="min-h-screen bg-gray-950 w-full" style={{ overflowX: 'clip' }}>
-      <NavbarStudio />
-      
       {/* Hero Section */}
       <section className="relative z-10 pt-52 pb-24 px-6 lg:px-12">
         <div className="max-w-5xl mx-auto text-center">

@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Space_Grotesk, Plus_Jakarta_Sans } from "next/font/google";
 import { AllSchemasDynamic } from "@/components/schema-org-dynamic";
 import { generateSeoMetadata, getSeoSettings } from "@/lib/seo";
+import NavbarStudio from "@/components/navbar-studio";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -49,6 +50,7 @@ export default async function RootLayout({
       </head>
       <body className={`${spaceGrotesk.variable} ${plusJakartaSans.variable} font-sans antialiased bg-black text-[#F5F3FF]`}>
         <AllSchemasDynamic seo={seo} />
+        <NavbarStudio />
         {children}
         <Analytics />
       </body>

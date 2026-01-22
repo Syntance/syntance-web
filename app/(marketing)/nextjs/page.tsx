@@ -1,5 +1,4 @@
 import { Metadata } from 'next'
-import NavbarStudio from '@/components/navbar-studio'
 import { Zap, Shield, TrendingUp, DollarSign, Wrench, Rocket, Code, Server, Globe, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 
@@ -116,8 +115,6 @@ const comparisonTable = [
 export default function NextjsPage() {
   return (
     <div className="min-h-screen bg-gray-900 w-full" style={{ overflowX: 'clip' }}>
-      <NavbarStudio />
-      
       {/* Hero */}
       <section className="relative z-10 pt-52 pb-24 px-6 lg:px-12">
         <div className="max-w-5xl mx-auto text-center">

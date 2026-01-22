@@ -3,7 +3,6 @@ import { sanityFetch } from '@/sanity/lib/fetch'
 import { pricingDataQuery, PricingData, defaultPricingData } from '@/sanity/queries/pricing'
 import { pricingFaqQuery, PricingFaqItem, defaultFaqItems } from '@/sanity/queries/faq'
 import { PricingConfigurator } from '@/components/PricingConfigurator'
-import NavbarStudio from '@/components/navbar-studio'
 import PricingFAQ from '@/components/sections/pricing-faq'
 import { Twitter, Linkedin, Github } from 'lucide-react'
 
@@ -68,8 +67,6 @@ export default async function CennikPage() {
 
   return (
     <div className="min-h-screen bg-gray-950 w-full" style={{ overflowX: 'clip' }}>
-      <NavbarStudio />
-      
       {/* Animated hero wrapper - BEZ konfiguratora (transform blokuje sticky) */}
       <div className="animate-fade-in-scale">
         {/* Hero section */}
