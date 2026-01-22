@@ -3,9 +3,15 @@
 import { useRef, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+interface DropdownItem {
+  label: string;
+  href: string;
+}
+
 interface NavItem {
   label: string;
   href: string;
+  dropdown?: DropdownItem[];
 }
 
 interface GooeyNavProps {
@@ -41,8 +47,21 @@ const GooeyNav = ({
   const filterRef = useRef<HTMLSpanElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
   const [activeIndex, setActiveIndex] = useState(initialActiveIndex);
+  const [openDropdown, setOpenDropdown] = useState<number | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const isNavigatingRef = useRef(false);
   const navigatingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Zamknij dropdown po kliknięciu poza nim
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setOpenDropdown(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const noise = (n = 1) => n / 2 - Math.random() * n;
   const getXY = (distance: number, pointIndex: number, totalPoints: number) => {
@@ -120,6 +139,17 @@ const GooeyNav = ({
   const handleClick = (e: React.MouseEvent<HTMLLIElement>, index: number) => {
     e.preventDefault();
     const liEl = e.currentTarget;
+    const item = items[index];
+    
+    // Jeśli element ma dropdown, otwórz/zamknij go zamiast nawigować
+    if (item.dropdown && item.dropdown.length > 0) {
+      setOpenDropdown(openDropdown === index ? null : index);
+      return;
+    }
+    
+    // Zamknij dropdown przy nawigacji
+    setOpenDropdown(null);
+    
     if (activeIndex === index) return;
     
     // Blokuj reakcję na externalActiveIndex przez czas scrollowania
@@ -148,7 +178,7 @@ const GooeyNav = ({
       makeParticles(filterRef.current);
     }
     // Navigate to href
-    const href = items[index].href;
+    const href = item.href;
     if (href.startsWith('#')) {
       const element = document.querySelector(href) as HTMLElement;
       if (element) {
@@ -173,6 +203,11 @@ const GooeyNav = ({
       // Link do podstrony - użyj Next.js router dla płynnej nawigacji
       router.push(href);
     }
+  };
+  
+  const handleDropdownClick = (href: string) => {
+    setOpenDropdown(null);
+    router.push(href);
   };
   const handleKeyDown = (e: React.KeyboardEvent<HTMLAnchorElement>, index: number) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -382,6 +417,51 @@ const GooeyNav = ({
           transition: all 0.3s ease;
           z-index: -1;
         }
+        .gooey-dropdown {
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          transform: translateX(-50%);
+          margin-top: 1rem;
+          padding: 0.5rem 0;
+          background: rgba(17, 24, 39, 0.95);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 0.75rem;
+          min-width: 180px;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+          z-index: 50;
+          opacity: 0;
+          pointer-events: none;
+          transition: all 0.2s ease;
+        }
+        .gooey-dropdown.open {
+          opacity: 1;
+          pointer-events: auto;
+          transform: translateX(-50%) translateY(0);
+        }
+        .gooey-dropdown-item {
+          display: block;
+          padding: 0.5rem 1rem;
+          color: rgba(156, 163, 175, 1);
+          font-size: 0.875rem;
+          font-weight: 300;
+          letter-spacing: 0.05em;
+          transition: all 0.15s ease;
+          cursor: pointer;
+        }
+        .gooey-dropdown-item:hover {
+          color: white;
+          background: rgba(255, 255, 255, 0.05);
+        }
+        .gooey-chevron {
+          display: inline-block;
+          margin-left: 4px;
+          transition: transform 0.2s ease;
+        }
+        .gooey-chevron.open {
+          transform: rotate(180deg);
+        }
       `}</style>
       <div className="relative" ref={containerRef}>
         <nav className="flex relative" style={{ transform: 'translate3d(0,0,0.01px)' }}>
@@ -394,7 +474,7 @@ const GooeyNav = ({
             }}
           >
             {items.map((item, index) => (
-                <li
+              <li
                 key={index}
                 className={`gooey-nav-item rounded-full relative cursor-pointer transition-[background-color_color] duration-300 ease text-white text-sm font-light tracking-wider ${
                   activeIndex === index ? 'active' : ''
@@ -404,10 +484,44 @@ const GooeyNav = ({
                 <a
                   href={item.href}
                   onKeyDown={e => handleKeyDown(e, index)}
-                  className="outline-none py-[0.6em] px-[1em] inline-block"
+                  className="outline-none py-[0.6em] px-[1em] inline-flex items-center"
+                  onClick={(e) => item.dropdown && e.preventDefault()}
                 >
                   {item.label}
+                  {item.dropdown && item.dropdown.length > 0 && (
+                    <svg 
+                      className={`gooey-chevron ${openDropdown === index ? 'open' : ''}`}
+                      width="14" 
+                      height="14" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2"
+                    >
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  )}
                 </a>
+                {/* Dropdown menu */}
+                {item.dropdown && item.dropdown.length > 0 && (
+                  <div 
+                    ref={openDropdown === index ? dropdownRef : null}
+                    className={`gooey-dropdown ${openDropdown === index ? 'open' : ''}`}
+                  >
+                    {item.dropdown.map((dropItem, dropIndex) => (
+                      <button
+                        key={dropIndex}
+                        className="gooey-dropdown-item w-full text-left"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDropdownClick(dropItem.href);
+                        }}
+                      >
+                        {dropItem.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </li>
             ))}
           </ul>
