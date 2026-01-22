@@ -14,6 +14,7 @@ const ValuesStudio = dynamic(() => import("@/components/sections/values-studio")
 const TechComparison = dynamic(() => import("@/components/sections/tech-comparison"), { ssr: true });
 const PortfolioStudio = dynamic(() => import("@/components/sections/portfolio-studio"), { ssr: true });
 const ProcessStudio = dynamic(() => import("@/components/sections/process-studio"), { ssr: true });
+const CMSSection = dynamic(() => import("@/components/sections/cms-section"), { ssr: true });
 const PricingStudioNew = dynamic(() => import("@/components/sections/pricing-studio-new"), { ssr: true });
 const AboutSection = dynamic(() => import("@/components/sections/about-section"), { ssr: true });
 
@@ -123,6 +124,7 @@ export default function HomePage() {
         <OfferCards />
         <TechComparison />
         <ProcessStudio />
+        <CMSSection />
         <ValuesStudio />
         <PortfolioStudio />
         <PricingStudioNew />
