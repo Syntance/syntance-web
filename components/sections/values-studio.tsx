@@ -35,7 +35,7 @@ const values = [
     glowColor: "rgba(168, 85, 247, 0.3)",
   },
   {
-    title: "Bez locka",
+    title: "Bez ograniczeń",
     description: "Pełna własność kodu",
     proof: "Możesz zmienić wykonawcę",
     icon: Lock,
