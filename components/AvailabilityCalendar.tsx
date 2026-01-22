@@ -146,7 +146,7 @@ export function AvailabilityCalendar({
     return (
       <div className="flex flex-col items-center justify-center py-12 space-y-4">
         <Loader2 className="w-8 h-8 text-purple-400 animate-spin" />
-        <p className="text-gray-400 text-sm">Sprawdzam dostępność...</p>
+        <p className="text-gray-300 text-sm">Sprawdzam dostępność...</p>
       </div>
     )
   }
@@ -176,7 +176,7 @@ export function AvailabilityCalendar({
             <p className="text-white font-medium">
               Wymagane {requiredDays} dni roboczych
             </p>
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-300 text-sm">
               Wybierz datę startu projektu - pokazujemy tylko terminy z wystarczającą ilością wolnych dni
             </p>
           </div>
@@ -191,7 +191,7 @@ export function AvailabilityCalendar({
           className={`p-2 rounded-lg transition-colors ${
             canGoPrevious 
               ? 'text-gray-300 hover:text-white hover:bg-white/10' 
-              : 'text-gray-400 cursor-not-allowed'
+              : 'text-gray-300 cursor-not-allowed'
           }`}
         >
           <ChevronLeft size={20} />
@@ -207,7 +207,7 @@ export function AvailabilityCalendar({
           className={`p-2 rounded-lg transition-colors ${
             canGoNext 
               ? 'text-gray-300 hover:text-white hover:bg-white/10' 
-              : 'text-gray-400 cursor-not-allowed'
+              : 'text-gray-300 cursor-not-allowed'
           }`}
         >
           <ChevronRight size={20} />
@@ -219,7 +219,7 @@ export function AvailabilityCalendar({
         {/* Nagłówki dni tygodnia */}
         <div className="grid grid-cols-7 border-b border-white/10">
           {WEEKDAYS.map((day) => (
-            <div key={day} className="py-2 text-center text-xs text-gray-400 font-medium">
+            <div key={day} className="py-2 text-center text-xs text-gray-300 font-medium">
               {day}
             </div>
           ))}
@@ -236,9 +236,9 @@ export function AvailabilityCalendar({
             const statusStyles = {
               available: 'bg-green-500/20 text-green-400 hover:bg-green-500/30 cursor-pointer border-green-500/30',
               busy: 'bg-red-500/10 text-red-400/60 cursor-not-allowed',
-              past: 'text-gray-400 cursor-not-allowed',
-              unavailable: 'text-gray-400 cursor-not-allowed',
-              weekend: 'text-gray-400 cursor-not-allowed bg-white/2',
+              past: 'text-gray-300 cursor-not-allowed',
+              unavailable: 'text-gray-300 cursor-not-allowed',
+              weekend: 'text-gray-300 cursor-not-allowed bg-white/2',
             }
 
             const handleClick = () => {
@@ -279,7 +279,7 @@ export function AvailabilityCalendar({
       </div>
 
       {/* Legenda */}
-      <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-gray-400">
+      <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-gray-300">
         <div className="flex items-center gap-2">
           <span className="w-3 h-3 rounded-full bg-green-500/40 border border-green-500/50" />
           <span>Dostępny</span>
@@ -300,7 +300,7 @@ export function AvailabilityCalendar({
           <div className="flex items-center gap-3">
             <Calendar size={20} className="text-purple-400" />
             <div>
-              <p className="text-gray-400 text-sm">Wybrany termin startu:</p>
+              <p className="text-gray-300 text-sm">Wybrany termin startu:</p>
               <p className="text-white font-medium">
                 {new Date(selectedDate).toLocaleDateString('pl-PL', {
                   weekday: 'long',
@@ -309,7 +309,7 @@ export function AvailabilityCalendar({
                   year: 'numeric',
                 })}
               </p>
-              <p className="text-gray-400 text-sm mt-1">
+              <p className="text-gray-300 text-sm mt-1">
                 Szacowany koniec: {' '}
                 {(() => {
                   const start = new Date(selectedDate)
