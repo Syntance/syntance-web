@@ -8,10 +8,11 @@ interface ImageSmartProps extends ImageProps {
 }
 
 export default function ImageSmart(props: ImageSmartProps) {
-  const { loading, decoding, sizes, ...rest } = props;
+  const { loading, decoding, sizes, alt, ...rest } = props;
   
   return (
     <Image
+      alt={alt}
       {...rest}
       loading={loading ?? 'lazy'}
       decoding={decoding ?? 'async'}

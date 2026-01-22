@@ -2,13 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import { Zap, Target, Rocket, Lock } from "lucide-react";
-import TiltCard from "@/components/tilt-card";
 import dynamic from "next/dynamic";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
-const TiltCardLazy = dynamic(() => import("@/components/tilt-card"), {
+const TiltCard = dynamic(() => import("@/components/tilt-card"), {
   ssr: false,
-  loading: () => <div className="opacity-50" />,
 });
 
 const values = [
@@ -96,7 +94,7 @@ export default function ValuesStudio() {
                   transitionDelay: `${index * 100}ms`,
                 }}
               >
-                <TiltCardLazy className="h-full">
+                <TiltCard className="h-full">
                   <div className="group relative h-full">
                     {/* Card background with gradient border */}
                     <div className="relative h-full">
@@ -188,7 +186,7 @@ export default function ValuesStudio() {
                       </div>
                     </div>
                   </div>
-                </TiltCardLazy>
+                </TiltCard>
               </div>
             );
           })}

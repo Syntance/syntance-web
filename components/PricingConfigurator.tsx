@@ -353,7 +353,8 @@ export function PricingConfigurator({ data }: Props) {
         }
       }
     })
-  }, [items, getParentBundles, isStillNeededByOthers, performRemoveItem, performAddItem])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items, getParentBundles, performRemoveItem, performAddItem])
 
   // Zmiana ilości
   const setQuantity = useCallback((id: string, qty: number) => {
