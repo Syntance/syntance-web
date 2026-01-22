@@ -17,7 +17,8 @@ const config: Config = {
     },
     extend: {
       fontFamily: {
-        sans: ["var(--font-space-grotesk)", "system-ui", "sans-serif"],
+        sans: ["var(--font-plus-jakarta)", "system-ui", "sans-serif"],
+        heading: ["var(--font-space-grotesk)", "system-ui", "sans-serif"],
       },
       colors: {
         brand: {

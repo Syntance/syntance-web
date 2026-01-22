@@ -1,7 +1,7 @@
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
-import { Space_Grotesk } from "next/font/google";
+import { Space_Grotesk, Plus_Jakarta_Sans } from "next/font/google";
 import { AllSchemasDynamic } from "@/components/schema-org-dynamic";
 import { generateSeoMetadata, getSeoSettings } from "@/lib/seo";
 
@@ -9,7 +9,15 @@ const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-space-grotesk",
-  display: "swap", // Pokazuj tekst natychmiast, nie czekaj na font
+  display: "swap",
+  preload: true,
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-plus-jakarta",
+  display: "swap",
   preload: true,
 });
 
@@ -39,7 +47,7 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
       </head>
-      <body className={`${spaceGrotesk.variable} font-sans antialiased bg-black text-[#F5F3FF]`}>
+      <body className={`${spaceGrotesk.variable} ${plusJakartaSans.variable} font-sans antialiased bg-black text-[#F5F3FF]`}>
         <AllSchemasDynamic seo={seo} />
         {children}
         <Analytics />
