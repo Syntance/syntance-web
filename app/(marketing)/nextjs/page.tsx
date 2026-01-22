@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { Zap, Shield, TrendingUp, DollarSign, Wrench, Rocket, Code, Server, Globe, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
+import { HeroTransition } from '@/components/page-transition'
 
 export const metadata: Metadata = {
   title: 'Dlaczego Next.js? Framework, który zmienia zasady gry | Syntance',
@@ -116,6 +117,7 @@ export default function NextjsPage() {
   return (
     <div className="min-h-screen bg-gray-900 w-full" style={{ overflowX: 'clip' }}>
       {/* Hero */}
+      <HeroTransition>
       <section className="relative z-10 pt-52 pb-24 px-6 lg:px-12">
         <div className="max-w-5xl mx-auto text-center">
           <h1 className="text-5xl md:text-6xl font-light tracking-widest glow-text mb-6">
@@ -130,6 +132,7 @@ export default function NextjsPage() {
           </p>
         </div>
       </section>
+      </HeroTransition>
 
       {/* Quick Comparison Table */}
       <section className="relative z-10 py-16 px-6 lg:px-12 bg-gray-900/30">
