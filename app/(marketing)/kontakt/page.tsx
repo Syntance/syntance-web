@@ -23,7 +23,7 @@ const faqs = [
     answer: "Nie. 30-minutowa rozmowa wstępna jest bezpłatna i bez zobowiązań."
   },
   {
-    question: "Czy pracujesz z klientami spoza Polski?",
+    question: "Czy pracujemy z klientami spoza Polski?",
     answer: "Tak. Pracuję zdalnie z klientami z całej Europy. Komunikacja po polsku lub angielsku."
   },
   {
