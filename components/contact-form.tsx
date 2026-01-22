@@ -22,6 +22,7 @@ export function ContactForm({
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '',
     message: '',
     hp: '' // honeypot field
   })
@@ -54,6 +55,14 @@ export function ContactForm({
       return
     }
 
+    // Walidacja numeru telefonu - minimum 9 cyfr
+    const phoneDigits = formData.phone.replace(/\D/g, '')
+    if (phoneDigits.length < 9) {
+      setFormStatus('error')
+      setErrorMessage('Podaj prawidłowy numer telefonu (minimum 9 cyfr).')
+      return
+    }
+
     if (formData.message.length < 10) {
       setFormStatus('error')
       setErrorMessage('Wiadomość musi mieć co najmniej 10 znaków.')
@@ -82,7 +91,7 @@ export function ContactForm({
       }
 
       setFormStatus('success')
-      setFormData({ name: '', email: '', message: '', hp: '' })
+      setFormData({ name: '', email: '', phone: '', message: '', hp: '' })
       setConsentChecked(false)
     } catch (error) {
       setFormStatus('error')
@@ -122,6 +131,18 @@ export function ContactForm({
           value={formData.email}
           onChange={handleFormChange}
           placeholder="Email"
+          required
+          disabled={formStatus === 'loading'}
+          className="w-full px-6 py-4 bg-white bg-opacity-5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors disabled:opacity-50"
+        />
+      </div>
+      <div>
+        <input
+          type="tel"
+          name="phone"
+          value={formData.phone}
+          onChange={handleFormChange}
+          placeholder="Numer telefonu"
           required
           disabled={formStatus === 'loading'}
           className="w-full px-6 py-4 bg-white bg-opacity-5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors disabled:opacity-50"

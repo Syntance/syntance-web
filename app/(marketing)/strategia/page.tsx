@@ -1,278 +1,546 @@
 import { Metadata } from 'next'
 import NavbarStudio from '@/components/navbar-studio'
-import { Target, Users, Zap, MessageSquare, Brain, GitBranch, Sparkles, Gauge, Bot, ArrowRight, CheckCircle2 } from 'lucide-react'
+import { Target, Users, Zap, AlertCircle, CheckCircle2, XCircle, ArrowRight, FileText, Clock, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
+import { StrategyCTA } from '@/components/StrategyCTA'
 
 export const metadata: Metadata = {
-  title: 'Strategia strony internetowej — Fundament, Mechanika, Design | Syntance',
-  description: 'Dowiedz się, jak planujemy strony internetowe: od strategii biznesowej, przez psychologię konwersji, po technologię premium. Poznaj naszą metodologię.',
+  title: 'Strategia Strony Internetowej',
+  description: 'Dlaczego strona nie generuje leadów? Bo nie ma strategii. Poznaj 3 fundamenty skutecznej strony: cel biznesowy, buyer persona i UVP. Warsztat Discovery od 4500 PLN.',
+  keywords: 'strategia strony internetowej, buyer persona, UVP, cel biznesowy strony, warsztat discovery, strona B2B',
   openGraph: {
-    title: 'Strategia strony internetowej | Syntance',
-    description: 'Większość agencji zaczyna od grafiki. My zaczynamy od biznesu.',
+    title: 'Strategia Strony Internetowej',
+    description: 'Dlaczego strona nie generuje leadów? Bo nie ma strategii. Poznaj 3 fundamenty skutecznej strony.',
     url: 'https://syntance.com/strategia',
   },
 }
 
-const strategyLevels = [
+// FAQ Data with Schema.org structure
+const faqItems = [
   {
-    level: 1,
-    title: "Fundament",
-    subtitle: "Strategia",
-    tagline: "Bez tego strona jest tylko ładnym obrazkiem.",
-    gradient: "from-purple-500 to-blue-500",
-    textColor: "text-purple-400",
-    bgGradient: "from-purple-500/10 via-blue-500/10 to-transparent",
-    sections: [
-      {
-        icon: Target,
-        label: "Cel Biznesowy",
-        title: "Co strona ma osiągnąć?",
-        description: "Zanim zaczniemy projektować, zadajemy kluczowe pytanie: **po co ta strona?** Czy ma generować więcej leadów? Zwiększyć średnią wartość zamówienia? Zmniejszyć obciążenie działu obsługi klienta? Bez jasnego celu nie mamy miernika sukcesu.",
-        bullets: [
-          "Definiujemy konkretne KPI (np. +30% zgłoszeń kontaktowych)",
-          "Ustalamy, jak strona wpisuje się w Twój model biznesowy",
-          "Określamy, co odróżnia Cię od konkurencji na rynku",
-        ]
-      },
-      {
-        icon: Users,
-        label: "Buyer Persony",
-        title: "Do kogo mówimy?",
-        description: "Strona \"dla wszystkich\" trafia do nikogo. Opisujemy Twojego idealnego klienta: kim jest, czego szuka, jakie ma obawy, gdzie się znajduje w procesie zakupowym. Dzięki temu komunikacja jest celna jak laser.",
-        bullets: [
-          "Tworzymy profile rzeczywistych klientów (demografia, psychografia)",
-          "Identyfikujemy ich największe problemy i potrzeby",
-          "Określamy, jak szukają rozwiązań i podejmują decyzje",
-        ]
-      },
-      {
-        icon: Zap,
-        label: "Unikalna Wartość (UVP)",
-        title: "Dlaczego Ty, nie konkurencja?",
-        description: "To jedno zdanie, które mówi: \"Robimy X dla Y w sposób Z\". UVP to serce całej komunikacji — jeśli nie potrafisz powiedzieć, dlaczego klient ma wybrać Ciebie, on też tego nie zrozumie.",
-        bullets: [
-          "Analizujemy konkurencję i szukamy Twojej przewagi",
-          "Formułujemy wartość w języku korzyści (nie cech)",
-          "Testujemy UVP z rzeczywistymi klientami",
-        ]
-      },
-    ]
+    question: "Czy mogę pominąć strategię i od razu zacząć od projektu?",
+    answer: "Możesz, ale ryzykujesz, że strona będzie ładna, ale nieskuteczna. 80% naszych klientów, którzy przyszli \"tylko po stronę\", po Discovery zmienili całą koncepcję."
   },
   {
-    level: 2,
-    title: "Mechanika",
-    subtitle: "Konwersja",
-    tagline: "To, co zmienia odwiedzającego w klienta.",
-    gradient: "from-blue-500 to-cyan-500",
-    textColor: "text-blue-400",
-    bgGradient: "from-blue-500/10 via-cyan-500/10 to-transparent",
-    sections: [
-      {
-        icon: MessageSquare,
-        label: "Copywriting",
-        title: "Tekst, który sprzedaje",
-        description: "To nie są \"ładne słowa\". To komunikaty oparte na psychologii perswazji i głębokim zrozumieniu bólów klienta. Każde zdanie ma cel: zatrzymać uwagę, budować zaufanie, prowadzić do akcji.",
-        bullets: [
-          "Stosujemy framework PAS (Problem-Agitate-Solve)",
-          "Piszemy nagłówki, które zatrzymują w 3 sekundy",
-          "Używamy konkretów zamiast ogólników ('90+ PageSpeed' vs. 'szybka strona')",
-        ]
-      },
-      {
-        icon: Brain,
-        label: "Psychologia sprzedaży",
-        title: "Zaufanie i decyzja",
-        description: "Ludzie kupują emocjami, potem racjonalizują. Stosujemy sprawdzone triggery: social proof (rekomendacje), scarcity (pilność), autoritet (certyfikaty), reciprocity (wartość za darmo). Ale nie manipulujemy — to musi być autentyczne.",
-        bullets: [
-          "Social proof: opinie, case study, ilość zrealizowanych projektów",
-          "Redukcja ryzyka: gwarancje, wersje demo,透明ność procesu",
-          "Anchoring: pokazujemy wartość przed ceną",
-        ]
-      },
-      {
-        icon: GitBranch,
-        label: "User Flow (Lejek)",
-        title: "Ścieżka do kontaktu",
-        description: "Projektujemy każdą ścieżkę użytkownika: od landing page przez ofertę do formularza kontaktowego. Każdy klik ma cel. Zero ślepych zaułków. Użytkownik zawsze wie, co robić dalej.",
-        bullets: [
-          "Mapujemy ścieżki dla różnych segmentów (nowy vs. powracający)",
-          "Minimalizujemy friction (formularz 3 pola zamiast 15)",
-          "Testujemy CTA w różnych miejscach (heatmapy, A/B testy)",
-        ]
-      },
-    ]
+    question: "Ile trwa Warsztat Discovery?",
+    answer: "Spotkanie to 2-3 godziny. Dokument strategiczny otrzymujesz w ciągu 3-5 dni roboczych."
   },
   {
-    level: 3,
-    title: "Efekt końcowy",
-    subtitle: "Tech & Design",
-    tagline: "To, co buduje zaufanie i zachwyt.",
-    gradient: "from-cyan-500 to-teal-500",
-    textColor: "text-cyan-400",
-    bgGradient: "from-cyan-500/10 via-teal-500/10 to-transparent",
-    sections: [
-      {
-        icon: Sparkles,
-        label: "Design premium",
-        title: "Estetyka profesjonalisty",
-        description: "Design to nie tylko \"żeby ładnie wyglądało\". To wizualna hierarchia, która prowadzi wzrok. Psychologia kolorów. Typografia, która buduje charakter marki. Każdy piksel ma znaczenie.",
-        bullets: [
-          "Projektujemy w Figmie z komponentowym podejściem (reusable)",
-          "Stosujemy design system (kolory, fonty, spacing)",
-          "Testujemy kontrast i czytelność (WCAG 2.1 AA)",
-        ]
-      },
-      {
-        icon: Gauge,
-        label: "PageSpeed 90+",
-        title: "Błyskawiczne ładowanie",
-        description: "Użytkownik odchodzi po 3 sekundach oczekiwania. Google to karze w SEO. Osiągamy 90+ na PageSpeed Insights dzięki Next.js, optymalizacji obrazów (WebP), lazy loadingowi i CDN.",
-        bullets: [
-          "Next.js 15 z App Router (Server Components, streaming)",
-          "Optymalizacja obrazów: WebP/AVIF, srcset, lazy loading",
-          "Hosting: Vercel Edge Network (CDN w 30+ lokalizacjach)",
-        ]
-      },
-      {
-        icon: Bot,
-        label: "AEO (AI Ready)",
-        title: "Widoczność w ChatGPT",
-        description: "Ludzie pytają AI, nie Google. Struktura strony musi być czytelna dla LLM-ów: semantic HTML, schema.org JSON-LD, plik `/llms.txt`. Twoja strona pojawia się w odpowiedziach Perplexity i ChatGPT.",
-        bullets: [
-          "Semantic HTML5 (header, nav, article, aside)",
-          "Schema.org: Organization, LocalBusiness, FAQPage",
-          "Metadata dla LLM: llms.txt, robots.txt, sitemap.xml",
-        ]
-      },
-    ]
+    question: "Co jeśli już mam strategię?",
+    answer: "Świetnie! Wtedy możemy od razu przejść do projektu. Podczas briefu zweryfikujemy, czy masz wszystkie elementy."
   },
+  {
+    question: "Czy strategia jest wliczona w cenę strony?",
+    answer: "Tak. Każdy projekt strony lub sklepu zawiera uproszczoną wersję Discovery w cenie. Pełny Warsztat (4500 PLN) to opcja dla firm, które chcą głębszej analizy."
+  },
+  {
+    question: "Dla jakiej wielkości firm jest Warsztat Discovery?",
+    answer: "Dla firm, które traktują stronę jako narzędzie biznesowe, nie wizytówkę. Typowo: 1-50 pracowników, B2B lub usługi premium B2C."
+  }
+]
+
+// Buyer Journey stages data
+const buyerJourneyStages = [
+  { stage: "1. Problem", think: "\"Coś nie działa\"", see: "Hero + opis bólu" },
+  { stage: "2. Zrozumienie", think: "\"Jak to naprawić?\"", see: "Edukacja / metodyka" },
+  { stage: "3. Wybór", think: "\"Jakie mam opcje?\"", see: "Porównanie / oferta" },
+  { stage: "4. Decyzja", think: "\"Czy warto ryzykować?\"", see: "Social proof, FAQ" },
+  { stage: "5. Zakup", think: "\"Chcę zacząć\"", see: "Cennik, CTA, kontakt" }
 ]
 
 export default function StrategiaPage() {
+  // Schema.org FAQ JSON-LD
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqItems.map(item => ({
+      "@type": "Question",
+      "name": item.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.answer
+      }
+    }))
+  }
+
   return (
     <div className="min-h-screen bg-gray-950 w-full" style={{ overflowX: 'clip' }}>
       <NavbarStudio />
       
-      {/* Hero */}
+      {/* Schema.org JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      
+      {/* Hero Section */}
       <section className="relative z-10 pt-52 pb-24 px-6 lg:px-12">
         <div className="max-w-5xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-light tracking-widest glow-text mb-6">
-            Większość agencji zaczyna od grafiki.
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-wide text-white mb-6 leading-tight">
+            Strategia strony internetowej — dlaczego 80% stron nie działa
           </h1>
-          <p className="text-2xl md:text-3xl font-light tracking-wide text-gray-400 mb-12">
-            My zaczynamy od biznesu.
+          <p className="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto">
+            Większość stron wygląda dobrze, ale nie sprzedaje. Problem? Brak fundamentów strategicznych przed pierwszym pikselem.
           </p>
-          <p className="text-lg text-gray-500 max-w-3xl mx-auto leading-relaxed">
-            Dobra strona to wierzchołek góry lodowej. Pod spodem jest strategia, psychologia, technologia. 
-            Poznaj naszą metodologię — 3 poziomy, które odróżniają stronę, która działa, od strony, która tylko wygląda.
-          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link 
+              href="/cennik#discovery" 
+              className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-105"
+            >
+              <span>Zamów Warsztat Discovery</span>
+              <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
+            </Link>
+            <Link 
+              href="#fundamenty"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-full border border-white/10 text-white font-medium transition-all duration-300 hover:bg-white/5"
+            >
+              <span>Dowiedz się więcej</span>
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* Strategy Levels */}
-      {strategyLevels.map((level, levelIndex) => (
-        <section 
-          key={level.level} 
-          className={`relative z-10 py-24 px-6 lg:px-12 ${levelIndex % 2 === 0 ? 'bg-gray-900/30' : ''}`}
-        >
-          <div className="max-w-6xl mx-auto">
-            {/* Level Header */}
-            <div className="text-center mb-20">
-              <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r ${level.gradient} bg-opacity-10 border border-white/10 mb-6`}>
-                <span className={`text-sm font-medium ${level.textColor} tracking-wider uppercase`}>
-                  Poziom {level.level}
-                </span>
-              </div>
-              <h2 className="text-4xl md:text-5xl font-light tracking-wide mb-4">
-                <span className={`bg-gradient-to-r ${level.gradient} bg-clip-text text-transparent`}>
-                  {level.title}
-                </span>
-                <span className="text-gray-400"> — {level.subtitle}</span>
-              </h2>
-              <p className="text-xl text-gray-500 italic">
-                {level.tagline}
-              </p>
+      {/* Problem Section */}
+      <section id="problem" className="relative z-10 py-24 px-6 lg:px-12 bg-gray-900/30">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-light tracking-wide text-white mb-12 text-center">
+            Czy Twoja strona to „ładny obrazek" czy narzędzie sprzedaży?
+          </h2>
+          
+          <div className="bg-red-500/5 border border-red-500/20 rounded-2xl p-8 mb-8">
+            <div className="flex items-start gap-4 mb-6">
+              <XCircle className="w-6 h-6 text-red-400 flex-shrink-0 mt-1" />
+              <h3 className="text-xl font-medium text-white">Typowe objawy strony bez strategii:</h3>
             </div>
+            <ul className="space-y-3 ml-10">
+              <li className="text-gray-400 flex items-start gap-3">
+                <span className="text-red-400 flex-shrink-0">•</span>
+                <span>Strona wygląda dobrze, ale nie generuje zapytań</span>
+              </li>
+              <li className="text-gray-400 flex items-start gap-3">
+                <span className="text-red-400 flex-shrink-0">•</span>
+                <span>Nie wiesz, kto jest Twoim idealnym klientem</span>
+              </li>
+              <li className="text-gray-400 flex items-start gap-3">
+                <span className="text-red-400 flex-shrink-0">•</span>
+                <span>Nagłówek brzmi: „Jesteśmy liderem" lub „Kompleksowe rozwiązania"</span>
+              </li>
+              <li className="text-gray-400 flex items-start gap-3">
+                <span className="text-red-400 flex-shrink-0">•</span>
+                <span>Każda zmiana wymaga 2 tygodni i wyceny od developera</span>
+              </li>
+              <li className="text-gray-400 flex items-start gap-3">
+                <span className="text-red-400 flex-shrink-0">•</span>
+                <span>Nie masz pojęcia, czy strona się zwraca</span>
+              </li>
+            </ul>
+          </div>
 
-            {/* Sections */}
-            <div className="space-y-16">
-              {level.sections.map((section, sectionIndex) => {
-                const Icon = section.icon;
-                const isEven = sectionIndex % 2 === 0;
-                
-                return (
-                  <div 
-                    key={sectionIndex} 
-                    className={`flex flex-col ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} gap-8 md:gap-12 items-start`}
-                  >
-                    {/* Icon + Label */}
-                    <div className="flex-shrink-0 md:w-1/3">
-                      <div className={`inline-flex items-center gap-4 mb-4`}>
-                        <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${level.gradient} bg-opacity-10 flex items-center justify-center`}>
-                          <Icon size={28} className={level.textColor} />
-                        </div>
-                        <div>
-                          <h3 className="text-2xl font-medium text-white">{section.label}</h3>
-                          <p className={`text-sm ${level.textColor} font-medium`}>{section.title}</p>
-                        </div>
-                      </div>
-                    </div>
+          <div className="bg-purple-500/5 border border-purple-500/20 rounded-2xl p-8">
+            <p className="text-lg text-gray-300 leading-relaxed">
+              <strong className="text-white">Prawda:</strong> Strona internetowa to nie wizytówka. To strategiczne narzędzie marketingowe, które musi być zaprojektowane wokół procesu zakupowego klienta.
+            </p>
+          </div>
+        </div>
+      </section>
 
-                    {/* Content */}
-                    <div className="flex-1">
-                      <p className="text-gray-400 leading-relaxed mb-6">
-                        {section.description.split('**').map((part, i) => 
-                          i % 2 === 1 ? <strong key={i} className="text-white font-medium">{part}</strong> : part
-                        )}
+      {/* 3 Fundamenty Section */}
+      <section id="fundamenty" className="relative z-10 py-24 px-6 lg:px-12">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-light tracking-wide text-white mb-4">
+              3 fundamenty skutecznej strony
+            </h2>
+            <p className="text-xl text-gray-400 mb-2">
+              (zanim napiszesz linijkę kodu)
+            </p>
+            <p className="text-gray-500 max-w-2xl mx-auto">
+              Zanim zaprojektujesz pierwszy piksel, musisz odpowiedzieć na 3 pytania. Bez nich strona będzie ładna, ale martwa.
+            </p>
+          </div>
+
+          <div className="space-y-16">
+            {/* Fundament 1: Cel Biznesowy */}
+            <div className="bg-gray-900/50 border border-white/10 rounded-3xl p-8 md:p-12">
+              <div className="flex items-start gap-6 mb-6">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center flex-shrink-0">
+                  <Target className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-medium text-white mb-2">
+                    1. Cel biznesowy — co strona ma osiągnąć?
+                  </h3>
+                  <p className="text-gray-400">
+                    Strona bez celu to strona bez mierzalnych wyników.
+                  </p>
+                </div>
+              </div>
+
+              <div className="ml-0 md:ml-22 space-y-6">
+                <div>
+                  <h4 className="text-lg font-medium text-white mb-3">Przykładowe cele:</h4>
+                  <ul className="space-y-2">
+                    <li className="flex items-start gap-3 text-gray-400">
+                      <CheckCircle2 className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
+                      <span>Zwiększyć liczbę zapytań ofertowych o 50%</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-gray-400">
+                      <CheckCircle2 className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
+                      <span>Zmniejszyć liczbę „głupich pytań" na telefon</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-gray-400">
+                      <CheckCircle2 className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
+                      <span>Podnieść średnią wartość klienta (premium pozycjonowanie)</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-gray-400">
+                      <CheckCircle2 className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
+                      <span>Zbudować listę mailingową (lead magnet)</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="bg-purple-500/5 border border-purple-500/20 rounded-xl p-6">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-purple-400 mb-1">Pytanie kontrolne:</p>
+                      <p className="text-gray-300">
+                        Skąd za 6 miesięcy będziesz wiedział, czy strona działa?
                       </p>
-                      <ul className="space-y-3">
-                        {section.bullets.map((bullet, bulletIndex) => (
-                          <li key={bulletIndex} className="flex items-start gap-3">
-                            <CheckCircle2 size={20} className={`flex-shrink-0 mt-0.5 ${level.textColor}`} />
-                            <span className="text-gray-400">{bullet}</span>
-                          </li>
-                        ))}
-                      </ul>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      ))}
-
-      {/* CTA Section */}
-      <section className="relative z-10 py-32 px-6 lg:px-12">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="relative group">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 rounded-3xl blur-lg opacity-20 group-hover:opacity-30 transition-opacity duration-500" />
-            
-            <div className="relative bg-gray-900/80 backdrop-blur-sm border border-white/10 rounded-3xl p-12">
-              <h2 className="text-3xl md:text-4xl font-light tracking-wide text-white mb-6">
-                Gotowy na stronę, która <span className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">działa</span>?
-              </h2>
-              <p className="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
-                Rozpocznijmy od rozmowy o Twoim biznesie. Bezpłatna konsultacja, bez zobowiązań.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <Link 
-                  href="/#contact" 
-                  className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-105"
-                >
-                  <span>Umów konsultację</span>
-                  <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
-                </Link>
-                
-                <Link 
-                  href="/cennik" 
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-full border border-white/10 text-white font-medium transition-all duration-300 hover:bg-white/5"
-                >
-                  <span>Zobacz cennik</span>
-                </Link>
+                </div>
               </div>
             </div>
+
+            {/* Fundament 2: Buyer Persona */}
+            <div className="bg-gray-900/50 border border-white/10 rounded-3xl p-8 md:p-12">
+              <div className="flex items-start gap-6 mb-6">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center flex-shrink-0">
+                  <Users className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-medium text-white mb-2">
+                    2. Buyer Persona — do kogo mówisz?
+                  </h3>
+                  <p className="text-gray-400">
+                    Strona „dla wszystkich" jest stroną dla nikogo.
+                  </p>
+                </div>
+              </div>
+
+              <div className="ml-0 md:ml-22 space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="text-lg font-medium text-white mb-3">Buyer Persona to NIE:</h4>
+                    <ul className="space-y-2">
+                      <li className="flex items-start gap-3 text-gray-400">
+                        <XCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                        <span>„Mężczyzna 35-50 lat, mieszka w mieście"</span>
+                      </li>
+                      <li className="flex items-start gap-3 text-gray-400">
+                        <XCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                        <span>„Firmy z sektora MŚP"</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h4 className="text-lg font-medium text-white mb-3">Buyer Persona to:</h4>
+                    <ul className="space-y-2">
+                      <li className="flex items-start gap-3 text-gray-400">
+                        <CheckCircle2 className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                        <span>Co go boli? (np. „Konkurencja ma lepszą stronę")</span>
+                      </li>
+                      <li className="flex items-start gap-3 text-gray-400">
+                        <CheckCircle2 className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                        <span>Czego się boi? (np. „Ostatnia strona była porażką")</span>
+                      </li>
+                      <li className="flex items-start gap-3 text-gray-400">
+                        <CheckCircle2 className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                        <span>Co wyzwala decyzję? (np. „Nowa inwestycja")</span>
+                      </li>
+                      <li className="flex items-start gap-3 text-gray-400">
+                        <CheckCircle2 className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                        <span>Jakie obiekcje? (np. „To pewnie drogie")</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-6">
+                  <div className="flex items-start gap-3">
+                    <Target className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-blue-400 mb-1">Efekt:</p>
+                      <p className="text-gray-300">
+                        Strona mówi językiem klienta i zbija jego obiekcje, zanim je wypowie.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Fundament 3: UVP */}
+            <div className="bg-gray-900/50 border border-white/10 rounded-3xl p-8 md:p-12">
+              <div className="flex items-start gap-6 mb-6">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500 to-teal-500 flex items-center justify-center flex-shrink-0">
+                  <Zap className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-medium text-white mb-2">
+                    3. Propozycja Wartości (UVP) — dlaczego Ty, a nie konkurencja?
+                  </h3>
+                  <p className="text-gray-400">
+                    UVP to odpowiedź na pytanie: „Dlaczego klient ma wybrać Ciebie?"
+                  </p>
+                </div>
+              </div>
+
+              <div className="ml-0 md:ml-22 space-y-6">
+                <div className="bg-cyan-500/5 border border-cyan-500/20 rounded-xl p-6">
+                  <h4 className="text-lg font-medium text-white mb-3">Szablon UVP:</h4>
+                  <p className="text-gray-300 italic">
+                    Dla [segment klientów], którzy [mają problem], [Twoja firma] to [kategoria], która [wyróżnik], ponieważ [dowód].
+                  </p>
+                </div>
+
+                <div className="bg-gray-800/50 rounded-xl p-6">
+                  <h4 className="text-lg font-medium text-white mb-3">Przykład:</h4>
+                  <p className="text-gray-300">
+                    Dla właścicieli firm usługowych, którzy chcą więcej klientów z internetu, Syntance to studio webowe, które buduje strony generujące leady, ponieważ każdy projekt zaczyna od strategii, nie od grafiki.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Buyer Journey Section */}
+      <section id="buyer-journey" className="relative z-10 py-24 px-6 lg:px-12 bg-gray-900/30">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-light tracking-wide text-white mb-4">
+              Strona = mapa procesu decyzyjnego klienta
+            </h2>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              Zamiast projektować „ładny layout", projektujesz proces decyzyjny w formie scrolla. Każda sekcja odpowiada na pytanie, które klient ma w głowie.
+            </p>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="border-b border-white/10">
+                  <th className="text-left py-4 px-6 text-sm font-medium text-purple-400 uppercase tracking-wider">Etap</th>
+                  <th className="text-left py-4 px-6 text-sm font-medium text-purple-400 uppercase tracking-wider">Co klient myśli</th>
+                  <th className="text-left py-4 px-6 text-sm font-medium text-purple-400 uppercase tracking-wider">Co musi zobaczyć</th>
+                </tr>
+              </thead>
+              <tbody>
+                {buyerJourneyStages.map((item, index) => (
+                  <tr key={index} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                    <td className="py-4 px-6 text-white font-medium">{item.stage}</td>
+                    <td className="py-4 px-6 text-gray-400">{item.think}</td>
+                    <td className="py-4 px-6 text-gray-300">{item.see}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="mt-8 bg-purple-500/5 border border-purple-500/20 rounded-xl p-6">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-purple-400 mb-1">Pytanie kluczowe:</p>
+                <p className="text-gray-300">
+                  Z jakiego etapu lejka przychodzi użytkownik na Twoją stronę? TOFU (zimny), MOFU (ciepły) czy BOFU (gorący)?
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Warsztat Discovery Section */}
+      <section id="discovery" className="relative z-10 py-24 px-6 lg:px-12">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-light tracking-wide text-white mb-4">
+              Warsztat Discovery — strategia przed kodem
+            </h2>
+            <p className="text-xl text-gray-400">
+              2-3 godzinne spotkanie strategiczne, na którym definiujemy fundamenty Twojej strony.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            <div className="bg-gray-900/50 border border-white/10 rounded-2xl p-8">
+              <h3 className="text-xl font-medium text-white mb-6">Co otrzymujesz:</h3>
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-300">
+                    <strong className="text-white">Analiza biznesu</strong> — cel strony, KPI, obecna sytuacja
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-300">
+                    <strong className="text-white">Segmentacja i ICP</strong> — dla kogo jest ta strona
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-300">
+                    <strong className="text-white">Buyer Persona</strong> — profil decydenta (bóle, cele, obiekcje)
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-300">
+                    <strong className="text-white">Buyer Journey</strong> — mapa procesu zakupowego
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-300">
+                    <strong className="text-white">Propozycja Wartości (UVP)</strong> — wyróżniki i komunikaty
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-300">
+                    <strong className="text-white">Architektura strony</strong> — struktura sekcji i user flow
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="space-y-8">
+              <div className="bg-gray-900/50 border border-white/10 rounded-2xl p-8">
+                <h3 className="text-xl font-medium text-white mb-6">Format dostawy:</h3>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3 text-gray-300">
+                    <FileText className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                    <span>PDF + strona w Notion (możesz edytować)</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-gray-300">
+                    <FileText className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                    <span>15-25 stron strategicznego dokumentu</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity" />
+                <div className="relative bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/30 rounded-2xl p-8">
+                  <div className="flex items-start gap-4 mb-4">
+                    <TrendingUp className="w-8 h-8 text-purple-400" />
+                    <div>
+                      <p className="text-sm text-purple-400 font-medium mb-1">Cena</p>
+                      <p className="text-3xl font-light text-white">4 500 PLN <span className="text-lg text-gray-400">netto</span></p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <Clock className="w-8 h-8 text-blue-400" />
+                    <div>
+                      <p className="text-sm text-blue-400 font-medium mb-1">Czas</p>
+                      <p className="text-gray-300">2-3h warsztat + 3-5 dni na dokument</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Dla kogo NIE jest Section */}
+      <section id="nie-dla" className="relative z-10 py-24 px-6 lg:px-12 bg-gray-900/30">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-light tracking-wide text-white mb-12 text-center">
+            Strategia nie jest dla każdego
+          </h2>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-red-500/5 border border-red-500/20 rounded-2xl p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <XCircle className="w-6 h-6 text-red-400" />
+                <h3 className="text-xl font-medium text-white">NIE jest dla Ciebie, jeśli:</h3>
+              </div>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3 text-gray-400">
+                  <span className="text-red-400 mt-1">•</span>
+                  <span>Potrzebujesz „prostej wizytówki za 2000 zł"</span>
+                </li>
+                <li className="flex items-start gap-3 text-gray-400">
+                  <span className="text-red-400 mt-1">•</span>
+                  <span>Masz już strategię i szukasz tylko wykonawcy</span>
+                </li>
+                <li className="flex items-start gap-3 text-gray-400">
+                  <span className="text-red-400 mt-1">•</span>
+                  <span>Nie masz czasu na 2-3h spotkanie</span>
+                </li>
+                <li className="flex items-start gap-3 text-gray-400">
+                  <span className="text-red-400 mt-1">•</span>
+                  <span>Twój budżet na stronę to poniżej 5000 PLN</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="bg-green-500/5 border border-green-500/20 rounded-2xl p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <CheckCircle2 className="w-6 h-6 text-green-400" />
+                <h3 className="text-xl font-medium text-white">JEST dla Ciebie, jeśli:</h3>
+              </div>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3 text-gray-400">
+                  <span className="text-green-400 mt-1">•</span>
+                  <span>Chcesz, żeby strona generowała leady, nie tylko „wyglądała ładnie"</span>
+                </li>
+                <li className="flex items-start gap-3 text-gray-400">
+                  <span className="text-green-400 mt-1">•</span>
+                  <span>Nie wiesz, od czego zacząć (masz wizję, ale brak planu)</span>
+                </li>
+                <li className="flex items-start gap-3 text-gray-400">
+                  <span className="text-green-400 mt-1">•</span>
+                  <span>Poprzednia strona była porażką i nie chcesz powtarzać błędów</span>
+                </li>
+                <li className="flex items-start gap-3 text-gray-400">
+                  <span className="text-green-400 mt-1">•</span>
+                  <span>Zależy Ci na ROI, nie tylko na estetyce</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA końcowe */}
+      <StrategyCTA />
+
+      {/* FAQ Section */}
+      <section id="faq" className="relative z-10 py-24 px-6 lg:px-12 bg-gray-900/30">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-light tracking-wide text-white mb-12 text-center">
+            Najczęściej zadawane pytania o strategię strony
+          </h2>
+
+          <div className="space-y-6">
+            {faqItems.map((item, index) => (
+              <div key={index} className="bg-gray-900/50 border border-white/10 rounded-2xl p-8 hover:border-purple-500/30 transition-colors">
+                <h3 className="text-lg font-medium text-white mb-3">
+                  {item.question}
+                </h3>
+                <p className="text-gray-400 leading-relaxed">
+                  {item.answer}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -280,10 +548,19 @@ export default function StrategiaPage() {
       {/* Footer */}
       <footer className="relative z-10 border-t border-gray-900 pt-16 pb-12 px-6 lg:px-12">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-6 md:mb-0">
-              <Link href="/" className="text-gray-400 hover:text-white transition-colors font-medium">
-                ← Powrót do strony głównej
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <Link href="/" className="text-gray-400 hover:text-white transition-colors font-medium">
+              ← Powrót do strony głównej
+            </Link>
+            <div className="flex gap-6">
+              <Link href="/cennik" className="text-gray-400 hover:text-white transition-colors">
+                Cennik
+              </Link>
+              <Link href="/nextjs" className="text-gray-400 hover:text-white transition-colors">
+                Technologia
+              </Link>
+              <Link href="/#contact" className="text-gray-400 hover:text-white transition-colors">
+                Kontakt
               </Link>
             </div>
           </div>
