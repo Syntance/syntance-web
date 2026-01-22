@@ -186,7 +186,7 @@ export default function StrategiaPage() {
                     </li>
                     <li className="flex items-start gap-3 text-gray-400">
                       <CheckCircle2 className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
-                      <span>Zmniejszyć liczbę „głupich pytań" na telefon</span>
+                      <span>Zmniejszyć liczbę &ldquo;głupich pytań&rdquo; na telefon</span>
                     </li>
                     <li className="flex items-start gap-3 text-gray-400">
                       <CheckCircle2 className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
