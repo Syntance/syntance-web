@@ -1,6 +1,6 @@
 'use client'
 
-import { Zap, Shield, TrendingUp, DollarSign, Wrench, Rocket, Quote } from 'lucide-react'
+import { Zap, Shield, TrendingUp, Rocket, Quote } from 'lucide-react'
 import GradientText from '@/components/GradientText'
 import { useIsMobile } from '@/hooks/useIsMobile'
 
@@ -28,22 +28,6 @@ const comparisonData = [
     nextjs: 'Strona ładuje się w <1 sek.',
     nextjsSuffix: '',
     color: 'from-green-500 to-emerald-500',
-  },
-  {
-    icon: DollarSign,
-    label: 'Google Ads',
-    wordpress: 'Wysoki CPC (słaby Quality Score)',
-    nextjs: 'Niższy CPC',
-    nextjsSuffix: ' (lepszy PageSpeed)',
-    color: 'from-purple-500 to-pink-500',
-  },
-  {
-    icon: Wrench,
-    label: 'Utrzymanie',
-    wordpress: 'Ciągłe aktualizacje wtyczek',
-    nextjs: 'Stabilny, minimalny serwis',
-    nextjsSuffix: '',
-    color: 'from-amber-500 to-yellow-500',
   },
   {
     icon: Rocket,

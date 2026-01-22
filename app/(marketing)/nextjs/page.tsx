@@ -107,13 +107,10 @@ const techDetails = [
 ]
 
 const comparisonTable = [
-  { feature: "Czas ładowania", wordpress: "3-7 sekund", nextjs: "<1 sekunda", winner: "nextjs" },
-  { feature: "PageSpeed Score", wordpress: "30-50/100", nextjs: "90-100/100", winner: "nextjs" },
-  { feature: "Bezpieczeństwo", wordpress: "Wtyczki = ryzyko", nextjs: "Brak wtyczek", winner: "nextjs" },
-  { feature: "Hosting (roczny)", wordpress: "1 200 - 3 000 PLN", nextjs: "0 - 1 200 PLN", winner: "nextjs" },
-  { feature: "Utrzymanie", wordpress: "10-15h/miesiąc", nextjs: "1-2h/rok", winner: "nextjs" },
-  { feature: "Skalowanie", wordpress: "Wymaga upgrade", nextjs: "Automatyczne", winner: "nextjs" },
-  { feature: "SEO", wordpress: "Wymaga wtyczek", nextjs: "Built-in", winner: "nextjs" },
+  { feature: "Szybkość (PageSpeed)", wordpress: "30-50/100", nextjs: "90-100/100", winner: "nextjs" },
+  { feature: "Bezpieczeństwo", wordpress: "Wtyczki = dziury", nextjs: "Zero wtyczek = zero dziur", winner: "nextjs" },
+  { feature: "Konwersja", wordpress: "-7% za każdą sekundę", nextjs: "Ładowanie <1 sek.", winner: "nextjs" },
+  { feature: "Skalowanie", wordpress: "Problemy przy ruchu", nextjs: "100 lub 100k użytkowników — działa", winner: "nextjs" },
 ]
 
 export default function NextjsPage() {
