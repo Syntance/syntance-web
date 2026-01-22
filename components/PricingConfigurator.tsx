@@ -508,10 +508,10 @@ export function PricingConfigurator({ data }: Props) {
                   }))}
                   className={`relative p-5 rounded-xl border-2 transition-all duration-300 text-left group ${
                     isDisabledType
-                      ? 'opacity-30 cursor-not-allowed border-white/5 bg-white/2'
+                      ? 'opacity-30 cursor-not-allowed border-white/5 bg-gray-900/30'
                       : isSelected 
-                        ? 'border-purple-500/60 bg-purple-500/10' 
-                        : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/8'
+                        ? 'border-purple-500 bg-purple-500/20' 
+                        : 'border-gray-800 bg-gray-900/50 hover:border-gray-700 hover:bg-gray-900/70'
                   }`}
                 >
                   {/* Glow effect for selected */}
@@ -569,7 +569,7 @@ export function PricingConfigurator({ data }: Props) {
               {requiredItems.map(item => (
                   <div 
                     key={item.id} 
-                    className="flex items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-white/5 rounded-xl border border-white/10"
+                    className="flex items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-900/30 rounded-xl border border-gray-800"
                   >
                   <div className="w-5 h-5 rounded bg-purple-500/30 flex items-center justify-center flex-shrink-0">
                     <Check size={14} className="text-purple-400" />
@@ -610,10 +610,10 @@ export function PricingConfigurator({ data }: Props) {
                     onClick={() => !disabled && toggleItem(item.id)}
                     className={`flex items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border transition-all duration-200 ${
                       disabled 
-                        ? 'opacity-40 cursor-not-allowed border-white/5 bg-white/2' 
+                        ? 'opacity-40 cursor-not-allowed border-gray-800 bg-gray-900/30' 
                         : selected 
-                          ? 'border-purple-500/50 bg-purple-500/10 cursor-pointer'
-                          : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/8 cursor-pointer'
+                          ? 'border-purple-500/50 bg-purple-500/15 cursor-pointer'
+                          : 'border-gray-800 bg-gray-900/40 hover:border-gray-700 hover:bg-gray-900/60 cursor-pointer'
                     }`}
                   >
                     {/* Checkbox */}
@@ -690,7 +690,7 @@ export function PricingConfigurator({ data }: Props) {
                           setQuantity(item.id, parseInt(e.target.value))
                         }}
                         onClick={(e) => e.stopPropagation()}
-                        className="px-3 py-1.5 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500"
+                        className="px-3 py-1.5 bg-gray-900/60 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500"
                       >
                         {Array.from({ length: item.maxQuantity }, (_, i) => i + 1).map(n => (
                           <option key={n} value={n} className="bg-gray-950">{n}x</option>
@@ -729,7 +729,7 @@ export function PricingConfigurator({ data }: Props) {
             {/* Gradient border glow */}
             <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-blue-500 to-pink-500 rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity blur-sm" />
             
-            <div className="relative bg-gray-950/90 backdrop-blur-sm border border-white/10 rounded-2xl p-3 sm:p-6 space-y-3 sm:space-y-6 overflow-hidden">
+            <div className="relative bg-gray-900/80 backdrop-blur-sm border border-gray-800 rounded-2xl p-3 sm:p-6 space-y-3 sm:space-y-6 overflow-hidden">
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-medium tracking-wide text-white">Podsumowanie</h3>
                 <span className="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded-full">
