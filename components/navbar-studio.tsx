@@ -218,8 +218,10 @@ export default function NavbarStudio() {
           <button 
             className="md:hidden text-white"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "Zamknij menu" : "Otwórz menu"}
+            aria-expanded={mobileMenuOpen}
           >
-            <Menu size={24} />
+            <Menu size={24} aria-hidden="true" />
           </button>
         )}
       </div>
