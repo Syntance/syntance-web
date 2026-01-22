@@ -25,6 +25,7 @@ const config: Config = {
           DEFAULT: "#246BFD",
           dark: "#0B1530",
         },
+        offwhite: "#e5e5e5",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
