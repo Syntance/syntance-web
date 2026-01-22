@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 const faqs = [
   {
-    question: "Jak szybko odpowiadasz?",
+    question: "Jak szybko odpowiadamy?",
     answer: "Staram się odpowiedzieć w ciągu 24 godzin roboczych. Na pilne sprawy — zadzwoń."
   },
   {
