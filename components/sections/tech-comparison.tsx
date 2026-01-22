@@ -55,13 +55,6 @@ const comparisonData = [
   },
 ]
 
-const benefits = [
-  '+7% konwersji za każdą sekundę szybciej',
-  'Lepsze pozycje w Google (PageSpeed to ranking factor)',
-  'Tańsze reklamy (wyższy Quality Score = niższy CPC)',
-  '99.99% uptime (hosting Vercel z globalnym CDN)',
-]
-
 export default function TechComparison() {
   const isMobile = useIsMobile();
   
@@ -153,29 +146,6 @@ export default function TechComparison() {
                 )
               })}
             </div>
-          </div>
-        </div>
-
-        {/* Key Benefits */}
-        <div className="mb-12">
-          <h3 className="text-2xl font-light tracking-wide text-white mb-8 text-center">
-            Kluczowe korzyści biznesowe
-          </h3>
-          
-          <div className="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-            {benefits.map((benefit, index) => (
-              <div 
-                key={index}
-                className="flex items-start gap-3 p-4 rounded-xl bg-gradient-to-br from-purple-500/5 to-blue-500/5 border border-purple-500/20"
-              >
-                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <span className="text-gray-300 text-sm leading-relaxed">{benefit}</span>
-              </div>
-            ))}
           </div>
         </div>
 
