@@ -18,8 +18,8 @@ export function HeroTransition({ children }: HeroTransitionProps) {
       window.scrollTo({ top: 0, behavior: 'auto' })
     }
     
-    // Opóźnienie dla płynnej animacji
-    const timer = setTimeout(() => setIsVisible(true), 50)
+    // Opóźnienie 550ms - czeka aż animacja ładowania się zakończy (500ms) + 50ms bufora
+    const timer = setTimeout(() => setIsVisible(true), 550)
     return () => clearTimeout(timer)
   }, [])
 
