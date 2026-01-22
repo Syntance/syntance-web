@@ -131,7 +131,12 @@ const GooeyNav = ({
   const updateEffectPosition = (element: HTMLElement) => {
     if (!containerRef.current || !filterRef.current || !textRef.current) return;
     const containerRect = containerRef.current.getBoundingClientRect();
-    const pos = element.getBoundingClientRect();
+    
+    // Znajdź element <a> wewnątrz li żeby uzyskać prawidłowe wymiary (bez dropdown)
+    const anchorEl = element.querySelector('a');
+    const targetEl = anchorEl || element;
+    const pos = targetEl.getBoundingClientRect();
+    
     const styles = {
       left: `${pos.x - containerRect.x}px`,
       top: `${pos.y - containerRect.y}px`,
@@ -140,7 +145,10 @@ const GooeyNav = ({
     };
     Object.assign(filterRef.current.style, styles);
     Object.assign(textRef.current.style, styles);
-    textRef.current.innerText = element.innerText;
+    
+    // Pobierz tylko tekst z pierwszego dziecka tekstowego (label), nie z dropdown
+    const labelText = element.querySelector('a')?.childNodes[0]?.textContent || element.innerText;
+    textRef.current.innerText = labelText.trim();
   };
   const handleClick = (e: React.MouseEvent<HTMLLIElement>, index: number) => {
     e.preventDefault();
