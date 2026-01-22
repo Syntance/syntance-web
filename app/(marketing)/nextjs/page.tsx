@@ -127,7 +127,7 @@ export default function NextjsPage() {
           <p className="text-2xl md:text-3xl font-light tracking-wide text-gray-400 mb-12">
             To przewaga konkurencyjna, która przynosi realne pieniądze
           </p>
-          <p className="text-lg text-gray-500 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed">
             Netflix, TikTok, Nike, Notion — nie wybrali Next.js przypadkowo. Wybrali szybkość, bezpieczeństwo i skalowalność, 
             których WordPress nigdy nie zapewni. Poznaj technologię, która zmienia zasady gry.
           </p>
@@ -156,10 +156,10 @@ export default function NextjsPage() {
                 {comparisonTable.map((row, index) => (
                   <tr key={index} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
                     <td className="py-4 px-4 text-white font-medium">{row.feature}</td>
-                    <td className={`py-4 px-4 text-center ${row.winner === 'wordpress' ? 'text-green-400' : 'text-gray-500'}`}>
+                    <td className={`py-4 px-4 text-center ${row.winner === 'wordpress' ? 'text-green-400' : 'text-gray-400'}`}>
                       {row.wordpress}
                     </td>
-                    <td className={`py-4 px-4 text-center font-medium ${row.winner === 'nextjs' ? 'text-green-400' : 'text-gray-500'}`}>
+                    <td className={`py-4 px-4 text-center font-medium ${row.winner === 'nextjs' ? 'text-green-400' : 'text-gray-400'}`}>
                       {row.nextjs}
                     </td>
                   </tr>
@@ -295,7 +295,7 @@ export default function NextjsPage() {
             </div>
           </div>
           <div className="mt-12 pt-8 border-t border-gray-900">
-            <p className="text-center text-sm font-light tracking-wider text-gray-500">
+            <p className="text-center text-sm font-light tracking-wider text-gray-400">
               © Syntance — Strony i sklepy, które działają.
             </p>
           </div>

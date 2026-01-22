@@ -154,7 +154,7 @@ export default function ValuesStudio() {
 
                         {/* Proof */}
                         {value.proof && (
-                          <p className="text-gray-500 font-light text-xs tracking-wide leading-relaxed">
+                          <p className="text-gray-400 font-light text-xs tracking-wide leading-relaxed">
                             {value.proof}
                           </p>
                         )}

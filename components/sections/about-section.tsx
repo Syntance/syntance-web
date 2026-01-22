@@ -42,7 +42,7 @@ export default function AboutSection() {
               Specjalizujemy się w Next.js, headless CMS i nowoczesnym e-commerce. Każdy projekt zaczynamy od strategii, nie od kodu. Efekt? Strony z PageSpeed 90+, które realizują cele biznesowe.
             </p>
             
-            <div className="pt-8 flex flex-wrap justify-center gap-8 text-sm font-light tracking-wider text-gray-500">
+            <div className="pt-8 flex flex-wrap justify-center gap-8 text-sm font-light tracking-wider text-gray-400">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-teal-400"></div>
                 <span>Next.js & React</span>

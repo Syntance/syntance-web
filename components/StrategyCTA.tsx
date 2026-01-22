@@ -80,7 +80,7 @@ export function StrategyCTA() {
               source="strategy-page-cta"
             />
 
-            <div className="mt-6 text-xs text-gray-500 text-center">
+            <div className="mt-6 text-xs text-gray-400 text-center">
               Twoje dane są bezpieczne. Sprawdź naszą{' '}
               <Link href="/polityka-prywatnosci" className="text-purple-400 hover:text-purple-300 underline">
                 Politykę Prywatności

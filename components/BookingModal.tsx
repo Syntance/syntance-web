@@ -251,9 +251,9 @@ export function BookingModal({
                       Cena netto
                     </div>
                     <div className="text-2xl font-bold text-white">
-                      {booking.priceNetto.toLocaleString('pl-PL')} <span className="text-sm font-normal text-gray-500">PLN</span>
+                      {booking.priceNetto.toLocaleString('pl-PL')} <span className="text-sm font-normal text-gray-400">PLN</span>
                     </div>
-                    <div className="text-sm text-gray-500 mt-1">
+                    <div className="text-sm text-gray-400 mt-1">
                       Brutto: {booking.priceBrutto.toLocaleString('pl-PL')} PLN
                     </div>
                   </div>
@@ -264,7 +264,7 @@ export function BookingModal({
                       Czas realizacji
                     </div>
                     <div className="text-2xl font-bold text-white">
-                      {booking.days} <span className="text-sm font-normal text-gray-500">dni roboczych</span>
+                      {booking.days} <span className="text-sm font-normal text-gray-400">dni roboczych</span>
                     </div>
                     <div className={`text-sm mt-1 ${getComplexityColor(booking.complexity)}`}>
                       Złożoność: {getComplexityLabel(booking.complexity)}
@@ -280,7 +280,7 @@ export function BookingModal({
                       {booking.deposit.toLocaleString('pl-PL')} PLN
                     </span>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-400 mt-1">
                     Płatność po akceptacji zlecenia, przed rozpoczęciem prac
                   </p>
                 </div>
@@ -475,7 +475,7 @@ export function BookingModal({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 justify-center text-sm text-gray-500">
+                <div className="flex items-center gap-2 justify-center text-sm text-gray-400">
                   <Mail size={14} />
                   Wysłaliśmy szczegóły na {email}
                 </div>

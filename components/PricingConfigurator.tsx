@@ -523,7 +523,7 @@ export function PricingConfigurator({ data }: Props) {
                     {getIcon(type.icon)}
                     <span className={`font-medium tracking-wide ${
                       isDisabledType 
-                        ? 'text-gray-600' 
+                        ? 'text-gray-400' 
                         : isSelected ? 'text-white' : 'text-gray-300'
                     }`}>
                       {type.name}
@@ -531,14 +531,14 @@ export function PricingConfigurator({ data }: Props) {
                   </div>
                   
                   {type.basePrice && (
-                    <span className={`text-sm ${isDisabledType ? 'text-gray-700' : 'text-gray-500'}`}>
+                    <span className={`text-sm ${isDisabledType ? 'text-gray-700' : 'text-gray-400'}`}>
                       od {type.basePrice.toLocaleString('pl-PL')} PLN netto
                     </span>
                   )}
                   
                   {isDisabledType && (
                     <div className="mt-2">
-                      <span className="text-xs text-gray-600 bg-white/5 px-2 py-1 rounded">
+                      <span className="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">
                         Niedostępny
                       </span>
                     </div>
@@ -577,7 +577,7 @@ export function PricingConfigurator({ data }: Props) {
                   <div className="flex-1 min-w-0">
                     <span className="text-gray-300 font-medium">{item.name}</span>
                     {item.description && (
-                      <p className="text-sm text-gray-500 truncate">{item.description}</p>
+                      <p className="text-sm text-gray-400 truncate">{item.description}</p>
                     )}
                   </div>
                   {!item.hidePrice && (
@@ -657,13 +657,13 @@ export function PricingConfigurator({ data }: Props) {
                           </span>
                         )}
                         {disabled && (
-                          <span className="px-2 py-0.5 text-xs rounded-full bg-gray-800 text-gray-500 font-medium">
+                          <span className="px-2 py-0.5 text-xs rounded-full bg-gray-800 text-gray-400 font-medium">
                             Niedostępny
                           </span>
                         )}
                       </div>
                       {item.description && (
-                        <p className="text-sm text-gray-500">{item.description}</p>
+                        <p className="text-sm text-gray-400">{item.description}</p>
                       )}
                       {/* Info dla elementów z ilością */}
                       {item.maxQuantity && item.maxQuantity > 1 && selected && (
@@ -732,14 +732,14 @@ export function PricingConfigurator({ data }: Props) {
             <div className="relative bg-gray-900/90 backdrop-blur-sm border border-white/10 rounded-2xl p-3 sm:p-6 space-y-3 sm:space-y-6 overflow-hidden">
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-medium tracking-wide text-white">Podsumowanie</h3>
-                <span className="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded-full">
+                <span className="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded-full">
                   {calculation.itemsCount} elementów
                 </span>
               </div>
 
               {/* Selected project type */}
               <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-                <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Typ projektu</div>
+                <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Typ projektu</div>
                 <div className="text-white font-medium flex items-center gap-2">
                   {getIcon(currentProjectType?.icon)}
                   {currentProjectType?.name}
@@ -751,7 +751,7 @@ export function PricingConfigurator({ data }: Props) {
                 <div className="flex justify-between items-baseline gap-1 sm:gap-2 min-w-0">
                   <span className="text-gray-400 text-xs sm:text-base shrink-0">Cena netto</span>
                   <span className="text-lg sm:text-2xl font-semibold text-white whitespace-nowrap">
-                    {calculation.priceNetto.toLocaleString('pl-PL')} <span className="text-xs sm:text-sm font-normal text-gray-500">PLN</span>
+                    {calculation.priceNetto.toLocaleString('pl-PL')} <span className="text-xs sm:text-sm font-normal text-gray-400">PLN</span>
                   </span>
                 </div>
                 {calculation.complexityPrice > 0 && (
@@ -761,11 +761,11 @@ export function PricingConfigurator({ data }: Props) {
                   </div>
                 )}
                 <div className="flex justify-between text-xs sm:text-sm gap-1 sm:gap-2 min-w-0">
-                  <span className="text-gray-500 truncate">Brutto (+{config?.vatRate || 23}% VAT)</span>
+                  <span className="text-gray-400 truncate">Brutto (+{config?.vatRate || 23}% VAT)</span>
                   <span className="text-gray-400 whitespace-nowrap">{calculation.priceBrutto.toLocaleString('pl-PL')} PLN</span>
                 </div>
                 <div className="flex justify-between text-xs sm:text-sm gap-1 sm:gap-2 min-w-0">
-                  <span className="text-gray-500 truncate">Zaliczka ({config?.depositPercent || 20}%)</span>
+                  <span className="text-gray-400 truncate">Zaliczka ({config?.depositPercent || 20}%)</span>
                   <span className="text-purple-400 font-medium whitespace-nowrap">{calculation.deposit.toLocaleString('pl-PL')} PLN</span>
                 </div>
               </div>
@@ -777,7 +777,7 @@ export function PricingConfigurator({ data }: Props) {
                 <div className="text-center p-2 sm:p-3 rounded-lg bg-white/5">
                   <Clock size={16} className="mx-auto mb-1 text-blue-400" />
                   <div className="text-base sm:text-lg font-semibold text-white">{calculation.days}</div>
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-gray-400">
                     dni roboczych
                     {calculation.complexityDays > 0 && (
                       <span className="block text-amber-400/80">
@@ -807,7 +807,7 @@ export function PricingConfigurator({ data }: Props) {
                      calculation.complexity === 'medium' ? 'Średnia' :
                      'Niska'}
                   </div>
-                  <div className="text-xs text-gray-500">złożoność</div>
+                  <div className="text-xs text-gray-400">złożoność</div>
                 </div>
               </div>
 
@@ -831,7 +831,7 @@ export function PricingConfigurator({ data }: Props) {
                 </button>
               </div>
 
-              <p className="text-[10px] sm:text-xs text-gray-500 text-center leading-relaxed">
+              <p className="text-[10px] sm:text-xs text-gray-400 text-center leading-relaxed">
                 Gwarancja 30 dni • Po tym czasie opieka w ramach abonamentu
                 <br />
                 Akceptacja zlecenia telefonicznie po rezerwacji terminu

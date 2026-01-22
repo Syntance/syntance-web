@@ -191,7 +191,7 @@ export function AvailabilityCalendar({
           className={`p-2 rounded-lg transition-colors ${
             canGoPrevious 
               ? 'text-gray-300 hover:text-white hover:bg-white/10' 
-              : 'text-gray-600 cursor-not-allowed'
+              : 'text-gray-400 cursor-not-allowed'
           }`}
         >
           <ChevronLeft size={20} />
@@ -207,7 +207,7 @@ export function AvailabilityCalendar({
           className={`p-2 rounded-lg transition-colors ${
             canGoNext 
               ? 'text-gray-300 hover:text-white hover:bg-white/10' 
-              : 'text-gray-600 cursor-not-allowed'
+              : 'text-gray-400 cursor-not-allowed'
           }`}
         >
           <ChevronRight size={20} />
@@ -219,7 +219,7 @@ export function AvailabilityCalendar({
         {/* Nagłówki dni tygodnia */}
         <div className="grid grid-cols-7 border-b border-white/10">
           {WEEKDAYS.map((day) => (
-            <div key={day} className="py-2 text-center text-xs text-gray-500 font-medium">
+            <div key={day} className="py-2 text-center text-xs text-gray-400 font-medium">
               {day}
             </div>
           ))}
@@ -236,9 +236,9 @@ export function AvailabilityCalendar({
             const statusStyles = {
               available: 'bg-green-500/20 text-green-400 hover:bg-green-500/30 cursor-pointer border-green-500/30',
               busy: 'bg-red-500/10 text-red-400/60 cursor-not-allowed',
-              past: 'text-gray-600 cursor-not-allowed',
-              unavailable: 'text-gray-500 cursor-not-allowed',
-              weekend: 'text-gray-600 cursor-not-allowed bg-white/2',
+              past: 'text-gray-400 cursor-not-allowed',
+              unavailable: 'text-gray-400 cursor-not-allowed',
+              weekend: 'text-gray-400 cursor-not-allowed bg-white/2',
             }
 
             const handleClick = () => {
@@ -309,7 +309,7 @@ export function AvailabilityCalendar({
                   year: 'numeric',
                 })}
               </p>
-              <p className="text-gray-500 text-sm mt-1">
+              <p className="text-gray-400 text-sm mt-1">
                 Szacowany koniec: {' '}
                 {(() => {
                   const start = new Date(selectedDate)

@@ -134,7 +134,7 @@ export default function AnatomyStudio() {
                         </h3>
 
                         {/* Tagline */}
-                        <p className="text-gray-500 italic mb-8">
+                        <p className="text-gray-400 italic mb-8">
                           {layer.tagline}
                         </p>
 
@@ -151,7 +151,7 @@ export default function AnatomyStudio() {
                                 </div>
                                 <div>
                                   <span className="text-white font-medium">{item.label}</span>
-                                  <span className="text-gray-500 ml-2">— {item.desc}</span>
+                                  <span className="text-gray-400 ml-2">— {item.desc}</span>
                                 </div>
                               </div>
                             );

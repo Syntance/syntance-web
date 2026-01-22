@@ -120,13 +120,13 @@ export default function ProcessStudio() {
                       </p>
                       
                       {step.note && (
-                        <p className="text-sm text-gray-500 font-light italic mt-2">
+                        <p className="text-sm text-gray-400 font-light italic mt-2">
                           ({step.note})
                         </p>
                       )}
 
                       {/* Decorative element */}
-                      <div className="mt-4 inline-flex items-center gap-2 text-sm text-gray-500" aria-hidden="true">
+                      <div className="mt-4 inline-flex items-center gap-2 text-sm text-gray-400" aria-hidden="true">
                         <div className={`w-8 h-0.5 bg-gradient-to-r ${step.gradient}`}></div>
                         <span className="font-light">Krok {index + 1} z 4</span>
                       </div>
