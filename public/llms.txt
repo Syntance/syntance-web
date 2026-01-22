@@ -38,8 +38,10 @@ Jakość agencji w tempie freelancera. Strony w 2-4 tygodnie, sklepy w 4-6 tygod
 - AEO-ready (struktura czytelna dla ChatGPT/Perplexity)
 
 ## Kontakt
+- Strona kontaktowa: https://syntance.com/kontakt
 - Email: kontakt@syntance.com
 - Telefon: +48 662 519 544
+- Właściciel: Kamil Podobiński
 - Adres: Czerniec 72, 33-390 Łącko, Polska
 - Strona: https://syntance.com
 - Cennik: https://syntance.com/cennik
