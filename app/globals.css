@@ -8,7 +8,7 @@
     max-width: 100vw;
   }
   body {
-    @apply bg-[#0a0a0f] text-[#F5F3FF];
+    @apply bg-black text-[#F5F3FF];
     overflow-x: clip;
     max-width: 100vw;
   }

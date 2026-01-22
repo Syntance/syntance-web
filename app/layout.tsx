@@ -47,7 +47,7 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
       </head>
-      <body className={`${spaceGrotesk.variable} ${plusJakartaSans.variable} font-sans antialiased bg-[#0a0a0f] text-[#F5F3FF]`}>
+      <body className={`${spaceGrotesk.variable} ${plusJakartaSans.variable} font-sans antialiased bg-black text-[#F5F3FF]`}>
         <AllSchemasDynamic seo={seo} />
         {children}
         <Analytics />

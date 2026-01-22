@@ -693,7 +693,7 @@ export function PricingConfigurator({ data }: Props) {
                         className="px-3 py-1.5 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500"
                       >
                         {Array.from({ length: item.maxQuantity }, (_, i) => i + 1).map(n => (
-                          <option key={n} value={n} className="bg-gray-900">{n}x</option>
+                          <option key={n} value={n} className="bg-gray-950">{n}x</option>
                         ))}
                       </select>
                     )}
@@ -729,7 +729,7 @@ export function PricingConfigurator({ data }: Props) {
             {/* Gradient border glow */}
             <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-blue-500 to-pink-500 rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity blur-sm" />
             
-            <div className="relative bg-gray-900/90 backdrop-blur-sm border border-white/10 rounded-2xl p-3 sm:p-6 space-y-3 sm:space-y-6 overflow-hidden">
+            <div className="relative bg-gray-950/90 backdrop-blur-sm border border-white/10 rounded-2xl p-3 sm:p-6 space-y-3 sm:space-y-6 overflow-hidden">
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-medium tracking-wide text-white">Podsumowanie</h3>
                 <span className="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded-full">
