@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { Code, Zap, Target, Users, Award, Sparkles, ArrowRight } from 'lucide-react'
+import { Code, Zap, Target, Users, Sparkles, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
 export const metadata: Metadata = {

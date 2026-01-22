@@ -8,9 +8,6 @@ const redirects: Record<string, string> = {
   '/studio/cennik': '/cennik',
   '/studio/kontakt': '/#kontakt',
   
-  // Stare anchor linki (bez hash - Next.js nie obsługuje hash w middleware)
-  '/o-nas': '/',
-  
   // Nieistniejące wersje językowe
   '/en': '/',
   '/de': '/',
@@ -52,7 +49,6 @@ export const config = {
   matcher: [
     // Dopasuj tylko konkretne ścieżki do przekierowań
     '/studio/:path*',
-    '/o-nas',
     '/en',
     '/de',
     '/pl',
