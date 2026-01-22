@@ -106,9 +106,7 @@ export default function AnatomyStudio() {
                   style={{ transitionDelay: `${index * 100}ms` }}
                 >
                   {/* Timeline dot */}
-                  <div className={`absolute left-8 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-gradient-to-br ${layer.gradient} shadow-lg z-10`}>
-                    <div className={`absolute inset-0 rounded-full bg-gradient-to-br ${layer.gradient} animate-ping opacity-30`} />
-                  </div>
+                  <div className={`absolute left-8 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-gradient-to-br ${layer.gradient} shadow-lg z-10`} />
 
                   {/* Card */}
                   <div className={`ml-20 md:ml-0 md:w-[calc(50%-40px)] ${isLeft ? 'md:mr-auto md:pr-8' : 'md:ml-auto md:pl-8'}`}>
