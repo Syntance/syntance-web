@@ -122,7 +122,7 @@ export default function NextjsPage() {
       <section className="relative z-10 pt-52 pb-24 px-6 lg:px-12">
         <div className="max-w-5xl mx-auto text-center">
           <h1 className="text-5xl md:text-6xl font-light tracking-widest glow-text mb-6">
-            Next.js nie jest „tylko frameworkiem"
+            Next.js nie jest &ldquo;tylko frameworkiem&rdquo;
           </h1>
           <p className="text-2xl md:text-3xl font-light tracking-wide text-gray-400 mb-12">
             To przewaga konkurencyjna, która przynosi realne pieniądze
@@ -238,7 +238,7 @@ export default function NextjsPage() {
               </h3>
               <p className="text-gray-400 leading-relaxed mb-4">
                 Tylko w jednym przypadku: **prosty blog, zero ambicji wzrostu, minimalna inwestycja**. 
-                Jeśli potrzebujesz strony „bo trzeba mieć stronę" — WordPress wystarczy.
+                Jeśli potrzebujesz strony &ldquo;bo trzeba mieć stronę&rdquo; — WordPress wystarczy.
               </p>
               <p className="text-gray-300 leading-relaxed">
                 Ale jeśli Twoja strona ma **generować leady, sprzedawać produkty, lub budować markę** — 
