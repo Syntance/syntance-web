@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { Target, Zap, Code, Users, ChevronDown } from 'lucide-react'
 import Link from 'next/link'
+import { PageTransition } from '@/components/page-transition'
 
 export const metadata: Metadata = {
   title: 'O nas — Syntance | Agencja interaktywna i software house Next.js',
@@ -112,6 +113,7 @@ export default function ONasPage() {
         }}
       />
 
+      <PageTransition>
       <div className="min-h-screen bg-[#05030C] w-full" style={{ overflowX: 'clip' }}>
         {/* Hero Section */}
         <section className="relative z-10 pt-52 pb-24 px-6 lg:px-12">
@@ -342,6 +344,7 @@ export default function ONasPage() {
           </div>
         </footer>
       </div>
+      </PageTransition>
     </>
   )
 }
