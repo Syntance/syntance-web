@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface NavItem {
   label: string;
@@ -34,6 +35,7 @@ const GooeyNav = ({
   isExternalScrolling = false,
   onNavigate
 }: GooeyNavProps) => {
+  const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLUListElement>(null);
   const filterRef = useRef<HTMLSpanElement>(null);
@@ -164,8 +166,12 @@ const GooeyNav = ({
           behavior: 'smooth'
         });
       }
+    } else if (href.startsWith('/#')) {
+      // Link do sekcji na stronie głównej z innej podstrony
+      router.push(href);
     } else {
-      window.location.href = href;
+      // Link do podstrony - użyj Next.js router dla płynnej nawigacji
+      router.push(href);
     }
   };
   const handleKeyDown = (e: React.KeyboardEvent<HTMLAnchorElement>, index: number) => {
