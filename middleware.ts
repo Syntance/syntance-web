@@ -14,7 +14,6 @@ const redirects: Record<string, string> = {
   '/pl': '/',
   
   // Inne potencjalne stare URL-e
-  '/kontakt': '/#kontakt',
   '/uslugi': '/cennik',
   '/oferta': '/cennik',
   '/wycena': '/cennik',
@@ -52,7 +51,6 @@ export const config = {
     '/en',
     '/de',
     '/pl',
-    '/kontakt',
     '/uslugi',
     '/oferta',
     '/wycena',
