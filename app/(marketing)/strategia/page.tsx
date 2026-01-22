@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { Target, Users, Zap, AlertCircle, CheckCircle2, XCircle, ArrowRight, FileText, Clock, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
 import { StrategyCTA } from '@/components/StrategyCTA'
+import { HeroTransition } from '@/components/page-transition'
 
 export const metadata: Metadata = {
   title: 'Strategia Strony Internetowej',
@@ -71,6 +72,7 @@ export default function StrategiaPage() {
       />
       
       {/* Hero Section */}
+      <HeroTransition>
       <section className="relative z-10 pt-52 pb-24 px-6 lg:px-12">
         <div className="max-w-5xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-wide text-white mb-6 leading-tight">
@@ -96,6 +98,7 @@ export default function StrategiaPage() {
           </div>
         </div>
       </section>
+      </HeroTransition>
 
       {/* Problem Section */}
       <section id="problem" className="relative z-10 py-24 px-6 lg:px-12 bg-gray-900/30">
