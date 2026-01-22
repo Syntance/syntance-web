@@ -7,9 +7,11 @@ export function ProgressBar() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(false)
+  const [showLoader, setShowLoader] = useState(false)
 
   useEffect(() => {
     setIsLoading(false)
+    setShowLoader(false)
   }, [pathname, searchParams])
 
   useEffect(() => {
@@ -21,6 +23,16 @@ export function ProgressBar() {
       // Uruchom loader tylko dla linków prowadzących do innych stron
       if (href !== currentUrl && target.target !== '_blank' && !href.includes('#')) {
         setIsLoading(true)
+        
+        // Pokaż loader tylko jeśli ładowanie trwa dłużej niż 150ms
+        // (szybkie ładowanie z cache nie pokazuje loadera)
+        const timeout = setTimeout(() => {
+          if (isLoading) {
+            setShowLoader(true)
+          }
+        }, 150)
+        
+        return () => clearTimeout(timeout)
       }
     }
 
@@ -47,9 +59,9 @@ export function ProgressBar() {
         anchor.removeEventListener('click', handleAnchorClick as EventListener)
       })
     }
-  }, [])
+  }, [isLoading])
 
-  if (!isLoading) return null
+  if (!showLoader) return null
 
   return (
     <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-[#05030C]/80 backdrop-blur-sm">
