@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 
 export function ProgressBar() {
@@ -8,16 +8,22 @@ export function ProgressBar() {
   const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(false)
   const [bgColor, setBgColor] = useState('#05030C')
+  const loadingStartTime = useRef<number>(0)
 
   useEffect(() => {
-    // Zawsze pokaż loader na pół sekundy
-    setIsLoading(true)
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 500)
-    
-    return () => clearTimeout(timer)
-  }, [pathname, searchParams])
+    // Gdy pathname się zmieni (nowa strona załadowana)
+    if (isLoading && loadingStartTime.current > 0) {
+      const elapsed = Date.now() - loadingStartTime.current
+      const remainingTime = Math.max(0, 500 - elapsed)
+      
+      const timer = setTimeout(() => {
+        setIsLoading(false)
+        loadingStartTime.current = 0
+      }, remainingTime)
+      
+      return () => clearTimeout(timer)
+    }
+  }, [pathname, searchParams, isLoading])
 
   useEffect(() => {
     const handleAnchorClick = (e: MouseEvent) => {
@@ -39,6 +45,8 @@ export function ProgressBar() {
           setBgColor(bodyBg)
         }
         
+        // Zapisz czas startu i pokaż loader NATYCHMIAST
+        loadingStartTime.current = Date.now()
         setIsLoading(true)
       }
     }
