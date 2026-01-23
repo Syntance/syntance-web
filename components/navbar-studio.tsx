@@ -29,6 +29,7 @@ const pathToNavIndex: Record<string, number> = {
   '/nextjs': 1,    // "Wiedza" dropdown
   '/cennik': 2,
   '/o-nas': 3,
+  '/kontakt': 4,
 };
 
 export default function NavbarStudio() {

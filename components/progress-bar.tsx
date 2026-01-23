@@ -92,7 +92,7 @@ export function ProgressBar() {
     loader.style.cssText = `
       position: fixed;
       inset: 0;
-      z-index: 9999;
+      z-index: 40;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -182,14 +182,11 @@ export function ProgressBar() {
       }
     }
 
-    // Listener dla custom eventu z GooeyNav - też zatrzymujemy
+    // Listener dla custom eventu z GooeyNav
     const handleNavigationStart = (e: Event) => {
       const customEvent = e as CustomEvent
       const href = customEvent.detail?.href
       if (href && !href.includes('#')) {
-        e.preventDefault()
-        e.stopPropagation()
-        
         const color = currentPageBgColor.current || detectPageBgColor()
         showLoaderAndNavigate(color, href)
       }
