@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 interface DropdownItem {
   label: string;
@@ -41,7 +41,6 @@ const GooeyNav = ({
   isExternalScrolling = false,
   onNavigate
 }: GooeyNavProps) => {
-  const router = useRouter();
   const pathname = usePathname();
   const containerRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLUListElement>(null);
@@ -220,20 +219,18 @@ const GooeyNav = ({
       }
     } else if (href.startsWith('/#')) {
       // Link do sekcji na stronie głównej z innej podstrony
+      // Dispatch event - ProgressBar obsłuży nawigację z animacją
       window.dispatchEvent(new CustomEvent('navigation-start', { detail: { href } }));
-      router.push(href);
     } else {
-      // Link do podstrony - użyj Next.js router dla płynnej nawigacji
+      // Link do podstrony - dispatch event, ProgressBar obsłuży nawigację
       window.dispatchEvent(new CustomEvent('navigation-start', { detail: { href } }));
-      router.push(href);
     }
   };
   
   const handleDropdownClick = (href: string) => {
     setOpenDropdown(null);
-    // Wyślij custom event dla progress bara
+    // Dispatch event - ProgressBar obsłuży nawigację z animacją
     window.dispatchEvent(new CustomEvent('navigation-start', { detail: { href } }));
-    router.push(href);
   };
   const handleKeyDown = (e: React.KeyboardEvent<HTMLAnchorElement>, index: number) => {
     if (e.key === 'Enter' || e.key === ' ') {
