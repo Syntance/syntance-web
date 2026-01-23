@@ -100,15 +100,25 @@ export default function NavbarStudio() {
       >
         <div className="space-y-1 py-4">
           {/* Strona główna */}
-          <Link
-            href="/"
-            onClick={() => setMobileMenuOpen(false)}
-            className={`block py-3 text-sm font-light tracking-wider transition-colors ${
-              pathname === '/' ? 'text-white' : 'text-gray-400 hover:text-purple-300'
-            }`}
-          >
-            Strona główna
-          </Link>
+          {pathname === '/' ? (
+            <button
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setMobileMenuOpen(false);
+              }}
+              className="block py-3 text-sm font-light tracking-wider text-white w-full text-left"
+            >
+              Strona główna
+            </button>
+          ) : (
+            <Link
+              href="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-3 text-sm font-light tracking-wider text-gray-400 hover:text-purple-300 transition-colors"
+            >
+              Strona główna
+            </Link>
+          )}
           
           {/* Wiedza dropdown */}
           <div>

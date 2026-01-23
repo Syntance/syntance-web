@@ -166,6 +166,12 @@ const GooeyNav = ({
     // Zamknij dropdown przy nawigacji
     setOpenDropdown(null);
     
+    // Jeśli klikamy "Strona główna" będąc już na stronie głównej - scroll do góry
+    if (activeIndex === index && item.href === '/' && pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    
     if (activeIndex === index) return;
     
     // Blokuj reakcję na externalActiveIndex przez czas scrollowania
