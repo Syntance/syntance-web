@@ -26,6 +26,24 @@ export function ProgressBar() {
   }, [pathname, searchParams, isLoading])
 
   useEffect(() => {
+    const startLoading = () => {
+      // Zapisz kolor tła obecnej strony
+      const bodyBg = window.getComputedStyle(document.body).backgroundColor
+      const mainDiv = document.querySelector('main')?.parentElement || document.body
+      const mainBg = window.getComputedStyle(mainDiv).backgroundColor
+      
+      // Użyj koloru z głównego diva lub body
+      if (mainBg && mainBg !== 'rgba(0, 0, 0, 0)' && mainBg !== 'transparent') {
+        setBgColor(mainBg)
+      } else if (bodyBg && bodyBg !== 'rgba(0, 0, 0, 0)' && bodyBg !== 'transparent') {
+        setBgColor(bodyBg)
+      }
+      
+      // Zapisz czas startu i pokaż loader NATYCHMIAST
+      loadingStartTime.current = Date.now()
+      setIsLoading(true)
+    }
+
     const handleAnchorClick = (e: MouseEvent) => {
       const target = e.currentTarget as HTMLAnchorElement
       const href = target.href
@@ -33,23 +51,20 @@ export function ProgressBar() {
       
       // Uruchom loader dla linków prowadzących do innych stron
       if (href !== currentUrl && target.target !== '_blank' && !href.includes('#')) {
-        // Zapisz kolor tła obecnej strony
-        const bodyBg = window.getComputedStyle(document.body).backgroundColor
-        const mainDiv = document.querySelector('main')?.parentElement || document.body
-        const mainBg = window.getComputedStyle(mainDiv).backgroundColor
-        
-        // Użyj koloru z głównego diva lub body
-        if (mainBg && mainBg !== 'rgba(0, 0, 0, 0)' && mainBg !== 'transparent') {
-          setBgColor(mainBg)
-        } else if (bodyBg && bodyBg !== 'rgba(0, 0, 0, 0)' && bodyBg !== 'transparent') {
-          setBgColor(bodyBg)
-        }
-        
-        // Zapisz czas startu i pokaż loader NATYCHMIAST
-        loadingStartTime.current = Date.now()
-        setIsLoading(true)
+        startLoading()
       }
     }
+
+    // Listener dla custom eventu z GooeyNav
+    const handleNavigationStart = (e: Event) => {
+      const customEvent = e as CustomEvent
+      const href = customEvent.detail?.href
+      if (href && !href.includes('#')) {
+        startLoading()
+      }
+    }
+
+    window.addEventListener('navigation-start', handleNavigationStart as EventListener)
 
     const handleMutation = () => {
       const anchors = document.querySelectorAll('a[href^="/"]')
@@ -68,6 +83,7 @@ export function ProgressBar() {
     })
 
     return () => {
+      window.removeEventListener('navigation-start', handleNavigationStart as EventListener)
       observer.disconnect()
       const anchors = document.querySelectorAll('a[href^="/"]')
       anchors.forEach(anchor => {

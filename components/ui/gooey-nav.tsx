@@ -214,15 +214,19 @@ const GooeyNav = ({
       }
     } else if (href.startsWith('/#')) {
       // Link do sekcji na stronie głównej z innej podstrony
+      window.dispatchEvent(new CustomEvent('navigation-start', { detail: { href } }));
       router.push(href);
     } else {
       // Link do podstrony - użyj Next.js router dla płynnej nawigacji
+      window.dispatchEvent(new CustomEvent('navigation-start', { detail: { href } }));
       router.push(href);
     }
   };
   
   const handleDropdownClick = (href: string) => {
     setOpenDropdown(null);
+    // Wyślij custom event dla progress bara
+    window.dispatchEvent(new CustomEvent('navigation-start', { detail: { href } }));
     router.push(href);
   };
   const handleKeyDown = (e: React.KeyboardEvent<HTMLAnchorElement>, index: number) => {
