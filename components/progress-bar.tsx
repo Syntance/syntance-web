@@ -7,6 +7,7 @@ export function ProgressBar() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(false)
+  const [bgColor, setBgColor] = useState('#05030C')
 
   useEffect(() => {
     // Zawsze pokaż loader na pół sekundy
@@ -26,6 +27,18 @@ export function ProgressBar() {
       
       // Uruchom loader dla linków prowadzących do innych stron
       if (href !== currentUrl && target.target !== '_blank' && !href.includes('#')) {
+        // Zapisz kolor tła obecnej strony
+        const bodyBg = window.getComputedStyle(document.body).backgroundColor
+        const mainDiv = document.querySelector('main')?.parentElement || document.body
+        const mainBg = window.getComputedStyle(mainDiv).backgroundColor
+        
+        // Użyj koloru z głównego diva lub body
+        if (mainBg && mainBg !== 'rgba(0, 0, 0, 0)' && mainBg !== 'transparent') {
+          setBgColor(mainBg)
+        } else if (bodyBg && bodyBg !== 'rgba(0, 0, 0, 0)' && bodyBg !== 'transparent') {
+          setBgColor(bodyBg)
+        }
+        
         setIsLoading(true)
       }
     }
@@ -58,7 +71,10 @@ export function ProgressBar() {
   if (!isLoading) return null
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-[#05030C] animate-in fade-in duration-200">
+    <div 
+      className="fixed inset-0 z-40 flex items-center justify-center animate-in fade-in duration-200"
+      style={{ backgroundColor: bgColor }}
+    >
       <div className="relative">
         {/* Animated Sygnet */}
         <svg 
