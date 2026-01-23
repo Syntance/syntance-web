@@ -6,6 +6,7 @@ import { AllSchemasDynamic } from "@/components/schema-org-dynamic";
 import { generateSeoMetadata, getSeoSettings } from "@/lib/seo";
 import NavbarStudio from "@/components/navbar-studio";
 import { ProgressBar } from "@/components/progress-bar";
+import { Suspense } from "react";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -50,7 +51,9 @@ export default async function RootLayout({
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
       </head>
       <body className={`${spaceGrotesk.variable} ${plusJakartaSans.variable} font-sans antialiased bg-black text-[#F5F3FF]`}>
-        <ProgressBar />
+        <Suspense fallback={null}>
+          <ProgressBar />
+        </Suspense>
         <AllSchemasDynamic seo={seo} />
         <NavbarStudio />
         {children}
