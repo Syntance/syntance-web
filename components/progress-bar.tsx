@@ -58,7 +58,7 @@ export function ProgressBar() {
   if (!isLoading) return null
 
   return (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-[#05030C] animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-[#05030C] animate-in fade-in duration-200">
       <div className="relative">
         {/* Animated Sygnet */}
         <svg 
