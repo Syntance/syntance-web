@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { Target, Zap, Code, Users, ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import { HeroTransition } from '@/components/page-transition'
+import GradientText from '@/components/GradientText'
 
 export const metadata: Metadata = {
   title: 'O nas — Syntance | Agencja interaktywna i software house Next.js',
@@ -121,8 +122,13 @@ export default function ONasPage() {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-wide text-white mb-6 leading-tight">
               Czym jest Syntance?
             </h1>
-            <h2 className="text-xl md:text-2xl font-medium bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent mb-8">
-              Agencja interaktywna i software house z Polski specjalizujący się w Next.js
+            <h2 className="text-xl md:text-2xl font-medium mb-8">
+              <GradientText
+                colors={['#ffaa40', '#9c40ff', '#ffaa40']}
+                animationSpeed={4}
+              >
+                Agencja interaktywna i software house z Polski specjalizujący się w Next.js
+              </GradientText>
             </h2>
             <p className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
               Jesteśmy agencją webową, która tworzy nowoczesne strony internetowe i sklepy e-commerce. Każdy projekt zaczynamy od strategii — nie od kodu.
