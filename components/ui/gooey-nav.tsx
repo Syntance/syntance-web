@@ -499,7 +499,7 @@ const GooeyNav = ({
         @media (pointer: coarse) {
           .gooey-effect.filter::after,
           .gooey-nav-item::after {
-            inset: 5px -2px !important;
+            inset: 10px -4px !important;
           }
         }
       `}</style>
