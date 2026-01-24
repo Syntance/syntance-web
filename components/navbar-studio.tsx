@@ -67,8 +67,8 @@ export default function NavbarStudio() {
           </Link>
         )}
         
-        {/* Desktop Navigation with GooeyNav */}
-        <div className="hidden md:flex items-center gap-4">
+        {/* Desktop Navigation with GooeyNav - od 1024px (tablet landscape + desktop) */}
+        <div className="hidden lg:flex items-center gap-4">
           <GooeyNav 
             items={navItems}
             particleCount={8}
@@ -82,9 +82,9 @@ export default function NavbarStudio() {
           />
         </div>
         
-        {/* Mobile menu button */}
+        {/* Mobile menu button - pokazuj do 1023px (mobile + tablet portrait) */}
         <button 
-          className="md:hidden text-white"
+          className="lg:hidden text-white"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label={mobileMenuOpen ? "Zamknij menu" : "Otwórz menu"}
           aria-expanded={mobileMenuOpen}
@@ -93,9 +93,9 @@ export default function NavbarStudio() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - pokazuj do 1023px */}
       <div 
-        className={`md:hidden overflow-hidden transition-all duration-300 ${
+        className={`lg:hidden overflow-hidden transition-all duration-300 ${
           mobileMenuOpen ? 'max-h-[400px] opacity-100 mt-6' : 'max-h-0 opacity-0'
         }`}
       >
