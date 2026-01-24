@@ -332,6 +332,12 @@ const GooeyNav = ({
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
         }
+        /* Style dla tabletów (urządzenia dotykowe) */
+        @media (pointer: coarse) {
+          .gooey-effect.text {
+            font-size: 0.75rem;
+          }
+        }
         .gooey-effect.text.active {
           color: #000000;
           font-weight: 600;
@@ -495,12 +501,26 @@ const GooeyNav = ({
         .gooey-chevron.open {
           transform: rotate(180deg);
         }
+        /* Style dla tabletów (urządzenia dotykowe) - lista i linki */
+        @media (pointer: coarse) {
+          .gooey-nav-list {
+            gap: 0.5rem !important;
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+          }
+          .gooey-nav-item {
+            font-size: 0.75rem !important;
+          }
+          .gooey-nav-link {
+            padding: 0.35em 0.7em !important;
+          }
+        }
       `}</style>
       <div className="relative" ref={containerRef}>
         <nav className="flex relative" style={{ transform: 'translate3d(0,0,0.01px)' }}>
           <ul
             ref={navRef}
-            className="flex gap-8 list-none p-0 px-4 m-0 relative z-[3]"
+            className="gooey-nav-list flex gap-8 list-none p-0 px-4 m-0 relative z-[3]"
             style={{
               color: 'white',
               textShadow: '0 1px 1px hsl(205deg 30% 10% / 0.2)'
@@ -517,7 +537,7 @@ const GooeyNav = ({
                 <a
                   href={item.href}
                   onKeyDown={e => handleKeyDown(e, index)}
-                  className="outline-none py-[0.6em] px-[1em] inline-flex items-center"
+                  className="gooey-nav-link outline-none py-[0.6em] px-[1em] inline-flex items-center"
                   onClick={(e) => item.dropdown && e.preventDefault()}
                 >
                   {item.label}
