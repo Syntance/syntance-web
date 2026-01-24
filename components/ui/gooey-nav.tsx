@@ -356,7 +356,7 @@ const GooeyNav = ({
           transform: scale(0);
           opacity: 0;
           z-index: -1;
-          border-radius: 9999px;
+          border-radius: 20px;
         }
         .gooey-effect.active::after {
           animation: pill 0.3s ease both;
@@ -448,7 +448,7 @@ const GooeyNav = ({
           content: "";
           position: absolute;
           inset: 0;
-          border-radius: 8px;
+          border-radius: 20px;
           background: #e5e5e5;
           opacity: 0;
           transform: scale(0);
@@ -522,7 +522,7 @@ const GooeyNav = ({
                 <a
                   href={item.href}
                   onKeyDown={e => handleKeyDown(e, index)}
-                  className="outline-none py-[0.5em] px-[0.7em] xl:py-[0.6em] xl:px-[1em] inline-flex items-center"
+                  className="outline-none py-[0.35em] px-[0.8em] xl:py-[0.4em] xl:px-[1em] inline-flex items-center"
                   onClick={(e) => item.dropdown && e.preventDefault()}
                 >
                   {item.label}
