@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, ChevronDown } from "lucide-react";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import GooeyNav from "@/components/ui/gooey-nav";
 
 // Główne linki nawigacyjne z dropdownem dla "Wiedza"
@@ -45,19 +45,6 @@ export default function NavbarStudio() {
   // Sprawdź czy któryś z linków w "Wiedza" jest aktywny
   const isWiedzaActive = pathname === '/strategia' || pathname === '/nextjs';
 
-  // Wykryj urządzenie dotykowe (tablet/telefon)
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
-  useEffect(() => {
-    const checkTouch = () => {
-      setIsTouchDevice(window.matchMedia('(pointer: coarse)').matches);
-    };
-    checkTouch();
-    window.matchMedia('(pointer: coarse)').addEventListener('change', checkTouch);
-    return () => {
-      window.matchMedia('(pointer: coarse)').removeEventListener('change', checkTouch);
-    };
-  }, []);
-
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 py-6 px-6 lg:px-12 backdrop-blur-md bg-black/30 transition-all duration-300">
       <div className="flex justify-between items-center">
@@ -84,13 +71,13 @@ export default function NavbarStudio() {
         <div className="hidden lg:flex items-center gap-4">
           <GooeyNav 
             items={navItems}
-            particleCount={isTouchDevice ? 5 : 8}
-            particleDistances={isTouchDevice ? [50, 6] : [90, 10]}
-            particleR={isTouchDevice ? 40 : 80}
+            particleCount={8}
+            particleDistances={[90, 10]}
+            particleR={80}
             initialActiveIndex={-1}
             externalActiveIndex={activeNavIndex}
-            animationTime={isTouchDevice ? 350 : 450}
-            timeVariance={isTouchDevice ? 100 : 200}
+            animationTime={450}
+            timeVariance={200}
             colors={[1, 2, 3, 4]}
           />
         </div>
