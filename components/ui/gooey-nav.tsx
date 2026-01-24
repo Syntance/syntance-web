@@ -332,12 +332,6 @@ const GooeyNav = ({
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
         }
-        /* Style dla tabletów (urządzenia dotykowe) */
-        @media (pointer: coarse) {
-          .gooey-effect.text {
-            font-size: 0.75rem;
-          }
-        }
         .gooey-effect.text.active {
           color: #000000;
           font-weight: 600;
@@ -501,23 +495,11 @@ const GooeyNav = ({
         .gooey-chevron.open {
           transform: rotate(180deg);
         }
-        /* Style dla tabletów (urządzenia dotykowe) - lista i linki */
+        /* Style dla tabletów (urządzenia dotykowe) - tylko pill */
         @media (pointer: coarse) {
-          .gooey-nav-list {
-            gap: 0.25rem !important;
-            padding-left: 0.25rem !important;
-            padding-right: 0.25rem !important;
-          }
-          .gooey-nav-item {
-            font-size: 0.7rem !important;
-          }
-          .gooey-nav-link {
-            padding: 0.25em 0.6em !important;
-          }
-          /* Zmniejsz pill efekt - dodaj inset żeby był mniejszy */
           .gooey-effect.filter::after,
           .gooey-nav-item::after {
-            inset: 3px 0 !important;
+            inset: 5px -2px !important;
           }
         }
       `}</style>
