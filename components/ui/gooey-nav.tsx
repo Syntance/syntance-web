@@ -326,16 +326,11 @@ const GooeyNav = ({
         .gooey-effect.text {
           color: white;
           transition: color 0.3s ease, font-weight 0.3s ease;
-          font-size: 0.75rem;
+          font-size: 0.875rem;
           font-weight: 300;
           letter-spacing: 0.05em;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
-        }
-        @media (min-width: 1280px) {
-          .gooey-effect.text {
-            font-size: 0.875rem;
-          }
         }
         .gooey-effect.text.active {
           color: #000000;
@@ -356,7 +351,7 @@ const GooeyNav = ({
           transform: scale(0);
           opacity: 0;
           z-index: -1;
-          border-radius: 20px;
+          border-radius: 9999px;
         }
         .gooey-effect.active::after {
           animation: pill 0.3s ease both;
@@ -448,7 +443,7 @@ const GooeyNav = ({
           content: "";
           position: absolute;
           inset: 0;
-          border-radius: 20px;
+          border-radius: 8px;
           background: #e5e5e5;
           opacity: 0;
           transform: scale(0);
@@ -505,7 +500,7 @@ const GooeyNav = ({
         <nav className="flex relative" style={{ transform: 'translate3d(0,0,0.01px)' }}>
           <ul
             ref={navRef}
-            className="flex gap-3 xl:gap-6 2xl:gap-8 list-none p-0 px-2 xl:px-4 m-0 relative z-[3]"
+            className="flex gap-8 list-none p-0 px-4 m-0 relative z-[3]"
             style={{
               color: 'white',
               textShadow: '0 1px 1px hsl(205deg 30% 10% / 0.2)'
@@ -514,7 +509,7 @@ const GooeyNav = ({
             {items.map((item, index) => (
               <li
                 key={index}
-                className={`gooey-nav-item rounded-full relative cursor-pointer transition-[background-color_color] duration-300 ease text-white text-xs xl:text-sm font-light tracking-wider ${
+                className={`gooey-nav-item rounded-full relative cursor-pointer transition-[background-color_color] duration-300 ease text-white text-sm font-light tracking-wider ${
                   activeIndex === index ? 'active' : ''
                 }`}
                 onClick={(e) => handleClick(e, index)}
@@ -522,7 +517,7 @@ const GooeyNav = ({
                 <a
                   href={item.href}
                   onKeyDown={e => handleKeyDown(e, index)}
-                  className="outline-none py-[0.35em] px-[0.8em] xl:py-[0.4em] xl:px-[1em] inline-flex items-center"
+                  className="outline-none py-[0.6em] px-[1em] inline-flex items-center"
                   onClick={(e) => item.dropdown && e.preventDefault()}
                 >
                   {item.label}

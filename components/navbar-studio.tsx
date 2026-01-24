@@ -71,13 +71,13 @@ export default function NavbarStudio() {
         <div className="hidden lg:flex items-center gap-4">
           <GooeyNav 
             items={navItems}
-            particleCount={6}
-            particleDistances={[60, 8]}
-            particleR={50}
+            particleCount={8}
+            particleDistances={[90, 10]}
+            particleR={80}
             initialActiveIndex={-1}
             externalActiveIndex={activeNavIndex}
-            animationTime={400}
-            timeVariance={150}
+            animationTime={450}
+            timeVariance={200}
             colors={[1, 2, 3, 4]}
           />
         </div>
