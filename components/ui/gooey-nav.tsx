@@ -495,9 +495,25 @@ const GooeyNav = ({
         .gooey-chevron.open {
           transform: rotate(180deg);
         }
-        /* Style dla tabletów (urządzenia dotykowe) - tylko pill */
-        @media (pointer: coarse) {
-          .gooey-effect.filter::after,
+        /* Style dla tabletów - wykrywanie dotykowe lub hover:none */
+        @media (pointer: coarse), (hover: none) {
+          .gooey-effect.filter::after {
+            inset: 12px -6px !important;
+            border-radius: 12px !important;
+          }
+          .gooey-nav-item.active::after,
+          .gooey-nav-item::after {
+            inset: 12px -6px !important;
+            border-radius: 12px !important;
+          }
+        }
+        /* Fallback - tablet landscape po szerokości */
+        @media (min-width: 1024px) and (max-width: 1279px) {
+          .gooey-effect.filter::after {
+            inset: 12px -6px !important;
+            border-radius: 12px !important;
+          }
+          .gooey-nav-item.active::after,
           .gooey-nav-item::after {
             inset: 12px -6px !important;
             border-radius: 12px !important;
