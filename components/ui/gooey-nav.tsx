@@ -504,15 +504,20 @@ const GooeyNav = ({
         /* Style dla tabletów (urządzenia dotykowe) - lista i linki */
         @media (pointer: coarse) {
           .gooey-nav-list {
-            gap: 0.5rem !important;
-            padding-left: 0.5rem !important;
-            padding-right: 0.5rem !important;
+            gap: 0.25rem !important;
+            padding-left: 0.25rem !important;
+            padding-right: 0.25rem !important;
           }
           .gooey-nav-item {
-            font-size: 0.75rem !important;
+            font-size: 0.7rem !important;
           }
           .gooey-nav-link {
-            padding: 0.35em 0.7em !important;
+            padding: 0.25em 0.6em !important;
+          }
+          /* Zmniejsz pill efekt - dodaj inset żeby był mniejszy */
+          .gooey-effect.filter::after,
+          .gooey-nav-item::after {
+            inset: 3px 0 !important;
           }
         }
       `}</style>
