@@ -326,11 +326,16 @@ const GooeyNav = ({
         .gooey-effect.text {
           color: white;
           transition: color 0.3s ease, font-weight 0.3s ease;
-          font-size: 0.875rem;
+          font-size: 0.75rem;
           font-weight: 300;
           letter-spacing: 0.05em;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
+        }
+        @media (min-width: 1280px) {
+          .gooey-effect.text {
+            font-size: 0.875rem;
+          }
         }
         .gooey-effect.text.active {
           color: #000000;
@@ -495,36 +500,12 @@ const GooeyNav = ({
         .gooey-chevron.open {
           transform: rotate(180deg);
         }
-        /* Style dla tabletów - wykrywanie dotykowe lub hover:none */
-        @media (pointer: coarse), (hover: none) {
-          .gooey-effect.filter::after {
-            inset: 12px -6px !important;
-            border-radius: 12px !important;
-          }
-          .gooey-nav-item.active::after,
-          .gooey-nav-item::after {
-            inset: 12px -6px !important;
-            border-radius: 12px !important;
-          }
-        }
-        /* Fallback - tablet landscape po szerokości */
-        @media (min-width: 1024px) and (max-width: 1279px) {
-          .gooey-effect.filter::after {
-            inset: 12px -6px !important;
-            border-radius: 12px !important;
-          }
-          .gooey-nav-item.active::after,
-          .gooey-nav-item::after {
-            inset: 12px -6px !important;
-            border-radius: 12px !important;
-          }
-        }
       `}</style>
       <div className="relative" ref={containerRef}>
         <nav className="flex relative" style={{ transform: 'translate3d(0,0,0.01px)' }}>
           <ul
             ref={navRef}
-            className="gooey-nav-list flex gap-8 list-none p-0 px-4 m-0 relative z-[3]"
+            className="flex gap-3 xl:gap-8 list-none p-0 px-2 xl:px-4 m-0 relative z-[3]"
             style={{
               color: 'white',
               textShadow: '0 1px 1px hsl(205deg 30% 10% / 0.2)'
@@ -533,7 +514,7 @@ const GooeyNav = ({
             {items.map((item, index) => (
               <li
                 key={index}
-                className={`gooey-nav-item rounded-full relative cursor-pointer transition-[background-color_color] duration-300 ease text-white text-sm font-light tracking-wider ${
+                className={`gooey-nav-item rounded-full relative cursor-pointer transition-[background-color_color] duration-300 ease text-white text-xs xl:text-sm font-light tracking-wider ${
                   activeIndex === index ? 'active' : ''
                 }`}
                 onClick={(e) => handleClick(e, index)}
@@ -541,7 +522,7 @@ const GooeyNav = ({
                 <a
                   href={item.href}
                   onKeyDown={e => handleKeyDown(e, index)}
-                  className="gooey-nav-link outline-none py-[0.6em] px-[1em] inline-flex items-center"
+                  className="outline-none py-[0.5em] px-[0.7em] xl:py-[0.6em] xl:px-[1em] inline-flex items-center"
                   onClick={(e) => item.dropdown && e.preventDefault()}
                 >
                   {item.label}
