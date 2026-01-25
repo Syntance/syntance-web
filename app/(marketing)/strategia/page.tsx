@@ -3,41 +3,43 @@ import { Target, Users, Zap, AlertCircle, CheckCircle2, XCircle, ArrowRight, Fil
 import Link from 'next/link'
 import { StrategyCTA } from '@/components/StrategyCTA'
 import { HeroTransition } from '@/components/page-transition'
+import { sanityFetch } from '@/sanity/lib/fetch'
+import { startingPricesQuery, defaultStartingPrices, type StartingPrices } from '@/sanity/queries/pricing'
 
-export const metadata: Metadata = {
-  title: 'Strategia Strony Internetowej',
-  description: 'Dlaczego strona nie generuje leadów? Bo nie ma strategii. Poznaj 3 fundamenty skutecznej strony: cel biznesowy, buyer persona i UVP. Warsztat Discovery od 4500 PLN.',
-  keywords: 'strategia strony internetowej, buyer persona, UVP, cel biznesowy strony, warsztat discovery, strona B2B',
-  openGraph: {
-    title: 'Strategia Strony Internetowej',
-    description: 'Dlaczego strona nie generuje leadów? Bo nie ma strategii. Poznaj 3 fundamenty skutecznej strony.',
-    url: 'https://syntance.com/strategia',
-  },
+// Pobierz ceny startowe z Sanity
+async function getStartingPrices(): Promise<StartingPrices> {
+  try {
+    const prices = await sanityFetch<StartingPrices>({ query: startingPricesQuery })
+    if (!prices?.discoveryWorkshopPrice) {
+      return defaultStartingPrices
+    }
+    return prices
+  } catch {
+    return defaultStartingPrices
+  }
 }
 
-// FAQ Data with Schema.org structure
-const faqItems = [
-  {
-    question: "Czy mogę pominąć strategię i od razu zacząć od projektu?",
-    answer: "Możesz, ale ryzykujesz, że strona będzie ładna, ale nieskuteczna. 80% naszych klientów, którzy przyszli &ldquo;tylko po stronę&rdquo;, po Discovery zmienili całą koncepcję."
-  },
-  {
-    question: "Ile trwa Warsztat Discovery?",
-    answer: "Spotkanie to 2-3 godziny. Dokument strategiczny otrzymujesz w ciągu 3-5 dni roboczych."
-  },
-  {
-    question: "Co jeśli już mam strategię?",
-    answer: "Świetnie! Wtedy możemy od razu przejść do projektu. Podczas briefu zweryfikujemy, czy masz wszystkie elementy."
-  },
-  {
-    question: "Czy strategia jest wliczona w cenę strony?",
-    answer: "Tak. Każdy projekt strony lub sklepu zawiera uproszczoną wersję Discovery w cenie. Pełny Warsztat (4500 PLN) to opcja dla firm, które chcą głębszej analizy."
-  },
-  {
-    question: "Dla jakiej wielkości firm jest Warsztat Discovery?",
-    answer: "Dla firm, które traktują stronę jako narzędzie biznesowe, nie wizytówkę. Typowo: 1-50 pracowników, B2B lub usługi premium B2C."
+// Funkcja do formatowania ceny
+function formatPrice(price: number): string {
+  return price.toLocaleString('pl-PL')
+}
+
+// Dynamiczne metadata z cenami z Sanity
+export async function generateMetadata(): Promise<Metadata> {
+  const prices = await getStartingPrices()
+  
+  return {
+    title: 'Strategia Strony Internetowej',
+    description: `Dlaczego strona nie generuje leadów? Bo nie ma strategii. Poznaj 3 fundamenty skutecznej strony: cel biznesowy, buyer persona i UVP. Warsztat Discovery od ${formatPrice(prices.discoveryWorkshopPrice)} PLN.`,
+    keywords: 'strategia strony internetowej, buyer persona, UVP, cel biznesowy strony, warsztat discovery, strona B2B',
+    openGraph: {
+      title: 'Strategia Strony Internetowej',
+      description: 'Dlaczego strona nie generuje leadów? Bo nie ma strategii. Poznaj 3 fundamenty skutecznej strony.',
+      url: 'https://syntance.com/strategia',
+    },
   }
-]
+}
+
 
 // Buyer Journey stages data
 const buyerJourneyStages = [
@@ -48,7 +50,33 @@ const buyerJourneyStages = [
   { stage: "5. Zakup", think: "\"Chcę zacząć\"", see: "Cennik, CTA, kontakt" }
 ]
 
-export default function StrategiaPage() {
+export default async function StrategiaPage() {
+  const prices = await getStartingPrices()
+  
+  // FAQ Data with Schema.org structure - z dynamicznymi cenami
+  const faqItems = [
+    {
+      question: "Czy mogę pominąć strategię i od razu zacząć od projektu?",
+      answer: "Możesz, ale ryzykujesz, że strona będzie ładna, ale nieskuteczna. 80% naszych klientów, którzy przyszli &ldquo;tylko po stronę&rdquo;, po Discovery zmienili całą koncepcję."
+    },
+    {
+      question: "Ile trwa Warsztat Discovery?",
+      answer: "Spotkanie to 2-3 godziny. Dokument strategiczny otrzymujesz w ciągu 3-5 dni roboczych."
+    },
+    {
+      question: "Co jeśli już mam strategię?",
+      answer: "Świetnie! Wtedy możemy od razu przejść do projektu. Podczas briefu zweryfikujemy, czy masz wszystkie elementy."
+    },
+    {
+      question: "Czy strategia jest wliczona w cenę strony?",
+      answer: `Tak. Każdy projekt strony lub sklepu zawiera uproszczoną wersję Discovery w cenie. Pełny Warsztat (${formatPrice(prices.discoveryWorkshopPrice)} PLN) to opcja dla firm, które chcą głębszej analizy.`
+    },
+    {
+      question: "Dla jakiej wielkości firm jest Warsztat Discovery?",
+      answer: "Dla firm, które traktują stronę jako narzędzie biznesowe, nie wizytówkę. Typowo: 1-50 pracowników, B2B lub usługi premium B2C."
+    }
+  ]
+  
   // Schema.org FAQ JSON-LD
   const faqSchema = {
     "@context": "https://schema.org",
@@ -64,7 +92,7 @@ export default function StrategiaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 w-full" style={{ overflowX: 'clip' }}>
+    <div className="min-h-screen w-full" style={{ overflowX: 'clip' }}>
       {/* Schema.org JSON-LD */}
       <script
         type="application/ld+json"
@@ -442,7 +470,7 @@ export default function StrategiaPage() {
                     <TrendingUp className="w-8 h-8 text-purple-400" />
                     <div>
                       <p className="text-sm text-purple-400 font-medium mb-1">Cena</p>
-                      <p className="text-3xl font-light text-white">4 500 PLN <span className="text-lg text-gray-400">netto</span></p>
+                      <p className="text-3xl font-light text-white">{formatPrice(prices.discoveryWorkshopPrice)} PLN <span className="text-lg text-gray-400">netto</span></p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">

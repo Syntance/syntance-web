@@ -53,13 +53,20 @@ export const pricingDataQuery = groq`{
     vatRate,
     depositPercent,
     depositFixed,
-    discoveryWorkshopPrice,
-    hourlyRateDev,
-    hourlyRateConsulting,
-    workHoursPerDay,
     calendlyUrl,
     ctaTexts,
-    complexitySettings
+    complexitySettings,
+    // Ceny startowe
+    discoveryWorkshopPrice,
+    websiteStartPrice,
+    websiteAdvancedStartPrice,
+    ecommerceStandardStartPrice,
+    ecommerceProStartPrice,
+    webappStartPrice,
+    // Stawki
+    hourlyRateDev,
+    hourlyRateConsulting,
+    workHoursPerDay
   }
 }`
 
@@ -129,10 +136,6 @@ export interface PricingConfig {
   vatRate: number
   depositPercent: number
   depositFixed: number
-  discoveryWorkshopPrice: number
-  hourlyRateDev: number
-  hourlyRateConsulting: number
-  workHoursPerDay: number
   calendlyUrl?: string
   ctaTexts: {
     reserve: string
@@ -140,6 +143,47 @@ export interface PricingConfig {
     pdf: string
   }
   complexitySettings?: ComplexitySettings
+  // Ceny startowe
+  discoveryWorkshopPrice: number
+  websiteStartPrice: number
+  websiteAdvancedStartPrice: number
+  ecommerceStandardStartPrice: number
+  ecommerceProStartPrice: number
+  webappStartPrice: number
+  // Stawki
+  hourlyRateDev: number
+  hourlyRateConsulting: number
+  workHoursPerDay: number
+}
+
+// Ceny startowe do użycia na stronach
+export interface StartingPrices {
+  discoveryWorkshopPrice: number
+  websiteStartPrice: number
+  websiteAdvancedStartPrice: number
+  ecommerceStandardStartPrice: number
+  ecommerceProStartPrice: number
+  webappStartPrice: number
+}
+
+// Query do pobierania tylko cen startowych (lżejsze)
+export const startingPricesQuery = groq`*[_type == "pricingConfig"][0] {
+  discoveryWorkshopPrice,
+  websiteStartPrice,
+  websiteAdvancedStartPrice,
+  ecommerceStandardStartPrice,
+  ecommerceProStartPrice,
+  webappStartPrice
+}`
+
+// Domyślne ceny startowe (fallback)
+export const defaultStartingPrices: StartingPrices = {
+  discoveryWorkshopPrice: 4500,
+  websiteStartPrice: 5400,
+  websiteAdvancedStartPrice: 12000,
+  ecommerceStandardStartPrice: 12000,
+  ecommerceProStartPrice: 25000,
+  webappStartPrice: 30000,
 }
 
 export interface PricingData {
@@ -216,10 +260,6 @@ export const defaultPricingData: PricingData = {
     vatRate: 23,
     depositPercent: 20,
     depositFixed: 500,
-    discoveryWorkshopPrice: 4500,
-    hourlyRateDev: 200,
-    hourlyRateConsulting: 300,
-    workHoursPerDay: 6,
     calendlyUrl: 'https://calendly.com/syntance/discovery',
     ctaTexts: {
       reserve: 'Zarezerwuj termin w tej cenie',
@@ -235,5 +275,16 @@ export const defaultPricingData: PricingData = {
       veryHighDays: 7,
       dayPrice: 1200,
     },
+    // Ceny startowe
+    discoveryWorkshopPrice: 4500,
+    websiteStartPrice: 5400,
+    websiteAdvancedStartPrice: 12000,
+    ecommerceStandardStartPrice: 12000,
+    ecommerceProStartPrice: 25000,
+    webappStartPrice: 30000,
+    // Stawki
+    hourlyRateDev: 200,
+    hourlyRateConsulting: 300,
+    workHoursPerDay: 6,
   },
 }

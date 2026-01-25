@@ -19,53 +19,58 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { HeroTransition } from '@/components/page-transition'
+import { sanityFetch } from '@/sanity/lib/fetch'
+import { startingPricesQuery, defaultStartingPrices, type StartingPrices } from '@/sanity/queries/pricing'
 
-export const metadata: Metadata = {
-  title: 'Strony internetowe dla firm | Profesjonalne strony www Next.js | Syntance',
-  description: 'Tworzymy profesjonalne strony internetowe dla firm B2B. Next.js, PageSpeed 90+, strategia przed kodem. Strony od 5 400 PLN. Bezpłatna wycena →',
-  keywords: [
-    'tworzenie stron internetowych',
-    'strona internetowa dla firmy',
-    'profesjonalna strona internetowa',
-    'strony dla firm',
-    'strona www dla firmy',
-    'strona internetowa Next.js',
-    'strona B2B',
-    'szybka strona internetowa',
-    'tworzenie stron internetowych Kraków',
-    'strony internetowe Małopolska',
-    'agencja webowa Polska',
-  ],
-  openGraph: {
-    title: 'Strony internetowe dla firm | Syntance',
-    description: 'Profesjonalne strony www w Next.js z gwarancją PageSpeed 90+. Strategia przed kodem. Strony od 5 400 PLN.',
-    url: 'https://syntance.com/strony-www',
-  },
-  alternates: {
-    canonical: 'https://syntance.com/strony-www',
-  },
-}
-
-// Schema.org JSON-LD
-const schemaOrg = {
-  "@context": "https://schema.org",
-  "@type": "Service",
-  "name": "Tworzenie stron internetowych",
-  "provider": {
-    "@type": "Organization",
-    "name": "Syntance",
-    "url": "https://syntance.com"
-  },
-  "description": "Profesjonalne strony internetowe dla firm B2B w Next.js",
-  "areaServed": ["PL", "EU"],
-  "serviceType": "Web Development",
-  "offers": {
-    "@type": "Offer",
-    "priceCurrency": "PLN",
-    "price": "5400",
-    "priceValidUntil": "2026-12-31"
+// Pobierz ceny startowe z Sanity
+async function getStartingPrices(): Promise<StartingPrices> {
+  try {
+    const prices = await sanityFetch<StartingPrices>({ query: startingPricesQuery })
+    if (!prices?.websiteStartPrice) {
+      return defaultStartingPrices
+    }
+    return prices
+  } catch {
+    return defaultStartingPrices
   }
 }
+
+// Funkcja do formatowania ceny
+function formatPrice(price: number): string {
+  return price.toLocaleString('pl-PL')
+}
+
+// Dynamiczne metadata z cenami z Sanity
+export async function generateMetadata(): Promise<Metadata> {
+  const prices = await getStartingPrices()
+  
+  return {
+    title: 'Strony internetowe dla firm | Profesjonalne strony www Next.js | Syntance',
+    description: `Tworzymy profesjonalne strony internetowe dla firm B2B. Next.js, PageSpeed 90+, strategia przed kodem. Strony od ${formatPrice(prices.websiteStartPrice)} PLN. Bezpłatna wycena →`,
+    keywords: [
+      'tworzenie stron internetowych',
+      'strona internetowa dla firmy',
+      'profesjonalna strona internetowa',
+      'strony dla firm',
+      'strona www dla firmy',
+      'strona internetowa Next.js',
+      'strona B2B',
+      'szybka strona internetowa',
+      'tworzenie stron internetowych Kraków',
+      'strony internetowe Małopolska',
+      'agencja webowa Polska',
+    ],
+    openGraph: {
+      title: 'Strony internetowe dla firm | Syntance',
+      description: `Profesjonalne strony www w Next.js z gwarancją PageSpeed 90+. Strategia przed kodem. Strony od ${formatPrice(prices.websiteStartPrice)} PLN.`,
+      url: 'https://syntance.com/strony-www',
+    },
+    alternates: {
+      canonical: 'https://syntance.com/strony-www',
+    },
+  }
+}
+
 
 const problems = [
   { icon: XCircle, text: "Wolna — użytkownicy uciekają po 3 sekundach" },
@@ -163,36 +168,60 @@ const processSteps = [
   },
 ]
 
-const faqItems = [
-  {
-    question: "Ile kosztuje profesjonalna strona internetowa?",
-    answer: "Strony zaczynają się od 5 400 PLN netto. Cena zależy od zakresu — liczby podstron, integracji, funkcjonalności. Użyj naszego konfiguratora cennika, aby poznać orientacyjną wycenę.",
-  },
-  {
-    question: "Jak długo trwa tworzenie strony internetowej?",
-    answer: "Standardowa strona firmowa to 2-4 tygodnie. Projekty enterprise z rozbudowaną funkcjonalnością — 4-8 tygodni. Dokładny timeline ustalamy po warsztacie discovery.",
-  },
-  {
-    question: "Czy mogę sam edytować stronę?",
-    answer: "Tak! Każda strona ma panel Sanity CMS — intuicyjny edytor, w którym samodzielnie zmieniasz teksty, zdjęcia i dodajesz podstrony. Bez programisty, bez dodatkowych kosztów.",
-  },
-  {
-    question: "Dlaczego Next.js zamiast WordPress?",
-    answer: "Next.js = szybkość (PageSpeed 90+ vs 30-50 na WP), bezpieczeństwo (zero wtyczek = zero dziur), lepsze SEO. WordPress to 60% zhakowanych stron w sieci i ciągłe aktualizacje. Next.js działa latami bez interwencji.",
-  },
-  {
-    question: "Czy oferujecie strony internetowe w Krakowie i okolicach?",
-    answer: "Tak! Obsługujemy klientów z całej Polski, ze szczególnym uwzględnieniem Krakowa i Małopolski. Pracujemy zdalnie lub spotkajmy się na żywo — elastycznie dopasowujemy się do Twoich potrzeb.",
-  },
-  {
-    question: "Co obejmuje gwarancja i wsparcie?",
-    answer: "30 dni wsparcia technicznego w cenie. Poprawiamy błędy, pomagamy z CMS, odpowiadamy na pytania. Po tym okresie oferujemy opcjonalny abonament opieki technicznej.",
-  },
-]
-
-export default function StronyWWWPage() {
+export default async function StronyWWWPage() {
+  const prices = await getStartingPrices()
+  
+  // FAQ items z dynamicznymi cenami
+  const faqItems = [
+    {
+      question: "Ile kosztuje profesjonalna strona internetowa?",
+      answer: `Strony zaczynają się od ${formatPrice(prices.websiteStartPrice)} PLN netto. Cena zależy od zakresu — liczby podstron, integracji, funkcjonalności. Użyj naszego konfiguratora cennika, aby poznać orientacyjną wycenę.`,
+    },
+    {
+      question: "Jak długo trwa tworzenie strony internetowej?",
+      answer: "Standardowa strona firmowa to 2-4 tygodnie. Projekty enterprise z rozbudowaną funkcjonalnością — 4-8 tygodni. Dokładny timeline ustalamy po warsztacie discovery.",
+    },
+    {
+      question: "Czy mogę sam edytować stronę?",
+      answer: "Tak! Każda strona ma panel Sanity CMS — intuicyjny edytor, w którym samodzielnie zmieniasz teksty, zdjęcia i dodajesz podstrony. Bez programisty, bez dodatkowych kosztów.",
+    },
+    {
+      question: "Dlaczego Next.js zamiast WordPress?",
+      answer: "Next.js = szybkość (PageSpeed 90+ vs 30-50 na WP), bezpieczeństwo (zero wtyczek = zero dziur), lepsze SEO. WordPress to 60% zhakowanych stron w sieci i ciągłe aktualizacje. Next.js działa latami bez interwencji.",
+    },
+    {
+      question: "Czy oferujecie strony internetowe w Krakowie i okolicach?",
+      answer: "Tak! Obsługujemy klientów z całej Polski, ze szczególnym uwzględnieniem Krakowa i Małopolski. Pracujemy zdalnie lub spotkajmy się na żywo — elastycznie dopasowujemy się do Twoich potrzeb.",
+    },
+    {
+      question: "Co obejmuje gwarancja i wsparcie?",
+      answer: "30 dni wsparcia technicznego w cenie. Poprawiamy błędy, pomagamy z CMS, odpowiadamy na pytania. Po tym okresie oferujemy opcjonalny abonament opieki technicznej.",
+    },
+  ]
+  
+  // Schema.org JSON-LD z dynamiczną ceną
+  const schemaOrg = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": "Tworzenie stron internetowych",
+    "provider": {
+      "@type": "Organization",
+      "name": "Syntance",
+      "url": "https://syntance.com"
+    },
+    "description": "Profesjonalne strony internetowe dla firm B2B w Next.js",
+    "areaServed": ["PL", "EU"],
+    "serviceType": "Web Development",
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "PLN",
+      "price": prices.websiteStartPrice.toString(),
+      "priceValidUntil": "2026-12-31"
+    }
+  }
+  
   return (
-    <div className="min-h-screen bg-gray-900 w-full" style={{ overflowX: 'clip' }}>
+    <div className="min-h-screen w-full" style={{ overflowX: 'clip' }}>
       {/* Schema.org JSON-LD */}
       <script
         type="application/ld+json"
@@ -427,7 +456,7 @@ export default function StronyWWWPage() {
                 <h3 className="text-xl font-medium text-white mb-2">Strona firmowa</h3>
                 <p className="text-gray-400 text-sm mb-6">Landing page, wizytówka, strona usługowa</p>
                 
-                <div className="text-3xl font-light text-white mb-1">od 5 400 PLN</div>
+                <div className="text-3xl font-light text-white mb-1">od {formatPrice(prices.websiteStartPrice)} PLN</div>
                 <div className="text-sm text-gray-400 mb-6">netto • 2-4 tygodnie</div>
                 
                 <ul className="space-y-3 mb-6">
@@ -458,7 +487,7 @@ export default function StronyWWWPage() {
                 <h3 className="text-xl font-medium text-white mb-2">Strona rozbudowana</h3>
                 <p className="text-gray-400 text-sm mb-6">Katalog produktów, portal, integracje</p>
                 
-                <div className="text-3xl font-light text-white mb-1">od 12 000 PLN</div>
+                <div className="text-3xl font-light text-white mb-1">od {formatPrice(prices.websiteAdvancedStartPrice)} PLN</div>
                 <div className="text-sm text-gray-400 mb-6">netto • 4-8 tygodni</div>
                 
                 <ul className="space-y-3 mb-6">

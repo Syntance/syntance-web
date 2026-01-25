@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { sanityFetch } from '@/sanity/lib/fetch'
-import { pricingDataQuery, PricingData, defaultPricingData } from '@/sanity/queries/pricing'
+import { pricingDataQuery, PricingData, defaultPricingData, startingPricesQuery, defaultStartingPrices, type StartingPrices } from '@/sanity/queries/pricing'
 import { pricingFaqQuery, PricingFaqItem, defaultFaqItems } from '@/sanity/queries/faq'
 import { PricingConfigurator } from '@/components/PricingConfigurator'
 import PricingFAQ from '@/components/sections/pricing-faq'
@@ -9,14 +9,37 @@ import { Twitter, Linkedin, Github } from 'lucide-react'
 // Wymusza dynamiczne renderowanie - dane zawsze świeże z Sanity
 export const dynamic = 'force-dynamic'
 
-export const metadata: Metadata = {
-  title: 'Ile kosztuje strona internetowa? Cennik 2026 | Syntance',
-  description: 'Strona firmowa od 5 400 PLN, sklep e-commerce od 12 000 PLN. Sprawdź cenę swojego projektu w konfiguratorze — wycena w 2 minuty, bez zobowiązań.',
-  openGraph: {
-    title: 'Ile kosztuje strona internetowa? | Syntance',
-    description: 'Cena strony internetowej zależy od funkcjonalności. Sprawdź ile kosztuje zrobienie strony internetowej lub sklepu e-commerce.',
-    url: 'https://syntance.com/cennik',
-  },
+// Funkcja do formatowania ceny
+function formatPrice(price: number): string {
+  return price.toLocaleString('pl-PL')
+}
+
+// Pobierz ceny startowe dla metadata
+async function getStartingPricesForMetadata(): Promise<StartingPrices> {
+  try {
+    const prices = await sanityFetch<StartingPrices>({ query: startingPricesQuery })
+    if (!prices?.websiteStartPrice) {
+      return defaultStartingPrices
+    }
+    return prices
+  } catch {
+    return defaultStartingPrices
+  }
+}
+
+// Dynamiczne metadata z cenami z Sanity
+export async function generateMetadata(): Promise<Metadata> {
+  const prices = await getStartingPricesForMetadata()
+  
+  return {
+    title: 'Ile kosztuje strona internetowa? Cennik 2026 | Syntance',
+    description: `Strona firmowa od ${formatPrice(prices.websiteStartPrice)} PLN, sklep e-commerce od ${formatPrice(prices.ecommerceStandardStartPrice)} PLN. Sprawdź cenę swojego projektu w konfiguratorze — wycena w 2 minuty, bez zobowiązań.`,
+    openGraph: {
+      title: 'Ile kosztuje strona internetowa? | Syntance',
+      description: 'Cena strony internetowej zależy od funkcjonalności. Sprawdź ile kosztuje zrobienie strony internetowej lub sklepu e-commerce.',
+      url: 'https://syntance.com/cennik',
+    },
+  }
 }
 
 async function getPricingData(): Promise<PricingData> {

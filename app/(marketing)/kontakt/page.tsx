@@ -3,6 +3,26 @@ import { Mail, Phone, Calendar, MapPin, Clock, ArrowRight, MessageSquare } from 
 import Link from 'next/link'
 import { ContactForm } from '@/components/contact-form'
 import { HeroTransition } from '@/components/page-transition'
+import { sanityFetch } from '@/sanity/lib/fetch'
+import { startingPricesQuery, defaultStartingPrices, type StartingPrices } from '@/sanity/queries/pricing'
+
+// Pobierz ceny startowe z Sanity
+async function getStartingPrices(): Promise<StartingPrices> {
+  try {
+    const prices = await sanityFetch<StartingPrices>({ query: startingPricesQuery })
+    if (!prices?.websiteStartPrice) {
+      return defaultStartingPrices
+    }
+    return prices
+  } catch {
+    return defaultStartingPrices
+  }
+}
+
+// Funkcja do formatowania ceny
+function formatPrice(price: number): string {
+  return price.toLocaleString('pl-PL')
+}
 
 export const metadata: Metadata = {
   title: 'Kontakt — Syntance | Strony i sklepy Next.js',
@@ -14,26 +34,28 @@ export const metadata: Metadata = {
   },
 }
 
-const faqs = [
-  {
-    question: "Jak szybko odpowiadamy?",
-    answer: "Staram się odpowiedzieć w ciągu 24 godzin roboczych. Na pilne sprawy — zadzwoń."
-  },
-  {
-    question: "Czy pierwsza rozmowa jest płatna?",
-    answer: "Nie. 30-minutowa rozmowa wstępna jest bezpłatna i bez zobowiązań."
-  },
-  {
-    question: "Czy pracujemy z klientami spoza Polski?",
-    answer: "Tak. Pracuję zdalnie z klientami z całej Europy. Komunikacja po polsku lub angielsku."
-  },
-  {
-    question: "Jaki jest minimalny budżet na projekt?",
-    answer: "Strony od 5 000 PLN, sklepy od 20 000 PLN. Dokładna wycena po rozmowie o zakresie."
-  }
-]
-
-export default function KontaktPage() {
+export default async function KontaktPage() {
+  const prices = await getStartingPrices()
+  
+  const faqs = [
+    {
+      question: "Jak szybko odpowiadamy?",
+      answer: "Staram się odpowiedzieć w ciągu 24 godzin roboczych. Na pilne sprawy — zadzwoń."
+    },
+    {
+      question: "Czy pierwsza rozmowa jest płatna?",
+      answer: "Nie. 30-minutowa rozmowa wstępna jest bezpłatna i bez zobowiązań."
+    },
+    {
+      question: "Czy pracujemy z klientami spoza Polski?",
+      answer: "Tak. Pracuję zdalnie z klientami z całej Europy. Komunikacja po polsku lub angielsku."
+    },
+    {
+      question: "Jaki jest minimalny budżet na projekt?",
+      answer: `Strony od ${formatPrice(prices.websiteStartPrice)} PLN, sklepy od ${formatPrice(prices.ecommerceStandardStartPrice)} PLN. Dokładna wycena po rozmowie o zakresie.`
+    }
+  ]
+  
   return (
     <>
       {/* Schema.org JSON-LD */}
