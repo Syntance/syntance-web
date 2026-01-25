@@ -1,4 +1,6 @@
-import { Metadata } from 'next'
+'use client'
+
+import { useEffect, useState, useRef } from 'react'
 import { 
   Zap, 
   Shield, 
@@ -11,79 +13,109 @@ import {
   Store,
   Repeat,
   Users,
-  ShoppingCart,
   CreditCard,
-  Package,
-  Globe,
-  Smartphone,
-  Search,
   ChevronDown,
   Server,
   Layout,
-  Database
+  Database,
+  ShoppingCart,
+  Percent,
+  Lock,
+  Layers
 } from 'lucide-react'
 import Link from 'next/link'
-import { HeroTransition } from '@/components/page-transition'
-import { sanityFetch } from '@/sanity/lib/fetch'
-import { startingPricesQuery, defaultStartingPrices, type StartingPrices } from '@/sanity/queries/pricing'
+import GradientText from '@/components/GradientText'
 
-// Pobierz ceny startowe z Sanity
-async function getStartingPrices(): Promise<StartingPrices> {
-  try {
-    const prices = await sanityFetch<StartingPrices>({ query: startingPricesQuery })
-    if (!prices?.ecommerceStandardStartPrice) {
-      return defaultStartingPrices
-    }
-    return prices
-  } catch {
-    return defaultStartingPrices
-  }
+// Komponent animowanej sekcji
+function AnimatedSection({ 
+  children, 
+  className = '', 
+  delay = 0 
+}: { 
+  children: React.ReactNode
+  className?: string
+  delay?: number 
+}) {
+  const [isVisible, setIsVisible] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => setIsVisible(true), delay)
+          observer.unobserve(entry.target)
+        }
+      },
+      { threshold: 0.1, rootMargin: '-50px' }
+    )
+
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [delay])
+
+  return (
+    <div 
+      ref={ref}
+      className={`transition-all duration-1000 ease-out ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+      } ${className}`}
+    >
+      {children}
+    </div>
+  )
 }
 
-// Funkcja do formatowania ceny
-function formatPrice(price: number): string {
-  return price.toLocaleString('pl-PL')
-}
+// Komponent karty z glow effect
+function GlowCard({ 
+  children, 
+  gradient = 'from-purple-500 to-pink-500',
+  className = '',
+  delay = 0
+}: { 
+  children: React.ReactNode
+  gradient?: string
+  className?: string
+  delay?: number
+}) {
+  const [isVisible, setIsVisible] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
 
-// Dynamiczne metadata z cenami z Sanity
-export async function generateMetadata(): Promise<Metadata> {
-  const prices = await getStartingPrices()
-  
-  return {
-    title: 'Sklepy internetowe headless | MedusaJS & Next.js | Syntance',
-    description: `Budujemy sklepy internetowe w architekturze headless. MedusaJS, Next.js, zero prowizji. Sklepy od ${formatPrice(prices.ecommerceStandardStartPrice)} PLN. Wycena w 24h →`,
-    keywords: [
-      'ile kosztuje sklep internetowy',
-      'sklep internetowy dla firmy',
-      'sklep internetowy headless',
-      'headless ecommerce',
-      'sklep next.js',
-      'medusajs sklep',
-      'własny sklep internetowy',
-      'sklep dla producenta',
-      'alternatywa dla Shopify',
-      'własny sklep zamiast Allegro',
-      'sklep internetowy Kraków',
-      'tworzenie sklepów internetowych Polska',
-      'agencja e-commerce Małopolska',
-    ],
-    openGraph: {
-      title: 'Sklepy internetowe headless | MedusaJS & Next.js | Syntance',
-      description: `Budujemy sklepy e-commerce w architekturze headless. Zero prowizji, pełna kontrola. Sklepy od ${formatPrice(prices.ecommerceStandardStartPrice)} PLN.`,
-      url: 'https://syntance.com/sklepy-internetowe',
-    },
-    alternates: {
-      canonical: 'https://syntance.com/sklepy-internetowe',
-    },
-  }
-}
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => setIsVisible(true), delay)
+          observer.unobserve(entry.target)
+        }
+      },
+      { threshold: 0.2 }
+    )
 
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [delay])
+
+  return (
+    <div 
+      ref={ref}
+      className={`relative group transition-all duration-700 ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+      } ${className}`}
+    >
+      <div className={`absolute -inset-0.5 bg-gradient-to-r ${gradient} rounded-2xl opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-500`} />
+      <div className="relative bg-gray-900/80 backdrop-blur-sm border border-white/10 rounded-2xl p-6 md:p-8 h-full">
+        {children}
+      </div>
+    </div>
+  )
+}
 
 const problems = [
-  { icon: XCircle, text: "Prowizje — Shopify pobiera do 2% od każdej transakcji", highlight: "Prowizje" },
-  { icon: XCircle, text: "Limity — WooCommerce pada przy 1000+ produktów", highlight: "Limity" },
-  { icon: XCircle, text: "Szablonowość — Twój sklep wygląda jak tysiące innych", highlight: "Szablonowość" },
-  { icon: XCircle, text: "Vendor lock-in — migracja = budowanie od zera", highlight: "Vendor lock-in" },
+  { icon: Percent, text: "Prowizje", desc: "Shopify pobiera do 2% od każdej transakcji" },
+  { icon: XCircle, text: "Limity", desc: "WooCommerce pada przy 1000+ produktów" },
+  { icon: Layers, text: "Szablonowość", desc: "Twój sklep wygląda jak tysiące innych" },
+  { icon: Lock, text: "Vendor lock-in", desc: "migracja = budowanie od zera" },
 ]
 
 const solutions = [
@@ -192,396 +224,380 @@ const proFeatures = [
   "Integracje ERP/CRM",
 ]
 
-export default async function SklepyInternetowePage() {
-  const prices = await getStartingPrices()
-  
-  // FAQ items z dynamicznymi cenami
-  const faqItems = [
-    {
-      question: "Ile kosztuje sklep internetowy headless?",
-      answer: `Sklepy zaczynają się od ${formatPrice(prices.ecommerceStandardStartPrice)} PLN (standard) do ${formatPrice(prices.ecommerceProStartPrice)}+ PLN (pro). Cena zależy od liczby funkcji, integracji i stopnia customizacji. Użyj naszego konfiguratora cennika, aby poznać orientacyjną wycenę.`,
-    },
-    {
-      question: "Czym różni się headless od Shopify?",
-      answer: "Headless = pełna własność kodu, zero prowizji od sprzedaży, nieograniczona customizacja. Shopify = wynajem platformy, prowizje 0.5-2% od transakcji, ograniczenia szablonu. Z headless płacisz raz za development, nie co miesiąc za dostęp.",
-    },
-    {
-      question: "Jak długo trwa budowa sklepu internetowego?",
-      answer: "Sklep standard (katalog, koszyk, płatności): 4-6 tygodni. Sklep pro z integracjami ERP, kurierami i subskrypcjami: 6-10 tygodni. Dokładny timeline ustalamy po warsztacie discovery.",
-    },
-    {
-      question: "Czy MedusaJS to sprawdzona technologia?",
-      answer: "Tak! MedusaJS to open-source e-commerce platform backed by $9M VC funding. Używany przez firmy jak Tekla, Summer Health i setki innych. Aktywna społeczność, regularne aktualizacje, enterprise-grade security.",
-    },
-    {
-      question: "Czy mogę migrować z WooCommerce/Shopify?",
-      answer: "Tak, przeprowadzamy pełną migrację — produkty, warianty, klienci, historia zamówień. Proces jest bezpieczny i nie wpływa na działanie obecnego sklepu do momentu przełączenia.",
-    },
-    {
-      question: "Czy oferujecie sklepy internetowe w Krakowie?",
-      answer: "Tak! Obsługujemy klientów z całej Polski, ze szczególnym uwzględnieniem Krakowa i Małopolski. Pracujemy zdalnie lub spotykamy się na żywo — elastycznie dopasowujemy się do Twoich potrzeb.",
-    },
-  ]
-  
-  // Schema.org JSON-LD z dynamiczną ceną
-  const schemaOrg = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "name": "Sklepy internetowe headless",
-    "provider": {
-      "@type": "Organization",
-      "name": "Syntance",
-      "url": "https://syntance.com"
-    },
-    "description": "Sklepy e-commerce w architekturze headless — MedusaJS, Next.js",
-    "areaServed": ["PL", "EU"],
-    "serviceType": "E-commerce Development",
-    "offers": {
-      "@type": "Offer",
-      "priceCurrency": "PLN",
-      "price": prices.ecommerceStandardStartPrice.toString(),
-      "priceValidUntil": "2026-12-31"
-    }
-  }
-  
+const comparisonData = [
+  { feature: "Prowizje", saas: "0.5-2% od transakcji", headless: "0% — zero prowizji" },
+  { feature: "PageSpeed", saas: "40-60/100", headless: "90+/100" },
+  { feature: "Własność kodu", saas: "Wynajem platformy", headless: "100% Twój kod" },
+  { feature: "Customizacja", saas: "Limity szablonu", headless: "Bez ograniczeń" },
+  { feature: "Skalowalność", saas: "Problemy przy wzroście", headless: "Nieograniczona" },
+]
+
+const faqItems = [
+  {
+    question: "Ile kosztuje sklep internetowy headless?",
+    answer: "Sklepy zaczynają się od 12 000 PLN (standard) do 25 000+ PLN (pro). Cena zależy od liczby funkcji, integracji i stopnia customizacji.",
+  },
+  {
+    question: "Czym różni się headless od Shopify?",
+    answer: "Headless = pełna własność kodu, zero prowizji od sprzedaży, nieograniczona customizacja. Shopify = wynajem platformy, prowizje 0.5-2%, ograniczenia szablonu.",
+  },
+  {
+    question: "Jak długo trwa budowa sklepu?",
+    answer: "Sklep standard (katalog, koszyk, płatności): 4-6 tygodni. Sklep pro z integracjami: 6-10 tygodni.",
+  },
+  {
+    question: "Czy MedusaJS to sprawdzona technologia?",
+    answer: "Tak! MedusaJS to open-source backed by $9M VC funding. Używany przez firmy jak Tekla, Summer Health i setki innych.",
+  },
+  {
+    question: "Czy mogę migrować z WooCommerce/Shopify?",
+    answer: "Tak, przeprowadzamy pełną migrację — produkty, warianty, klienci, historia zamówień.",
+  },
+]
+
+export default function SklepyInternetowePage() {
+  const [heroVisible, setHeroVisible] = useState(false)
+
+  useEffect(() => {
+    setHeroVisible(true)
+  }, [])
+
   return (
     <div className="min-h-screen w-full" style={{ overflowX: 'clip' }}>
-      {/* Schema.org JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
-      />
-
       {/* Hero Section */}
-      <HeroTransition>
-        <section className="relative z-10 pt-52 pb-24 px-6 lg:px-12">
-          <div className="max-w-5xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-widest glow-text mb-6">
-              Sklepy internetowe headless — Next.js i MedusaJS
-            </h1>
-            <p className="text-xl md:text-2xl font-light tracking-wide text-gray-400 mb-8">
-              Własny sklep internetowy bez limitów SaaS i prowizji od sprzedaży
-            </p>
-            <p className="text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed mb-12">
-              Budujemy szybkie sklepy e-commerce w architekturze headless. 
-              Zero prowizji, pełna kontrola nad kodem, nieograniczona skalowalność. 
-              Twój sklep, Twoje zasady.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link 
-                href="/cennik" 
-                className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-105"
+      <section className="relative z-10 min-h-screen flex items-center justify-center px-6 lg:px-12 pt-32 pb-20">
+        <div className={`max-w-5xl mx-auto text-center transition-all duration-1000 ${
+          heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`}>
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-light tracking-widest leading-tight mb-8 glow-text">
+            Sklepy internetowe{" "}
+            <GradientText
+              colors={["#a855f7", "#ec4899", "#a855f7"]}
+              animationSpeed={4}
+              className="font-medium"
+            >
+              headless
+            </GradientText>
+          </h1>
+          <p className="text-xl md:text-2xl font-light tracking-wide text-gray-400 mb-6">
+            Twój sklep, Twoje zasady — zero prowizji
+          </p>
+          <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed mb-12">
+            Budujemy szybkie sklepy e-commerce w architekturze headless. 
+            MedusaJS + Next.js = pełna kontrola i nieograniczona skalowalność.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="relative group">
+              <div 
+                className="absolute -inset-1 rounded-full blur-md opacity-25 group-hover:opacity-40 transition-opacity animate-gradient -z-10"
+                style={{
+                  backgroundImage: 'linear-gradient(to right, #9333ea, #ec4899, #f472b6, #ec4899, #9333ea)',
+                  backgroundSize: '300% 100%'
+                }}
+              />
+              <button 
+                onClick={() => {
+                  document.getElementById('problem')?.scrollIntoView({ behavior: 'smooth' })
+                }}
+                className="relative z-10 px-8 py-4 bg-gray-900/80 backdrop-blur-sm border border-gray-700 text-white rounded-full font-medium tracking-wider hover:bg-gray-800/80 transition-all"
               >
-                <span>Wycena sklepu</span>
-                <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
-              </Link>
-              
-              <Link 
-                href="/#contact" 
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-full border border-white/10 text-white font-medium transition-all duration-300 hover:bg-white/5"
-              >
-                <span>Porozmawiajmy</span>
-              </Link>
+                Dowiedz się więcej
+              </button>
             </div>
+            <Link 
+              href="/cennik"
+              className="px-8 py-4 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 transition-all glow-box"
+            >
+              Sprawdź cenę
+            </Link>
           </div>
-        </section>
-      </HeroTransition>
+        </div>
+        
+        {/* Scroll indicator */}
+        <div className={`absolute bottom-10 left-1/2 -translate-x-1/2 transition-all duration-1000 delay-500 ${
+          heroVisible ? 'opacity-100' : 'opacity-0'
+        }`}>
+          <div className="w-6 h-10 border-2 border-gray-600 rounded-full flex justify-center">
+            <div className="w-1 h-3 bg-gray-400 rounded-full mt-2 animate-bounce" />
+          </div>
+        </div>
+      </section>
 
       {/* Problem Section */}
-      <section className="relative z-10 py-20 px-6 lg:px-12 bg-gray-900/50">
+      <section id="problem" className="relative z-10 py-32 px-6 lg:px-12">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-light tracking-wide text-center mb-12">
-            <span className="text-gray-400">Dlaczego SaaS-owe platformy</span>{' '}
-            <span className="text-red-400">Cię ograniczają?</span>
-          </h2>
+          <AnimatedSection>
+            <h2 className="text-3xl md:text-5xl font-light tracking-wide text-center mb-6">
+              Dlaczego SaaS{' '}
+              <span className="text-red-400">Cię ogranicza?</span>
+            </h2>
+            <p className="text-xl text-gray-400 text-center mb-20">
+              Shopify, WooCommerce — czas na coś lepszego.
+            </p>
+          </AnimatedSection>
           
           <div className="grid md:grid-cols-2 gap-6">
             {problems.map((problem, index) => (
-              <div 
-                key={index}
-                className="flex items-start gap-4 p-6 rounded-2xl bg-white/5 border border-red-500/20"
-              >
-                <problem.icon className="w-6 h-6 text-red-400 flex-shrink-0 mt-0.5" />
-                <p className="text-gray-300 leading-relaxed">
-                  <strong className="text-white">{problem.highlight}</strong> — {problem.text.split(' — ')[1]}
-                </p>
-              </div>
+              <AnimatedSection key={index} delay={index * 100}>
+                <div className="flex items-start gap-4 p-6 rounded-2xl bg-red-500/5 border border-red-500/20 hover:border-red-500/40 transition-colors">
+                  <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center flex-shrink-0">
+                    <problem.icon className="w-5 h-5 text-red-400" />
+                  </div>
+                  <div>
+                    <p className="text-white font-medium mb-1">{problem.text}</p>
+                    <p className="text-gray-400 text-sm">{problem.desc}</p>
+                  </div>
+                </div>
+              </AnimatedSection>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Solution Section - What is Headless */}
+      {/* Transition */}
       <section className="relative z-10 py-24 px-6 lg:px-12">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-light tracking-wide text-center mb-6">
-            <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Headless e-commerce</span>{' '}
-            <span className="text-white">— sklep bez limitów</span>
-          </h2>
-          
-          {/* What is headless explanation */}
-          <div className="max-w-3xl mx-auto mb-16">
-            <div className="p-6 rounded-2xl bg-white/5 border border-white/10 mb-8">
-              <h3 className="text-xl font-medium text-white mb-4">Co to headless?</h3>
-              <p className="text-gray-400 leading-relaxed">
-                Frontend (to, co widzi klient) jest <strong className="text-white">oddzielony od backendu</strong> (logika, baza, płatności). 
-                Dzięki temu możesz mieć ultra-szybki frontend w Next.js połączony z potężnym silnikiem e-commerce MedusaJS.
-              </p>
-            </div>
+        <AnimatedSection className="max-w-3xl mx-auto text-center">
+          <p className="text-2xl md:text-4xl font-light text-gray-400 leading-relaxed">
+            Co to znaczy{' '}
+            <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              headless
+            </span>?
+          </p>
+        </AnimatedSection>
+      </section>
+
+      {/* What is Headless */}
+      <section className="relative z-10 py-16 px-6 lg:px-12">
+        <AnimatedSection className="max-w-3xl mx-auto">
+          <div className="p-8 rounded-2xl bg-white/5 border border-white/10">
+            <p className="text-lg text-gray-300 leading-relaxed">
+              <strong className="text-white">Frontend</strong> (to, co widzi klient) jest{' '}
+              <strong className="text-white">oddzielony od backendu</strong>{' '}
+              (logika, baza, płatności). Dzięki temu masz ultra-szybki frontend w Next.js 
+              połączony z potężnym silnikiem e-commerce MedusaJS.
+            </p>
           </div>
+        </AnimatedSection>
+      </section>
+
+      {/* Solution Section */}
+      <section className="relative z-10 py-32 px-6 lg:px-12">
+        <div className="max-w-5xl mx-auto">
+          <AnimatedSection className="text-center mb-20">
+            <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6 glow-text">
+              Sklep bez limitów
+            </h2>
+            <p className="text-xl text-gray-400">
+              4 przewagi headless nad SaaS
+            </p>
+          </AnimatedSection>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {solutions.map((solution, index) => {
               const Icon = solution.icon
               return (
-                <div 
-                  key={index}
-                  className="group p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-300"
-                >
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${solution.gradient} bg-opacity-10 flex items-center justify-center mb-4`}>
-                    <Icon size={24} className={solution.textColor} />
+                <GlowCard key={index} gradient={solution.gradient} delay={index * 100}>
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${solution.gradient} bg-opacity-10 flex items-center justify-center mb-6`}>
+                    <Icon size={28} className={solution.textColor} />
                   </div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <CheckCircle2 size={16} className="text-green-400" />
+                  <div className="flex items-center gap-2 mb-3">
+                    <CheckCircle2 size={18} className="text-green-400" />
                     <h3 className="text-lg font-medium text-white">{solution.title}</h3>
                   </div>
-                  <p className="text-gray-400 text-sm">{solution.description}</p>
-                </div>
+                  <p className="text-gray-400 text-sm leading-relaxed">{solution.description}</p>
+                </GlowCard>
               )
             })}
           </div>
         </div>
       </section>
 
-      {/* Target Audience Section */}
-      <section className="relative z-10 py-24 px-6 lg:px-12 bg-gray-900/30">
+      {/* Target Audience */}
+      <section className="relative z-10 py-32 px-6 lg:px-12 bg-gradient-to-b from-transparent via-purple-950/10 to-transparent">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-light tracking-wide text-center mb-6 glow-text">
-            Sklepy dla firm, które chcą kontroli
-          </h2>
-          <p className="text-lg text-gray-400 text-center mb-16 max-w-2xl mx-auto">
-            Headless e-commerce to rozwiązanie dla firm, które wyrosły z platform SaaS
-          </p>
+          <AnimatedSection className="text-center mb-20">
+            <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6 glow-text">
+              Dla kogo to jest?
+            </h2>
+            <p className="text-xl text-gray-400">
+              Sklepy dla firm, które chcą kontroli
+            </p>
+          </AnimatedSection>
           
           <div className="grid md:grid-cols-2 gap-8">
             {targetAudiences.map((audience, index) => {
               const Icon = audience.icon
               return (
-                <div 
-                  key={index}
-                  className="group relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 p-8 hover:border-white/20 transition-all duration-300"
-                >
-                  <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${audience.gradient} opacity-5 blur-2xl`} />
-                  
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${audience.gradient} bg-opacity-10 flex items-center justify-center mb-6`}>
-                    <Icon size={28} className="text-white" />
+                <GlowCard key={index} gradient={audience.gradient} delay={index * 150}>
+                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${audience.gradient} bg-opacity-10 flex items-center justify-center mb-6`}>
+                    <Icon size={32} className="text-white" />
                   </div>
-                  
                   <h3 className="text-xl font-medium text-white mb-3">{audience.title}</h3>
                   <p className="text-gray-400 leading-relaxed">{audience.description}</p>
-                </div>
+                </GlowCard>
               )
             })}
           </div>
         </div>
       </section>
 
-      {/* Technology Stack Section */}
-      <section className="relative z-10 py-24 px-6 lg:px-12">
+      {/* Tech Stack */}
+      <section className="relative z-10 py-32 px-6 lg:px-12">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-light tracking-wide text-center mb-6 glow-text">
-            Stack technologiczny — MedusaJS + Next.js
-          </h2>
-          <p className="text-lg text-gray-400 text-center mb-16 max-w-2xl mx-auto">
-            Enterprise-grade technologie, zero vendor lock-in
-          </p>
+          <AnimatedSection className="text-center mb-20">
+            <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6 glow-text">
+              Stack technologiczny
+            </h2>
+            <p className="text-xl text-gray-400">
+              MedusaJS + Next.js — enterprise-grade bez prowizji
+            </p>
+          </AnimatedSection>
           
           <div className="grid md:grid-cols-2 gap-6">
             {techStack.map((tech, index) => {
               const Icon = tech.icon
               return (
-                <div 
-                  key={index}
-                  className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 transition-all"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tech.gradient} bg-opacity-10 flex items-center justify-center flex-shrink-0`}>
-                      <Icon size={24} className="text-white" />
-                    </div>
-                    <div>
-                      <div className="text-sm text-gray-500 mb-1">{tech.layer}</div>
-                      <h3 className="text-lg font-medium text-white mb-1">{tech.tech}</h3>
-                      <p className="text-gray-400 text-sm">{tech.why}</p>
+                <AnimatedSection key={index} delay={index * 100}>
+                  <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 transition-colors">
+                    <div className="flex items-start gap-4">
+                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tech.gradient} bg-opacity-10 flex items-center justify-center flex-shrink-0`}>
+                        <Icon size={24} className="text-white" />
+                      </div>
+                      <div>
+                        <div className="text-sm text-gray-500 mb-1">{tech.layer}</div>
+                        <h3 className="text-lg font-medium text-white mb-1">{tech.tech}</h3>
+                        <p className="text-gray-400 text-sm">{tech.why}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
+                </AnimatedSection>
               )
             })}
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="relative z-10 py-24 px-6 lg:px-12 bg-gray-900/30">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-light tracking-wide text-center mb-6 glow-text">
-            Co zawiera sklep headless od Syntance?
-          </h2>
-          <p className="text-lg text-gray-400 text-center mb-16 max-w-2xl mx-auto">
-            Wybierz pakiet dopasowany do Twoich potrzeb
-          </p>
+      {/* Comparison Table */}
+      <section className="relative z-10 py-32 px-6 lg:px-12">
+        <div className="max-w-4xl mx-auto">
+          <AnimatedSection className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6">
+              <span className="text-gray-400">Headless vs.</span>{' '}
+              <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Shopify/WooCommerce
+              </span>
+            </h2>
+          </AnimatedSection>
           
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Standard Package */}
-            <div className="relative group">
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl opacity-20 blur-lg group-hover:opacity-30 transition-opacity" />
-              <div className="relative p-8 rounded-2xl bg-gray-900 border border-white/10 h-full">
-                <div className="inline-block px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-sm font-medium mb-4">
-                  Standard
-                </div>
-                <h3 className="text-2xl font-medium text-white mb-2">od {formatPrice(prices.ecommerceStandardStartPrice)} PLN</h3>
-                <p className="text-gray-400 text-sm mb-6">netto • 4-6 tygodni</p>
-                
-                <ul className="space-y-3">
-                  {standardFeatures.map((feature, index) => (
-                    <li key={index} className="flex items-center gap-3 text-gray-300">
-                      <CheckCircle2 size={18} className="text-blue-400 flex-shrink-0" />
-                      <span>{feature}</span>
-                    </li>
+          <AnimatedSection delay={100}>
+            <div className="overflow-x-auto rounded-2xl border border-white/10">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-white/10 bg-white/5">
+                    <th className="text-left py-4 px-6 text-gray-400 font-medium">Kryterium</th>
+                    <th className="text-center py-4 px-6 text-gray-400 font-medium">SaaS</th>
+                    <th className="text-center py-4 px-6 font-medium bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">Headless</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonData.map((row, index) => (
+                    <tr key={index} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                      <td className="py-4 px-6 text-white font-medium">{row.feature}</td>
+                      <td className="py-4 px-6 text-center text-gray-400">{row.saas}</td>
+                      <td className="py-4 px-6 text-center text-green-400 font-medium">{row.headless}</td>
+                    </tr>
                   ))}
-                </ul>
-              </div>
+                </tbody>
+              </table>
             </div>
+          </AnimatedSection>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section className="relative z-10 py-32 px-6 lg:px-12 bg-gradient-to-b from-transparent via-purple-950/10 to-transparent">
+        <div className="max-w-5xl mx-auto">
+          <AnimatedSection className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6 glow-text">
+              Ile to kosztuje?
+            </h2>
+            <p className="text-xl text-gray-400">
+              Wybierz pakiet dopasowany do Twoich potrzeb
+            </p>
+          </AnimatedSection>
+          
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            <GlowCard gradient="from-blue-500 to-cyan-500" delay={0}>
+              <div className="inline-block px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-sm font-medium mb-4">
+                Standard
+              </div>
+              <h3 className="text-3xl font-medium text-white mb-2">od 12 000 PLN</h3>
+              <p className="text-gray-400 text-sm mb-8">netto • 4-6 tygodni</p>
+              
+              <ul className="space-y-3">
+                {standardFeatures.map((feature, index) => (
+                  <li key={index} className="flex items-center gap-3 text-gray-300">
+                    <CheckCircle2 size={18} className="text-blue-400 flex-shrink-0" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </GlowCard>
             
-            {/* Pro Package */}
-            <div className="relative group">
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl opacity-20 blur-lg group-hover:opacity-30 transition-opacity" />
-              <div className="relative p-8 rounded-2xl bg-gray-900 border border-white/10 h-full">
-                <div className="inline-block px-3 py-1 rounded-full bg-purple-500/20 text-purple-400 text-sm font-medium mb-4">
-                  Pro
-                </div>
-                <h3 className="text-2xl font-medium text-white mb-2">od {formatPrice(prices.ecommerceProStartPrice)} PLN</h3>
-                <p className="text-gray-400 text-sm mb-6">netto • 6-10 tygodni</p>
-                
-                <p className="text-gray-400 text-sm mb-4">Wszystko ze Standard, plus:</p>
-                
-                <ul className="space-y-3">
-                  {proFeatures.map((feature, index) => (
-                    <li key={index} className="flex items-center gap-3 text-gray-300">
-                      <CheckCircle2 size={18} className="text-purple-400 flex-shrink-0" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
+            <GlowCard gradient="from-purple-500 to-pink-500" delay={100}>
+              <div className="inline-block px-3 py-1 rounded-full bg-purple-500/20 text-purple-400 text-sm font-medium mb-4">
+                Pro
               </div>
-            </div>
+              <h3 className="text-3xl font-medium text-white mb-2">od 25 000 PLN</h3>
+              <p className="text-gray-400 text-sm mb-4">netto • 6-10 tygodni</p>
+              <p className="text-gray-500 text-sm mb-8">Wszystko ze Standard, plus:</p>
+              
+              <ul className="space-y-3">
+                {proFeatures.map((feature, index) => (
+                  <li key={index} className="flex items-center gap-3 text-gray-300">
+                    <CheckCircle2 size={18} className="text-purple-400 flex-shrink-0" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </GlowCard>
           </div>
           
-          <div className="text-center mt-12">
+          <AnimatedSection delay={200} className="text-center">
             <Link 
               href="/cennik" 
               className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-105"
             >
               <span>Sprawdź konfigurator cennika</span>
-              <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Comparison with Shopify */}
-      <section className="relative z-10 py-24 px-6 lg:px-12">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-light tracking-wide text-center mb-12">
-            <span className="text-gray-400">Headless vs.</span>{' '}
-            <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Shopify/WooCommerce</span>
-          </h2>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b border-white/10">
-                  <th className="text-left py-4 px-4 text-gray-400 font-medium">Kryterium</th>
-                  <th className="text-center py-4 px-4 text-gray-400 font-medium">Shopify/WooCommerce</th>
-                  <th className="text-center py-4 px-4 font-medium bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">Headless</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                  <td className="py-4 px-4 text-white font-medium">Prowizje</td>
-                  <td className="py-4 px-4 text-center text-gray-400">0.5-2% od transakcji</td>
-                  <td className="py-4 px-4 text-center text-green-400 font-medium">0% — zero prowizji</td>
-                </tr>
-                <tr className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                  <td className="py-4 px-4 text-white font-medium">PageSpeed</td>
-                  <td className="py-4 px-4 text-center text-gray-400">40-60/100</td>
-                  <td className="py-4 px-4 text-center text-green-400 font-medium">90+/100</td>
-                </tr>
-                <tr className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                  <td className="py-4 px-4 text-white font-medium">Własność kodu</td>
-                  <td className="py-4 px-4 text-center text-gray-400">Wynajem platformy</td>
-                  <td className="py-4 px-4 text-center text-green-400 font-medium">100% Twój kod</td>
-                </tr>
-                <tr className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                  <td className="py-4 px-4 text-white font-medium">Customizacja</td>
-                  <td className="py-4 px-4 text-center text-gray-400">Limity szablonu</td>
-                  <td className="py-4 px-4 text-center text-green-400 font-medium">Bez ograniczeń</td>
-                </tr>
-                <tr className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                  <td className="py-4 px-4 text-white font-medium">Skalowalność</td>
-                  <td className="py-4 px-4 text-center text-gray-400">Problemy przy wzroście</td>
-                  <td className="py-4 px-4 text-center text-green-400 font-medium">Nieograniczona</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          </AnimatedSection>
         </div>
       </section>
 
       {/* FAQ Section */}
-      <section className="relative z-10 py-24 px-6 lg:px-12 bg-gray-900/30" id="faq">
-        {/* FAQ Schema.org */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              "mainEntity": faqItems.map(item => ({
-                "@type": "Question",
-                "name": item.question,
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": item.answer,
-                },
-              })),
-            }),
-          }}
-        />
-        
+      <section className="relative z-10 py-32 px-6 lg:px-12" id="faq">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-light tracking-wide text-center mb-6 glow-text">
-            Często zadawane pytania
-          </h2>
-          <p className="text-lg text-gray-400 text-center mb-12">
-            Wszystko, co powinieneś wiedzieć o sklepach headless
-          </p>
+          <AnimatedSection className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6 glow-text">
+              Pytania i odpowiedzi
+            </h2>
+          </AnimatedSection>
           
           <div className="space-y-4">
             {faqItems.map((item, index) => (
-              <details 
-                key={index}
-                className="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden"
-              >
-                <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
-                  <span className="font-medium text-white pr-4">{item.question}</span>
-                  <ChevronDown className="w-5 h-5 text-gray-400 transition-transform duration-300 group-open:rotate-180 flex-shrink-0" />
-                </summary>
-                <div className="px-6 pb-6 pt-0">
-                  <p className="text-gray-400 leading-relaxed">{item.answer}</p>
-                </div>
-              </details>
+              <AnimatedSection key={index} delay={index * 50}>
+                <details className="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-colors">
+                  <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
+                    <span className="font-medium text-white pr-4">{item.question}</span>
+                    <ChevronDown className="w-5 h-5 text-gray-400 transition-transform duration-300 group-open:rotate-180 flex-shrink-0" />
+                  </summary>
+                  <div className="px-6 pb-6 pt-0">
+                    <p className="text-gray-400 leading-relaxed">{item.answer}</p>
+                  </div>
+                </details>
+              </AnimatedSection>
             ))}
           </div>
         </div>
@@ -589,19 +605,19 @@ export default async function SklepyInternetowePage() {
 
       {/* Final CTA */}
       <section className="relative z-10 py-32 px-6 lg:px-12">
-        <div className="max-w-4xl mx-auto text-center">
+        <AnimatedSection className="max-w-4xl mx-auto text-center">
           <div className="relative group">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 rounded-3xl blur-lg opacity-20 group-hover:opacity-30 transition-opacity duration-500" />
+            <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 rounded-3xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity duration-500" />
             
-            <div className="relative bg-gray-900/80 backdrop-blur-sm border border-white/10 rounded-3xl p-12">
-              <h2 className="text-3xl md:text-4xl font-light tracking-wide text-white mb-6">
+            <div className="relative bg-gray-900/80 backdrop-blur-sm border border-white/10 rounded-3xl p-12 md:p-16">
+              <h2 className="text-3xl md:text-5xl font-light tracking-wide text-white mb-6">
                 Gotowy na sklep, który{' '}
                 <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                   rośnie razem z Tobą?
                 </span>
               </h2>
               <p className="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
-                Zamów bezpłatną wycenę sklepu — odpowiadamy w ciągu 24 godzin
+                Zamów bezpłatną wycenę — odpowiadamy w ciągu 24 godzin
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -610,7 +626,7 @@ export default async function SklepyInternetowePage() {
                   className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-105"
                 >
                   <span>Wycena sklepu</span>
-                  <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 
                 <Link 
@@ -622,18 +638,16 @@ export default async function SklepyInternetowePage() {
               </div>
             </div>
           </div>
-        </div>
+        </AnimatedSection>
       </section>
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-gray-900 pt-16 pb-12 px-6 lg:px-12">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-6 md:mb-0">
-              <Link href="/" className="text-gray-400 hover:text-white transition-colors font-medium">
-                ← Powrót do strony głównej
-              </Link>
-            </div>
+            <Link href="/" className="text-gray-400 hover:text-white transition-colors font-medium">
+              ← Powrót do strony głównej
+            </Link>
           </div>
           <div className="mt-12 pt-8 border-t border-gray-900">
             <p className="text-center text-sm font-light tracking-wider text-gray-400">

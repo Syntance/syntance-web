@@ -44,12 +44,21 @@ export default function HeroStudio() {
           Ultra-szybkie, bezpieczne i gotowe na przyszłość. Strategia przed kodem.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button 
-            onClick={scrollToNext}
-            className="px-8 py-3 bg-white bg-opacity-10 border border-gray-700 text-white rounded-full font-medium tracking-wider hover:bg-opacity-20 transition-all glow-box cursor-pointer"
-          >
-            Dowiedz się więcej
-          </button>
+          <div className="relative group">
+            <div 
+              className="absolute -inset-1 rounded-full blur-md opacity-25 group-hover:opacity-40 transition-opacity animate-gradient -z-10"
+              style={{
+                backgroundImage: 'linear-gradient(to right, #2563eb, #7c3aed, #06b6d4, #7c3aed, #2563eb)',
+                backgroundSize: '300% 100%'
+              }}
+            />
+            <button 
+              onClick={scrollToNext}
+              className="relative z-10 px-8 py-3 bg-gray-900/80 backdrop-blur-sm border border-gray-700 text-white rounded-full font-medium tracking-wider hover:bg-gray-800/80 transition-all cursor-pointer"
+            >
+              Dowiedz się więcej
+            </button>
+          </div>
           <a 
             href="/cennik"
             className="px-8 py-3 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 transition-all glow-box cursor-pointer inline-block text-center"

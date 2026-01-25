@@ -117,12 +117,21 @@ export default async function StrategiaPage() {
               <span>Zamów stronę ze strategią</span>
               <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
-            <Link 
-              href="#fundamenty"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-full border border-white/10 text-white font-medium transition-all duration-300 hover:bg-white/5"
-            >
-              <span>Dowiedz się więcej</span>
-            </Link>
+            <div className="relative group">
+              <div 
+                className="absolute -inset-1 rounded-full blur-md opacity-25 group-hover:opacity-40 transition-opacity animate-gradient -z-10"
+                style={{
+                  backgroundImage: 'linear-gradient(to right, #7c3aed, #3b82f6, #06b6d4, #3b82f6, #7c3aed)',
+                  backgroundSize: '300% 100%'
+                }}
+              />
+              <Link 
+                href="#fundamenty"
+                className="relative z-10 inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gray-900/80 backdrop-blur-sm border border-white/10 text-white font-medium transition-all duration-300 hover:bg-gray-800/80"
+              >
+                <span>Dowiedz się więcej</span>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
