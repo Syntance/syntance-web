@@ -25,6 +25,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import GradientText from '@/components/GradientText'
+import TiltCard from '@/components/tilt-card'
 
 // Komponent animowanej sekcji
 function AnimatedSection({ 
@@ -429,13 +430,20 @@ export default function SklepyInternetowePage() {
             {targetAudiences.map((audience, index) => {
               const Icon = audience.icon
               return (
-                <GlowCard key={index} gradient={audience.gradient} delay={index * 150}>
-                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${audience.gradient} bg-opacity-10 flex items-center justify-center mb-6`}>
-                    <Icon size={32} className="text-white" />
-                  </div>
-                  <h3 className="text-xl font-medium text-white mb-3">{audience.title}</h3>
-                  <p className="text-gray-400 leading-relaxed">{audience.description}</p>
-                </GlowCard>
+                <AnimatedSection key={index} delay={index * 150}>
+                  <TiltCard className="h-full">
+                    <div className="relative group h-full">
+                      <div className={`absolute -inset-0.5 bg-gradient-to-r ${audience.gradient} rounded-2xl opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-500`} />
+                      <div className="relative h-full p-8 rounded-2xl bg-gray-900/80 backdrop-blur-sm border border-white/10">
+                        <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${audience.gradient} flex items-center justify-center mb-6`}>
+                          <Icon size={32} className="text-white" />
+                        </div>
+                        <h3 className="text-xl font-medium text-white mb-3">{audience.title}</h3>
+                        <p className="text-gray-400 leading-relaxed">{audience.description}</p>
+                      </div>
+                    </div>
+                  </TiltCard>
+                </AnimatedSection>
               )
             })}
           </div>
@@ -528,40 +536,54 @@ export default function SklepyInternetowePage() {
           </AnimatedSection>
           
           <div className="grid md:grid-cols-2 gap-8 mb-12">
-            <GlowCard gradient="from-blue-500 to-cyan-500" delay={0}>
-              <div className="inline-block px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-sm font-medium mb-4">
-                Standard
-              </div>
-              <h3 className="text-3xl font-medium text-white mb-2">od 12 000 PLN</h3>
-              <p className="text-gray-400 text-sm mb-8">netto • 4-6 tygodni</p>
-              
-              <ul className="space-y-3">
-                {standardFeatures.map((feature, index) => (
-                  <li key={index} className="flex items-center gap-3 text-gray-300">
-                    <CheckCircle2 size={18} className="text-blue-400 flex-shrink-0" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </GlowCard>
+            <AnimatedSection delay={0}>
+              <TiltCard className="h-full">
+                <div className="relative group h-full">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-500" />
+                  <div className="relative h-full p-6 md:p-8 rounded-2xl bg-gray-900/80 backdrop-blur-sm border border-white/10">
+                    <div className="inline-block px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-sm font-medium mb-4">
+                      Standard
+                    </div>
+                    <h3 className="text-3xl font-medium text-white mb-2">od 12 000 PLN</h3>
+                    <p className="text-gray-400 text-sm mb-8">netto • 4-6 tygodni</p>
+                    
+                    <ul className="space-y-3">
+                      {standardFeatures.map((feature, index) => (
+                        <li key={index} className="flex items-center gap-3 text-gray-300">
+                          <CheckCircle2 size={18} className="text-blue-400 flex-shrink-0" />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </TiltCard>
+            </AnimatedSection>
             
-            <GlowCard gradient="from-purple-500 to-pink-500" delay={100}>
-              <div className="inline-block px-3 py-1 rounded-full bg-purple-500/20 text-purple-400 text-sm font-medium mb-4">
-                Pro
-              </div>
-              <h3 className="text-3xl font-medium text-white mb-2">od 25 000 PLN</h3>
-              <p className="text-gray-400 text-sm mb-4">netto • 6-10 tygodni</p>
-              <p className="text-gray-500 text-sm mb-8">Wszystko ze Standard, plus:</p>
-              
-              <ul className="space-y-3">
-                {proFeatures.map((feature, index) => (
-                  <li key={index} className="flex items-center gap-3 text-gray-300">
-                    <CheckCircle2 size={18} className="text-purple-400 flex-shrink-0" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </GlowCard>
+            <AnimatedSection delay={100}>
+              <TiltCard className="h-full">
+                <div className="relative group h-full">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-500" />
+                  <div className="relative h-full p-6 md:p-8 rounded-2xl bg-gray-900/80 backdrop-blur-sm border border-white/10">
+                    <div className="inline-block px-3 py-1 rounded-full bg-purple-500/20 text-purple-400 text-sm font-medium mb-4">
+                      Pro
+                    </div>
+                    <h3 className="text-3xl font-medium text-white mb-2">od 25 000 PLN</h3>
+                    <p className="text-gray-400 text-sm mb-4">netto • 6-10 tygodni</p>
+                    <p className="text-gray-500 text-sm mb-8">Wszystko ze Standard, plus:</p>
+                    
+                    <ul className="space-y-3">
+                      {proFeatures.map((feature, index) => (
+                        <li key={index} className="flex items-center gap-3 text-gray-300">
+                          <CheckCircle2 size={18} className="text-purple-400 flex-shrink-0" />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </TiltCard>
+            </AnimatedSection>
           </div>
           
           <AnimatedSection delay={200} className="text-center">
