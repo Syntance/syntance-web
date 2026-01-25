@@ -26,6 +26,19 @@ import {
 import Link from 'next/link'
 import GradientText from '@/components/GradientText'
 import TiltCard from '@/components/tilt-card'
+import SubpageScrollbar from '@/components/SubpageScrollbar'
+
+// Sekcje dla scrollbar
+const scrollbarSections = [
+  { id: "hero-sklepy", label: "Start" },
+  { id: "problem", label: "Problem" },
+  { id: "solution", label: "Rozwiązanie" },
+  { id: "audience", label: "Dla kogo" },
+  { id: "tech", label: "Technologia" },
+  { id: "comparison", label: "Porównanie" },
+  { id: "pricing", label: "Cennik" },
+  { id: "faq", label: "FAQ" },
+]
 
 // Komponent animowanej sekcji
 function AnimatedSection({ 
@@ -265,8 +278,10 @@ export default function SklepyInternetowePage() {
 
   return (
     <div className="min-h-screen w-full" style={{ overflowX: 'clip' }}>
+      <SubpageScrollbar sections={scrollbarSections} />
+      
       {/* Hero Section */}
-      <section className="relative z-10 min-h-screen flex items-center justify-center px-6 lg:px-12 pt-32 pb-20">
+      <section id="hero-sklepy" className="relative z-10 min-h-screen flex items-center justify-center px-6 lg:px-12 pt-32 pb-20">
         <div className={`max-w-5xl mx-auto text-center transition-all duration-1000 ${
           heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
@@ -293,7 +308,7 @@ export default function SklepyInternetowePage() {
               <div 
                 className="absolute -inset-1 rounded-full blur-md opacity-25 group-hover:opacity-40 transition-opacity animate-gradient -z-10"
                 style={{
-                  backgroundImage: 'linear-gradient(to right, #9333ea, #ec4899, #f472b6, #ec4899, #9333ea)',
+                  backgroundImage: 'linear-gradient(to right, #a855f7, #ec4899, #a855f7)',
                   backgroundSize: '300% 100%'
                 }}
               />
@@ -383,7 +398,7 @@ export default function SklepyInternetowePage() {
       </section>
 
       {/* Solution Section */}
-      <section className="relative z-10 py-32 px-6 lg:px-12">
+      <section id="solution" className="relative z-10 py-32 px-6 lg:px-12">
         <div className="max-w-5xl mx-auto">
           <AnimatedSection className="text-center mb-20">
             <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6 glow-text">
@@ -415,7 +430,7 @@ export default function SklepyInternetowePage() {
       </section>
 
       {/* Target Audience */}
-      <section className="relative z-10 py-32 px-6 lg:px-12 bg-gradient-to-b from-transparent via-purple-950/10 to-transparent">
+      <section id="audience" className="relative z-10 py-32 px-6 lg:px-12 bg-gradient-to-b from-transparent via-purple-950/10 to-transparent">
         <div className="max-w-5xl mx-auto">
           <AnimatedSection className="text-center mb-20">
             <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6 glow-text">
@@ -451,7 +466,7 @@ export default function SklepyInternetowePage() {
       </section>
 
       {/* Tech Stack */}
-      <section className="relative z-10 py-32 px-6 lg:px-12">
+      <section id="tech" className="relative z-10 py-32 px-6 lg:px-12">
         <div className="max-w-4xl mx-auto">
           <AnimatedSection className="text-center mb-20">
             <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6 glow-text">
@@ -487,7 +502,7 @@ export default function SklepyInternetowePage() {
       </section>
 
       {/* Comparison Table */}
-      <section className="relative z-10 py-32 px-6 lg:px-12">
+      <section id="comparison" className="relative z-10 py-32 px-6 lg:px-12">
         <div className="max-w-4xl mx-auto">
           <AnimatedSection className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6">
@@ -524,7 +539,7 @@ export default function SklepyInternetowePage() {
       </section>
 
       {/* Pricing */}
-      <section className="relative z-10 py-32 px-6 lg:px-12 bg-gradient-to-b from-transparent via-purple-950/10 to-transparent">
+      <section id="pricing" className="relative z-10 py-32 px-6 lg:px-12 bg-gradient-to-b from-transparent via-purple-950/10 to-transparent">
         <div className="max-w-5xl mx-auto">
           <AnimatedSection className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6 glow-text">
