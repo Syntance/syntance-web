@@ -491,10 +491,10 @@ export default function SklepyInternetowePage() {
         <div className="max-w-4xl mx-auto">
           <AnimatedSection className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6">
-              <span className="text-gray-400">Headless vs.</span>{' '}
               <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Shopify/WooCommerce
-              </span>
+                Headless
+              </span>{' '}
+              <span className="text-gray-400">vs. Shopify/WooCommerce</span>
             </h2>
           </AnimatedSection>
           
