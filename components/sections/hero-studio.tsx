@@ -48,7 +48,7 @@ export default function HeroStudio() {
             <div 
               className="absolute -inset-1 rounded-full blur-md opacity-25 group-hover:opacity-40 transition-opacity animate-gradient -z-10"
               style={{
-                backgroundImage: 'linear-gradient(to right, #2563eb, #7c3aed, #06b6d4, #7c3aed, #2563eb)',
+                backgroundImage: 'linear-gradient(to right, #ffaa40, #9c40ff, #ffaa40)',
                 backgroundSize: '300% 100%'
               }}
             />
@@ -66,6 +66,23 @@ export default function HeroStudio() {
             Sprawdź cenę
           </a>
         </div>
+      </div>
+      
+      {/* Scroll indicator */}
+      <div 
+        className={`absolute bottom-10 left-1/2 -translate-x-1/2 transition-all duration-1000 delay-700 ${
+          isVisible ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <button 
+          onClick={scrollToNext}
+          className="group flex flex-col items-center gap-2 cursor-pointer"
+          aria-label="Przewiń w dół"
+        >
+          <div className="w-6 h-10 border-2 border-gray-600 rounded-full flex justify-center group-hover:border-gray-400 transition-colors">
+            <div className="w-1 h-3 bg-gray-400 rounded-full mt-2 animate-bounce group-hover:bg-white transition-colors" />
+          </div>
+        </button>
       </div>
     </section>
   );

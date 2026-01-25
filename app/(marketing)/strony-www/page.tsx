@@ -23,6 +23,19 @@ import {
 import Link from 'next/link'
 import GradientText from '@/components/GradientText'
 import TiltCard from '@/components/tilt-card'
+import SubpageScrollbar from '@/components/SubpageScrollbar'
+
+// Sekcje dla scrollbar
+const scrollbarSections = [
+  { id: "hero-strony", label: "Start" },
+  { id: "problem", label: "Problem" },
+  { id: "solution", label: "Rozwiązanie" },
+  { id: "audience", label: "Dla kogo" },
+  { id: "process", label: "Proces" },
+  { id: "tech", label: "Technologia" },
+  { id: "pricing", label: "Cennik" },
+  { id: "faq", label: "FAQ" },
+]
 
 // Komponent animowanej sekcji
 function AnimatedSection({ 
@@ -247,8 +260,10 @@ export default function StronyWWWPage() {
 
   return (
     <div className="min-h-screen w-full" style={{ overflowX: 'clip' }}>
+      <SubpageScrollbar sections={scrollbarSections} />
+      
       {/* Hero Section - Full viewport */}
-      <section className="relative z-10 min-h-screen flex items-center justify-center px-6 lg:px-12 pt-32 pb-20">
+      <section id="hero-strony" className="relative z-10 min-h-screen flex items-center justify-center px-6 lg:px-12 pt-32 pb-20">
         <div className={`max-w-5xl mx-auto text-center transition-all duration-1000 ${
           heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
@@ -275,7 +290,7 @@ export default function StronyWWWPage() {
               <div 
                 className="absolute -inset-1 rounded-full blur-md opacity-25 group-hover:opacity-40 transition-opacity animate-gradient -z-10"
                 style={{
-                  backgroundImage: 'linear-gradient(to right, #2563eb, #7c3aed, #06b6d4, #7c3aed, #2563eb)',
+                  backgroundImage: 'linear-gradient(to right, #06b6d4, #3b82f6, #8b5cf6, #3b82f6, #06b6d4)',
                   backgroundSize: '300% 100%'
                 }}
               />
@@ -354,7 +369,7 @@ export default function StronyWWWPage() {
       </section>
 
       {/* Solution Section - Cards reveal */}
-      <section className="relative z-10 py-32 px-6 lg:px-12">
+      <section id="solution" className="relative z-10 py-32 px-6 lg:px-12">
         <div className="max-w-5xl mx-auto">
           <AnimatedSection className="text-center mb-20">
             <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6 glow-text">
@@ -386,7 +401,7 @@ export default function StronyWWWPage() {
       </section>
 
       {/* Target Audience - Timeline style */}
-      <section className="relative z-10 py-32 px-6 lg:px-12 bg-gradient-to-b from-transparent via-blue-950/10 to-transparent">
+      <section id="audience" className="relative z-10 py-32 px-6 lg:px-12 bg-gradient-to-b from-transparent via-blue-950/10 to-transparent">
         <div className="max-w-5xl mx-auto">
           <AnimatedSection className="text-center mb-20">
             <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6 glow-text">
@@ -422,7 +437,7 @@ export default function StronyWWWPage() {
       </section>
 
       {/* Process Section - Vertical Timeline */}
-      <section className="relative z-10 py-32 px-6 lg:px-12">
+      <section id="process" className="relative z-10 py-32 px-6 lg:px-12">
         <div className="max-w-4xl mx-auto">
           <AnimatedSection className="text-center mb-20">
             <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6 glow-text">
@@ -486,7 +501,7 @@ export default function StronyWWWPage() {
       </section>
 
       {/* Stats Section */}
-      <section className="relative z-10 py-32 px-6 lg:px-12">
+      <section id="tech" className="relative z-10 py-32 px-6 lg:px-12">
         <div className="max-w-4xl mx-auto">
           <AnimatedSection className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6">
@@ -524,7 +539,7 @@ export default function StronyWWWPage() {
       </section>
 
       {/* Pricing Preview */}
-      <section className="relative z-10 py-32 px-6 lg:px-12 bg-gradient-to-b from-transparent via-purple-950/10 to-transparent">
+      <section id="pricing" className="relative z-10 py-32 px-6 lg:px-12 bg-gradient-to-b from-transparent via-purple-950/10 to-transparent">
         <div className="max-w-4xl mx-auto">
           <AnimatedSection className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6 glow-text">
