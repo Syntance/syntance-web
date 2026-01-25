@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import TiltCard from "@/components/tilt-card";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
@@ -57,9 +58,9 @@ export default function OfferCards() {
           <div className="grid md:grid-cols-2 gap-8">
             {/* Karta 1: Strony WWW */}
             <TiltCard className="h-full">
-              <div 
-                onClick={() => scrollToPricing('Strona')}
-                className="group h-full product-card rounded-3xl p-8 cursor-pointer transition-all duration-300"
+              <Link 
+                href="/strony-www"
+                className="group h-full product-card rounded-3xl p-8 cursor-pointer transition-all duration-300 block"
               >
                 <div className="text-5xl mb-6">🌐</div>
                 
@@ -92,7 +93,7 @@ export default function OfferCards() {
                   Dowiedz się więcej 
                   <span className="ml-2">→</span>
                 </div>
-              </div>
+              </Link>
             </TiltCard>
 
             {/* Karta 2: Sklepy e-commerce */}
