@@ -6,14 +6,15 @@ import { Menu, X, ChevronDown } from "lucide-react";
 import { useState, useMemo } from "react";
 import GooeyNav from "@/components/ui/gooey-nav";
 
-// Główne linki nawigacyjne z dropdownem dla "Wiedza"
+// Główne linki nawigacyjne
 const navItems = [
   { label: "Strona główna", href: "/" },
+  { label: "Strony", href: "/strony-www" },
+  { label: "Sklepy", href: "/sklepy-internetowe" },
   { 
     label: "Wiedza", 
     href: "#",
     dropdown: [
-      { label: "Strony WWW", href: "/strony-www" },
       { label: "Strategia", href: "/strategia" },
       { label: "Technologia", href: "/nextjs" },
     ]
@@ -26,12 +27,13 @@ const navItems = [
 // Mapowanie pathname na indeks aktywnego elementu
 const pathToNavIndex: Record<string, number> = {
   '/': 0,
-  '/strony-www': 1, // "Wiedza" dropdown
-  '/strategia': 1,  // "Wiedza" dropdown
-  '/nextjs': 1,     // "Wiedza" dropdown
-  '/cennik': 2,
-  '/o-nas': 3,
-  '/kontakt': 4,
+  '/strony-www': 1,
+  '/sklepy-internetowe': 2,
+  '/strategia': 3,           // "Wiedza" dropdown
+  '/nextjs': 3,              // "Wiedza" dropdown
+  '/cennik': 4,
+  '/o-nas': 5,
+  '/kontakt': 6,
 };
 
 export default function NavbarStudio() {
@@ -45,7 +47,7 @@ export default function NavbarStudio() {
   }, [pathname]);
 
   // Sprawdź czy któryś z linków w "Wiedza" jest aktywny
-  const isWiedzaActive = pathname === '/strony-www' || pathname === '/strategia' || pathname === '/nextjs';
+  const isWiedzaActive = pathname === '/strategia' || pathname === '/nextjs';
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 py-6 px-6 lg:px-12 backdrop-blur-md bg-black/30 transition-all duration-300">
@@ -98,7 +100,7 @@ export default function NavbarStudio() {
       {/* Mobile Menu - pokazuj do 1023px */}
       <div 
         className={`lg:hidden overflow-hidden transition-all duration-300 ${
-          mobileMenuOpen ? 'max-h-[400px] opacity-100 mt-6' : 'max-h-0 opacity-0'
+          mobileMenuOpen ? 'max-h-[500px] opacity-100 mt-6' : 'max-h-0 opacity-0'
         }`}
       >
         <div className="space-y-1 py-4">
@@ -123,6 +125,28 @@ export default function NavbarStudio() {
             </Link>
           )}
           
+          {/* Strony */}
+          <Link
+            href="/strony-www"
+            onClick={() => setMobileMenuOpen(false)}
+            className={`block py-3 text-sm font-light tracking-wider transition-colors ${
+              pathname === '/strony-www' ? 'text-white' : 'text-gray-400 hover:text-purple-300'
+            }`}
+          >
+            Strony
+          </Link>
+          
+          {/* Sklepy */}
+          <Link
+            href="/sklepy-internetowe"
+            onClick={() => setMobileMenuOpen(false)}
+            className={`block py-3 text-sm font-light tracking-wider transition-colors ${
+              pathname === '/sklepy-internetowe' ? 'text-white' : 'text-gray-400 hover:text-purple-300'
+            }`}
+          >
+            Sklepy
+          </Link>
+          
           {/* Wiedza dropdown */}
           <div>
             <button
@@ -140,24 +164,10 @@ export default function NavbarStudio() {
             
             <div 
               className={`overflow-hidden transition-all duration-200 ${
-                mobileWiedzaOpen ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'
+                mobileWiedzaOpen ? 'max-h-[150px] opacity-100' : 'max-h-0 opacity-0'
               }`}
             >
               <div className="pl-4 space-y-1 border-l border-white/10 ml-2">
-                <Link
-                  href="/strony-www"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    setMobileWiedzaOpen(false);
-                  }}
-                  className={`block py-2 text-sm font-light tracking-wider transition-colors ${
-                    pathname === '/strony-www' 
-                      ? 'text-white' 
-                      : 'text-gray-400 hover:text-purple-300'
-                  }`}
-                >
-                  Strony WWW
-                </Link>
                 <Link
                   href="/strategia"
                   onClick={() => {

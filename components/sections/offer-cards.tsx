@@ -4,8 +4,18 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import TiltCard from "@/components/tilt-card";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { defaultStartingPrices, type StartingPrices } from "@/sanity/queries/pricing";
 
-export default function OfferCards() {
+// Funkcja do formatowania ceny
+function formatPrice(price: number): string {
+  return price.toLocaleString('pl-PL');
+}
+
+interface OfferCardsProps {
+  prices?: StartingPrices;
+}
+
+export default function OfferCards({ prices = defaultStartingPrices }: OfferCardsProps) {
   const [isVisible, setIsVisible] = useState(false);
   const isMobile = useIsMobile();
 
@@ -24,24 +34,6 @@ export default function OfferCards() {
 
     return () => observer.disconnect();
   }, []);
-
-  const scrollToPricing = (filter: string) => {
-    const element = document.getElementById('pricing-studio');
-    if (element) {
-      const navbarHeight = 100;
-      const elementRect = element.getBoundingClientRect();
-      const elementTop = elementRect.top + window.scrollY;
-      const scrollToPosition = elementTop - navbarHeight;
-      
-      window.scrollTo({
-        top: scrollToPosition,
-        behavior: 'smooth'
-      });
-      
-      // Tutaj możesz dodać logikę do ustawienia filtra w konfigurator cennika
-      // np. sessionStorage.setItem('pricingFilter', filter);
-    }
-  };
 
   return (
     <section 
@@ -82,7 +74,7 @@ export default function OfferCards() {
                 
                 <div className="flex items-center justify-between mb-6 pb-6 border-b border-white/10">
                   <div>
-                    <div className="text-2xl font-light text-white">Od 5 000 PLN</div>
+                    <div className="text-2xl font-light text-white">Od {formatPrice(prices.websiteStartPrice)} PLN</div>
                     <div className="text-sm text-gray-400 font-light mt-1">2-4 tygodnie</div>
                   </div>
                 </div>
@@ -98,9 +90,9 @@ export default function OfferCards() {
 
             {/* Karta 2: Sklepy e-commerce */}
             <TiltCard className="h-full">
-              <div 
-                onClick={() => scrollToPricing('Sklep')}
-                className="group h-full product-card rounded-3xl p-8 cursor-pointer transition-all duration-300"
+              <Link 
+                href="/sklepy-internetowe"
+                className="group h-full product-card rounded-3xl p-8 cursor-pointer transition-all duration-300 block"
               >
                 <div className="text-5xl mb-6">🛒</div>
                 
@@ -122,7 +114,7 @@ export default function OfferCards() {
                 
                 <div className="flex items-center justify-between mb-6 pb-6 border-b border-white/10">
                   <div>
-                    <div className="text-2xl font-light text-white">Od 20 000 PLN</div>
+                    <div className="text-2xl font-light text-white">Od {formatPrice(prices.ecommerceStandardStartPrice)} PLN</div>
                     <div className="text-sm text-gray-400 font-light mt-1">4-6 tygodni</div>
                   </div>
                 </div>
@@ -133,7 +125,7 @@ export default function OfferCards() {
                   Dowiedz się więcej 
                   <span className="ml-2">→</span>
                 </div>
-              </div>
+              </Link>
             </TiltCard>
           </div>
         </div>

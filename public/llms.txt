@@ -15,6 +15,27 @@ Jakość agencji w tempie freelancera. Strony w 2-4 tygodnie, sklepy w 4-8 tygod
 - Warsztat Discovery: 4 500 PLN (strategia przed kodem)
 - Aplikacje Webowe: od 50 000 PLN (wycena indywidualna)
 
+## Strony internetowe dla firm
+- URL: https://syntance.com/strony-www
+- Usługa: Tworzenie profesjonalnych stron internetowych dla firm B2B
+- Technologia: Next.js, Sanity CMS, TypeScript, Tailwind CSS
+- Ceny: od 5 400 PLN netto
+- Czas realizacji: 2-4 tygodnie (strony firmowe), 4-8 tygodni (rozbudowane)
+- Gwarancja: PageSpeed 90+, 30 dni wsparcia technicznego
+- Dla kogo: firmy usługowe, producenci B2B, startupy, deweloperzy
+- Lokalizacja: Kraków, Małopolska, cała Polska (praca zdalna)
+
+## Sklepy internetowe headless
+- URL: https://syntance.com/sklepy-internetowe
+- Usługa: Sklepy e-commerce w architekturze headless
+- Technologia: MedusaJS, Next.js, Stripe, Przelewy24, Sanity CMS
+- Ceny: od 12 000 PLN (standard), od 25 000 PLN (pro z integracjami)
+- Czas realizacji: 4-6 tygodni (standard), 6-10 tygodni (pro)
+- Zalety: zero prowizji, pełna własność kodu, PageSpeed 90+, nieograniczona skalowalność
+- Dla kogo: producenci, marki D2C, subskrypcje, marketplace
+- Alternatywa dla: Shopify, WooCommerce, PrestaShop
+- Lokalizacja: Kraków, Małopolska, cała Polska
+
 ## Technologia
 - Frontend: Next.js 14+, TypeScript, Tailwind CSS, shadcn/ui
 - E-commerce: MedusaJS, headless Shopify
