@@ -13,6 +13,7 @@ const navItems = [
     label: "Wiedza", 
     href: "#",
     dropdown: [
+      { label: "Strony WWW", href: "/strony-www" },
       { label: "Strategia", href: "/strategia" },
       { label: "Technologia", href: "/nextjs" },
     ]
@@ -25,8 +26,9 @@ const navItems = [
 // Mapowanie pathname na indeks aktywnego elementu
 const pathToNavIndex: Record<string, number> = {
   '/': 0,
-  '/strategia': 1, // "Wiedza" dropdown
-  '/nextjs': 1,    // "Wiedza" dropdown
+  '/strony-www': 1, // "Wiedza" dropdown
+  '/strategia': 1,  // "Wiedza" dropdown
+  '/nextjs': 1,     // "Wiedza" dropdown
   '/cennik': 2,
   '/o-nas': 3,
   '/kontakt': 4,
@@ -43,7 +45,7 @@ export default function NavbarStudio() {
   }, [pathname]);
 
   // Sprawdź czy któryś z linków w "Wiedza" jest aktywny
-  const isWiedzaActive = pathname === '/strategia' || pathname === '/nextjs';
+  const isWiedzaActive = pathname === '/strony-www' || pathname === '/strategia' || pathname === '/nextjs';
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 py-6 px-6 lg:px-12 backdrop-blur-md bg-black/30 transition-all duration-300">
@@ -142,6 +144,20 @@ export default function NavbarStudio() {
               }`}
             >
               <div className="pl-4 space-y-1 border-l border-white/10 ml-2">
+                <Link
+                  href="/strony-www"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setMobileWiedzaOpen(false);
+                  }}
+                  className={`block py-2 text-sm font-light tracking-wider transition-colors ${
+                    pathname === '/strony-www' 
+                      ? 'text-white' 
+                      : 'text-gray-400 hover:text-purple-300'
+                  }`}
+                >
+                  Strony WWW
+                </Link>
                 <Link
                   href="/strategia"
                   onClick={() => {
