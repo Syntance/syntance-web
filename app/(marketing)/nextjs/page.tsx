@@ -189,7 +189,7 @@ export default function NextjsPage() {
             </GradientText>?
           </h1>
           <p className="text-xl md:text-2xl font-light tracking-wide text-gray-400 mb-6">
-            To nie "tylko framework" — to przewaga konkurencyjna
+            To nie &ldquo;tylko framework&rdquo; — to przewaga konkurencyjna
           </p>
           <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed mb-12">
             Netflix, TikTok, Nike, Notion — nie wybrali Next.js przypadkowo. 
@@ -347,7 +347,7 @@ export default function NextjsPage() {
                     </h3>
                     <p className="text-gray-400 leading-relaxed mb-4">
                       Tylko w jednym przypadku: <strong className="text-white">prosty blog, zero ambicji wzrostu, minimalna inwestycja</strong>. 
-                      Jeśli potrzebujesz strony "bo trzeba mieć stronę" — WordPress wystarczy.
+                      Jeśli potrzebujesz strony &ldquo;bo trzeba mieć stronę&rdquo; — WordPress wystarczy.
                     </p>
                     <p className="text-gray-400 leading-relaxed">
                       Ale jeśli Twoja strona ma <strong className="text-white">generować leady, sprzedawać produkty, lub budować markę</strong> — 

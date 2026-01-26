@@ -212,7 +212,7 @@ export default function StrategiaPage() {
           <AnimatedSection>
             <h2 className="text-3xl md:text-5xl font-light tracking-wide text-center mb-6">
               Czy Twoja strona to{' '}
-              <span className="text-red-400">"ładny obrazek"</span>?
+              <span className="text-red-400">&ldquo;ładny obrazek&rdquo;</span>?
             </h2>
             <p className="text-xl text-gray-400 text-center mb-16">
               Większość stron wygląda dobrze, ale nie sprzedaje.
@@ -396,7 +396,7 @@ export default function StrategiaPage() {
               Strona = mapa procesu decyzyjnego
             </h2>
             <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-              Zamiast projektować "ładny layout", projektujesz proces decyzyjny w formie scrolla.
+              Zamiast projektować &ldquo;ładny layout&rdquo;, projektujesz proces decyzyjny w formie scrolla.
             </p>
           </AnimatedSection>
           
