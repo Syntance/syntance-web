@@ -758,12 +758,6 @@ export function PricingConfigurator({ data }: Props) {
                     {calculation.priceNetto.toLocaleString('pl-PL')} <span className="text-xs sm:text-sm font-normal text-gray-400">PLN</span>
                   </span>
                 </div>
-                {calculation.complexityPrice > 0 && (
-                  <div className="flex justify-between text-xs sm:text-sm gap-2">
-                    <span className="text-amber-500/80">w tym za złożoność</span>
-                    <span className="text-amber-400">+{calculation.complexityPrice.toLocaleString('pl-PL')} PLN</span>
-                  </div>
-                )}
                 <div className="flex justify-between text-xs sm:text-sm gap-1 sm:gap-2 min-w-0">
                   <span className="text-gray-400 truncate">Brutto (+{config?.vatRate || 23}% VAT)</span>
                   <span className="text-gray-400 whitespace-nowrap">{calculation.priceBrutto.toLocaleString('pl-PL')} PLN</span>
