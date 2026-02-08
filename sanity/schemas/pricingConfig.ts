@@ -168,6 +168,13 @@ export default defineType({
           description: 'Suma wag złożoności od której projekt jest "bardzo wysoko złożony"',
         }),
         defineField({
+          name: 'lowDays',
+          title: 'Dodatkowe dni (niska)',
+          type: 'number',
+          initialValue: 0,
+          description: 'Ile dni dodać dla niskiej złożoności',
+        }),
+        defineField({
           name: 'mediumDays',
           title: 'Dodatkowe dni (średnia)',
           type: 'number',
