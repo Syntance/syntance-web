@@ -6,6 +6,7 @@ import { AllSchemasDynamic } from "@/components/schema-org-dynamic";
 import { generateSeoMetadata, getSeoSettings } from "@/lib/seo";
 import NavbarStudio from "@/components/navbar-studio";
 import { ProgressBar } from "@/components/progress-bar";
+import { CookieBanner } from "@/components/CookieBanner";
 import { Suspense } from "react";
 
 const spaceGrotesk = Space_Grotesk({
@@ -57,6 +58,7 @@ export default async function RootLayout({
         <AllSchemasDynamic seo={seo} />
         <NavbarStudio />
         {children}
+        <CookieBanner />
         <Analytics />
       </body>
     </html>
