@@ -140,6 +140,7 @@ export function PricingConfigurator({ data }: Props) {
       mediumThreshold: 5,
       highThreshold: 10,
       veryHighThreshold: 15,
+      lowDays: 0,
       mediumDays: 2,
       highDays: 4,
       veryHighDays: 7,
@@ -171,6 +172,9 @@ export function PricingConfigurator({ data }: Props) {
     } else if (totalComplexityWeight >= complexitySettings.mediumThreshold) {
       complexity = 'medium'
       complexityDays = complexitySettings.mediumDays
+    } else {
+      complexity = 'low'
+      complexityDays = complexitySettings.lowDays ?? 0
     }
 
     // Dodaj cenę za dni złożoności

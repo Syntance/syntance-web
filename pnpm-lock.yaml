@@ -71,6 +71,9 @@ importers:
       sharp:
         specifier: ^0.34.5
         version: 0.34.5
+      styled-components:
+        specifier: ^6.1.15
+        version: 6.3.5(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       tailwind-merge:
         specifier: ^2.2.0
         version: 2.6.0
