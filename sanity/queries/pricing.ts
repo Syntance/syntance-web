@@ -127,9 +127,13 @@ export interface ComplexitySettings {
   highThreshold: number
   veryHighThreshold: number
   lowDays: number
+  showLowDaysLabel?: boolean
   mediumDays: number
+  showMediumDaysLabel?: boolean
   highDays: number
+  showHighDaysLabel?: boolean
   veryHighDays: number
+  showVeryHighDaysLabel?: boolean
   dayPrice: number
 }
 
@@ -272,9 +276,13 @@ export const defaultPricingData: PricingData = {
       highThreshold: 10,
       veryHighThreshold: 15,
       lowDays: 0,
+      showLowDaysLabel: false,
       mediumDays: 2,
+      showMediumDaysLabel: true,
       highDays: 4,
+      showHighDaysLabel: true,
       veryHighDays: 7,
+      showVeryHighDaysLabel: true,
       dayPrice: 1200,
     },
     // Ceny startowe

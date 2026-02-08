@@ -141,9 +141,13 @@ export function PricingConfigurator({ data }: Props) {
       highThreshold: 10,
       veryHighThreshold: 15,
       lowDays: 0,
+      showLowDaysLabel: false,
       mediumDays: 2,
+      showMediumDaysLabel: true,
       highDays: 4,
+      showHighDaysLabel: true,
       veryHighDays: 7,
+      showVeryHighDaysLabel: true,
       dayPrice: 1200,
     }
 
@@ -777,11 +781,19 @@ export function PricingConfigurator({ data }: Props) {
                   <div className="text-base sm:text-lg font-semibold text-white">{calculation.days}</div>
                   <div className="text-xs text-gray-400">
                     dni roboczych
-                    {calculation.complexityDays > 0 && (
-                      <span className="block text-amber-400/80">
-                        (+{calculation.complexityDays} za złożoność)
-                      </span>
-                    )}
+                    {calculation.complexityDays > 0 && (() => {
+                      const shouldShow = 
+                        (calculation.complexity === 'low' && complexitySettings.showLowDaysLabel) ||
+                        (calculation.complexity === 'medium' && complexitySettings.showMediumDaysLabel) ||
+                        (calculation.complexity === 'high' && complexitySettings.showHighDaysLabel) ||
+                        (calculation.complexity === 'very-high' && complexitySettings.showVeryHighDaysLabel)
+                      
+                      return shouldShow ? (
+                        <span className="block text-amber-400/80">
+                          (+{calculation.complexityDays} za złożoność)
+                        </span>
+                      ) : null
+                    })()}
                   </div>
                 </div>
                 <div className="text-center p-2 sm:p-3 rounded-lg bg-white/5">
