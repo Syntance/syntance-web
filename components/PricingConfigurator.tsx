@@ -782,11 +782,12 @@ export function PricingConfigurator({ data }: Props) {
                   <div className="text-xs text-gray-400">
                     dni roboczych
                     {calculation.complexityDays > 0 && (() => {
+                      const cs = config?.complexitySettings
                       const shouldShow = 
-                        (calculation.complexity === 'low' && complexitySettings.showLowDaysLabel) ||
-                        (calculation.complexity === 'medium' && complexitySettings.showMediumDaysLabel) ||
-                        (calculation.complexity === 'high' && complexitySettings.showHighDaysLabel) ||
-                        (calculation.complexity === 'very-high' && complexitySettings.showVeryHighDaysLabel)
+                        (calculation.complexity === 'low' && cs?.showLowDaysLabel) ||
+                        (calculation.complexity === 'medium' && (cs?.showMediumDaysLabel ?? true)) ||
+                        (calculation.complexity === 'high' && (cs?.showHighDaysLabel ?? true)) ||
+                        (calculation.complexity === 'very-high' && (cs?.showVeryHighDaysLabel ?? true))
                       
                       return shouldShow ? (
                         <span className="block text-amber-400/80">
