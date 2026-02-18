@@ -349,17 +349,7 @@ const GooeyNav = ({
           content: none;
         }
         .gooey-effect.filter::after {
-          content: "";
-          position: absolute;
-          inset: 3px;
-          background: #e5e5e5;
-          transform: scale(0);
-          opacity: 0;
-          z-index: -1;
-          border-radius: 9999px;
-        }
-        .gooey-effect.active::after {
-          animation: pill 0.3s ease both;
+          content: none;
         }
         @keyframes pill {
           to {
