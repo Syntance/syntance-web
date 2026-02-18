@@ -151,39 +151,7 @@ const GooeyNav = ({
     const labelText = element.querySelector('a')?.childNodes[0]?.textContent || element.innerText;
     textRef.current.innerText = labelText.trim();
   };
-  const handleClick = (e: React.MouseEvent<HTMLLIElement>, index: number) => {
-    e.preventDefault();
-    const liEl = e.currentTarget;
-    const item = items[index];
-    
-    // Jeśli element ma dropdown, otwórz/zamknij go zamiast nawigować
-    if (item.dropdown && item.dropdown.length > 0) {
-      setOpenDropdown(openDropdown === index ? null : index);
-      return;
-    }
-    
-    // Zamknij dropdown przy nawigacji
-    setOpenDropdown(null);
-    
-    // Jeśli klikamy "Strona główna" będąc już na stronie głównej - scroll do góry
-    if (activeIndex === index && item.href === '/' && pathname === '/') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-    
-    if (activeIndex === index) return;
-    
-    // Blokuj reakcję na externalActiveIndex przez czas scrollowania
-    // Anuluj poprzedni timeout żeby szybkie kliknięcia nie resetowały blokady przedwcześnie
-    isNavigatingRef.current = true;
-    if (navigatingTimeoutRef.current) clearTimeout(navigatingTimeoutRef.current);
-    navigatingTimeoutRef.current = setTimeout(() => { isNavigatingRef.current = false; }, 1200);
-    
-    // Wywołaj callback przed ustawieniem active index
-    if (onNavigate) {
-      onNavigate(index);
-    }
-    
+  const movePill = (liEl: HTMLElement, index: number) => {
     setActiveIndex(index);
     updateEffectPosition(liEl);
     if (filterRef.current) {
@@ -198,17 +166,52 @@ const GooeyNav = ({
     if (filterRef.current) {
       makeParticles(filterRef.current);
     }
-    // Navigate to href
+  };
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLLIElement>, index: number) => {
+    if (e.button !== 0) return;
+    const liEl = e.currentTarget;
+    const item = items[index];
+
+    if (item.dropdown && item.dropdown.length > 0) return;
+    if (activeIndex === index) return;
+
+    isNavigatingRef.current = true;
+    if (navigatingTimeoutRef.current) clearTimeout(navigatingTimeoutRef.current);
+    navigatingTimeoutRef.current = setTimeout(() => { isNavigatingRef.current = false; }, 1200);
+
+    if (onNavigate) {
+      onNavigate(index);
+    }
+
+    movePill(liEl, index);
+  };
+
+  const handleClick = (e: React.MouseEvent<HTMLLIElement>, index: number) => {
+    e.preventDefault();
+    const item = items[index];
+    
+    if (item.dropdown && item.dropdown.length > 0) {
+      setOpenDropdown(openDropdown === index ? null : index);
+      return;
+    }
+    
+    setOpenDropdown(null);
+    
+    if (activeIndex === index && item.href === '/' && pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    
     const href = item.href;
     if (href.startsWith('#')) {
       const element = document.querySelector(href) as HTMLElement;
       if (element) {
-        const navbarHeight = 100; // wysokość fixed navbar + padding
+        const navbarHeight = 100;
         const viewportHeight = window.innerHeight;
         const elementHeight = element.offsetHeight;
         const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
         
-        // Centrowanie sekcji na ekranie
         const centerOffset = (viewportHeight - elementHeight) / 2;
         const offsetPosition = elementPosition - Math.max(navbarHeight, centerOffset);
         
@@ -218,11 +221,8 @@ const GooeyNav = ({
         });
       }
     } else if (href.startsWith('/#')) {
-      // Link do sekcji na stronie głównej z innej podstrony
-      // Dispatch event - ProgressBar obsłuży nawigację z animacją
       window.dispatchEvent(new CustomEvent('navigation-start', { detail: { href } }));
     } else {
-      // Link do podstrony - dispatch event, ProgressBar obsłuży nawigację
       window.dispatchEvent(new CustomEvent('navigation-start', { detail: { href } }));
     }
   };
@@ -349,7 +349,17 @@ const GooeyNav = ({
           content: none;
         }
         .gooey-effect.filter::after {
-          content: none;
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: #e5e5e5;
+          transform: scale(0);
+          opacity: 0;
+          z-index: -1;
+          border-radius: 9999px;
+        }
+        .gooey-effect.active::after {
+          animation: pill 0.3s ease both;
         }
         @keyframes pill {
           to {
@@ -507,6 +517,7 @@ const GooeyNav = ({
                 className={`gooey-nav-item rounded-full relative cursor-pointer transition-[background-color_color] duration-300 ease text-white text-xs xl:text-sm font-light tracking-wider ${
                   activeIndex === index ? 'active' : ''
                 }`}
+                onPointerDown={(e) => handlePointerDown(e, index)}
                 onClick={(e) => handleClick(e, index)}
               >
                 <a
