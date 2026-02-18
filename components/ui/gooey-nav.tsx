@@ -351,7 +351,7 @@ const GooeyNav = ({
         .gooey-effect.filter::after {
           content: "";
           position: absolute;
-          inset: 0;
+          inset: 3px;
           background: #e5e5e5;
           transform: scale(0);
           opacity: 0;
