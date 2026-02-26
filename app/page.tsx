@@ -16,7 +16,7 @@ const PortfolioStudio = dynamic(() => import("@/components/sections/portfolio-st
 const ProcessStudio = dynamic(() => import("@/components/sections/process-studio"), { ssr: true });
 const CMSSection = dynamic(() => import("@/components/sections/cms-section"), { ssr: true });
 const PricingStudioNew = dynamic(() => import("@/components/sections/pricing-studio-new"), { ssr: true });
-const AboutSection = dynamic(() => import("@/components/sections/about-section"), { ssr: true });
+
 
 export default function HomePage() {
   const [isPageReady, setIsPageReady] = useState(false);
@@ -46,7 +46,6 @@ export default function HomePage() {
         <ValuesStudio />
         <PortfolioStudio />
         <PricingStudioNew />
-        <AboutSection />
         
         {/* Contact Section */}
         <section id="contact" aria-labelledby="contact-heading" className="relative z-10 px-6 lg:px-12 py-32">
