@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Target, Users, Zap, MessageSquare, Brain, GitBranch, Sparkles, Gauge, Bot } from "lucide-react";
+import { Target, Users, Zap, Workflow, Palette, PenTool, Code2, Shield, FolderGit2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import AnimatedSection from "@/components/AnimatedSection";
 
@@ -21,28 +21,28 @@ const layers = [
   },
   {
     level: 2,
-    title: "Mechanika",
-    subtitle: "Konwersja",
-    tagline: "To, co zmienia odwiedzającego w klienta.",
+    title: "Projektowanie",
+    subtitle: "Doświadczenie",
+    tagline: "Każdy ekran, tekst i przycisk ma swoje zadanie.",
     gradient: "from-blue-500 to-cyan-500",
     textColor: "text-blue-400",
     items: [
-      { icon: MessageSquare, label: "Copywriting", desc: "Tekst, który sprzedaje" },
-      { icon: Brain, label: "Psychologia", desc: "Zaufanie i decyzja" },
-      { icon: GitBranch, label: "User Flow", desc: "Ścieżka do kontaktu" },
+      { icon: Workflow, label: "UX / User Flow", desc: "Ścieżka do konwersji" },
+      { icon: Palette, label: "UI / Design", desc: "Estetyka dopasowana do branży" },
+      { icon: PenTool, label: "Copywriting", desc: "Tekst, który prowadzi do działania" },
     ],
   },
   {
     level: 3,
-    title: "Efekt końcowy",
-    subtitle: "Tech & Design",
-    tagline: "To, co buduje zaufanie i zachwyt.",
+    title: "Development",
+    subtitle: "Technologia",
+    tagline: "Szybka, bezpieczna, Twoja.",
     gradient: "from-cyan-500 to-teal-500",
     textColor: "text-cyan-400",
     items: [
-      { icon: Sparkles, label: "Design premium", desc: "Estetyka profesjonalisty" },
-      { icon: Gauge, label: "PageSpeed 90+", desc: "Błyskawiczne ładowanie" },
-      { icon: Bot, label: "AI Ready", desc: "Widoczność w ChatGPT" },
+      { icon: Code2, label: "Next.js / PageSpeed 90+", desc: "Błyskawiczne ładowanie" },
+      { icon: Shield, label: "Bezpieczeństwo", desc: "Zero wtyczek, zero dziur" },
+      { icon: FolderGit2, label: "Własność kodu", desc: "Twoje repo od dnia 1" },
     ],
   },
 ];
