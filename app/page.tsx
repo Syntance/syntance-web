@@ -3,6 +3,7 @@
 import { useState, useLayoutEffect } from "react";
 import dynamic from "next/dynamic";
 import SectionScrollbar from "@/components/SectionScrollbar";
+
 import AnimatedSection from "@/components/AnimatedSection";
 import { ContactForm } from "@/components/contact-form";
 import { Twitter, Linkedin, Github } from "lucide-react";
