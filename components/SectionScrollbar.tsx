@@ -9,7 +9,6 @@ const sections = [
   { id: "values-studio", label: "Dlaczego my" },
   { id: "portfolio-studio", label: "Portfolio" },
   { id: "pricing-studio", label: "Cennik" },
-  { id: "o-nas", label: "O nas" },
   { id: "contact", label: "Kontakt" },
 ];
 
