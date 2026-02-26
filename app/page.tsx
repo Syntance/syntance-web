@@ -3,6 +3,7 @@
 import { useState, useLayoutEffect } from "react";
 import dynamic from "next/dynamic";
 import SectionScrollbar from "@/components/SectionScrollbar";
+import AnimatedSection from "@/components/AnimatedSection";
 import { ContactForm } from "@/components/contact-form";
 import { Twitter, Linkedin, Github } from "lucide-react";
 
@@ -50,13 +51,16 @@ export default function HomePage() {
         {/* Contact Section */}
         <section id="contact" aria-labelledby="contact-heading" className="relative z-10 px-6 lg:px-12 py-32">
           <div className="max-w-4xl mx-auto">
-            <h2 id="contact-heading" className="text-4xl md:text-5xl font-light tracking-wider mb-8 text-center glow-text">
-              Porozmawiajmy
-            </h2>
-            <p className="text-xl text-gray-400 font-light tracking-wide text-center mb-16">
-              Jeśli masz pytania, na które nie znalazłeś odpowiedzi, skontaktuj się z nami.
-            </p>
+            <AnimatedSection>
+              <h2 id="contact-heading" className="text-4xl md:text-5xl font-light tracking-wider mb-8 text-center glow-text">
+                Porozmawiajmy
+              </h2>
+              <p className="text-xl text-gray-400 font-light tracking-wide text-center mb-16">
+                Jeśli masz pytania, na które nie znalazłeś odpowiedzi, skontaktuj się z nami.
+              </p>
+            </AnimatedSection>
             
+            <AnimatedSection delay={100}>
             <div className="grid md:grid-cols-2 gap-12 mb-16">
               {/* Contact Info */}
               <address className="space-y-8 not-italic">
@@ -93,6 +97,7 @@ export default function HomePage() {
               {/* Contact Form - używamy komponentu zamiast duplikacji */}
               <ContactForm idPrefix="home" source="homepage" showFullRodo={true} />
             </div>
+            </AnimatedSection>
           </div>
         </section>
       </main>

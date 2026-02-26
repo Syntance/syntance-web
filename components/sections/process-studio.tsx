@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { Search, Palette, Code, HeartHandshake } from "lucide-react";
+import AnimatedSection from "@/components/AnimatedSection";
 
 const steps = [
   {
@@ -63,14 +64,16 @@ export default function ProcessStudio() {
     <section id="process-studio" aria-labelledby="process-heading" className="relative z-10 py-32 px-6 lg:px-12 overflow-hidden">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <header className="text-center mb-20">
-          <h2 id="process-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
-            Jak pracujemy
-          </h2>
-          <p className="text-lg font-light tracking-wide text-gray-400">
-            Proces, który łączy design ze strategią
-          </p>
-        </header>
+        <AnimatedSection>
+          <header className="text-center mb-20">
+            <h2 id="process-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
+              Jak pracujemy
+            </h2>
+            <p className="text-lg font-light tracking-wide text-gray-400">
+              Proces, który łączy design ze strategią
+            </p>
+          </header>
+        </AnimatedSection>
 
         {/* Timeline */}
         <div ref={timelineRef} className="relative">

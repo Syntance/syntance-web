@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { Target, Users, Zap, MessageSquare, Brain, GitBranch, Sparkles, Gauge, Bot } from "lucide-react";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import AnimatedSection from "@/components/AnimatedSection";
 
 const layers = [
   {
@@ -80,14 +81,16 @@ export default function AnatomyStudio() {
     >
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <header className="text-center mb-32">
-          <h2 id="anatomy-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
-            Większość agencji zaczyna od grafiki.
-          </h2>
-          <p className="text-2xl md:text-3xl font-light tracking-wide text-gray-400">
-            My zaczynamy od biznesu.
-          </p>
-        </header>
+        <AnimatedSection>
+          <header className="text-center mb-32">
+            <h2 id="anatomy-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
+              Większość agencji zaczyna od grafiki.
+            </h2>
+            <p className="text-2xl md:text-3xl font-light tracking-wide text-gray-400">
+              My zaczynamy od biznesu.
+            </p>
+          </header>
+        </AnimatedSection>
 
         {/* Timeline with cards */}
         <div className="relative">
