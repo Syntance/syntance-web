@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { Check } from "lucide-react";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import AnimatedSection from "@/components/AnimatedSection";
 
 export default function PricingStudioNew() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -40,14 +41,16 @@ export default function PricingStudioNew() {
     >
       <div className="max-w-4xl mx-auto text-center">
         {/* Header */}
-        <header className="mb-16">
-          <h2 id="pricing-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
-            Cennik i wycena
-          </h2>
-          <p className="text-lg font-light tracking-wide text-gray-400 max-w-2xl mx-auto">
-            Każdy projekt jest unikalny — dlatego zaprojektowaliśmy interaktywny konfigurator, który pomoże Ci oszacować koszt i czas realizacji w kilka minut.
-          </p>
-        </header>
+        <AnimatedSection>
+          <header className="mb-16">
+            <h2 id="pricing-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
+              Cennik i wycena
+            </h2>
+            <p className="text-lg font-light tracking-wide text-gray-400 max-w-2xl mx-auto">
+              Każdy projekt jest unikalny — dlatego zaprojektowaliśmy interaktywny konfigurator, który pomoże Ci oszacować koszt i czas realizacji w kilka minut.
+            </p>
+          </header>
+        </AnimatedSection>
 
         {/* Value propositions */}
         <div className="grid md:grid-cols-3 gap-6 mb-16">

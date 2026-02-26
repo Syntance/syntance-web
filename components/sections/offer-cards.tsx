@@ -5,6 +5,7 @@ import Link from "next/link";
 import TiltCard from "@/components/tilt-card";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { defaultStartingPrices, type StartingPrices } from "@/sanity/queries/pricing";
+import AnimatedSection from "@/components/AnimatedSection";
 
 // Funkcja do formatowania ceny
 function formatPrice(price: number): string {
@@ -43,9 +44,11 @@ export default function OfferCards({ prices = defaultStartingPrices }: OfferCard
     >
       <div className="max-w-5xl mx-auto">
         <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-          <h2 id="offer-heading" className="text-4xl md:text-5xl font-light tracking-wider mb-16 text-center glow-text">
-            Co możemy dla Ciebie zbudować?
-          </h2>
+          <AnimatedSection>
+            <h2 id="offer-heading" className="text-4xl md:text-5xl font-light tracking-wider mb-16 text-center glow-text">
+              Co możemy dla Ciebie zbudować?
+            </h2>
+          </AnimatedSection>
           
           <div className="grid md:grid-cols-2 gap-8">
             {/* Karta 1: Strony WWW */}

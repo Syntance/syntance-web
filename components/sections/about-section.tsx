@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import AnimatedSection from "@/components/AnimatedSection";
 
 export default function AboutSection() {
   const [isVisible, setIsVisible] = useState(false);
@@ -29,9 +30,11 @@ export default function AboutSection() {
     >
       <div className="max-w-4xl mx-auto">
         <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-          <h2 id="about-heading" className="text-4xl md:text-5xl font-light tracking-wider mb-12 text-center glow-text">
-            Kim jesteśmy
-          </h2>
+          <AnimatedSection>
+            <h2 id="about-heading" className="text-4xl md:text-5xl font-light tracking-wider mb-12 text-center glow-text">
+              Kim jesteśmy
+            </h2>
+          </AnimatedSection>
           
           <div className="space-y-8 text-center">
             <p className="text-xl md:text-2xl font-light tracking-wide text-gray-200 leading-relaxed">
