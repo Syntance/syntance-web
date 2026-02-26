@@ -4,20 +4,40 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import TiltCard from "@/components/tilt-card";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { defaultStartingPrices, type StartingPrices } from "@/sanity/queries/pricing";
 
-// Funkcja do formatowania ceny
 function formatPrice(price: number): string {
   return price.toLocaleString('pl-PL');
 }
 
-interface OfferCardsProps {
-  prices?: StartingPrices;
-}
+const defaultBasePrices = { website: 10000, ecommerce: 20000 };
 
-export default function OfferCards({ prices = defaultStartingPrices }: OfferCardsProps) {
+export default function OfferCards() {
   const [isVisible, setIsVisible] = useState(false);
+  const [basePrices, setBasePrices] = useState(defaultBasePrices);
   const isMobile = useIsMobile();
+
+  useEffect(() => {
+    const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+    const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production';
+    if (!projectId) return;
+
+    const query = encodeURIComponent(
+      `*[_type == "projectType" && !disabled]{ "id": id.current, basePrice }`
+    );
+    fetch(`https://${projectId}.api.sanity.io/v2024-01-01/data/query/${dataset}?query=${query}`)
+      .then(res => res.json())
+      .then(data => {
+        const types = data.result as { id: string; basePrice?: number }[];
+        if (!types?.length) return;
+        const website = types.find(t => t.id === 'website');
+        const ecommerce = types.find(t => t.id === 'ecommerce');
+        setBasePrices({
+          website: website?.basePrice ?? defaultBasePrices.website,
+          ecommerce: ecommerce?.basePrice ?? defaultBasePrices.ecommerce,
+        });
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -74,7 +94,7 @@ export default function OfferCards({ prices = defaultStartingPrices }: OfferCard
                 
                 <div className="flex items-center justify-between mb-6 pb-6 border-b border-white/10">
                   <div>
-                    <div className="text-2xl font-light text-white">Od {formatPrice(prices.websiteStartPrice)} PLN</div>
+                    <div className="text-2xl font-light text-white">Od&nbsp; {formatPrice(basePrices.website)} PLN</div>
                     <div className="text-sm text-gray-400 font-light mt-1">2-4 tygodnie</div>
                   </div>
                 </div>
@@ -114,7 +134,7 @@ export default function OfferCards({ prices = defaultStartingPrices }: OfferCard
                 
                 <div className="flex items-center justify-between mb-6 pb-6 border-b border-white/10">
                   <div>
-                    <div className="text-2xl font-light text-white">Od {formatPrice(prices.ecommerceStandardStartPrice)} PLN</div>
+                    <div className="text-2xl font-light text-white">Od&nbsp; {formatPrice(basePrices.ecommerce)} PLN</div>
                     <div className="text-sm text-gray-400 font-light mt-1">4-6 tygodni</div>
                   </div>
                 </div>
