@@ -7,6 +7,7 @@ export default function HeroStudio() {
   const [isVisible, setIsVisible] = useState(false);
   const [entryDone, setEntryDone] = useState(false);
   const [isFloating, setIsFloating] = useState(false);
+  const [hiddenByPricing, setHiddenByPricing] = useState(false);
   const placeholderRef = useRef<HTMLDivElement>(null);
   const [inlinePos, setInlinePos] = useState<{ x: number; y: number } | null>(null);
 
@@ -47,6 +48,16 @@ export default function HeroStudio() {
 
     observer.observe(hero);
 
+    const pricing = document.getElementById("pricing-studio");
+    let pricingObserver: IntersectionObserver | null = null;
+    if (pricing) {
+      pricingObserver = new IntersectionObserver(
+        ([entry]) => setHiddenByPricing(entry.isIntersecting),
+        { threshold: 0.15 }
+      );
+      pricingObserver.observe(pricing);
+    }
+
     const handleScroll = () => {
       if (!isFloating) capturePosition();
     };
@@ -54,6 +65,7 @@ export default function HeroStudio() {
 
     return () => {
       observer.disconnect();
+      pricingObserver?.disconnect();
       window.removeEventListener("scroll", handleScroll);
     };
   }, [capturePosition, isFloating]);
@@ -155,18 +167,22 @@ export default function HeroStudio() {
       {/* Fixed button — appears after entry, flies to corner on scroll */}
       <a
         href="/cennik"
-        className="fixed z-50 px-8 py-3 bg-white text-gray-900 rounded-full font-medium tracking-wider shadow-lg shadow-white/10 hover:shadow-white/25 hover:scale-105 cursor-pointer whitespace-nowrap glow-box"
+        className={`fixed z-50 rounded-full font-medium tracking-wider shadow-lg cursor-pointer whitespace-nowrap transition-none ${
+          isFloating
+            ? "px-6 py-2.5 text-sm bg-white text-gray-900 shadow-white/5 hover:shadow-white/20 hover:scale-105"
+            : "px-8 py-3 text-base bg-white text-gray-900 shadow-white/10 glow-box"
+        }`}
         style={{
           left: `${startX}px`,
           top: `${startY}px`,
           transform: isFloating
             ? `translate(${tx}px, ${ty}px) translate(-50%, -50%)`
             : "translate(-50%, -50%)",
-          opacity: entryDone ? 1 : 0,
+          opacity: entryDone && !hiddenByPricing ? 1 : 0,
           transition: isFloating
-            ? "transform 1s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease-out"
-            : "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease-out",
-          pointerEvents: isFloating ? "auto" : undefined,
+            ? "transform 1s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease-out, background-color 0.6s ease, color 0.6s ease, padding 0.6s ease, font-size 0.6s ease"
+            : "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease-out, background-color 0.4s ease, color 0.4s ease, padding 0.4s ease, font-size 0.4s ease",
+          pointerEvents: isFloating && !hiddenByPricing ? "auto" : undefined,
         }}
       >
         Sprawdź cenę
