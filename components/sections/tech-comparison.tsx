@@ -3,6 +3,7 @@
 import { Zap, Shield, TrendingUp, Rocket, Quote } from 'lucide-react'
 import GradientText from '@/components/GradientText'
 import { useIsMobile } from '@/hooks/useIsMobile'
+import AnimatedSection from '@/components/AnimatedSection'
 
 const comparisonData = [
   {
@@ -46,25 +47,28 @@ export default function TechComparison() {
     <section id="tech-comparison" aria-labelledby="tech-heading" className="relative z-10 py-24 px-6 lg:px-12">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <header className="text-center mb-16">
-          <h2 id="tech-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
-            Dlaczego <GradientText>NEXT.JS</GradientText>?
-          </h2>
-          <p className="text-xl font-light tracking-wide text-gray-400 max-w-3xl mx-auto mb-4">
-            Większość stron działa na WordPressie. My budujemy na Next.js — i oto dlaczego.
-          </p>
-          
-          {/* Czym jest Next.js */}
-          <div className="mt-8 p-6 rounded-2xl bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/20 max-w-3xl mx-auto">
-            <p className="text-gray-400 leading-relaxed">
-              <span className="font-medium text-white">Next.js</span> to nowoczesny framework do tworzenia stron i aplikacji webowych, 
-              używany przez <GradientText className="font-medium">Netflix, TikTok, Nike i Notion</GradientText>. 
-              To standard wśród firm, które traktują web poważnie.
+        <AnimatedSection>
+          <header className="text-center mb-16">
+            <h2 id="tech-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
+              Dlaczego <GradientText>NEXT.JS</GradientText>?
+            </h2>
+            <p className="text-xl font-light tracking-wide text-gray-400 max-w-3xl mx-auto mb-4">
+              Większość stron działa na WordPressie. My budujemy na Next.js — i oto dlaczego.
             </p>
-          </div>
-        </header>
+            
+            {/* Czym jest Next.js */}
+            <div className="mt-8 p-6 rounded-2xl bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/20 max-w-3xl mx-auto">
+              <p className="text-gray-400 leading-relaxed">
+                <span className="font-medium text-white">Next.js</span> to nowoczesny framework do tworzenia stron i aplikacji webowych, 
+                używany przez <GradientText className="font-medium">Netflix, TikTok, Nike i Notion</GradientText>. 
+                To standard wśród firm, które traktują web poważnie.
+              </p>
+            </div>
+          </header>
+        </AnimatedSection>
 
         {/* Comparison Table */}
+        <AnimatedSection>
         <div className="mb-16">
           <h3 className="text-2xl font-light tracking-wide text-white mb-8 text-center">
             Porównanie z WordPress
@@ -132,8 +136,10 @@ export default function TechComparison() {
             </div>
           </div>
         </div>
+        </AnimatedSection>
 
         {/* Quote - Kiedy WordPress ma sens */}
+        <AnimatedSection>
         <div className="relative max-w-3xl mx-auto mb-12">
           <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl opacity-20 blur-lg" />
           <div className="relative p-8 rounded-2xl bg-gray-900 border border-amber-500/30">
@@ -146,8 +152,10 @@ export default function TechComparison() {
             </p>
           </div>
         </div>
+        </AnimatedSection>
 
         {/* CTA Button */}
+        <AnimatedSection>
         <div className="text-center">
           <a 
             href="/nextjs" 
@@ -164,6 +172,7 @@ export default function TechComparison() {
             </svg>
           </a>
         </div>
+        </AnimatedSection>
       </div>
     </section>
   )

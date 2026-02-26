@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { Zap, Target, Rocket, Lock } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import AnimatedSection from "@/components/AnimatedSection";
 
 const TiltCard = dynamic(() => import("@/components/tilt-card"), {
   ssr: false,
@@ -73,14 +74,16 @@ export default function ValuesStudio() {
     <section id="values-studio" aria-labelledby="values-heading" className="relative z-10 py-32 px-6 lg:px-12 overflow-hidden">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <header className="text-center mb-20">
-          <h2 id="values-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
-            Dlaczego My?
-          </h2>
-          <p className="text-lg font-light tracking-wide text-gray-400">
-            Jakość agencji w tempie freelancera
-          </p>
-        </header>
+        <AnimatedSection>
+          <header className="text-center mb-20">
+            <h2 id="values-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
+              Dlaczego My?
+            </h2>
+            <p className="text-lg font-light tracking-wide text-gray-400">
+              Jakość agencji w tempie freelancera
+            </p>
+          </header>
+        </AnimatedSection>
 
         {/* Cards Grid */}
         <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-2 gap-8">
