@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { Edit3, FileText, BookOpen, CheckCircle } from 'lucide-react';
 import GradientText from '@/components/GradientText';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import AnimatedSection from '@/components/AnimatedSection';
 
 const features = [
   {
@@ -61,26 +62,28 @@ export default function CMSSection() {
     >
       <div className="max-w-6xl mx-auto">
         {/* Header - spójny z resztą strony */}
-        <header className="text-center mb-16">
-          <h2 
-            id="cms-heading" 
-            className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6"
-          >
-            Edytuj sam z <GradientText>Sanity CMS</GradientText>
-          </h2>
-          <p className="text-xl font-light tracking-wide text-gray-400 max-w-3xl mx-auto mb-4">
-            Chcesz edytować treści bez programisty? Panel CMS — prosty jak Word.
-          </p>
-          
-          {/* Info box - jak w tech-comparison */}
-          <div className="mt-8 p-6 rounded-2xl bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/20 max-w-3xl mx-auto">
-            <p className="text-gray-400 leading-relaxed">
-              <span className="font-medium text-white">Sanity CMS</span> to nowoczesny panel administracyjny 
-              używany przez <GradientText className="font-medium">Figma, Shopify i Sonos</GradientText>. 
-              Szybki, intuicyjny i bezpieczny.
+        <AnimatedSection>
+          <header className="text-center mb-16">
+            <h2 
+              id="cms-heading" 
+              className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6"
+            >
+              Edytuj sam z <GradientText>Sanity CMS</GradientText>
+            </h2>
+            <p className="text-xl font-light tracking-wide text-gray-400 max-w-3xl mx-auto mb-4">
+              Chcesz edytować treści bez programisty? Panel CMS — prosty jak Word.
             </p>
-          </div>
-        </header>
+            
+            {/* Info box - jak w tech-comparison */}
+            <div className="mt-8 p-6 rounded-2xl bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/20 max-w-3xl mx-auto">
+              <p className="text-gray-400 leading-relaxed">
+                <span className="font-medium text-white">Sanity CMS</span> to nowoczesny panel administracyjny 
+                używany przez <GradientText className="font-medium">Figma, Shopify i Sonos</GradientText>. 
+                Szybki, intuicyjny i bezpieczny.
+              </p>
+            </div>
+          </header>
+        </AnimatedSection>
 
         {/* Features Grid - styl jak values-studio */}
         <div className="grid md:grid-cols-3 gap-6 mb-16">
