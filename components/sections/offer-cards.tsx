@@ -46,7 +46,7 @@ export default function OfferCards() {
           setIsVisible(true);
         }
       },
-      { threshold: 0.2 }
+      { threshold: 0.15, rootMargin: '-30% 0px -30% 0px' }
     );
 
     const element = document.getElementById('offer-cards');

@@ -24,7 +24,7 @@ export default function AnimatedSection({
           observer.unobserve(entry.target);
         }
       },
-      { threshold: 0.1, rootMargin: "-50px" }
+      { threshold: 0.15, rootMargin: "-30% 0px -30% 0px" }
     );
 
     if (ref.current) observer.observe(ref.current);

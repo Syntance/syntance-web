@@ -62,7 +62,7 @@ export default function AnatomyStudio() {
           }
         });
       },
-      { threshold: 0.2, rootMargin: '-50px' }
+      { threshold: 0.15, rootMargin: '-20% 0px -20% 0px' }
     );
 
     cards.forEach((card) => observer.observe(card));
@@ -170,7 +170,7 @@ export default function AnatomyStudio() {
         </div>
 
         {/* Bottom Quote + CTA */}
-        <div className="mt-32 text-center anatomy-card opacity-0 translate-y-12 transition-all duration-1000 ease-out" style={{ transitionDelay: '300ms' }}>
+        <div className="mt-32 text-center anatomy-card opacity-0 translate-y-12 transition-all duration-1000 ease-out">
           <p className="text-xl md:text-2xl font-light text-gray-400 mb-8">
             Efekt? <span className="text-white">Strona, która pracuje na Twój wynik.</span>
           </p>

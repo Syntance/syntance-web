@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback, useRef } from 'react'
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 import { 
   Layout, FileText, Layers, Zap, Plug, CreditCard, Truck, 
   Globe, ShoppingCart, Smartphone, Check, Sparkles, Clock,
@@ -35,6 +35,37 @@ export function PricingConfigurator({ data }: Props) {
   // Ref do głównego podsumowania
   const summaryRef = useRef<HTMLDivElement>(null)
   const shouldShowMiniBar = useHideStickyOnVisible(summaryRef)
+  
+  const [highlightedItem, setHighlightedItem] = useState<string | null>(null)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const highlight = params.get('highlight')
+    if (!highlight) return
+
+    const findAndHighlight = () => {
+      let el = document.querySelector(`[data-item-id="${highlight}"]`)
+      if (!el) {
+        el = document.querySelector(`[data-item-id*="${highlight}"]`)
+      }
+      if (!el) return false
+
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      const itemId = el.getAttribute('data-item-id')
+      setHighlightedItem(itemId)
+      setTimeout(() => setHighlightedItem(null), 1800)
+      return true
+    }
+
+    const t1 = setTimeout(() => {
+      if (!findAndHighlight()) {
+        const t2 = setTimeout(findAndHighlight, 1000)
+        return () => clearTimeout(t2)
+      }
+    }, 500)
+
+    return () => clearTimeout(t1)
+  }, [])
 
   // Pobierz domyślnie zaznaczone elementy dla typu projektu
   const getDefaultSelectedItems = useCallback((projectTypeId: string) => {
@@ -612,16 +643,23 @@ export function PricingConfigurator({ data }: Props) {
                 const selected = state.selectedItems.includes(item.id)
                 const qty = state.quantities[item.id] || 1
 
+                const isHighlighted = highlightedItem === item.id
+
                 return (
                   <div 
-                    key={item.id} 
+                    key={item.id}
+                    data-item-id={item.id}
                     onClick={() => !disabled && toggleItem(item.id)}
-                    className={`flex items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border transition-all duration-200 ${
-                      disabled 
-                        ? 'opacity-40 cursor-not-allowed border-gray-800 bg-gray-900/30' 
-                        : selected 
-                          ? 'border-purple-500/50 bg-purple-500/15 cursor-pointer'
-                          : 'border-gray-800 bg-gray-900/40 hover:border-gray-700 hover:bg-gray-900/60 cursor-pointer'
+                    className={`flex items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border ${
+                      isHighlighted ? '' : 'transition-all duration-200'
+                    } ${
+                      isHighlighted
+                        ? 'border-purple-500 bg-purple-500/20 cursor-pointer animate-highlight-pulse'
+                        : disabled 
+                          ? 'opacity-40 cursor-not-allowed border-gray-800 bg-gray-900/30' 
+                          : selected 
+                            ? 'border-purple-500/50 bg-purple-500/15 cursor-pointer'
+                            : 'border-gray-800 bg-gray-900/40 hover:border-gray-700 hover:bg-gray-900/60 cursor-pointer'
                     }`}
                   >
                     {/* Checkbox */}
