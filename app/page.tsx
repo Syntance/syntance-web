@@ -41,11 +41,11 @@ export default function HomePage() {
       <main id="main-content">
         <HeroStudio />
         <AnatomyStudio />
+        <ProcessStudio />
+        <ValuesStudio />
         <OfferCards />
         <TechComparison />
         <CMSSection />
-        <ProcessStudio />
-        <ValuesStudio />
         <PortfolioStudio />
         <PricingStudioNew />
         

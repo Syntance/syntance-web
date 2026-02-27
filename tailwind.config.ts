@@ -91,6 +91,13 @@ const config: Config = {
           "0%": { opacity: "0", transform: "scale(0.98)" },
           "100%": { opacity: "1", transform: "scale(1)" },
         },
+        "highlight-pulse": {
+          "0%": { transform: "scale(1)", boxShadow: "0 0 0 0 rgba(139, 92, 246, 0)" },
+          "15%": { transform: "scale(1.03)", boxShadow: "0 0 20px 4px rgba(139, 92, 246, 0.4)" },
+          "40%": { transform: "scale(0.99)", boxShadow: "0 0 10px 2px rgba(139, 92, 246, 0.2)" },
+          "60%": { transform: "scale(1.015)", boxShadow: "0 0 15px 3px rgba(139, 92, 246, 0.3)" },
+          "100%": { transform: "scale(1)", boxShadow: "0 0 0 0 rgba(139, 92, 246, 0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -100,6 +107,7 @@ const config: Config = {
         float: "float 8s ease-in-out infinite",
         "float-delayed": "float 8s ease-in-out 2s infinite",
         "fade-in-scale": "fade-in-scale 0.4s ease-out forwards",
+        "highlight-pulse": "highlight-pulse 1.5s ease-in-out",
       },
     },
   },

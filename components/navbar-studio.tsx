@@ -12,7 +12,7 @@ const navItems = [
   { label: "Strony", href: "/strony-www" },
   { label: "Sklepy", href: "/sklepy-internetowe" },
   { 
-    label: "Wiedza", 
+    label: "Blog", 
     href: "#",
     dropdown: [
       { label: "Strategia", href: "/strategia" },

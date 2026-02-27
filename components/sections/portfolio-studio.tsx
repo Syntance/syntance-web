@@ -45,7 +45,7 @@ export default function PortfolioStudio() {
           }
         });
       },
-      { threshold: 0.1, rootMargin: '50px' }
+      { threshold: 0.15, rootMargin: '-20% 0px -20% 0px' }
     );
 
     cards.forEach((card) => observer.observe(card));

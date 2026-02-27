@@ -44,7 +44,7 @@ export default function CMSSection() {
           }
         });
       },
-      { threshold: 0.1, rootMargin: '50px' }
+      { threshold: 0.15, rootMargin: '-20% 0px -20% 0px' }
     );
 
     cards.forEach((card) => observer.observe(card));
@@ -168,7 +168,7 @@ export default function CMSSection() {
                   Decydujesz czy chcesz samodzielnie zarządzać treścią.
                 </p>
                 <a 
-                  href="/cennik" 
+                  href="/cennik?highlight=cms" 
                   className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500/10 to-blue-500/10 hover:from-purple-500/20 hover:to-blue-500/20 border border-purple-500/30 hover:border-purple-500/50 text-white rounded-lg transition-all group/btn"
                 >
                   <span className="font-light tracking-wide">Sprawdź cenę w konfiguratorze</span>

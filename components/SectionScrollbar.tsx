@@ -4,9 +4,9 @@ import { useState, useEffect, useRef } from "react";
 
 const sections = [
   { id: "hero-studio", label: "Oferta" },
-  { id: "tech-comparison", label: "Technologia" },
   { id: "process-studio", label: "Proces" },
   { id: "values-studio", label: "Dlaczego my" },
+  { id: "tech-comparison", label: "Technologia" },
   { id: "portfolio-studio", label: "Portfolio" },
   { id: "pricing-studio", label: "Cennik" },
   { id: "contact", label: "Kontakt" },

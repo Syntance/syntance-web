@@ -50,7 +50,7 @@ export default function ProcessStudio() {
           }
         });
       },
-      { threshold: 0.2, rootMargin: '50px' }
+      { threshold: 0.15, rootMargin: '-20% 0px -20% 0px' }
     );
 
     steps.forEach((step) => observer.observe(step));
