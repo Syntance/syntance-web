@@ -64,8 +64,8 @@ const defaultFaqItems = [
   {
     _id: 'faq-6',
     _type: 'pricingFaq',
-    question: 'Co to jest Warsztat Discovery?',
-    answer: '2-3 godzinne spotkanie, na którym definiujemy strategię, grupę docelową i cele strony. Wynikiem jest dokument z wytycznymi — dzięki temu strona jest skuteczna, a nie tylko "ładna". Warsztat kosztuje 4 500 PLN i jest zaliczany na poczet projektu.',
+    question: 'Co to jest Strategia przedwdrożeniowa?',
+    answer: 'Spotkanie strategiczne (2-3h), na którym definiujemy cel biznesowy strony, buyer persony, UVP, user flows, SEO i architekturę informacji. Wynikiem jest dokument z wytycznymi — dzięki temu strona realizuje cele biznesowe, a nie jest tylko "ładna". Cena jest zaliczana na poczet projektu.',
     category: 'time',
     order: 6,
     isActive: true,

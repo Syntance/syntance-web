@@ -1,6 +1,8 @@
 import { Metadata } from 'next'
 import { clientWithoutToken } from '@/sanity/lib/client'
 import { seoSettingsQuery, SeoSettings, pageSeoQuery, PageSeo } from '@/sanity/queries/seo'
+import { sanityFetch } from '@/sanity/lib/fetch'
+import { startingPricesQuery, defaultStartingPrices, type StartingPrices } from '@/sanity/queries/pricing'
 
 // Domyślne wartości SEO (fallback)
 const defaultSeo: SeoSettings = {
@@ -68,8 +70,8 @@ const defaultSeo: SeoSettings = {
       priceRange: 'od 20000 PLN',
     },
     {
-      name: 'Warsztat Discovery',
-      description: 'Strategia przed kodem - analiza biznesu, buyer persony, UVP, architektura informacji.',
+      name: 'Strategia przedwdrożeniowa',
+      description: 'Cel biznesowy strony przed kodem - analiza biznesu, buyer persony, UVP, user flows, SEO, architektura informacji.',
       serviceType: 'Business Consulting',
       price: 4500,
     },
@@ -82,29 +84,58 @@ const defaultSeo: SeoSettings = {
   ],
 }
 
+async function getStrategyPrice(): Promise<number> {
+  try {
+    const prices = await sanityFetch<StartingPrices>({ query: startingPricesQuery })
+    return prices?.discoveryWorkshopPrice || defaultStartingPrices.discoveryWorkshopPrice
+  } catch {
+    return defaultStartingPrices.discoveryWorkshopPrice
+  }
+}
+
+function applyDynamicPricesToServices(
+  services: SeoSettings['services'],
+  strategyPrice: number,
+): SeoSettings['services'] {
+  if (!services) return services
+  return services.map((s) => {
+    if (s.serviceType === 'Business Consulting' && s.price) {
+      return { ...s, price: strategyPrice }
+    }
+    return s
+  })
+}
+
 // Pobierz ustawienia SEO z Sanity (z cache)
 export async function getSeoSettings(): Promise<SeoSettings> {
   try {
-    const settings = await clientWithoutToken.fetch<SeoSettings | null>(
-      seoSettingsQuery,
-      {},
-      { 
-        next: { 
-          revalidate: 60 // Cache na 60 sekund
-        } 
-      }
-    )
+    const [settings, strategyPrice] = await Promise.all([
+      clientWithoutToken.fetch<SeoSettings | null>(
+        seoSettingsQuery,
+        {},
+        { 
+          next: { 
+            revalidate: 60
+          } 
+        }
+      ),
+      getStrategyPrice(),
+    ])
     
     if (!settings) {
-      return defaultSeo
+      return {
+        ...defaultSeo,
+        services: applyDynamicPricesToServices(defaultSeo.services, strategyPrice),
+      }
     }
     
-    // Merge z domyślnymi wartościami (dla pustych pól)
+    const mergedServices = settings.services?.length ? settings.services : defaultSeo.services
+
     return {
       ...defaultSeo,
       ...settings,
       keywords: settings.keywords?.length ? settings.keywords : defaultSeo.keywords,
-      services: settings.services?.length ? settings.services : defaultSeo.services,
+      services: applyDynamicPricesToServices(mergedServices, strategyPrice),
       socialLinks: settings.socialLinks?.length ? settings.socialLinks : defaultSeo.socialLinks,
       address: settings.address ? { ...defaultSeo.address, ...settings.address } : defaultSeo.address,
       geo: settings.geo ? { ...defaultSeo.geo, ...settings.geo } : defaultSeo.geo,
