@@ -190,9 +190,9 @@ const targetAudiences = [
 const processSteps = [
   {
     number: "01",
-    title: "Discovery",
+    title: "Strategia",
     subtitle: "Poznajemy Twój biznes",
-    description: "Warsztat strategiczny, brief, buyer persona. Zanim napiszemy linijkę kodu, rozumiemy Twój cel.",
+    description: "Strategia przedwdrożeniowa, brief, buyer persona. Zanim napiszemy linijkę kodu, rozumiemy Twój cel.",
     icon: Target,
     gradient: "from-purple-500 to-blue-500",
   },

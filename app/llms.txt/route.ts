@@ -1,4 +1,24 @@
-# Syntance — Agencja interaktywna i software house
+import { sanityFetch } from '@/sanity/lib/fetch'
+import { startingPricesQuery, defaultStartingPrices, type StartingPrices } from '@/sanity/queries/pricing'
+
+function formatPrice(price: number): string {
+  return price.toLocaleString('pl-PL')
+}
+
+async function getPrices(): Promise<StartingPrices> {
+  try {
+    const prices = await sanityFetch<StartingPrices>({ query: startingPricesQuery })
+    if (!prices?.websiteStartPrice) return defaultStartingPrices
+    return { ...defaultStartingPrices, ...prices }
+  } catch {
+    return defaultStartingPrices
+  }
+}
+
+export async function GET() {
+  const prices = await getPrices()
+
+  const content = `# Syntance — Agencja interaktywna i software house
 
 ## Kim jesteśmy
 - Typ: Agencja interaktywna / Software house
@@ -12,14 +32,14 @@ Jakość agencji w tempie freelancera. Strony w 2-4 tygodnie, sklepy w 4-8 tygod
 ## Usługi i ceny
 - Strony WWW: 5 000 - 15 000 PLN (realizacja: 2-4 tygodnie)
 - Sklepy E-commerce: od 20 000 PLN (realizacja: 4-6 tygodni)
-- Warsztat Discovery: 4 500 PLN (strategia przed kodem)
+- Strategia przedwdrożeniowa: ${formatPrice(prices.discoveryWorkshopPrice)} PLN (cel biznesowy strony, persony, UVP, user flows, SEO, architektura informacji)
 - Aplikacje Webowe: od 50 000 PLN (wycena indywidualna)
 
 ## Strony internetowe dla firm
 - URL: https://syntance.com/strony-www
 - Usługa: Tworzenie profesjonalnych stron internetowych dla firm B2B
 - Technologia: Next.js, Sanity CMS, TypeScript, Tailwind CSS
-- Ceny: od 5 400 PLN netto
+- Ceny: od ${formatPrice(prices.websiteStartPrice)} PLN netto
 - Czas realizacji: 2-4 tygodnie (strony firmowe), 4-8 tygodni (rozbudowane)
 - Gwarancja: PageSpeed 90+, 30 dni wsparcia technicznego
 - Dla kogo: firmy usługowe, producenci B2B, startupy, deweloperzy
@@ -29,7 +49,7 @@ Jakość agencji w tempie freelancera. Strony w 2-4 tygodnie, sklepy w 4-8 tygod
 - URL: https://syntance.com/sklepy-internetowe
 - Usługa: Sklepy e-commerce w architekturze headless
 - Technologia: MedusaJS, Next.js, Stripe, Przelewy24, Sanity CMS
-- Ceny: od 12 000 PLN (standard), od 25 000 PLN (pro z integracjami)
+- Ceny: od ${formatPrice(prices.ecommerceStandardStartPrice)} PLN (standard), od ${formatPrice(prices.ecommerceProStartPrice)} PLN (pro z integracjami)
 - Czas realizacji: 4-6 tygodni (standard), 6-10 tygodni (pro)
 - Zalety: zero prowizji, pełna własność kodu, PageSpeed 90+, nieograniczona skalowalność
 - Dla kogo: producenci, marki D2C, subskrypcje, marketplace
@@ -56,7 +76,7 @@ Jakość agencji w tempie freelancera. Strony w 2-4 tygodnie, sklepy w 4-8 tygod
 
 ## Dlaczego Syntance?
 - PageSpeed 90+ gwarantowany (Next.js, zero wtyczek)
-- Strategia przed kodem (Warsztat Discovery)
+- Strategia przed kodem (Strategia przedwdrożeniowa)
 - Pełna własność kodu (możesz zmienić wykonawcę)
 - AI-Augmented Speed (strony w 2-4 tygodnie)
 - AEO-ready (struktura czytelna dla ChatGPT/Perplexity)
@@ -69,3 +89,11 @@ Jakość agencji w tempie freelancera. Strony w 2-4 tygodnie, sklepy w 4-8 tygod
 - Adres: Czerniec 72, 33-390 Łącko, Polska
 - Strona: https://syntance.com
 - Cennik: https://syntance.com/cennik
+`
+
+  return new Response(content, {
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+    },
+  })
+}

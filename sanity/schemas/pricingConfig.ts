@@ -44,7 +44,7 @@ export default defineType({
     // === CENY STARTOWE ===
     defineField({
       name: 'discoveryWorkshopPrice',
-      title: 'Cena Warsztatu Discovery (PLN)',
+      title: 'Cena Strategii przedwdrożeniowej (PLN)',
       type: 'number',
       group: 'startingPrices',
       initialValue: 4500,
@@ -130,7 +130,7 @@ export default defineType({
           name: 'workshop', 
           title: 'Przycisk warsztatu', 
           type: 'string', 
-          initialValue: 'Zamów Warsztat Discovery' 
+          initialValue: 'Zamów Strategię przedwdrożeniową' 
         }),
         defineField({ 
           name: 'pdf', 
