@@ -268,7 +268,7 @@ export const defaultPricingData: PricingData = {
     calendlyUrl: 'https://calendly.com/syntance/discovery',
     ctaTexts: {
       reserve: 'Zarezerwuj termin w tej cenie',
-      workshop: 'Zamów Warsztat Discovery',
+      workshop: 'Zamów Strategię przedwdrożeniową',
       pdf: 'Pobierz wycenę PDF',
     },
     complexitySettings: {

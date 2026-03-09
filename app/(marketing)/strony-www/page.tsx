@@ -154,7 +154,7 @@ const solutions = [
   { 
     icon: Shield, 
     title: "Strategia przed kodem", 
-    description: "Warsztat discovery w cenie",
+    description: "Strategia przedwdrożeniowa w cenie",
     gradient: "from-purple-500 to-pink-500",
     textColor: "text-purple-400"
   },
@@ -587,7 +587,7 @@ export default function StronyWWWPage() {
                     <div className="text-sm text-gray-400 mb-8">netto • 4-8 tygodni</div>
                     
                     <ul className="space-y-3">
-                      {['Nieograniczone podstrony', 'Zaawansowane funkcje', 'Integracje (CRM, mailing)', 'Warsztat discovery w cenie'].map((item, i) => (
+                      {['Nieograniczone podstrony', 'Zaawansowane funkcje', 'Integracje (CRM, mailing)', 'Strategia przedwdrożeniowa w cenie'].map((item, i) => (
                         <li key={i} className="flex items-center gap-3 text-gray-300">
                           <CheckCircle2 size={18} className="text-purple-400 flex-shrink-0" />
                           <span>{item}</span>

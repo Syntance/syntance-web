@@ -39,7 +39,7 @@ const values = [
     icon: Target,
     title: "Strategia przed kodem",
     description: "Każdy projekt zaczynamy od zrozumienia Twojego biznesu. Najpierw cel, potem realizacja.",
-    note: "Warsztat discovery w cenie każdego projektu."
+    note: "Strategia przedwdrożeniowa w cenie każdego projektu."
   },
   {
     icon: Zap,

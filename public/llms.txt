@@ -12,7 +12,7 @@ Jakość agencji w tempie freelancera. Strony w 2-4 tygodnie, sklepy w 4-8 tygod
 ## Usługi i ceny
 - Strony WWW: 5 000 - 15 000 PLN (realizacja: 2-4 tygodnie)
 - Sklepy E-commerce: od 20 000 PLN (realizacja: 4-6 tygodni)
-- Warsztat Discovery: 4 500 PLN (strategia przed kodem)
+- Strategia przedwdrożeniowa: 4 500 PLN (cel biznesowy strony, persony, UVP, user flows, SEO, architektura informacji)
 - Aplikacje Webowe: od 50 000 PLN (wycena indywidualna)
 
 ## Strony internetowe dla firm
@@ -56,7 +56,7 @@ Jakość agencji w tempie freelancera. Strony w 2-4 tygodnie, sklepy w 4-8 tygod
 
 ## Dlaczego Syntance?
 - PageSpeed 90+ gwarantowany (Next.js, zero wtyczek)
-- Strategia przed kodem (Warsztat Discovery)
+- Strategia przed kodem (Strategia przedwdrożeniowa)
 - Pełna własność kodu (możesz zmienić wykonawcę)
 - AI-Augmented Speed (strony w 2-4 tygodnie)
 - AEO-ready (struktura czytelna dla ChatGPT/Perplexity)

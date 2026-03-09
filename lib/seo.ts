@@ -68,8 +68,8 @@ const defaultSeo: SeoSettings = {
       priceRange: 'od 20000 PLN',
     },
     {
-      name: 'Warsztat Discovery',
-      description: 'Strategia przed kodem - analiza biznesu, buyer persony, UVP, architektura informacji.',
+      name: 'Strategia przedwdrożeniowa',
+      description: 'Cel biznesowy strony przed kodem - persony, UVP, user flows, SEO, architektura informacji.',
       serviceType: 'Business Consulting',
       price: 4500,
     },

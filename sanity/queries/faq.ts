@@ -62,8 +62,8 @@ export const defaultFaqItems: PricingFaqItem[] = [
   {
     _id: 'default-6',
     category: 'time',
-    question: 'Co to jest Warsztat Discovery?',
-    answer: '2-3 godzinne spotkanie, na którym definiujemy strategię, grupę docelową i cele strony. Wynikiem jest dokument z wytycznymi — dzięki temu strona jest skuteczna, a nie tylko "ładna". Warsztat kosztuje 4 500 PLN i jest zaliczany na poczet projektu.',
+    question: 'Co to jest Strategia przedwdrożeniowa?',
+    answer: '2-3 godzinne spotkanie strategiczne, na którym definiujemy cel biznesowy strony, buyer persony, UVP, user flows, SEO i architekturę informacji. Wynikiem jest dokument z wytycznymi — dzięki temu strona jest skuteczna, a nie tylko "ładna". Strategia przedwdrożeniowa kosztuje 4 500 PLN i jest zaliczana na poczet projektu.',
     order: 6,
   },
   // Pytania o ryzyko/zaufanie
