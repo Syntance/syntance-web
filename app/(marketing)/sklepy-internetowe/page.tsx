@@ -221,22 +221,6 @@ const techStack = [
   },
 ]
 
-const standardFeatures = [
-  "Katalog produktów z wariantami",
-  "Koszyk i checkout",
-  "Płatności online (Stripe/P24)",
-  "Panel administracyjny",
-  "Responsywność mobile-first",
-  "SEO-ready (meta, sitemap, schema)",
-]
-
-const proFeatures = [
-  "Portal klienta (historia, faktury)",
-  "Integracja z kurierami (InPost, DPD)",
-  "Subskrypcje i recurring",
-  "Multi-currency / multi-language",
-  "Integracje ERP/CRM",
-]
 
 const comparisonData = [
   { feature: "Prowizje", saas: "0.5-2% od transakcji", headless: "0% — zero prowizji" },
@@ -540,68 +524,20 @@ export default function SklepyInternetowePage() {
 
       {/* Pricing */}
       <section id="pricing" className="relative z-10 py-32 px-6 lg:px-12 bg-gradient-to-b from-transparent via-purple-950/10 to-transparent">
-        <div className="max-w-5xl mx-auto">
-          <AnimatedSection className="text-center mb-16">
+        <div className="max-w-3xl mx-auto text-center">
+          <AnimatedSection>
             <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6 glow-text">
               Ile to kosztuje?
             </h2>
-            <p className="text-xl text-gray-400">
-              Wybierz pakiet dopasowany do Twoich potrzeb
+            <p className="text-xl text-gray-400 mb-4">
+              Sklepy internetowe już od <span className="text-white font-medium">12 000 PLN netto</span>
+            </p>
+            <p className="text-gray-500 mb-12 max-w-xl mx-auto">
+              Finalny koszt zależy od zakresu integracji, liczby funkcji i stopnia personalizacji. Skorzystaj z naszego konfiguratora, żeby w kilka chwil otrzymać orientacyjną wycenę.
             </p>
           </AnimatedSection>
           
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
-            <AnimatedSection delay={0}>
-              <TiltCard className="h-full">
-                <div className="relative group h-full">
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-500" />
-                  <div className="relative h-full p-6 md:p-8 rounded-2xl bg-gray-900/80 backdrop-blur-sm border border-white/10">
-                    <div className="inline-block px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-sm font-medium mb-4">
-                      Standard
-                    </div>
-                    <h3 className="text-3xl font-medium text-white mb-2">od 12 000 PLN</h3>
-                    <p className="text-gray-400 text-sm mb-8">netto • 4-6 tygodni</p>
-                    
-                    <ul className="space-y-3">
-                      {standardFeatures.map((feature, index) => (
-                        <li key={index} className="flex items-center gap-3 text-gray-300">
-                          <CheckCircle2 size={18} className="text-blue-400 flex-shrink-0" />
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </TiltCard>
-            </AnimatedSection>
-            
-            <AnimatedSection delay={100}>
-              <TiltCard className="h-full">
-                <div className="relative group h-full">
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-500" />
-                  <div className="relative h-full p-6 md:p-8 rounded-2xl bg-gray-900/80 backdrop-blur-sm border border-white/10">
-                    <div className="inline-block px-3 py-1 rounded-full bg-purple-500/20 text-purple-400 text-sm font-medium mb-4">
-                      Pro
-                    </div>
-                    <h3 className="text-3xl font-medium text-white mb-2">od 25 000 PLN</h3>
-                    <p className="text-gray-400 text-sm mb-4">netto • 6-10 tygodni</p>
-                    <p className="text-gray-500 text-sm mb-8">Wszystko ze Standard, plus:</p>
-                    
-                    <ul className="space-y-3">
-                      {proFeatures.map((feature, index) => (
-                        <li key={index} className="flex items-center gap-3 text-gray-300">
-                          <CheckCircle2 size={18} className="text-purple-400 flex-shrink-0" />
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </TiltCard>
-            </AnimatedSection>
-          </div>
-          
-          <AnimatedSection delay={200} className="text-center">
+          <AnimatedSection delay={100}>
             <Link 
               href="/cennik" 
               className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-105"
