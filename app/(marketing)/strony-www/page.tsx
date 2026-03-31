@@ -540,67 +540,20 @@ export default function StronyWWWPage() {
 
       {/* Pricing Preview */}
       <section id="pricing" className="relative z-10 py-32 px-6 lg:px-12 bg-gradient-to-b from-transparent via-purple-950/10 to-transparent">
-        <div className="max-w-4xl mx-auto">
-          <AnimatedSection className="text-center mb-16">
+        <div className="max-w-3xl mx-auto text-center">
+          <AnimatedSection>
             <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6 glow-text">
               Ile to kosztuje?
             </h2>
-            <p className="text-xl text-gray-400">
-              Transparentne ceny — bez ukrytych kosztów
+            <p className="text-xl text-gray-400 mb-4">
+              Strony internetowe już od <span className="text-white font-medium">5 400 PLN netto</span>
+            </p>
+            <p className="text-gray-500 mb-12 max-w-xl mx-auto">
+              Każdy projekt wyceniamy indywidualnie — cena zależy od liczby podstron, funkcjonalności i integracji. Skorzystaj z naszego konfiguratora, żeby w kilka chwil poznać orientacyjny koszt.
             </p>
           </AnimatedSection>
           
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
-            <AnimatedSection delay={0}>
-              <TiltCard className="h-full">
-                <div className="relative group h-full">
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-500" />
-                  <div className="relative h-full p-6 md:p-8 rounded-2xl bg-gray-900/80 backdrop-blur-sm border border-white/10">
-                    <h3 className="text-2xl font-medium text-white mb-2">Strona firmowa</h3>
-                    <p className="text-gray-400 text-sm mb-6">Landing page, wizytówka, strona usługowa</p>
-                    
-                    <div className="text-4xl font-light text-white mb-1">od 5 400 PLN</div>
-                    <div className="text-sm text-gray-400 mb-8">netto • 2-4 tygodnie</div>
-                    
-                    <ul className="space-y-3">
-                      {['Do 5 podstron', 'Panel CMS Sanity', 'Optymalizacja SEO', '30 dni wsparcia'].map((item, i) => (
-                        <li key={i} className="flex items-center gap-3 text-gray-300">
-                          <CheckCircle2 size={18} className="text-green-400 flex-shrink-0" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </TiltCard>
-            </AnimatedSection>
-            
-            <AnimatedSection delay={100}>
-              <TiltCard className="h-full">
-                <div className="relative group h-full">
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-500" />
-                  <div className="relative h-full p-6 md:p-8 rounded-2xl bg-gray-900/80 backdrop-blur-sm border border-white/10">
-                    <h3 className="text-2xl font-medium text-white mb-2">Strona rozbudowana</h3>
-                    <p className="text-gray-400 text-sm mb-6">Katalog produktów, portal, integracje</p>
-                    
-                    <div className="text-4xl font-light text-white mb-1">od 12 000 PLN</div>
-                    <div className="text-sm text-gray-400 mb-8">netto • 4-8 tygodni</div>
-                    
-                    <ul className="space-y-3">
-                      {['Nieograniczone podstrony', 'Zaawansowane funkcje', 'Integracje (CRM, mailing)', 'Strategia przedwdrożeniowa w cenie'].map((item, i) => (
-                        <li key={i} className="flex items-center gap-3 text-gray-300">
-                          <CheckCircle2 size={18} className="text-purple-400 flex-shrink-0" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </TiltCard>
-            </AnimatedSection>
-          </div>
-          
-          <AnimatedSection delay={200} className="text-center">
+          <AnimatedSection delay={100}>
             <Link 
               href="/cennik" 
               className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30 hover:scale-105"
