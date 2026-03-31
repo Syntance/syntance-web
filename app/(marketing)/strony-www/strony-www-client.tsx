@@ -1,7 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef, useMemo } from 'react'
-import { formatPricePln } from '@/lib/sanity-starting-prices'
+import { useEffect, useState, useRef } from 'react'
 import { 
   Zap, 
   Shield, 
@@ -229,42 +228,38 @@ const stats = [
   { value: "0", label: "Wtyczek", desc: "zero dziur bezpieczeństwa" },
 ]
 
-export default function StronyWWWClient({
-  websiteStartPrice,
-}: {
-  websiteStartPrice: number
-}) {
-  const [heroVisible, setHeroVisible] = useState(false)
+function getFaqItems(formattedPrice: string) {
+  return [
+    {
+      question: "Ile kosztuje profesjonalna strona internetowa?",
+      answer: `Strony zaczynają się od ${formattedPrice} PLN netto. Cena zależy od zakresu — liczby podstron, integracji, funkcjonalności. Użyj naszego konfiguratora cennika, aby poznać orientacyjną wycenę.`,
+    },
+    {
+      question: "Jak długo trwa tworzenie strony internetowej?",
+      answer: "Standardowa strona firmowa to 2-4 tygodnie. Projekty enterprise z rozbudowaną funkcjonalnością — 4-8 tygodni. Dokładny timeline ustalamy po warsztacie discovery.",
+    },
+    {
+      question: "Czy mogę sam edytować stronę?",
+      answer: "Tak! Każda strona ma panel Sanity CMS — intuicyjny edytor, w którym samodzielnie zmieniasz teksty, zdjęcia i dodajesz podstrony. Bez programisty, bez dodatkowych kosztów.",
+    },
+    {
+      question: "Dlaczego Next.js zamiast WordPress?",
+      answer: "Next.js = szybkość (PageSpeed 90+ vs 30-50 na WP), bezpieczeństwo (zero wtyczek = zero dziur), lepsze SEO. WordPress to 60% zhakowanych stron w sieci.",
+    },
+    {
+      question: "Czy oferujecie strony internetowe w Krakowie?",
+      answer: "Tak! Obsługujemy klientów z całej Polski, ze szczególnym uwzględnieniem Krakowa i Małopolski. Pracujemy zdalnie lub spotkajmy się na żywo.",
+    },
+  ]
+}
 
-  const faqItems = useMemo(
-    () => [
-      {
-        question: 'Ile kosztuje profesjonalna strona internetowa?',
-        answer: `Strony zaczynają się od ${formatPricePln(websiteStartPrice)} PLN netto. Cena zależy od zakresu — liczby podstron, integracji, funkcjonalności. Użyj naszego konfiguratora cennika, aby poznać orientacyjną wycenę.`,
-      },
-      {
-        question: 'Jak długo trwa tworzenie strony internetowej?',
-        answer:
-          'Standardowa strona firmowa to 2-4 tygodnie. Projekty enterprise z rozbudowaną funkcjonalnością — 4-8 tygodni. Dokładny timeline ustalamy po warsztacie discovery.',
-      },
-      {
-        question: 'Czy mogę sam edytować stronę?',
-        answer:
-          'Tak! Każda strona ma panel Sanity CMS — intuicyjny edytor, w którym samodzielnie zmieniasz teksty, zdjęcia i dodajesz podstrony. Bez programisty, bez dodatkowych kosztów.',
-      },
-      {
-        question: 'Dlaczego Next.js zamiast WordPress?',
-        answer:
-          'Next.js = szybkość (PageSpeed 90+ vs 30-50 na WP), bezpieczeństwo (zero wtyczek = zero dziur), lepsze SEO. WordPress to 60% zhakowanych stron w sieci.',
-      },
-      {
-        question: 'Czy oferujecie strony internetowe w Krakowie?',
-        answer:
-          'Tak! Obsługujemy klientów z całej Polski, ze szczególnym uwzględnieniem Krakowa i Małopolski. Pracujemy zdalnie lub spotkajmy się na żywo.',
-      },
-    ],
-    [websiteStartPrice]
-  )
+function formatPrice(price: number): string {
+  return new Intl.NumberFormat('pl-PL').format(price)
+}
+
+export default function StronyWWWContent({ startPrice }: { startPrice: number }) {
+  const formattedPrice = formatPrice(startPrice)
+  const [heroVisible, setHeroVisible] = useState(false)
 
   useEffect(() => {
     setHeroVisible(true)
@@ -558,10 +553,7 @@ export default function StronyWWWClient({
               Ile to kosztuje?
             </h2>
             <p className="text-xl text-gray-400 mb-4">
-              Strony internetowe już od{' '}
-              <span className="text-white font-medium">
-                {formatPricePln(websiteStartPrice)} PLN netto
-              </span>
+              Strony internetowe już od <span className="text-white font-medium">{formattedPrice} PLN netto</span>
             </p>
             <p className="text-gray-500 mb-12 max-w-xl mx-auto">
               Każdy projekt wyceniamy indywidualnie — cena zależy od liczby podstron, funkcjonalności i integracji. Skorzystaj z naszego konfiguratora, żeby w kilka chwil poznać orientacyjny koszt.
@@ -590,7 +582,7 @@ export default function StronyWWWClient({
           </AnimatedSection>
           
           <div className="space-y-4">
-            {faqItems.map((item, index) => (
+            {getFaqItems(formattedPrice).map((item, index) => (
               <AnimatedSection key={index} delay={index * 50}>
                 <details className="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-colors">
                   <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
