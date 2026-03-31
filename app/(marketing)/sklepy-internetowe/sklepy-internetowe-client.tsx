@@ -1,7 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef, useMemo } from 'react'
-import { formatPricePln } from '@/lib/sanity-starting-prices'
+import { useEffect, useState, useRef } from 'react'
 import { 
   Zap, 
   Shield, 
@@ -231,44 +230,38 @@ const comparisonData = [
   { feature: "Skalowalność", saas: "Problemy przy wzroście", headless: "Nieograniczona" },
 ]
 
-export default function SklepyInternetoweClient({
-  ecommerceStandardStartPrice,
-  ecommerceProStartPrice,
-}: {
-  ecommerceStandardStartPrice: number
-  ecommerceProStartPrice: number
-}) {
-  const [heroVisible, setHeroVisible] = useState(false)
+function getFaqItems(formattedPrice: string) {
+  return [
+    {
+      question: "Ile kosztuje sklep internetowy headless?",
+      answer: `Sklepy zaczynają się od ${formattedPrice} PLN netto. Cena zależy od liczby funkcji, integracji i stopnia customizacji. Skorzystaj z konfiguratora cennika, żeby poznać orientacyjną wycenę.`,
+    },
+    {
+      question: "Czym różni się headless od Shopify?",
+      answer: "Headless = pełna własność kodu, zero prowizji od sprzedaży, nieograniczona customizacja. Shopify = wynajem platformy, prowizje 0.5-2%, ograniczenia szablonu.",
+    },
+    {
+      question: "Jak długo trwa budowa sklepu?",
+      answer: "Sklep standard (katalog, koszyk, płatności): 4-6 tygodni. Sklep pro z integracjami: 6-10 tygodni.",
+    },
+    {
+      question: "Czy MedusaJS to sprawdzona technologia?",
+      answer: "Tak! MedusaJS to open-source backed by $9M VC funding. Używany przez firmy jak Tekla, Summer Health i setki innych.",
+    },
+    {
+      question: "Czy mogę migrować z WooCommerce/Shopify?",
+      answer: "Tak, przeprowadzamy pełną migrację — produkty, warianty, klienci, historia zamówień.",
+    },
+  ]
+}
 
-  const faqItems = useMemo(
-    () => [
-      {
-        question: 'Ile kosztuje sklep internetowy headless?',
-        answer: `Sklepy zaczynają się od ${formatPricePln(ecommerceStandardStartPrice)} PLN (standard) do ${formatPricePln(ecommerceProStartPrice)}+ PLN (pro). Cena zależy od liczby funkcji, integracji i stopnia customizacji.`,
-      },
-      {
-        question: 'Czym różni się headless od Shopify?',
-        answer:
-          'Headless = pełna własność kodu, zero prowizji od sprzedaży, nieograniczona customizacja. Shopify = wynajem platformy, prowizje 0.5-2%, ograniczenia szablonu.',
-      },
-      {
-        question: 'Jak długo trwa budowa sklepu?',
-        answer:
-          'Sklep standard (katalog, koszyk, płatności): 4-6 tygodni. Sklep pro z integracjami: 6-10 tygodni.',
-      },
-      {
-        question: 'Czy MedusaJS to sprawdzona technologia?',
-        answer:
-          'Tak! MedusaJS to open-source backed by $9M VC funding. Używany przez firmy jak Tekla, Summer Health i setki innych.',
-      },
-      {
-        question: 'Czy mogę migrować z WooCommerce/Shopify?',
-        answer:
-          'Tak, przeprowadzamy pełną migrację — produkty, warianty, klienci, historia zamówień.',
-      },
-    ],
-    [ecommerceStandardStartPrice, ecommerceProStartPrice]
-  )
+function formatPrice(price: number): string {
+  return new Intl.NumberFormat('pl-PL').format(price)
+}
+
+export default function SklepyInternetoweContent({ startPrice }: { startPrice: number }) {
+  const formattedPrice = formatPrice(startPrice)
+  const [heroVisible, setHeroVisible] = useState(false)
 
   useEffect(() => {
     setHeroVisible(true)
@@ -544,10 +537,7 @@ export default function SklepyInternetoweClient({
               Ile to kosztuje?
             </h2>
             <p className="text-xl text-gray-400 mb-4">
-              Sklepy internetowe już od{' '}
-              <span className="text-white font-medium">
-                {formatPricePln(ecommerceStandardStartPrice)} PLN netto
-              </span>
+              Sklepy internetowe już od <span className="text-white font-medium">{formattedPrice} PLN netto</span>
             </p>
             <p className="text-gray-500 mb-12 max-w-xl mx-auto">
               Finalny koszt zależy od zakresu integracji, liczby funkcji i stopnia personalizacji. Skorzystaj z naszego konfiguratora, żeby w kilka chwil otrzymać orientacyjną wycenę.
@@ -576,7 +566,7 @@ export default function SklepyInternetoweClient({
           </AnimatedSection>
           
           <div className="space-y-4">
-            {faqItems.map((item, index) => (
+            {getFaqItems(formattedPrice).map((item, index) => (
               <AnimatedSection key={index} delay={index * 50}>
                 <details className="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-colors">
                   <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
