@@ -2,11 +2,7 @@ import type { Metadata } from "next";
 import NavbarSimple from "@/components/navbar-simple";
 import Footer from "@/components/sections/footer";
 import Container from "@/components/container";
-import dynamic from "next/dynamic";
-
-const VantaBackground = dynamic(() => import("@/components/vanta-background"), {
-  ssr: false,
-});
+import VantaBackground from "@/components/vanta-background";
 
 export const metadata: Metadata = {
   title: "Regulamin Świadczenia Usług Drogą Elektroniczną | Syntance",
@@ -30,7 +26,7 @@ export default function TermsOfServicePage() {
       <section className="relative z-10 pt-40 pb-20 min-h-screen">
         <Container>
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-4xl font-bold mb-4 text-white glow-text">Regulamin Świadczenia Usług Drogą Elektroniczną</h1>
+            <h1 className="mb-4 text-white glow-text">Regulamin Świadczenia Usług Drogą Elektroniczną</h1>
             <p className="text-lg text-gray-400 mb-8">
               Ostatnia aktualizacja: {new Date().toLocaleDateString('pl-PL')}
             </p>

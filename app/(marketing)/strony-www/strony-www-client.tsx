@@ -206,7 +206,7 @@ export default function StronyWWWContent({ startPrice }: { startPrice: number })
         <div className={`max-w-5xl mx-auto text-center transition-all duration-1000 ${
           heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-light tracking-widest leading-tight mb-8 glow-text">
+          <h1 className="mb-8 glow-text">
             Strony internetowe{" "}
             <GradientText
               colors={["#06b6d4", "#3b82f6", "#8b5cf6", "#3b82f6", "#06b6d4"]}
@@ -405,14 +405,14 @@ export default function StronyWWWContent({ startPrice }: { startPrice: number })
                           <div className={`absolute -inset-0.5 bg-gradient-to-r ${step.gradient} rounded-2xl opacity-0 group-hover:opacity-20 blur-sm transition-opacity duration-500`} />
                           
                           <div className="relative bg-gray-900/80 backdrop-blur-sm border border-white/10 rounded-2xl p-6 md:p-8">
-                            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r ${step.gradient} bg-opacity-10 border border-white/10 mb-4`}>
+                            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r ${step.gradient} border border-white/10 mb-4`}>
                               <span className="text-xs font-mono font-medium text-white tracking-wider">
                                 {step.number}
                               </span>
                             </div>
                             
                             <div className="flex items-center gap-4 mb-4">
-                              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${step.gradient} bg-opacity-10 flex items-center justify-center`}>
+                              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${step.gradient} flex items-center justify-center`}>
                                 <Icon size={24} className="text-white" />
                               </div>
                               <div>

@@ -20,7 +20,7 @@ export default function GradientText({
 
   return (
     <span
-      className={`relative inline-block ${className}`}
+      className={`relative inline-block [font-family:inherit] ${className}`}
     >
       {showBorder && (
         <span
@@ -43,7 +43,7 @@ export default function GradientText({
         </span>
       )}
       <span
-        className="relative z-2 text-transparent bg-cover animate-gradient"
+        className="relative z-2 text-transparent bg-cover animate-gradient [font-family:inherit] [font-weight:inherit]"
         style={{
           ...gradientStyle,
           backgroundClip: 'text',

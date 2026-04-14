@@ -100,7 +100,7 @@ export default function ProcessStudio() {
                         className={`absolute inset-0 rounded-full bg-gradient-to-br ${step.gradient} blur-xl opacity-30`}
                       ></div>
                       {/* Icon container */}
-                      <div className={`relative w-16 h-16 rounded-full bg-gradient-to-br ${step.gradient} bg-opacity-10 border-2 border-white/10 flex items-center justify-center backdrop-blur-sm`}>
+                      <div className={`relative w-16 h-16 rounded-full bg-gradient-to-br ${step.gradient} border-2 border-white/10 flex items-center justify-center backdrop-blur-sm`}>
                         <Icon className="text-white" size={24} strokeWidth={1.5} aria-hidden="true" />
                       </div>
                     </div>

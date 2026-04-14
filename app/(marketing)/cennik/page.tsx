@@ -4,7 +4,7 @@ import { pricingDataQuery, PricingData, defaultPricingData, startingPricesQuery,
 import { pricingFaqQuery, PricingFaqItem, defaultFaqItems } from '@/sanity/queries/faq'
 import { PricingConfigurator } from '@/components/PricingConfigurator'
 import PricingFAQ from '@/components/sections/pricing-faq'
-import { Twitter, Linkedin, Github } from 'lucide-react'
+import { Twitter, Linkedin, Github } from '@/components/icons/social'
 
 // Wymusza dynamiczne renderowanie - dane zawsze świeże z Sanity
 export const dynamic = 'force-dynamic'
@@ -95,7 +95,7 @@ export default async function CennikPage() {
         {/* Hero section */}
         <section className="relative z-10 pt-52 pb-16 px-6 lg:px-12">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl md:text-6xl font-light tracking-widest glow-text mb-6">
+            <h1 className="glow-text mb-6">
               Ile kosztuje strona internetowa?
             </h1>
             <p className="text-xl font-light tracking-wide text-gray-400 max-w-2xl mx-auto">

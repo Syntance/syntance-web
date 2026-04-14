@@ -141,7 +141,7 @@ export default async function ONasPage() {
         <HeroTransition>
         <section className="relative z-10 pt-52 pb-24 px-6 lg:px-12">
           <div className="max-w-5xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-wide text-white mb-6 leading-tight">
+            <h1 className="text-white mb-6">
               Czym jest Syntance?
             </h1>
             <h2 className="text-xl md:text-2xl font-medium mb-8">

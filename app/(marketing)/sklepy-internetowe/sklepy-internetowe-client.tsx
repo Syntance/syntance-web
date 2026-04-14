@@ -277,7 +277,7 @@ export default function SklepyInternetoweContent({ startPrice }: { startPrice: n
         <div className={`max-w-5xl mx-auto text-center transition-all duration-1000 ${
           heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-light tracking-widest leading-tight mb-8 glow-text">
+          <h1 className="mb-8 glow-text">
             Sklepy internetowe{" "}
             <GradientText
               colors={["#a855f7", "#ec4899", "#a855f7"]}
@@ -404,7 +404,7 @@ export default function SklepyInternetoweContent({ startPrice }: { startPrice: n
               const Icon = solution.icon
               return (
                 <GlowCard key={index} gradient={solution.gradient} delay={index * 100}>
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${solution.gradient} bg-opacity-10 flex items-center justify-center mb-6`}>
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${solution.gradient} flex items-center justify-center mb-6`}>
                     <Icon size={28} className={solution.textColor} />
                   </div>
                   <div className="flex items-center gap-2 mb-3">
@@ -474,7 +474,7 @@ export default function SklepyInternetoweContent({ startPrice }: { startPrice: n
                 <AnimatedSection key={index} delay={index * 100}>
                   <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 transition-colors">
                     <div className="flex items-start gap-4">
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tech.gradient} bg-opacity-10 flex items-center justify-center flex-shrink-0`}>
+                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tech.gradient} flex items-center justify-center flex-shrink-0`}>
                         <Icon size={24} className="text-white" />
                       </div>
                       <div>

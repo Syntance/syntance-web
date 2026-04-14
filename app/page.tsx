@@ -6,7 +6,7 @@ import SectionScrollbar from "@/components/SectionScrollbar";
 
 import AnimatedSection from "@/components/AnimatedSection";
 import { ContactForm } from "@/components/contact-form";
-import { Twitter, Linkedin, Github } from "lucide-react";
+import { Twitter, Linkedin, Github } from "@/components/icons/social";
 
 // Import sections - bez lazy loadingu dla hero, żeby uniknąć flashowania kontaktu
 import HeroStudio from "@/components/sections/hero-studio";

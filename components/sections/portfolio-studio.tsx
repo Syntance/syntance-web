@@ -141,7 +141,7 @@ export default function PortfolioStudio() {
 
         {/* CTA */}
         <div className="text-center mt-16">
-          <button className="px-8 py-3 bg-white bg-opacity-5 border border-gray-700 text-white rounded-full font-medium tracking-wider hover:bg-opacity-10 transition-all glow-box cursor-pointer group">
+          <button className="px-8 py-3 bg-white/5 border border-gray-700 text-white rounded-full font-medium tracking-wider hover:bg-white/10 transition-all glow-box cursor-pointer group">
             Zobacz więcej projektów
             <span className={`inline-block ml-2 transition-transform ${
               isMobile ? 'translate-x-1' : 'group-hover:translate-x-1'

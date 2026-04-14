@@ -1,10 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: { 
+  experimental: {
     serverActions: { bodySizeLimit: '2mb' },
   },
-  images: { 
-    domains: [],
+  images: {
     remotePatterns: [
       {
         protocol: 'https',
@@ -20,17 +19,9 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  swcMinify: true,
   compress: true,
   poweredByHeader: false,
   reactStrictMode: true,
-  modularizeImports: {
-    'lucide-react': {
-      transform: 'lucide-react/dist/esm/icons/{{kebabCase member}}',
-    },
-  },
-  // Sanity Studio wymaga tych pakietów do transpilacji
   transpilePackages: ['sanity', 'next-sanity'],
 };
 export default nextConfig;
-

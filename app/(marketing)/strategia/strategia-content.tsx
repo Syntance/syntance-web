@@ -166,7 +166,7 @@ export default function StrategiaContent({ discoveryPrice }: StrategiaContentPro
         <div className={`max-w-5xl mx-auto text-center transition-all duration-1000 ${
           heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-light tracking-widest leading-tight mb-8 glow-text">
+          <h1 className="mb-8 glow-text">
             Strategia{" "}
             <GradientText
               colors={["#a855f7", "#3b82f6", "#06b6d4", "#3b82f6", "#a855f7"]}
@@ -195,7 +195,7 @@ export default function StrategiaContent({ discoveryPrice }: StrategiaContentPro
               onClick={() => {
                 document.getElementById('problem')?.scrollIntoView({ behavior: 'smooth' })
               }}
-              className="px-8 py-4 bg-white bg-opacity-10 border border-gray-700 text-white rounded-full font-medium tracking-wider hover:bg-opacity-20 transition-all"
+              className="px-8 py-4 bg-white/10 border border-gray-700 text-white rounded-full font-medium tracking-wider hover:bg-white/20 transition-all"
             >
               Dowiedz się więcej
             </button>
@@ -373,7 +373,7 @@ export default function StrategiaContent({ discoveryPrice }: StrategiaContentPro
                               </div>
                             )}
                             
-                            <div className={`p-4 rounded-xl bg-gradient-to-r ${fundament.gradient} bg-opacity-5 border border-white/10`}>
+                            <div className={`p-4 rounded-xl bg-gradient-to-r ${fundament.gradient} border border-white/10`}>
                               <div className="flex items-start gap-3">
                                 <AlertCircle size={18} className={`${fundament.textColor} flex-shrink-0 mt-0.5`} />
                                 <p className="text-sm text-gray-400">
