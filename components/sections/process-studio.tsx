@@ -6,28 +6,28 @@ import AnimatedSection from "@/components/AnimatedSection";
 
 const steps = [
   {
-    number: "01",
+    number: "Etap 1",
     title: "Poznajemy Twój biznes",
     description: "Zanim napiszemy linijkę kodu, rozumiemy cel, klienta i rynek.",
     icon: Search,
     gradient: "from-blue-400 to-cyan-400",
   },
   {
-    number: "02",
+    number: "Etap 2",
     title: "Projektujemy doświadczenie",
     description: "Tworzymy wireframes i prototypy. Design to nie tylko wygląd - to przemyślana ścieżka użytkownika.",
     icon: Palette,
     gradient: "from-purple-400 to-pink-400",
   },
   {
-    number: "03",
+    number: "Etap 3",
     title: "Budujemy i wdrażamy",
     description: "Kod, testy, optymalizacja. Rozwijamy projekt z dbałością o każdy detal i wydajność.",
     icon: Code,
     gradient: "from-amber-400 to-orange-400",
   },
   {
-    number: "04",
+    number: "Etap 4",
     title: "Opiekujemy się stroną",
     description: "Nie znikamy po wdrożeniu. Wspieramy, aktualizujemy i rozwijamy Twój projekt.",
     note: "30 dni gwarancji + opcja opieki w ramach abonamentu",
@@ -108,7 +108,7 @@ export default function ProcessStudio() {
                     {/* Content */}
                     <div className="flex-1 pt-1">
                       <div className="flex items-center gap-3 mb-3">
-                        <span className={`text-sm font-mono font-medium bg-gradient-to-br ${step.gradient} bg-clip-text text-transparent`} aria-hidden="true">
+                        <span className={`text-sm font-medium bg-gradient-to-br ${step.gradient} bg-clip-text text-transparent`} aria-hidden="true">
                           {step.number}
                         </span>
                         <div className={`h-px flex-1 bg-gradient-to-r ${step.gradient} opacity-20`} aria-hidden="true"></div>

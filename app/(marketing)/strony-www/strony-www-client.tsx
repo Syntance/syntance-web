@@ -1,20 +1,20 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import { 
+import {
   Check,
-  Palette, 
-  Code, 
-  Rocket, 
-  ArrowRight, 
-  XCircle, 
-  Building2, 
-  Factory, 
-  Lightbulb, 
+  Palette,
+  Code,
+  Search,
+  HeartHandshake,
+  ArrowRight,
+  XCircle,
+  Building2,
+  Factory,
+  Lightbulb,
   Home,
   ChevronDown,
-  Target,
-  TrendingUp
+  TrendingUp,
 } from 'lucide-react'
 import Link from 'next/link'
 import GradientText from '@/components/GradientText'
@@ -119,38 +119,40 @@ const targetAudiences = [
   },
 ]
 
+/** Zgodne z sekcją „Jak pracujemy” na stronie głównej (`process-studio.tsx`) */
 const processSteps = [
   {
-    number: "01",
-    title: "Discovery",
-    subtitle: "Poznajemy Twój biznes",
-    description: "Warsztat strategiczny, brief, buyer persona. Zanim napiszemy linijkę kodu, rozumiemy Twój cel.",
-    icon: Target,
-    gradient: "from-purple-500 to-blue-500",
+    number: 'Etap 1',
+    title: 'Poznajemy Twój biznes',
+    description:
+      'Zanim napiszemy linijkę kodu, rozumiemy cel, klienta i rynek.',
+    icon: Search,
+    gradient: 'from-blue-400 to-cyan-400',
   },
   {
-    number: "02",
-    title: "Design",
-    subtitle: "Projektujemy doświadczenie",
-    description: "UX/UI, prototyp w Figma. Design to nie tylko wygląd — to przemyślana ścieżka użytkownika.",
+    number: 'Etap 2',
+    title: 'Projektujemy doświadczenie',
+    description:
+      'To czas na UX/UI oraz copywritting. Design to nie tylko wygląd - to przemyślana ścieżka użytkownika.',
     icon: Palette,
-    gradient: "from-blue-500 to-cyan-500",
+    gradient: 'from-purple-400 to-pink-400',
   },
   {
-    number: "03",
-    title: "Development",
-    subtitle: "Budujemy i testujemy",
-    description: "Next.js, Sanity CMS. Kod, testy, optymalizacja — rozwijamy projekt z dbałością o każdy detal.",
+    number: 'Etap 3',
+    title: 'Budujemy i wdrażamy',
+    description:
+      'Kod, testy, optymalizacja. Rozwijamy projekt z dbałością o każdy detal i wydajność.',
     icon: Code,
-    gradient: "from-cyan-500 to-teal-500",
+    gradient: 'from-amber-400 to-orange-400',
   },
   {
-    number: "04",
-    title: "Launch",
-    subtitle: "Wdrażamy i wspieramy",
-    description: "Wdrożenie, szkolenie z CMS, 30 dni wsparcia technicznego. Nie znikamy po wdrożeniu.",
-    icon: Rocket,
-    gradient: "from-teal-500 to-green-500",
+    number: 'Etap 4',
+    title: 'Opiekujemy się stroną',
+    description:
+      'Nie znikamy po wdrożeniu. Wspieramy, aktualizujemy i rozwijamy Twój projekt.',
+    note: '30 dni gwarancji + opcja opieki w ramach abonamentu',
+    icon: HeartHandshake,
+    gradient: 'from-pink-400 to-rose-400',
   },
 ]
 
@@ -377,10 +379,10 @@ export default function StronyWWWContent({ startPrice }: { startPrice: number })
         <div className="max-w-4xl mx-auto">
           <AnimatedSection className="text-center mb-20">
             <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6 glow-text">
-              Jak pracujemy?
+              Jak pracujemy
             </h2>
             <p className="text-xl text-gray-400">
-              4 kroki do strony, która konwertuje
+              Proces, który łączy design ze strategią
             </p>
           </AnimatedSection>
           
@@ -405,8 +407,8 @@ export default function StronyWWWContent({ startPrice }: { startPrice: number })
                           <div className={`absolute -inset-0.5 bg-gradient-to-r ${step.gradient} rounded-2xl opacity-0 group-hover:opacity-20 blur-sm transition-opacity duration-500`} />
                           
                           <div className="relative bg-gray-900/80 backdrop-blur-sm border border-white/10 rounded-2xl p-6 md:p-8">
-                            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r ${step.gradient} border border-white/10 mb-4`}>
-                              <span className="text-xs font-mono font-medium text-white tracking-wider">
+                            <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r ${step.gradient} border border-white/10 mb-4`}>
+                              <span className="text-xs sm:text-sm font-medium text-white tracking-wide whitespace-nowrap">
                                 {step.number}
                               </span>
                             </div>
@@ -417,13 +419,13 @@ export default function StronyWWWContent({ startPrice }: { startPrice: number })
                               </div>
                               <div>
                                 <h3 className="text-xl font-medium text-white">{step.title}</h3>
-                                <p className={`text-sm bg-gradient-to-r ${step.gradient} bg-clip-text text-transparent`}>
-                                  {step.subtitle}
-                                </p>
                               </div>
                             </div>
-                            
+
                             <p className="text-gray-400 leading-relaxed">{step.description}</p>
+                            {'note' in step && step.note ? (
+                              <p className="text-sm text-purple-400/80 italic mt-3">{step.note}</p>
+                            ) : null}
                           </div>
                         </div>
                       </div>
