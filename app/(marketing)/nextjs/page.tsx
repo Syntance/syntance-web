@@ -17,6 +17,7 @@ import Link from 'next/link'
 import GradientText from '@/components/GradientText'
 import TiltCard from '@/components/tilt-card'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
+import StickyCtaFloat from '@/components/StickyCtaFloat'
 
 // Sekcje dla scrollbar
 const scrollbarSections = [
@@ -197,12 +198,11 @@ export default function NextjsPage() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link 
-              href="/cennik"
-              className="px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full font-medium tracking-wider hover:shadow-lg hover:shadow-blue-500/30 transition-all"
-            >
-              Sprawdź cennik
-            </Link>
+            <StickyCtaFloat
+              heroId="hero-nextjs"
+              hideSectionId="cta"
+              label="Sprawdź cennik"
+            />
             <button 
               onClick={() => {
                 document.getElementById('comparison')?.scrollIntoView({ behavior: 'smooth' })
