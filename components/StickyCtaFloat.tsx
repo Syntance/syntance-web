@@ -178,15 +178,15 @@ export default function StickyCtaFloat({
   useEffect(() => {
     const onPointerDown = (e: PointerEvent) => {
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
-      const a = (e.target as HTMLElement | null)?.closest?.('a[href]')
-      if (!a) return
+      const elLink = (e.target as HTMLElement | null)?.closest?.('a[href]')
+      if (!elLink || !(elLink instanceof HTMLAnchorElement)) return
       if (
-        a.getAttribute('target') === '_blank' ||
-        a.hasAttribute('download')
+        elLink.getAttribute('target') === '_blank' ||
+        elLink.hasAttribute('download')
       )
         return
       try {
-        const url = new URL(a.href, window.location.href)
+        const url = new URL(elLink.href, window.location.href)
         if (url.origin !== window.location.origin) return
         if (
           url.pathname === window.location.pathname &&
