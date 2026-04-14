@@ -27,6 +27,7 @@ import Link from 'next/link'
 import GradientText from '@/components/GradientText'
 import TiltCard from '@/components/tilt-card'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
+import StickyCtaFloat from '@/components/StickyCtaFloat'
 
 // Sekcje dla scrollbar
 const scrollbarSections = [
@@ -312,12 +313,10 @@ export default function SklepyInternetoweContent({ startPrice }: { startPrice: n
                 Dowiedz się więcej
               </button>
             </div>
-            <Link 
-              href="/cennik"
-              className="px-8 py-4 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 transition-all glow-box"
-            >
-              Sprawdź cenę
-            </Link>
+            <StickyCtaFloat
+              heroId="hero-sklepy"
+              hideSectionId="pricing"
+            />
           </div>
         </div>
         
