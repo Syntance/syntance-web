@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 
 interface StickyCtaFloatProps {
   heroId: string
@@ -15,6 +16,7 @@ export default function StickyCtaFloat({
   href = '/cennik',
   label = 'Sprawdź cenę',
 }: StickyCtaFloatProps) {
+  const router = useRouter()
   const wrapRef = useRef<HTMLDivElement>(null)
   const elRef = useRef<HTMLAnchorElement | null>(null)
   const isFixedRef = useRef(false)
@@ -28,8 +30,12 @@ export default function StickyCtaFloat({
     el.href = href
     el.textContent = label
     el.className =
-      'px-8 py-3 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 glow-box cursor-pointer inline-block text-center whitespace-nowrap shadow-lg shadow-white/10'
+      'px-8 py-3 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 glow-box cursor-pointer inline-flex items-center justify-center text-center whitespace-nowrap shadow-lg shadow-white/10'
     el.style.transition = 'opacity 0.3s ease-out'
+    el.addEventListener('click', (e) => {
+      e.preventDefault()
+      router.push(href)
+    })
     wrap.appendChild(el)
     elRef.current = el
 
@@ -37,7 +43,7 @@ export default function StickyCtaFloat({
       el.remove()
       elRef.current = null
     }
-  }, [href, label])
+  }, [href, label, router])
 
   const flipToFixed = useCallback(() => {
     const el = elRef.current
@@ -176,6 +182,14 @@ export default function StickyCtaFloat({
   }, [hideSectionId])
 
   useEffect(() => {
+    const hide = () => {
+      const el = elRef.current
+      if (el) {
+        el.style.transition = 'opacity 0.15s ease-out'
+        el.style.opacity = '0'
+      }
+    }
+
     const onPointerDown = (e: PointerEvent) => {
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
       const elLink = (e.target as HTMLElement | null)?.closest?.('a[href]')
@@ -193,12 +207,7 @@ export default function StickyCtaFloat({
           url.search === window.location.search
         )
           return
-        const el = elRef.current
-        if (el) {
-          el.style.transition = 'opacity 0.15s ease-out'
-          el.style.opacity = '0'
-          el.style.pointerEvents = 'none'
-        }
+        hide()
       } catch {
         /* ignore */
       }
