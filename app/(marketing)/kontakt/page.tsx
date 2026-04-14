@@ -97,7 +97,7 @@ export default async function KontaktPage() {
         <HeroTransition>
         <section className="relative z-10 pt-52 pb-16 px-6 lg:px-12">
           <div className="max-w-5xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-wide text-white mb-6 leading-tight">
+            <h1 className="text-white mb-6">
               Skontaktuj się
             </h1>
             <p className="text-xl md:text-2xl text-gray-400 max-w-2xl mx-auto">

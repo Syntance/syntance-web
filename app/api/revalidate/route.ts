@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     const tag = request.nextUrl.searchParams.get('tag')
     
     if (tag) {
-      revalidateTag(tag)
+      revalidateTag(tag, { expire: 0 })
       return NextResponse.json({ revalidated: true, tag, now: Date.now() })
     }
 
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     }
 
     const tagToRevalidate = tagMap[documentType] || 'pricing'
-    revalidateTag(tagToRevalidate)
+    revalidateTag(tagToRevalidate, { expire: 0 })
 
     return NextResponse.json({ 
       revalidated: true, 
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    revalidateTag(tag)
+    revalidateTag(tag, { expire: 0 })
     return NextResponse.json({ revalidated: true, tag, now: Date.now() })
   } catch (error) {
     console.error('Revalidation error:', error)

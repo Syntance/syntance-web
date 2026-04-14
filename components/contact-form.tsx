@@ -121,7 +121,7 @@ export function ContactForm({
           placeholder="Imię i nazwisko"
           required
           disabled={formStatus === 'loading'}
-          className="w-full px-6 py-4 bg-white bg-opacity-5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors disabled:opacity-50"
+          className="w-full px-6 py-4 bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors disabled:opacity-50"
         />
       </div>
       <div>
@@ -133,7 +133,7 @@ export function ContactForm({
           placeholder="Email"
           required
           disabled={formStatus === 'loading'}
-          className="w-full px-6 py-4 bg-white bg-opacity-5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors disabled:opacity-50"
+          className="w-full px-6 py-4 bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors disabled:opacity-50"
         />
       </div>
       <div>
@@ -145,7 +145,7 @@ export function ContactForm({
           placeholder="Numer telefonu"
           required
           disabled={formStatus === 'loading'}
-          className="w-full px-6 py-4 bg-white bg-opacity-5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors disabled:opacity-50"
+          className="w-full px-6 py-4 bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors disabled:opacity-50"
         />
       </div>
       <div>
@@ -157,7 +157,7 @@ export function ContactForm({
           rows={5}
           required
           disabled={formStatus === 'loading'}
-          className="w-full px-6 py-4 bg-white bg-opacity-5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors resize-none disabled:opacity-50"
+          className="w-full px-6 py-4 bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors resize-none disabled:opacity-50"
         ></textarea>
         <div className="text-sm text-gray-400 mt-1 text-right">
           {formData.message.length} / 2000 znaków
@@ -170,7 +170,7 @@ export function ContactForm({
       <button
         type="submit"
         disabled={formStatus === 'loading' || !consentChecked}
-        className="w-full px-8 py-4 bg-white text-gray-900 rounded-lg font-medium tracking-wider hover:bg-opacity-90 transition-all glow-box disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full px-8 py-4 bg-white text-gray-900 rounded-lg font-medium tracking-wider hover:bg-white/90 transition-all glow-box disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {formStatus === 'loading' ? 'Wysyłanie...' : 'Wyślij wiadomość'}
       </button>
@@ -182,7 +182,7 @@ export function ContactForm({
           id={`${idPrefix}-consent`}
           checked={consentChecked}
           onChange={(e) => setConsentChecked(e.target.checked)}
-          className="mt-1 h-4 w-4 rounded border-gray-700 bg-white bg-opacity-5 text-purple-500 focus:ring-purple-500 focus:ring-offset-gray-900"
+          className="mt-1 h-4 w-4 rounded border-gray-700 bg-white/5 text-purple-500 focus:ring-purple-500 focus:ring-offset-gray-900"
           required
         />
         <label htmlFor={`${idPrefix}-consent`} className="text-sm text-gray-400 leading-relaxed">
@@ -217,13 +217,13 @@ export function ContactForm({
       )}
       
       {formStatus === 'success' && (
-        <div className="p-4 bg-green-500 bg-opacity-20 border border-green-500 rounded-lg text-green-300 text-center">
+        <div className="p-4 bg-green-500/20 border border-green-500 rounded-lg text-green-300 text-center">
           Wiadomość została wysłana pomyślnie!
         </div>
       )}
       
       {formStatus === 'error' && (
-        <div className="p-4 bg-red-500 bg-opacity-20 border border-red-500 rounded-lg text-red-300 text-center">
+        <div className="p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-300 text-center">
           {errorMessage || 'Wystąpił błąd podczas wysyłania wiadomości.'}
         </div>
       )}

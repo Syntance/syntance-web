@@ -46,13 +46,16 @@ export default async function RootLayout({
   const seo = await getSeoSettings();
   
   return (
-    <html lang="pl" className="scroll-smooth">
+    <html
+      lang="pl"
+      className={`${spaceGrotesk.variable} ${plusJakartaSans.variable}`}
+    >
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
       </head>
-      <body className={`${spaceGrotesk.variable} ${plusJakartaSans.variable} font-sans antialiased bg-black text-[#F5F3FF]`}>
+      <body className="font-sans antialiased bg-black text-[#F5F3FF]">
         <Suspense fallback={null}>
           <ProgressBar />
         </Suspense>

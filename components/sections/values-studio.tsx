@@ -126,7 +126,7 @@ export default function ValuesStudio() {
 
                         {/* Icon */}
                         <div className="mb-6 relative">
-                          <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${value.gradient} bg-opacity-10 flex items-center justify-center transform transition-all duration-500 ${
+                          <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${value.gradient} flex items-center justify-center transform transition-all duration-500 ${
                             isMobile ? 'scale-110 rotate-3' : 'group-hover:scale-110 group-hover:rotate-3'
                           }`}>
                             <Icon className="text-white" size={32} strokeWidth={1.5} />

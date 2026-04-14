@@ -52,7 +52,7 @@ export default function PricingStudioNew() {
         {/* Value propositions */}
         <div className="grid md:grid-cols-3 gap-6 mb-16">
           <div className="product-card rounded-2xl p-6 text-center">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 bg-opacity-10 flex items-center justify-center mx-auto mb-4">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center mx-auto mb-4">
               <Check className="text-blue-400" size={24} />
             </div>
             <h3 className="text-lg font-medium mb-2">Transparentność</h3>
@@ -62,7 +62,7 @@ export default function PricingStudioNew() {
           </div>
 
           <div className="product-card rounded-2xl p-6 text-center">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 bg-opacity-10 flex items-center justify-center mx-auto mb-4">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center mx-auto mb-4">
               <Check className="text-purple-400" size={24} />
             </div>
             <h3 className="text-lg font-medium mb-2">Elastyczność</h3>
@@ -72,7 +72,7 @@ export default function PricingStudioNew() {
           </div>
 
           <div className="product-card rounded-2xl p-6 text-center">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-400 bg-opacity-10 flex items-center justify-center mx-auto mb-4">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-400 flex items-center justify-center mx-auto mb-4">
               <Check className="text-amber-400" size={24} />
             </div>
             <h3 className="text-lg font-medium mb-2">Wartość</h3>
@@ -99,7 +99,7 @@ export default function PricingStudioNew() {
             
             <a 
               href="/cennik"
-              className="px-10 py-4 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 transition-all glow-box cursor-pointer group inline-flex items-center gap-2"
+              className="px-10 py-4 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-white/90 transition-all glow-box cursor-pointer group inline-flex items-center gap-2"
             >
               Sprawdź cenę strony
               <span className={`inline-block transition-transform ${

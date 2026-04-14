@@ -28,19 +28,19 @@ export default function HeroStudio() {
       className="relative z-10 min-h-screen flex items-center justify-center px-6 lg:px-12 pt-32 pb-20"
     >
       <div
-        className={`max-w-4xl mx-auto text-center transition-all duration-1000 ${
+        className={`max-w-3xl mx-auto text-center transition-all duration-1000 ${
           isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
         }`}
       >
         <h1
           id="hero-heading"
-          className="text-5xl md:text-7xl font-light tracking-widest leading-tight mb-6 glow-text"
+          className="font-heading mb-6 glow-text"
         >
           Strony i sklepy{" "}
           <GradientText
+            className="font-medium"
             colors={["#ffaa40", "#9c40ff", "#ffaa40"]}
             animationSpeed={4}
-            className="font-medium"
           >
             Next.js
           </GradientText>

@@ -179,7 +179,7 @@ export default function NextjsPage() {
         <div className={`max-w-5xl mx-auto text-center transition-all duration-1000 ${
           heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-light tracking-widest leading-tight mb-8 glow-text">
+          <h1 className="mb-8 glow-text">
             Dlaczego{" "}
             <GradientText
               colors={["#3b82f6", "#06b6d4", "#10b981", "#06b6d4", "#3b82f6"]}
@@ -207,7 +207,7 @@ export default function NextjsPage() {
               onClick={() => {
                 document.getElementById('comparison')?.scrollIntoView({ behavior: 'smooth' })
               }}
-              className="px-8 py-4 bg-white bg-opacity-10 border border-gray-700 text-white rounded-full font-medium tracking-wider hover:bg-opacity-20 transition-all"
+              className="px-8 py-4 bg-white/10 border border-gray-700 text-white rounded-full font-medium tracking-wider hover:bg-white/20 transition-all"
             >
               Zobacz porównanie
             </button>
@@ -312,7 +312,7 @@ export default function NextjsPage() {
                               ))}
                             </ul>
 
-                            <div className={`p-4 rounded-xl bg-gradient-to-r ${benefit.gradient} bg-opacity-5 border border-white/10`}>
+                            <div className={`p-4 rounded-xl bg-gradient-to-r ${benefit.gradient} border border-white/10`}>
                               <p className="text-sm text-gray-400">
                                 <span className="font-medium text-white">Real world: </span>
                                 {benefit.realWorld}

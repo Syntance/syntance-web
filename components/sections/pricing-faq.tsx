@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown, DollarSign, Clock, Shield, Scale, Twitter, Linkedin, Github } from 'lucide-react'
+import { ChevronDown, DollarSign, Clock, Shield, Scale } from 'lucide-react'
+import { Twitter, Linkedin, Github } from '@/components/icons/social'
 import { ContactForm } from '@/components/contact-form'
 import { PricingFaqItem, defaultFaqItems } from '@/sanity/queries/faq'
 
