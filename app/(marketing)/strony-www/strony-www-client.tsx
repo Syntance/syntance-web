@@ -2,15 +2,11 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { 
-  Zap, 
-  Shield, 
-  Code2, 
-  Search, 
+  Check,
   Palette, 
   Code, 
   Rocket, 
   ArrowRight, 
-  CheckCircle2, 
   XCircle, 
   Building2, 
   Factory, 
@@ -78,112 +74,47 @@ function AnimatedSection({
   )
 }
 
-// Komponent karty z glow effect
-function GlowCard({ 
-  children, 
-  gradient = 'from-blue-500 to-cyan-500',
-  className = '',
-  delay = 0
-}: { 
-  children: React.ReactNode
-  gradient?: string
-  className?: string
-  delay?: number
-}) {
-  const [isVisible, setIsVisible] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => setIsVisible(true), delay)
-          observer.unobserve(entry.target)
-        }
-      },
-      { threshold: 0.2 }
-    )
-
-    if (ref.current) observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [delay])
-
-  return (
-    <div 
-      ref={ref}
-      className={`relative group transition-all duration-700 ${
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-      } ${className}`}
-    >
-      <div className={`absolute -inset-0.5 bg-gradient-to-r ${gradient} rounded-2xl opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-500`} />
-      <div className="relative bg-gray-900/80 backdrop-blur-sm border border-white/10 rounded-2xl p-6 md:p-8 h-full">
-        {children}
-      </div>
-    </div>
-  )
-}
-
 const problems = [
   { icon: XCircle, text: "Wolna", desc: "użytkownicy uciekają po 3 sekundach" },
-  { icon: XCircle, text: "Niewidoczna w Google", desc: "brak ruchu organicznego" },
+  { icon: XCircle, text: "Niewidoczna w Google i AI", desc: "brak ruchu organicznego." },
   { icon: XCircle, text: "Przestarzała technologia", desc: "WordPress z 50 wtyczkami" },
   { icon: XCircle, text: "Brak strategii", desc: "\"ładna\" strona bez celu biznesowego" },
 ]
 
 const solutions = [
-  { 
-    icon: Zap, 
-    title: "Szybkość", 
-    description: "PageSpeed 90+ gwarantowany",
-    gradient: "from-yellow-500 to-orange-500",
-    textColor: "text-yellow-400"
-  },
-  { 
-    icon: Search, 
-    title: "SEO-ready", 
-    description: "Optymalizacja od pierwszego dnia",
-    gradient: "from-green-500 to-emerald-500",
-    textColor: "text-green-400"
-  },
-  { 
-    icon: Code2, 
-    title: "Nowoczesna technologia", 
-    description: "Next.js, headless CMS",
-    gradient: "from-blue-500 to-cyan-500",
-    textColor: "text-blue-400"
-  },
-  { 
-    icon: Shield, 
-    title: "Strategia przed kodem", 
-    description: "Strategia przedwdrożeniowa w cenie",
-    gradient: "from-purple-500 to-pink-500",
-    textColor: "text-purple-400"
-  },
+  { title: "Szybkość", description: "PageSpeed 90+ gwarantowany" },
+  { title: "SEO i AI", description: "Optymalizacja od pierwszego dnia" },
+  { title: "Nowoczesna technologia", description: "Next.js, headless CMS" },
+  { title: "Strategia przed kodem", description: "Strategia przedwdrożeniowa w cenie" },
 ]
 
 const targetAudiences = [
   {
     icon: Building2,
     title: "Firmy usługowe",
-    description: "Strona jako generator leadów — pozycjonowanie lokalne, formularze kontaktowe, integracje z CRM.",
+    description:
+      "Strona, która generuje zapytania — nie tylko „ładnie wygląda”. Pozycjonowanie lokalne, formularze z kwalifikacją leadów, integracja z CRM.",
     gradient: "from-blue-500 to-cyan-500",
   },
   {
     icon: Factory,
     title: "Producenci B2B",
-    description: "Katalog produktów, zapytania ofertowe, specyfikacje techniczne — wszystko w jednym miejscu.",
+    description:
+      "Katalog produktów, specyfikacje techniczne, zapytania ofertowe — w jednym miejscu. Koniec z wysyłaniem PDF-ów mailem.",
     gradient: "from-purple-500 to-pink-500",
   },
   {
     icon: Lightbulb,
     title: "Startupy",
-    description: "MVP w 4 tygodnie — szybkie wejście na rynek z profesjonalną stroną, którą można rozwijać.",
+    description:
+      "MVP w 3 tygodnie — szybkie wejście na rynek z profesjonalną stroną, którą można skalować. Bez długu technologicznego od dnia 1.",
     gradient: "from-amber-500 to-orange-500",
   },
   {
     icon: Home,
     title: "Deweloperzy",
-    description: "Strony inwestycji z wizualizacjami 3D, galeriami i systemem rezerwacji mieszkań.",
+    description:
+      "Inwestycje z wizualizacjami 3D, galeriami i systemem rezerwacji mieszkań. Strona, która sprzedaje metraż, nie piksele.",
     gradient: "from-green-500 to-emerald-500",
   },
 ]
@@ -374,34 +305,33 @@ export default function StronyWWWContent({ startPrice }: { startPrice: number })
         </AnimatedSection>
       </section>
 
-      {/* Solution Section - Cards reveal */}
+      {/* Solution Section — ten sam układ co Problem, na zielono + fajki */}
       <section id="solution" className="relative z-10 py-32 px-6 lg:px-12">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <AnimatedSection className="text-center mb-20">
             <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6 glow-text">
-              Strona, która działa
+              Strona, która{' '}
+              <span className="text-green-400">działa.</span>
             </h2>
             <p className="text-xl text-gray-400">
               4 filary skutecznej strony internetowej
             </p>
           </AnimatedSection>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {solutions.map((solution, index) => {
-              const Icon = solution.icon
-              return (
-                <GlowCard key={index} gradient={solution.gradient} delay={index * 100}>
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${solution.gradient} bg-opacity-10 flex items-center justify-center mb-6`}>
-                    <Icon size={28} className={solution.textColor} />
+          <div className="grid md:grid-cols-2 gap-6">
+            {solutions.map((solution, index) => (
+              <AnimatedSection key={index} delay={index * 100}>
+                <div className="flex items-start gap-4 p-6 rounded-2xl bg-green-500/5 border border-green-500/20 hover:border-green-500/40 transition-colors">
+                  <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                    <Check className="w-5 h-5 text-green-400" strokeWidth={2.5} />
                   </div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <CheckCircle2 size={18} className="text-green-400" />
-                    <h3 className="text-lg font-medium text-white">{solution.title}</h3>
+                  <div>
+                    <p className="text-white font-medium mb-1">{solution.title}</p>
+                    <p className="text-gray-400 text-sm">{solution.description}</p>
                   </div>
-                  <p className="text-gray-400 text-sm leading-relaxed">{solution.description}</p>
-                </GlowCard>
-              )
-            })}
+                </div>
+              </AnimatedSection>
+            ))}
           </div>
         </div>
       </section>

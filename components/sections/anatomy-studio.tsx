@@ -124,7 +124,7 @@ export default function AnatomyStudio() {
                         {/* Level badge */}
                         <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r ${layer.gradient} bg-opacity-10 border border-white/10 mb-4`}>
                           <span className="text-xs font-medium text-white tracking-wider uppercase">
-                            Poziom {layer.level}
+                            Etap {layer.level}
                           </span>
                         </div>
 
