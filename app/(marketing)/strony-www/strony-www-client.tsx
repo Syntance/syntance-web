@@ -3,10 +3,6 @@
 import { useEffect, useState, useRef } from 'react'
 import {
   Check,
-  Palette,
-  Code,
-  Search,
-  HeartHandshake,
   ArrowRight,
   XCircle,
   Building2,
@@ -28,7 +24,6 @@ const scrollbarSections = [
   { id: "problem", label: "Problem" },
   { id: "solution", label: "Rozwiązanie" },
   { id: "audience", label: "Dla kogo" },
-  { id: "process", label: "Proces" },
   { id: "tech", label: "Technologia" },
   { id: "pricing", label: "Cennik" },
   { id: "faq", label: "FAQ" },
@@ -116,43 +111,6 @@ const targetAudiences = [
     description:
       "Inwestycje z wizualizacjami 3D, galeriami i systemem rezerwacji mieszkań. Strona, która sprzedaje metraż, nie piksele.",
     gradient: "from-green-500 to-emerald-500",
-  },
-]
-
-/** Zgodne z sekcją „Jak pracujemy” na stronie głównej (`process-studio.tsx`) */
-const processSteps = [
-  {
-    number: 'Etap 1',
-    title: 'Poznajemy Twój biznes',
-    description:
-      'Zanim napiszemy linijkę kodu, rozumiemy cel, klienta i rynek.',
-    icon: Search,
-    gradient: 'from-blue-400 to-cyan-400',
-  },
-  {
-    number: 'Etap 2',
-    title: 'Projektujemy doświadczenie',
-    description:
-      'To czas na UX/UI oraz copywritting. Design to nie tylko wygląd - to przemyślana ścieżka użytkownika.',
-    icon: Palette,
-    gradient: 'from-purple-400 to-pink-400',
-  },
-  {
-    number: 'Etap 3',
-    title: 'Budujemy i wdrażamy',
-    description:
-      'Kod, testy, optymalizacja. Rozwijamy projekt z dbałością o każdy detal i wydajność.',
-    icon: Code,
-    gradient: 'from-amber-400 to-orange-400',
-  },
-  {
-    number: 'Etap 4',
-    title: 'Opiekujemy się stroną',
-    description:
-      'Nie znikamy po wdrożeniu. Wspieramy, aktualizujemy i rozwijamy Twój projekt.',
-    note: '30 dni gwarancji + opcja opieki w ramach abonamentu',
-    icon: HeartHandshake,
-    gradient: 'from-pink-400 to-rose-400',
   },
 ]
 
@@ -370,70 +328,6 @@ export default function StronyWWWContent({ startPrice }: { startPrice: number })
                 </AnimatedSection>
               )
             })}
-          </div>
-        </div>
-      </section>
-
-      {/* Process Section - Vertical Timeline */}
-      <section id="process" className="relative z-10 py-32 px-6 lg:px-12">
-        <div className="max-w-4xl mx-auto">
-          <AnimatedSection className="text-center mb-20">
-            <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6 glow-text">
-              Jak pracujemy
-            </h2>
-            <p className="text-xl text-gray-400">
-              Proces, który łączy design ze strategią
-            </p>
-          </AnimatedSection>
-          
-          <div className="relative">
-            {/* Vertical Line */}
-            <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-purple-500 via-blue-500 to-green-500 opacity-30" />
-            
-            <div className="space-y-16 md:space-y-24">
-              {processSteps.map((step, index) => {
-                const Icon = step.icon
-                const isLeft = index % 2 === 0
-                
-                return (
-                  <AnimatedSection key={index} delay={index * 150}>
-                    <div className="relative">
-                      {/* Timeline dot */}
-                      <div className={`absolute left-8 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-gradient-to-br ${step.gradient} shadow-lg z-10`} />
-                      
-                      {/* Card */}
-                      <div className={`ml-20 md:ml-0 md:w-[calc(50%-40px)] ${isLeft ? 'md:mr-auto md:pr-8' : 'md:ml-auto md:pl-8'}`}>
-                        <div className="group relative">
-                          <div className={`absolute -inset-0.5 bg-gradient-to-r ${step.gradient} rounded-2xl opacity-0 group-hover:opacity-20 blur-sm transition-opacity duration-500`} />
-                          
-                          <div className="relative bg-gray-900/80 backdrop-blur-sm border border-white/10 rounded-2xl p-6 md:p-8">
-                            <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r ${step.gradient} border border-white/10 mb-4`}>
-                              <span className="text-xs sm:text-sm font-medium text-white tracking-wide whitespace-nowrap">
-                                {step.number}
-                              </span>
-                            </div>
-                            
-                            <div className="flex items-center gap-4 mb-4">
-                              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${step.gradient} flex items-center justify-center`}>
-                                <Icon size={24} className="text-white" />
-                              </div>
-                              <div>
-                                <h3 className="text-xl font-medium text-white">{step.title}</h3>
-                              </div>
-                            </div>
-
-                            <p className="text-gray-400 leading-relaxed">{step.description}</p>
-                            {'note' in step && step.note ? (
-                              <p className="text-sm text-purple-400/80 italic mt-3">{step.note}</p>
-                            ) : null}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </AnimatedSection>
-                )
-              })}
-            </div>
           </div>
         </div>
       </section>
