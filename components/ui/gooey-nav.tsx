@@ -48,7 +48,7 @@ const GooeyNav = ({
   const textRef = useRef<HTMLSpanElement>(null);
   const [activeIndex, setActiveIndex] = useState(initialActiveIndex);
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLLIElement | null>(null);
   const isNavigatingRef = useRef(false);
   const navigatingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -504,6 +504,11 @@ const GooeyNav = ({
             {items.map((item, index) => (
               <li
                 key={index}
+                ref={
+                  item.dropdown && item.dropdown.length > 0
+                    ? dropdownRef
+                    : undefined
+                }
                 className={`gooey-nav-item rounded-full relative cursor-pointer transition-[background-color_color] duration-300 ease text-white text-xs xl:text-sm font-light tracking-wider ${
                   activeIndex === index ? 'active' : ''
                 }`}
@@ -533,8 +538,7 @@ const GooeyNav = ({
                 </a>
                 {/* Dropdown menu */}
                 {item.dropdown && item.dropdown.length > 0 && (
-                  <div 
-                    ref={openDropdown === index ? dropdownRef : null}
+                  <div
                     className={`gooey-dropdown ${openDropdown === index ? 'open' : ''}`}
                   >
                     {item.dropdown.map((dropItem, dropIndex) => (
