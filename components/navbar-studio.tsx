@@ -11,6 +11,7 @@ const navItems = [
   { label: "Strona główna", href: "/" },
   { label: "Strony", href: "/strony-www" },
   { label: "Sklepy", href: "/sklepy-internetowe" },
+  { label: "Dla agencji", href: "/agencje-marketingowe" },
   { 
     label: "Blog", 
     href: "#",
@@ -29,11 +30,12 @@ const pathToNavIndex: Record<string, number> = {
   '/': 0,
   '/strony-www': 1,
   '/sklepy-internetowe': 2,
-  '/strategia': 3,           // "Wiedza" dropdown
-  '/nextjs': 3,              // "Wiedza" dropdown
-  '/cennik': 4,
-  '/o-nas': 5,
-  '/kontakt': 6,
+  '/agencje-marketingowe': 3,
+  '/strategia': 4,           // "Wiedza" dropdown
+  '/nextjs': 4,              // "Wiedza" dropdown
+  '/cennik': 5,
+  '/o-nas': 6,
+  '/kontakt': 7,
 };
 
 export default function NavbarStudio() {
@@ -145,6 +147,16 @@ export default function NavbarStudio() {
             }`}
           >
             Sklepy
+          </Link>
+
+          <Link
+            href="/agencje-marketingowe"
+            onClick={() => setMobileMenuOpen(false)}
+            className={`block py-3 text-sm font-light tracking-wider transition-colors ${
+              pathname === '/agencje-marketingowe' ? 'text-white' : 'text-gray-400 hover:text-purple-300'
+            }`}
+          >
+            Dla agencji
           </Link>
           
           {/* Wiedza dropdown */}
