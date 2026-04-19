@@ -175,11 +175,7 @@ export default function StrategiaContent({ discoveryPrice }: StrategiaContentPro
           <h1 className="mb-8 glow-text text-4xl md:text-5xl lg:text-6xl">
             Strategia marketingu i sprzedaży
           </h1>
-          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-4">
-            Strategia marketingu i sprzedaży — fundament pod skuteczną stronę. Zakończona gotowym
-            dokumentem strategicznym.
-          </p>
-          <p className="text-lg text-gray-500 max-w-3xl mx-auto leading-relaxed mb-12">
+          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-12">
             Strategia marketingu i sprzedaży to pierwsza faza każdego projektu. Decyduje, jak Twoja
             strona lub sklep będzie pozyskiwać klientów i sprzedawać.
           </p>
@@ -216,13 +212,18 @@ export default function StrategiaContent({ discoveryPrice }: StrategiaContentPro
       <section id="problem" className="relative z-10 py-32 px-6 lg:px-12">
         <div className="max-w-4xl mx-auto">
           <AnimatedSection>
-            <h2 className="text-3xl md:text-5xl font-light tracking-wide text-center mb-6">
-              Czy Twoja strona to{' '}
-              <span className="text-red-400">&ldquo;ładny obrazek&rdquo;</span>?
-            </h2>
-            <p className="text-xl text-gray-400 text-center mb-16">
-              Większość stron wygląda dobrze, ale nie sprzedaje.
-            </p>
+            <div className="flex w-full flex-col items-center gap-12">
+              {/* Odstęp między liniami: osobne bloki + gap — samo mb na h2 nie działa przy zawijaniu tekstu */}
+              <h2 className="flex w-full flex-col items-center gap-2 md:gap-2.5 text-3xl md:text-5xl font-light tracking-wide text-center">
+                <span className="block">Czy Twoja strona to</span>
+                <span className="block">
+                  <span className="text-red-400">&ldquo;ładny obrazek&rdquo;</span>?
+                </span>
+              </h2>
+              <p className="text-xl text-gray-400 text-center mb-16 w-full">
+                Większość stron wygląda dobrze, ale nie sprzedaje.
+              </p>
+            </div>
           </AnimatedSection>
           
           <AnimatedSection delay={100}>

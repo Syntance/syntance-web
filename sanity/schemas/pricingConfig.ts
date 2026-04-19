@@ -48,7 +48,8 @@ export default defineType({
       type: 'number',
       group: 'startingPrices',
       initialValue: 4500,
-      description: 'Cena pełnej Strategii marketingu i sprzedaży (faza przedwdrożeniowa)',
+      description:
+        'Ustawienia cennika → ta sama wartość na stronie /strategia-marketingu-i-sprzedazy (karta ceny, FAQ, JSON-LD) oraz w meta opisie.',
     }),
     defineField({
       name: 'websiteStartPrice',

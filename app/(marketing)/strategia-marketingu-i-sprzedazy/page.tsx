@@ -1,21 +1,10 @@
-import { sanityFetch } from '@/sanity/lib/fetch'
-import { startingPricesQuery, defaultStartingPrices, type StartingPrices } from '@/sanity/queries/pricing'
+import { getDiscoveryWorkshopPrice } from '@/lib/sanity/discovery-workshop-price'
 import StrategiaContent from './strategia-content'
 
 const PAGE_URL = 'https://syntance.com/strategia-marketingu-i-sprzedazy'
 
-async function getWorkshopPrice(): Promise<number> {
-  try {
-    const prices = await sanityFetch<StartingPrices>({ query: startingPricesQuery })
-    if (prices?.discoveryWorkshopPrice) {
-      return prices.discoveryWorkshopPrice
-    }
-  } catch {}
-  return defaultStartingPrices.discoveryWorkshopPrice
-}
-
 export default async function StrategiaMarketinguPage() {
-  const workshopPrice = await getWorkshopPrice()
+  const workshopPrice = await getDiscoveryWorkshopPrice()
 
   const jsonLd = {
     '@context': 'https://schema.org',

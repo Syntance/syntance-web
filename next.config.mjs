@@ -25,14 +25,23 @@ const nextConfig = {
   transpilePackages: ['sanity', 'next-sanity'],
 
   async redirects() {
-    const destination = '/strategia-marketingu-i-sprzedazy'
+    const strategia = '/strategia-marketingu-i-sprzedazy'
+    const porozmawiajmy = '/porozmawiajmy'
     return [
-      { source: '/strategia', destination, permanent: true },
-      { source: '/strategia-biznesowa', destination, permanent: true },
-      { source: '/strategia-przedwdrozeniowa', destination, permanent: true },
-      { source: '/strategia-przedwdrożeniowa', destination, permanent: true },
-      { source: '/discovery', destination, permanent: true },
-      { source: '/product-discovery', destination, permanent: true },
+      { source: '/strategia', destination: strategia, permanent: true },
+      { source: '/strategia-biznesowa', destination: strategia, permanent: true },
+      { source: '/strategia-przedwdrozeniowa', destination: strategia, permanent: true },
+      { source: '/strategia-przedwdrożeniowa', destination: strategia, permanent: true },
+      { source: '/discovery', destination: strategia, permanent: true },
+      { source: '/product-discovery', destination: strategia, permanent: true },
+
+      // Aliasy dla /porozmawiajmy (wizytówka, QR, podpis mail, LinkedIn)
+      { source: '/spotkanie', destination: porozmawiajmy, permanent: true },
+      { source: '/rozmowa', destination: porozmawiajmy, permanent: true },
+      { source: '/pogadajmy', destination: porozmawiajmy, permanent: true },
+      { source: '/umow-spotkanie', destination: porozmawiajmy, permanent: true },
+      { source: '/booking', destination: porozmawiajmy, permanent: true },
+      { source: '/meeting', destination: porozmawiajmy, permanent: true },
     ]
   },
 };
