@@ -1,19 +1,15 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { ADMIN_COOKIE_NAME, verifySession } from '@/lib/admin-auth'
 
 // Przekierowania dla starych URL-i (SEO - 301 permanent redirects)
 const redirects: Record<string, string> = {
-  // Stara struktura studio
   '/studio': '/',
   '/studio/cennik': '/cennik',
   '/studio/kontakt': '/#kontakt',
-  
-  // Nieistniejące wersje językowe
   '/en': '/',
   '/de': '/',
   '/pl': '/',
-  
-  // Inne potencjalne stare URL-e
   '/uslugi': '/cennik',
   '/oferta': '/cennik',
   '/wycena': '/cennik',
@@ -22,31 +18,40 @@ const redirects: Record<string, string> = {
   '/about': '/',
 }
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
-  
-  // Sprawdź czy ścieżka wymaga przekierowania
+
+  // 1) Ochrona /admin/**
+  if (pathname.startsWith('/admin')) {
+    // Login page jest publiczna
+    if (pathname === '/admin/login') return NextResponse.next()
+
+    const token = request.cookies.get(ADMIN_COOKIE_NAME)?.value
+    const session = await verifySession(token)
+    if (!session) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/admin/login'
+      url.search = ''
+      return NextResponse.redirect(url)
+    }
+    return NextResponse.next()
+  }
+
+  // 2) Stare redirecty
   const redirectTo = redirects[pathname]
-  
   if (redirectTo) {
     const url = request.nextUrl.clone()
-    url.pathname = redirectTo.split('#')[0] // Usuń hash dla pathname
-    
-    // Jeśli jest hash, dodaj go jako query param żeby JavaScript mógł obsłużyć
-    if (redirectTo.includes('#')) {
-      url.hash = redirectTo.split('#')[1]
-    }
-    
-    // 301 - Permanent redirect (dobre dla SEO)
+    url.pathname = redirectTo.split('#')[0]
+    if (redirectTo.includes('#')) url.hash = redirectTo.split('#')[1]
     return NextResponse.redirect(url, { status: 301 })
   }
-  
+
   return NextResponse.next()
 }
 
 export const config = {
   matcher: [
-    // Dopasuj tylko konkretne ścieżki do przekierowań
+    '/admin/:path*',
     '/studio/:path*',
     '/en',
     '/de',

@@ -4,14 +4,25 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ChevronLeft, ChevronRight, Loader2, AlertCircle, CheckCircle2, Calendar, Clock, ArrowRight } from 'lucide-react'
 import { trackEvent } from '@/lib/tracking'
 
-interface AvailabilityData {
-  availableStartDates: string[]
-  busyDays: string[]
-  requiredDays: number
+interface RangeResponse {
+  from: string
+  availableDates: string[]
+  busyDates: string[]
+  rules: { slotMinutes: number; maxAdvanceDays: number; timezone: string }
+}
+
+interface DaySlot {
+  time: string
+  startIso: string
+  endIso: string
+}
+
+interface DayResponse {
+  date: string
+  slots: DaySlot[]
 }
 
 interface MeetingBookingWidgetProps {
-  /** Gdzie przychodzi ruch (do PostHog properties oraz do maila) */
   source?: string
 }
 
@@ -30,9 +41,6 @@ const MONTHS = [
   'Listopad',
   'Grudzień',
 ]
-
-// Widełki godzinowe Kamila — max 3 sloty dziennie, wszystkie 30 min
-const DEFAULT_SLOTS = ['10:00', '13:00', '16:00']
 
 function toISODate(d: Date): string {
   const year = d.getFullYear()
@@ -56,7 +64,7 @@ function formatPolishDate(iso: string): string {
 type Step = 'calendar' | 'form' | 'success'
 
 export default function MeetingBookingWidget({ source }: MeetingBookingWidgetProps) {
-  const [availability, setAvailability] = useState<AvailabilityData | null>(null)
+  const [range, setRange] = useState<RangeResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentMonth, setCurrentMonth] = useState(() => {
@@ -66,6 +74,8 @@ export default function MeetingBookingWidget({ source }: MeetingBookingWidgetPro
   })
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
+  const [daySlots, setDaySlots] = useState<DaySlot[]>([])
+  const [loadingDay, setLoadingDay] = useState(false)
   const [step, setStep] = useState<Step>('calendar')
 
   const [name, setName] = useState('')
@@ -81,12 +91,12 @@ export default function MeetingBookingWidget({ source }: MeetingBookingWidgetPro
       setLoading(true)
       setError(null)
       try {
-        const res = await fetch('/api/availability?days=1&months=3')
+        const res = await fetch('/api/meeting/slots?days=60')
         if (!res.ok) throw new Error('Brak dostępności')
-        const data: AvailabilityData = await res.json()
-        if (!cancelled) setAvailability(data)
+        const data = (await res.json()) as RangeResponse
+        if (!cancelled) setRange(data)
       } catch (err) {
-        console.error('Availability fetch error:', err)
+        console.error('Range fetch error:', err)
         if (!cancelled) {
           setError('Nie udało się załadować kalendarza. Napisz do mnie bezpośrednio: kamil@syntance.com.')
         }
@@ -100,15 +110,38 @@ export default function MeetingBookingWidget({ source }: MeetingBookingWidgetPro
     }
   }, [])
 
-  const availableSet = useMemo(
-    () => new Set(availability?.availableStartDates ?? []),
-    [availability]
-  )
+  useEffect(() => {
+    if (!selectedDate) {
+      setDaySlots([])
+      return
+    }
+    let cancelled = false
+    const load = async () => {
+      setLoadingDay(true)
+      try {
+        const res = await fetch(`/api/meeting/slots?date=${selectedDate}`)
+        if (!res.ok) throw new Error('slots error')
+        const data = (await res.json()) as DayResponse
+        if (!cancelled) setDaySlots(data.slots ?? [])
+      } catch (err) {
+        console.error('Day slots error:', err)
+        if (!cancelled) setDaySlots([])
+      } finally {
+        if (!cancelled) setLoadingDay(false)
+      }
+    }
+    load()
+    return () => {
+      cancelled = true
+    }
+  }, [selectedDate])
+
+  const availableSet = useMemo(() => new Set(range?.availableDates ?? []), [range])
 
   const days = useMemo(() => {
     const first = new Date(currentMonth)
     first.setDate(1)
-    const startDay = (first.getDay() + 6) % 7 // pon=0
+    const startDay = (first.getDay() + 6) % 7
     const daysInMonth = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate()
 
     const cells: Array<{ iso: string; day: number; inMonth: boolean; available: boolean; past: boolean }> = []
@@ -134,7 +167,6 @@ export default function MeetingBookingWidget({ source }: MeetingBookingWidgetPro
   const goToPrevMonth = useCallback(() => {
     setCurrentMonth((m) => new Date(m.getFullYear(), m.getMonth() - 1, 1))
   }, [])
-
   const goToNextMonth = useCallback(() => {
     setCurrentMonth((m) => new Date(m.getFullYear(), m.getMonth() + 1, 1))
   }, [])
@@ -193,7 +225,6 @@ export default function MeetingBookingWidget({ source }: MeetingBookingWidgetPro
           const body = (await res.json().catch(() => null)) as { error?: string } | null
           throw new Error(body?.error || 'Nie udało się zarezerwować terminu.')
         }
-
         trackEvent('bizcard_booking_completed', {
           slot_date: selectedDate,
           slot_time: selectedSlot,
@@ -240,7 +271,7 @@ export default function MeetingBookingWidget({ source }: MeetingBookingWidgetPro
         )}
         <p className="mt-4 text-gray-400">
           Wysłałem Ci potwierdzenie na <strong className="text-white">{email}</strong> — razem z zaproszeniem do
-          kalendarza. Do zobaczenia!
+          kalendarza i linkiem Google Meet. Do zobaczenia!
         </p>
       </div>
     )
@@ -257,7 +288,7 @@ export default function MeetingBookingWidget({ source }: MeetingBookingWidgetPro
             <Calendar className="h-4 w-4 text-purple-400" /> {selectedDate && formatPolishDate(selectedDate)}
           </span>
           <span className="flex items-center gap-2">
-            <Clock className="h-4 w-4 text-purple-400" /> {selectedSlot} (30 min)
+            <Clock className="h-4 w-4 text-purple-400" /> {selectedSlot} ({range?.rules.slotMinutes ?? 30} min)
           </span>
           <button
             type="button"
@@ -328,7 +359,7 @@ export default function MeetingBookingWidget({ source }: MeetingBookingWidgetPro
             </>
           ) : (
             <>
-              Zarezerwuj 30 minut <ArrowRight className="h-4 w-4" />
+              Zarezerwuj {range?.rules.slotMinutes ?? 30} minut <ArrowRight className="h-4 w-4" />
             </>
           )}
         </button>
@@ -336,7 +367,6 @@ export default function MeetingBookingWidget({ source }: MeetingBookingWidgetPro
     )
   }
 
-  // step === 'calendar'
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 md:p-8">
       <div className="mb-6 flex items-center justify-between">
@@ -402,26 +432,36 @@ export default function MeetingBookingWidget({ source }: MeetingBookingWidgetPro
           <p className="mb-3 text-sm text-gray-400">
             Wybierz godzinę — {formatPolishDate(selectedDate)}:
           </p>
-          <div className="grid grid-cols-3 gap-3">
-            {DEFAULT_SLOTS.map((slot) => {
-              const isActive = slot === selectedSlot
-              return (
-                <button
-                  key={slot}
-                  type="button"
-                  onClick={() => handlePickSlot(slot)}
-                  className={[
-                    'rounded-lg border px-4 py-3 text-center transition-all',
-                    isActive
-                      ? 'border-purple-500 bg-purple-500/10 text-white'
-                      : 'border-white/10 bg-white/[0.02] text-gray-300 hover:border-white/20 hover:bg-white/5',
-                  ].join(' ')}
-                >
-                  {slot}
-                </button>
-              )
-            })}
-          </div>
+          {loadingDay ? (
+            <div className="flex items-center justify-center py-6 text-gray-400">
+              <Loader2 className="h-5 w-5 animate-spin" />
+            </div>
+          ) : daySlots.length === 0 ? (
+            <div className="rounded-lg border border-white/10 bg-white/[0.02] p-4 text-sm text-gray-400">
+              Brak wolnych godzin tego dnia. Wybierz inny termin.
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 gap-3">
+              {daySlots.map((slot) => {
+                const isActive = slot.time === selectedSlot
+                return (
+                  <button
+                    key={slot.time}
+                    type="button"
+                    onClick={() => handlePickSlot(slot.time)}
+                    className={[
+                      'rounded-lg border px-4 py-3 text-center transition-all',
+                      isActive
+                        ? 'border-purple-500 bg-purple-500/10 text-white'
+                        : 'border-white/10 bg-white/[0.02] text-gray-300 hover:border-white/20 hover:bg-white/5',
+                    ].join(' ')}
+                  >
+                    {slot.time}
+                  </button>
+                )
+              })}
+            </div>
+          )}
 
           <button
             type="button"

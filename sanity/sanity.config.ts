@@ -43,9 +43,35 @@ const structure = (S: any) =>
             .title('FAQ Cennika')
         ),
       S.divider(),
+      // === REZERWACJE ===
+      S.listItem()
+        .title('📅 Reguły rezerwacji')
+        .id('bookingRules')
+        .child(
+          S.document()
+            .schemaType('bookingRules')
+            .documentId('bookingRules')
+            .title('Reguły rezerwacji')
+        ),
+      S.listItem()
+        .title('⛔ Blokady czasu')
+        .id('bookingTimeBlock')
+        .child(
+          S.documentTypeList('bookingTimeBlock').title('Blokady czasu')
+        ),
+      S.listItem()
+        .title('📆 Rezerwacje spotkań')
+        .id('meetingBooking')
+        .child(
+          S.documentTypeList('meetingBooking').title('Rezerwacje spotkań')
+        ),
+      S.divider(),
       // Pozostałe dokumenty
       ...S.documentTypeListItems().filter(
-        (listItem: any) => !['pricingConfig', 'seoSettings', 'pageSeo', 'pricingFaq'].includes(listItem.getId())
+        (listItem: any) =>
+          !['pricingConfig', 'seoSettings', 'pageSeo', 'pricingFaq', 'bookingRules', 'bookingTimeBlock', 'meetingBooking'].includes(
+            listItem.getId()
+          )
       ),
     ])
 
