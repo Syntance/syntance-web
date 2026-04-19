@@ -40,13 +40,14 @@ const pathToNavIndex: Record<string, number> = {
 
 // Ścieżki, na których navbar jest ukryty (strony z jednym celem — bez rozpraszaczy)
 const HIDDEN_NAVBAR_PATHS = new Set<string>(['/porozmawiajmy'])
+const HIDDEN_NAVBAR_PREFIXES = ['/admin']
 
 export default function NavbarStudio() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileWiedzaOpen, setMobileWiedzaOpen] = useState(false);
 
-  if (HIDDEN_NAVBAR_PATHS.has(pathname)) {
+  if (HIDDEN_NAVBAR_PATHS.has(pathname) || HIDDEN_NAVBAR_PREFIXES.some((p) => pathname.startsWith(p))) {
     return null;
   }
 
