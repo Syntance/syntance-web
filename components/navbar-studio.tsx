@@ -16,7 +16,7 @@ const navItems = [
     label: "Blog", 
     href: "#",
     dropdown: [
-      { label: "Strategia", href: "/strategia" },
+      { label: "Strategia", href: "/strategia-marketingu-i-sprzedazy" },
       { label: "Technologia", href: "/nextjs" },
     ]
   },
@@ -31,7 +31,7 @@ const pathToNavIndex: Record<string, number> = {
   '/strony-www': 1,
   '/sklepy-internetowe': 2,
   '/agencje-marketingowe': 3,
-  '/strategia': 4,           // "Wiedza" dropdown
+  '/strategia-marketingu-i-sprzedazy': 4,           // "Wiedza" dropdown
   '/nextjs': 4,              // "Wiedza" dropdown
   '/cennik': 5,
   '/o-nas': 6,
@@ -49,7 +49,7 @@ export default function NavbarStudio() {
   }, [pathname]);
 
   // Sprawdź czy któryś z linków w "Wiedza" jest aktywny
-  const isWiedzaActive = pathname === '/strategia' || pathname === '/nextjs';
+  const isWiedzaActive = pathname === '/strategia-marketingu-i-sprzedazy' || pathname === '/nextjs';
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 py-6 px-6 lg:px-12 backdrop-blur-md bg-black/30 transition-all duration-300">
@@ -181,13 +181,13 @@ export default function NavbarStudio() {
             >
               <div className="pl-4 space-y-1 border-l border-white/10 ml-2">
                 <Link
-                  href="/strategia"
+                  href="/strategia-marketingu-i-sprzedazy"
                   onClick={() => {
                     setMobileMenuOpen(false);
                     setMobileWiedzaOpen(false);
                   }}
                   className={`block py-2 text-sm font-light tracking-wider transition-colors ${
-                    pathname === '/strategia' 
+                    pathname === '/strategia-marketingu-i-sprzedazy' 
                       ? 'text-white' 
                       : 'text-gray-400 hover:text-purple-300'
                   }`}

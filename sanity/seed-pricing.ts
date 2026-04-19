@@ -142,7 +142,7 @@ const config = {
   calendlyUrl: 'https://calendly.com/syntance/discovery',
   ctaTexts: {
     reserve: 'Zarezerwuj termin w tej cenie',
-    workshop: 'Zamów Strategię przedwdrożeniową',
+    workshop: 'Zamów Strategię marketingu i sprzedaży',
     pdf: 'Pobierz wycenę PDF',
   },
 }

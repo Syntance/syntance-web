@@ -20,7 +20,8 @@ const defaultSeoSettings = {
   // Meta tagi
   metaTitle: 'Syntance — Strony i sklepy Next.js | PageSpeed 90+ | Polska',
   metaTitleTemplate: '%s | Syntance',
-  metaDescription: 'Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia przed kodem. Strony od 5k PLN, sklepy od 20k PLN. Pełna własność kodu. Realizacja w 2-4 tygodnie.',
+  metaDescription:
+    'Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od 5k PLN, sklepy od 20k PLN. Pełna własność kodu. Realizacja w 2-4 tygodnie.',
   canonicalUrl: 'https://syntance.com',
   
   // Słowa kluczowe
@@ -41,12 +42,14 @@ const defaultSeoSettings = {
   
   // Open Graph
   ogTitle: 'Syntance — Strony i sklepy Next.js | PageSpeed 90+',
-  ogDescription: 'Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia przed kodem. Strony od 5k PLN. Realizacja w 2-4 tygodnie.',
+  ogDescription:
+    'Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od 5k PLN. Realizacja w 2-4 tygodnie.',
   ogImageUrl: 'https://syntance.com/og/og-home-1200x630.png',
   
   // Twitter
   twitterTitle: 'Syntance — Strony i sklepy Next.js | PageSpeed 90+',
-  twitterDescription: 'Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia przed kodem. Strony od 5k PLN. Realizacja w 2-4 tygodnie.',
+  twitterDescription:
+    'Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od 5k PLN. Realizacja w 2-4 tygodnie.',
   twitterImageAlt: 'Syntance - Studio tworzące szybkie strony i sklepy internetowe Next.js',
   
   // Schema.org
@@ -85,7 +88,8 @@ const defaultSeoSettings = {
     {
       _key: 'service-1',
       name: 'Strony WWW Next.js',
-      description: 'Ultra-szybkie strony internetowe na Next.js z PageSpeed 90+ gwarantowanym. Strategia przed kodem, pełna własność kodu.',
+      description:
+        'Ultra-szybkie strony internetowe na Next.js z PageSpeed 90+ gwarantowanym. Strategia marketingu i sprzedaży przed kodem, pełna własność kodu.',
       serviceType: 'Web Development',
       priceRange: '5000-15000 PLN',
     },
@@ -98,8 +102,9 @@ const defaultSeoSettings = {
     },
     {
       _key: 'service-3',
-      name: 'Strategia przedwdrożeniowa',
-      description: 'Cel biznesowy strony przed kodem - persony, UVP, user flows, SEO, architektura informacji.',
+      name: 'Strategia marketingu i sprzedaży',
+      description:
+        'Faza przedwdrożeniowa: segmentacja rynku, pozycjonowanie, UVP, buyer persony, lejek, user flows, plan SEO i analityki. Gotowy dokument strategiczny.',
       serviceType: 'Business Consulting',
       price: 4500,
     },

@@ -21,7 +21,7 @@ const values = [
   },
   {
     title: "Strategicznie",
-    description: "Strategia przedwdrożeniowa przed kodem",
+    description: "Strategia marketingu i sprzedaży przed kodem",
     proof: "Każda złotówka ma uzasadnienie",
     icon: Target,
     gradient: "from-pink-400 to-rose-400",

@@ -44,11 +44,11 @@ export default defineType({
     // === CENY STARTOWE ===
     defineField({
       name: 'discoveryWorkshopPrice',
-      title: 'Cena Strategii przedwdrożeniowej (PLN)',
+      title: 'Cena Strategii marketingu i sprzedaży (PLN)',
       type: 'number',
       group: 'startingPrices',
       initialValue: 4500,
-      description: 'Cena pełnej strategii przedwdrożeniowej',
+      description: 'Cena pełnej Strategii marketingu i sprzedaży (faza przedwdrożeniowa)',
     }),
     defineField({
       name: 'websiteStartPrice',
@@ -130,7 +130,7 @@ export default defineType({
           name: 'workshop', 
           title: 'Przycisk warsztatu', 
           type: 'string', 
-          initialValue: 'Zamów Strategię przedwdrożeniową' 
+          initialValue: 'Zamów Strategię marketingu i sprzedaży' 
         }),
         defineField({ 
           name: 'pdf', 

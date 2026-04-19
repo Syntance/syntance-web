@@ -62,8 +62,9 @@ export const defaultFaqItems: PricingFaqItem[] = [
   {
     _id: 'default-6',
     category: 'time',
-    question: 'Co to jest Strategia przedwdrożeniowa?',
-    answer: '2-3 godzinne spotkanie strategiczne, na którym definiujemy cel biznesowy strony, buyer persony, UVP, user flows, SEO i architekturę informacji. Wynikiem jest dokument z wytycznymi — dzięki temu strona jest skuteczna, a nie tylko "ładna". Strategia przedwdrożeniowa kosztuje 4 500 PLN i jest zaliczana na poczet projektu.',
+    question: 'Co to jest Strategia marketingu i sprzedaży?',
+    answer:
+      '2–3 godzinne spotkanie strategiczne (faza przedwdrożeniowa), na którym ustalamy m.in. segmentację, pozycjonowanie, UVP, buyer persony, lejek marketingowy, user flows, plan SEO i analityki. Wynikiem jest gotowy dokument strategiczny. Pełna usługa kosztuje 4 500 PLN i jest zaliczana na poczet projektu.',
     order: 6,
   },
   // Pytania o ryzyko/zaufanie

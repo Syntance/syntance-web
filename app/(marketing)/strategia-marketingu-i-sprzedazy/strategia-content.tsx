@@ -17,7 +17,6 @@ import {
   MessageSquare
 } from 'lucide-react'
 import Link from 'next/link'
-import GradientText from '@/components/GradientText'
 import TiltCard from '@/components/tilt-card'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
 
@@ -26,7 +25,7 @@ const scrollbarSections = [
   { id: "problem", label: "Problem" },
   { id: "fundamenty", label: "3 Fundamenty" },
   { id: "buyer-journey", label: "Buyer Journey" },
-  { id: "discovery", label: "Strategia" },
+  { id: "strategia-usluga", label: "Usługa" },
   { id: "dla-kogo", label: "Dla kogo" },
   { id: "faq", label: "FAQ" },
 ]
@@ -113,7 +112,7 @@ const fundamenty = [
     textColor: "text-cyan-400",
     description: "UVP to odpowiedź na pytanie: \"Dlaczego klient ma wybrać Ciebie?\"",
     template: "Dla [segment], którzy [problem], [firma] to [kategoria], która [wyróżnik], ponieważ [dowód].",
-    example: "Dla właścicieli firm usługowych, którzy chcą więcej klientów z internetu, Syntance to studio webowe, które buduje strony generujące leady, ponieważ każdy projekt zaczyna od strategii.",
+    example: "Dla właścicieli firm usługowych, którzy chcą więcej klientów z internetu, Syntance to studio webowe, które buduje strony generujące leady, ponieważ każdy projekt zaczyna od strategii marketingu i sprzedaży.",
     kontrolne: "Czy potrafisz powiedzieć to w jednym zdaniu?"
   }
 ]
@@ -133,24 +132,28 @@ export default function StrategiaContent({ discoveryPrice }: StrategiaContentPro
   const faqItems = [
     {
       question: "Czy mogę pominąć strategię i od razu zacząć od projektu?",
-      answer: "Możesz, ale ryzykujesz, że strona będzie ładna, ale nieskuteczna. 80% naszych klientów, którzy przyszli \"tylko po stronę\", po strategii przedwdrożeniowej zmienili całą koncepcję."
+      answer:
+        'Możesz, ale ryzykujesz, że strona będzie ładna, ale nieskuteczna. 80% naszych klientów, którzy przyszli "tylko po stronę", po strategii marketingu i sprzedaży zmienili całą koncepcję.',
     },
     {
-      question: "Ile trwa Strategia przedwdrożeniowa?",
-      answer: "Spotkanie to 2-3 godziny. Dokument strategiczny otrzymujesz w ciągu 3-5 dni roboczych."
+      question: "Ile trwa Strategia marketingu i sprzedaży?",
+      answer:
+        "Spotkanie to 2-3 godziny. Dokument strategiczny otrzymujesz w ciągu 3-5 dni roboczych.",
     },
     {
       question: "Co jeśli już mam strategię?",
-      answer: "Świetnie! Wtedy możemy od razu przejść do projektu. Podczas briefu zweryfikujemy, czy masz wszystkie elementy."
+      answer:
+        "Świetnie! Wtedy możemy od razu przejść do projektu. Podczas briefu zweryfikujemy, czy masz wszystkie elementy.",
     },
     {
       question: "Czy strategia jest wliczona w cenę strony?",
-      answer: `Tak. Każdy projekt strony lub sklepu zawiera uproszczoną wersję strategii w cenie. Pełna Strategia przedwdrożeniowa (${priceFormatted} PLN) to opcja dla firm, które chcą głębszej analizy.`
+      answer: `Tak. Każdy projekt strony lub sklepu zawiera uproszczoną wersję strategii w cenie. Pełna Strategia marketingu i sprzedaży (${priceFormatted} PLN) to opcja dla firm, które chcą głębszej analizy.`,
     },
     {
-      question: "Dla jakiej wielkości firm jest Strategia przedwdrożeniowa?",
-      answer: "Dla firm, które traktują stronę jako narzędzie biznesowe, nie wizytówkę. Typowo: 1-50 pracowników, B2B lub usługi premium B2C."
-    }
+      question: "Dla jakiej wielkości firm jest Strategia marketingu i sprzedaży?",
+      answer:
+        "Dla firm, które traktują stronę jako narzędzie biznesowe, nie wizytówkę. Typowo: 1-50 pracowników, B2B lub usługi premium B2C.",
+    },
   ]
 
   useEffect(() => {
@@ -166,22 +169,19 @@ export default function StrategiaContent({ discoveryPrice }: StrategiaContentPro
         <div className={`max-w-5xl mx-auto text-center transition-all duration-1000 ${
           heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
-          <h1 className="mb-8 glow-text">
-            Strategia{" "}
-            <GradientText
-              colors={["#a855f7", "#3b82f6", "#06b6d4", "#3b82f6", "#a855f7"]}
-              animationSpeed={4}
-              className="font-medium"
-            >
-              przed kodem
-            </GradientText>
-          </h1>
-          <p className="text-xl md:text-2xl font-light tracking-wide text-gray-400 mb-6">
+          <p className="text-xl md:text-2xl font-light tracking-wide text-gray-400 mb-4">
             Dlaczego 80% stron nie generuje leadów?
           </p>
-          <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed mb-12">
-            Większość stron wygląda dobrze, ale nie sprzedaje. 
-            Problem? Brak fundamentów strategicznych przed pierwszym pikselem.
+          <h1 className="mb-8 glow-text text-4xl md:text-5xl lg:text-6xl">
+            Strategia marketingu i sprzedaży
+          </h1>
+          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-4">
+            Strategia marketingu i sprzedaży — fundament pod skuteczną stronę. Zakończona gotowym
+            dokumentem strategicznym.
+          </p>
+          <p className="text-lg text-gray-500 max-w-3xl mx-auto leading-relaxed mb-12">
+            Strategia marketingu i sprzedaży to pierwsza faza każdego projektu. Decyduje, jak Twoja
+            strona lub sklep będzie pozyskiwać klientów i sprzedawać.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -446,42 +446,50 @@ export default function StrategiaContent({ discoveryPrice }: StrategiaContentPro
         </div>
       </section>
 
-      {/* Strategia przedwdrożeniowa Section */}
-      <section id="discovery" className="relative z-10 py-32 px-6 lg:px-12">
+      {/* Strategia marketingu i sprzedaży — szczegóły usługi */}
+      <section id="strategia-usluga" className="relative z-10 py-32 px-6 lg:px-12">
         <div className="max-w-5xl mx-auto">
           <AnimatedSection className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6 glow-text">
-              Strategia przedwdrożeniowa
+            <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-3 glow-text">
+              Strategia marketingu i sprzedaży
             </h2>
-            <p className="text-xl text-gray-400">
-              2-3 godzinne spotkanie strategiczne, na którym definiujemy fundamenty Twojej strony.
+            <p className="text-lg text-purple-300/90 mb-4">— faza przedwdrożeniowa</p>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              Strategia marketingu i sprzedaży to pierwsza faza każdego projektu. Decyduje, jak Twoja
+              strona lub sklep będzie pozyskiwać klientów i sprzedawać.
+            </p>
+            <p className="text-gray-500 max-w-3xl mx-auto mt-4">
+              2–3 godzinne spotkanie strategiczne + gotowy dokument strategiczny.
             </p>
           </AnimatedSection>
-          
+
           <div className="grid md:grid-cols-2 gap-8">
             <AnimatedSection delay={0}>
               <TiltCard className="h-full">
                 <div className="relative group h-full">
                   <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-500" />
                   <div className="relative h-full p-8 rounded-2xl bg-gray-900/80 backdrop-blur-sm border border-white/10">
-                    <h3 className="text-xl font-medium text-white mb-6">Co otrzymujesz:</h3>
-                    <ul className="space-y-4">
+                    <h3 className="text-xl font-medium text-white mb-6">W zakresie (otrzymujesz)</h3>
+                    <ul className="space-y-3 text-gray-400">
                       {[
-                        { title: "Analiza biznesu", desc: "cel strony, KPI, obecna sytuacja" },
-                        { title: "Segmentacja i ICP", desc: "dla kogo jest ta strona" },
-                        { title: "Buyer Persona", desc: "profil decydenta (bóle, cele, obiekcje)" },
-                        { title: "Buyer Journey", desc: "mapa procesu zakupowego" },
-                        { title: "Propozycja Wartości", desc: "wyróżniki i komunikaty" },
-                        { title: "Architektura strony", desc: "struktura sekcji i user flow" },
-                      ].map((item, i) => (
+                        'segmentacja rynku',
+                        'pozycjonowanie',
+                        'UVP',
+                        'buyer persony',
+                        'buyer journey',
+                        'lejek marketingowy',
+                        'user flows',
+                        'plan SEO i analityki',
+                      ].map((label, i) => (
                         <li key={i} className="flex items-start gap-3">
                           <CheckCircle2 className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
-                          <span className="text-gray-400">
-                            <strong className="text-white">{item.title}</strong> — {item.desc}
-                          </span>
+                          <span>{label}</span>
                         </li>
                       ))}
                     </ul>
+                    <p className="text-gray-400 mt-6 leading-relaxed border-t border-white/10 pt-6">
+                      Wszystko, czego potrzebujemy, żeby zbudować stronę, która sprzedaje.
+                    </p>
                   </div>
                 </div>
               </TiltCard>
@@ -493,7 +501,7 @@ export default function StrategiaContent({ discoveryPrice }: StrategiaContentPro
                   <div className="relative group h-full">
                     <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-500" />
                     <div className="relative h-full p-8 rounded-2xl bg-gray-900/80 backdrop-blur-sm border border-white/10">
-                      <h3 className="text-xl font-medium text-white mb-6">Format dostawy:</h3>
+                      <h3 className="text-xl font-medium text-white mb-6">Format dostawy</h3>
                       <ul className="space-y-3">
                         <li className="flex items-start gap-3 text-gray-400">
                           <FileText className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
@@ -501,7 +509,7 @@ export default function StrategiaContent({ discoveryPrice }: StrategiaContentPro
                         </li>
                         <li className="flex items-start gap-3 text-gray-400">
                           <FileText className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-                          <span>15-25 stron strategicznego dokumentu</span>
+                          <span>15–25 stron strategicznego dokumentu</span>
                         </li>
                       </ul>
                     </div>
@@ -516,19 +524,35 @@ export default function StrategiaContent({ discoveryPrice }: StrategiaContentPro
                         <TrendingUp className="w-8 h-8 text-purple-400" />
                         <div>
                           <p className="text-sm text-purple-400 font-medium">Cena</p>
-                          <p className="text-3xl font-light text-white">{priceFormatted} PLN <span className="text-lg text-gray-400">netto</span></p>
+                          <p className="text-3xl font-light text-white">
+                            {priceFormatted} PLN{' '}
+                            <span className="text-lg text-gray-400">netto</span>
+                          </p>
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
                       <Clock className="w-6 h-6 text-blue-400" />
-                      <p className="text-gray-400">2-3h spotkanie + 3-5 dni na dokument</p>
+                      <p className="text-gray-400">2–3 h spotkanie + 3–5 dni na dokument</p>
                     </div>
                   </div>
                 </div>
               </div>
             </AnimatedSection>
           </div>
+
+          <AnimatedSection delay={200} className="mt-10">
+            <div className="p-8 rounded-2xl bg-red-500/5 border border-red-500/20">
+              <h3 className="text-lg font-medium text-white mb-4 flex items-center gap-2">
+                <AlertCircle className="w-5 h-5 text-red-400" />
+                Poza zakresem
+              </h3>
+              <p className="text-gray-400 leading-relaxed">
+                Prowadzenie kampanii reklamowych, produkcja contentu marketingowego (artykuły,
+                posty, newslettery), wdrożenie CRM, e-mail marketing, pełny branding.
+              </p>
+            </div>
+          </AnimatedSection>
         </div>
       </section>
 
@@ -640,7 +664,8 @@ export default function StrategiaContent({ discoveryPrice }: StrategiaContentPro
                 </span>
               </h2>
               <p className="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
-                Zamów stronę ze strategią — każdy projekt zaczynamy od strategii przedwdrożeniowej
+                Zamów stronę ze strategią — każdy projekt zaczynamy od strategii marketingu i
+                sprzedaży (faza przedwdrożeniowa)
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
