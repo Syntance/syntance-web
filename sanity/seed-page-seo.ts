@@ -22,7 +22,8 @@ const defaultPages: any[] = [
     isActive: true,
     focusKeyword: 'strony Next.js',
     metaTitle: 'Syntance — Strony i sklepy Next.js | PageSpeed 90+ | Polska',
-    metaDescription: 'Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia przed kodem. Strony od 5k PLN, sklepy od 20k PLN. Realizacja w 2-4 tygodnie.',
+    metaDescription:
+      'Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od 5k PLN, sklepy od 20k PLN. Realizacja w 2-4 tygodnie.',
     keywords: [
       'strony Next.js',
       'sklepy Next.js',
@@ -57,7 +58,8 @@ const defaultPages: any[] = [
     isActive: true,
     focusKeyword: 'agencja interaktywna',
     metaTitle: 'O nas — Syntance | Agencja interaktywna i software house Next.js',
-    metaDescription: 'Syntance to agencja interaktywna i software house z Polski. Specjalizujemy się w tworzeniu stron internetowych i sklepów e-commerce w Next.js. Strategia przed kodem.',
+    metaDescription:
+      'Syntance to agencja interaktywna i software house z Polski. Specjalizujemy się w tworzeniu stron internetowych i sklepów e-commerce w Next.js. Strategia marketingu i sprzedaży (faza przedwdrożeniowa).',
     keywords: [
       'agencja interaktywna',
       'software house Polska',
@@ -86,15 +88,16 @@ const defaultPages: any[] = [
     _id: 'page-seo-strategia',
     _type: 'pageSeo',
     pageName: 'Strategia',
-    slug: { _type: 'slug', current: '/strategia' },
+    slug: { _type: 'slug', current: '/strategia-marketingu-i-sprzedazy' },
     isActive: true,
-    focusKeyword: 'strategia strony internetowej',
-    metaTitle: 'Strategia przed kodem — Syntance | Strategia przedwdrożeniowa',
-    metaDescription: 'Strategia to fundament skutecznej strony. Strategia przedwdrożeniowa: cel biznesowy, buyer persony, UVP, user flows, SEO, architektura informacji. Dowiedz się więcej.',
+    focusKeyword: 'strategia marketingu i sprzedaży',
+    metaTitle: 'Strategia marketingu i sprzedaży (faza przedwdrożeniowa) | Syntance',
+    metaDescription:
+      'Strategia marketingu i sprzedaży — fundament pod skuteczną stronę. Zakończona gotowym dokumentem strategicznym. Segmentacja, UVP, persony, lejek, SEO.',
     keywords: [
+      'strategia marketingu i sprzedaży',
       'strategia strony internetowej',
-      'strategia przedwdrożeniowa',
-      'strategia przed kodem',
+      'faza przedwdrożeniowa',
       'buyer persona',
       'UVP strona internetowa',
     ],
@@ -125,7 +128,8 @@ const defaultPages: any[] = [
     isActive: true,
     focusKeyword: 'tworzenie stron internetowych',
     metaTitle: 'Strony internetowe dla firm | Profesjonalne strony www Next.js | Syntance',
-    metaDescription: 'Tworzymy profesjonalne strony internetowe dla firm B2B. Next.js, PageSpeed 90+, strategia przed kodem. Strony od 5 400 PLN. Bezpłatna wycena →',
+    metaDescription:
+      'Tworzymy profesjonalne strony internetowe dla firm B2B. Next.js, PageSpeed 90+, strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od 5 400 PLN. Bezpłatna wycena →',
     keywords: [
       'tworzenie stron internetowych',
       'strona internetowa dla firmy',

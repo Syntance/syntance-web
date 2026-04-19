@@ -84,7 +84,7 @@ function generateConfirmationEmail(name: string): string {
                 <tr><td style="height: 12px;"></td></tr>
                 <tr>
                   <td style="padding: 16px 20px; background-color: rgba(59, 130, 246, 0.1); border-radius: 12px;">
-                    <a href="https://syntance.com/strategia" style="color: #93c5fd; text-decoration: none; font-size: 15px;">
+                    <a href="https://syntance.com/strategia-marketingu-i-sprzedazy" style="color: #93c5fd; text-decoration: none; font-size: 15px;">
                       🎯 Dowiedzieć się więcej o naszej strategii
                     </a>
                   </td>
@@ -136,7 +136,7 @@ Odezwiemy się w ciągu 24 godzin w dni robocze.
 
 W międzyczasie możesz:
 - Sprawdzić nasz cennik: https://syntance.com/cennik
-- Dowiedzieć się więcej o strategii: https://syntance.com/strategia
+- Dowiedzieć się więcej: https://syntance.com/strategia-marketingu-i-sprzedazy
 
 Do usłyszenia!
 

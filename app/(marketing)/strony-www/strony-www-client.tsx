@@ -80,7 +80,10 @@ const solutions = [
   { title: "Szybkość", description: "PageSpeed 90+ gwarantowany" },
   { title: "SEO i AI", description: "Optymalizacja od pierwszego dnia" },
   { title: "Nowoczesna technologia", description: "Next.js, headless CMS" },
-  { title: "Strategia przed kodem", description: "Strategia przedwdrożeniowa w cenie" },
+  {
+    title: "Strategia marketingu i sprzedaży",
+    description: "Faza przedwdrożeniowa w cenie",
+  },
 ]
 
 const targetAudiences = [
@@ -128,7 +131,8 @@ function getFaqItems(formattedPrice: string) {
     },
     {
       question: "Jak długo trwa tworzenie strony internetowej?",
-      answer: "Standardowa strona firmowa to 2-4 tygodnie. Projekty enterprise z rozbudowaną funkcjonalnością — 4-8 tygodni. Dokładny timeline ustalamy po warsztacie discovery.",
+      answer:
+        "Standardowa strona firmowa to 2-4 tygodnie. Projekty enterprise z rozbudowaną funkcjonalnością — 4-8 tygodni. Dokładny timeline ustalamy po fazie strategicznej.",
     },
     {
       question: "Czy mogę sam edytować stronę?",

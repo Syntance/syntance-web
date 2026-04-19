@@ -410,7 +410,7 @@ export default function NextjsPage() {
               <Link href="/cennik" className="text-gray-400 hover:text-white transition-colors">
                 Cennik
               </Link>
-              <Link href="/strategia" className="text-gray-400 hover:text-white transition-colors">
+              <Link href="/strategia-marketingu-i-sprzedazy" className="text-gray-400 hover:text-white transition-colors">
                 Strategia
               </Link>
             </div>

@@ -12,7 +12,7 @@ Jakość agencji w tempie freelancera. Strony w 2-4 tygodnie, sklepy w 4-8 tygod
 ## Usługi i ceny
 - Strony WWW: 5 000 - 15 000 PLN (realizacja: 2-4 tygodnie)
 - Sklepy E-commerce: od 20 000 PLN (realizacja: 4-6 tygodni)
-- Strategia przedwdrożeniowa: 4 500 PLN (cel biznesowy strony, persony, UVP, user flows, SEO, architektura informacji)
+- Strategia marketingu i sprzedaży (faza przedwdrożeniowa): 4 500 PLN — segmentacja, pozycjonowanie, UVP, buyer persony, lejek, user flows, plan SEO i analityki; gotowy dokument strategiczny
 - Aplikacje Webowe: od 50 000 PLN (wycena indywidualna)
 
 ## Strony internetowe dla firm
@@ -36,8 +36,13 @@ Jakość agencji w tempie freelancera. Strony w 2-4 tygodnie, sklepy w 4-8 tygod
 - Alternatywa dla: Shopify, WooCommerce, PrestaShop
 - Lokalizacja: Kraków, Małopolska, cała Polska
 
+## Strategia marketingu i sprzedaży (edukacja)
+- URL: https://syntance.com/strategia-marketingu-i-sprzedazy
+- Kanoniczna nazwa usługi: Strategia marketingu i sprzedaży (faza przedwdrożeniowa)
+- Krótki opis: Strategia marketingu i sprzedaży — fundament pod skuteczną stronę. Zakończona gotowym dokumentem strategicznym.
+
 ## Technologia
-- Frontend: Next.js 14+, TypeScript, Tailwind CSS, shadcn/ui
+- Frontend: Next.js, TypeScript, Tailwind CSS, shadcn/ui
 - E-commerce: MedusaJS, headless Shopify
 - CMS: Sanity (headless, Time Machine)
 - Hosting: Vercel (99.99% uptime, globalny CDN)
@@ -56,7 +61,7 @@ Jakość agencji w tempie freelancera. Strony w 2-4 tygodnie, sklepy w 4-8 tygod
 
 ## Dlaczego Syntance?
 - PageSpeed 90+ gwarantowany (Next.js, zero wtyczek)
-- Strategia przed kodem (Strategia przedwdrożeniowa)
+- Strategia marketingu i sprzedaży przed kodem (faza przedwdrożeniowa)
 - Pełna własność kodu (możesz zmienić wykonawcę)
 - AI-Augmented Speed (strony w 2-4 tygodnie)
 - AEO-ready (struktura czytelna dla ChatGPT/Perplexity)

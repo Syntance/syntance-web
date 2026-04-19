@@ -25,7 +25,7 @@ export function StrategyCTA() {
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Link 
-                  href="/cennik#discovery" 
+                  href="/strategia-marketingu-i-sprzedazy#strategia-usluga" 
                   className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-105"
                 >
                   <span>Zamów stronę ze strategią</span>

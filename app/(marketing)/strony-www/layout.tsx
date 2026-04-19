@@ -2,7 +2,8 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Strony internetowe dla firm | Profesjonalne strony www Next.js | Syntance',
-  description: 'Tworzymy profesjonalne strony internetowe dla firm B2B. Next.js, PageSpeed 90+, strategia przed kodem. Strony od 5 400 PLN. Bezpłatna wycena →',
+  description:
+    'Tworzymy profesjonalne strony internetowe dla firm B2B. Next.js, PageSpeed 90+, strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od 5 400 PLN. Bezpłatna wycena →',
   keywords: [
     'tworzenie stron internetowych',
     'strona internetowa dla firmy',
@@ -18,7 +19,8 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: 'Strony internetowe dla firm | Syntance',
-    description: 'Profesjonalne strony www w Next.js z gwarancją PageSpeed 90+. Strategia przed kodem. Strony od 5 400 PLN.',
+    description:
+      'Profesjonalne strony www w Next.js z gwarancją PageSpeed 90+. Strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od 5 400 PLN.',
     url: 'https://syntance.com/strony-www',
   },
   alternates: {

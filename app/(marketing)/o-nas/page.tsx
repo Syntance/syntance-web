@@ -26,7 +26,8 @@ function formatPrice(price: number): string {
 
 export const metadata: Metadata = {
   title: 'O nas — Syntance | Agencja interaktywna i software house Next.js',
-  description: 'Syntance to agencja interaktywna i software house z Polski. Specjalizujemy się w tworzeniu stron internetowych i sklepów e-commerce w Next.js. Strategia przed kodem.',
+  description:
+    'Syntance to agencja interaktywna i software house z Polski. Specjalizujemy się w tworzeniu stron internetowych i sklepów e-commerce w Next.js. Strategia marketingu i sprzedaży (faza przedwdrożeniowa).',
   openGraph: {
     title: 'O nas | Syntance — Agencja interaktywna',
     description: 'Syntance to agencja interaktywna i software house z Polski. Specjalizujemy się w tworzeniu stron internetowych i sklepów e-commerce w Next.js.',
@@ -37,9 +38,9 @@ export const metadata: Metadata = {
 const values = [
   {
     icon: Target,
-    title: "Strategia przed kodem",
+    title: "Strategia marketingu i sprzedaży",
     description: "Każdy projekt zaczynamy od zrozumienia Twojego biznesu. Najpierw cel, potem realizacja.",
-    note: "Strategia przedwdrożeniowa w cenie każdego projektu."
+    note: "Strategia marketingu i sprzedaży (faza przedwdrożeniowa) w cenie każdego projektu."
   },
   {
     icon: Zap,
@@ -129,7 +130,7 @@ export default async function ONasPage() {
             "foundingDate": "2024",
             "areaServed": ["PL", "EU"],
             "knowsAbout": ["Next.js", "React", "TypeScript", "Sanity CMS", "MedusaJS", "E-commerce", "Web Development"],
-            "slogan": "Strategia przed kodem",
+            "slogan": "Strategia marketingu i sprzedaży",
             "email": "kontakt@syntance.com",
             "telephone": "+48662519544"
           })
