@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
-import { sanityFetch } from '@/sanity/lib/fetch'
-import { startingPricesQuery, defaultStartingPrices, type StartingPrices } from '@/sanity/queries/pricing'
+import { getDiscoveryWorkshopPrice } from '@/lib/sanity/discovery-workshop-price'
 
 function formatPrice(price: number): string {
   return price.toLocaleString('pl-PL')
@@ -10,14 +9,7 @@ const SHORT =
   'Strategia marketingu i sprzedaży — fundament pod skuteczną stronę. Zakończona gotowym dokumentem strategicznym.'
 
 export async function generateMetadata(): Promise<Metadata> {
-  let workshopPrice = defaultStartingPrices.discoveryWorkshopPrice
-  try {
-    const prices = await sanityFetch<StartingPrices>({ query: startingPricesQuery })
-    if (prices?.discoveryWorkshopPrice) {
-      workshopPrice = prices.discoveryWorkshopPrice
-    }
-  } catch {}
-
+  const workshopPrice = await getDiscoveryWorkshopPrice()
   const priceFormatted = formatPrice(workshopPrice)
   const canonical = 'https://syntance.com/strategia-marketingu-i-sprzedazy'
 

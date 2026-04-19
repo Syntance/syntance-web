@@ -38,10 +38,17 @@ const pathToNavIndex: Record<string, number> = {
   '/kontakt': 7,
 };
 
+// Ścieżki, na których navbar jest ukryty (strony z jednym celem — bez rozpraszaczy)
+const HIDDEN_NAVBAR_PATHS = new Set<string>(['/porozmawiajmy'])
+
 export default function NavbarStudio() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileWiedzaOpen, setMobileWiedzaOpen] = useState(false);
+
+  if (HIDDEN_NAVBAR_PATHS.has(pathname)) {
+    return null;
+  }
 
   // Znajdź aktywny indeks na podstawie aktualnej ścieżki
   const activeNavIndex = useMemo(() => {
