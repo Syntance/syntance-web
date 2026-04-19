@@ -31,7 +31,9 @@ export default defineType({
       name: 'description',
       title: 'Opis',
       type: 'text',
+      rows: 8,
       group: 'basic',
+      description: 'Akapity: pusta linia w edytorze = odstęp na stronie (jak Enter dwa razy).',
     }),
     defineField({
       name: 'category',
