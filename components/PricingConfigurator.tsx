@@ -29,6 +29,11 @@ interface Props {
   data: PricingData
 }
 
+/** Opis z Sanity (`text`) — zachowuje entery / puste linie między akapitami */
+function ItemDescriptionText({ className, children }: { className?: string; children: string }) {
+  return <p className={`whitespace-pre-line ${className ?? ''}`}>{children}</p>
+}
+
 export function PricingConfigurator({ data }: Props) {
   const { categories, projectTypes, items, config } = data
   
@@ -616,7 +621,9 @@ export function PricingConfigurator({ data }: Props) {
                   <div className="flex-1 min-w-0">
                     <span className="text-gray-400 font-medium">{item.name}</span>
                     {item.description && (
-                      <p className="text-sm text-gray-400 truncate">{item.description}</p>
+                      <ItemDescriptionText className="text-sm text-gray-400">
+                        {item.description}
+                      </ItemDescriptionText>
                     )}
                   </div>
                   {!item.hidePrice && (
@@ -709,7 +716,9 @@ export function PricingConfigurator({ data }: Props) {
                         )}
                       </div>
                       {item.description && (
-                        <p className="text-sm text-gray-400">{item.description}</p>
+                        <ItemDescriptionText className="text-sm text-gray-400 mt-1">
+                          {item.description}
+                        </ItemDescriptionText>
                       )}
                       {/* Info dla elementów z ilością */}
                       {item.maxQuantity && item.maxQuantity > 1 && selected && (
