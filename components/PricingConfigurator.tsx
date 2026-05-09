@@ -129,9 +129,16 @@ export function PricingConfigurator({ data }: Props) {
     const optional = availableItems.filter(item => !item.required)
     return categories.map(cat => ({
       ...cat,
-      items: optional.filter(item => item.category === cat.id)
+      items: optional
+        .filter(item => item.category === cat.id)
+        .sort((a, b) => {
+          // Szukaj pozycji dla aktualnego typu projektu
+          const aOrder = a.projectTypeOrder?.find(pto => pto.projectType === state.projectType)?.order ?? a.order ?? 0
+          const bOrder = b.projectTypeOrder?.find(pto => pto.projectType === state.projectType)?.order ?? b.order ?? 0
+          return aOrder - bOrder
+        })
     })).filter(cat => cat.items.length > 0)
-  }, [availableItems, categories])
+  }, [availableItems, categories, state.projectType])
 
   // Kalkulacja ceny
   const calculation = useMemo(() => {

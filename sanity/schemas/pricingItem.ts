@@ -53,10 +53,39 @@ export default defineType({
     }),
     defineField({
       name: 'order',
-      title: 'Kolejność w kategorii',
+      title: 'Kolejność w kategorii (globalna)',
       type: 'number',
       group: 'basic',
       initialValue: 0,
+      description: 'Używana jako fallback, jeśli nie ma pozycji dla typu projektu',
+    }),
+    defineField({
+      name: 'projectTypeOrder',
+      title: 'Pozycja dla każdego typu projektu',
+      type: 'array',
+      group: 'basic',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'projectType',
+              title: 'Typ projektu',
+              type: 'reference',
+              to: [{ type: 'projectType' }],
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'order',
+              title: 'Pozycja w kategorii',
+              type: 'number',
+              initialValue: 0,
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+        },
+      ],
+      description: 'Ustaw indywidualną pozycję dla każdego typu projektu. Jeśli brak, używana będzie pozycja globalna.',
     }),
 
     // === CENY I CZAS ===
