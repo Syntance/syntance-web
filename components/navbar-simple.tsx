@@ -24,12 +24,6 @@ export default function NavbarSimple() {
           >
             Strona główna
           </Link>
-          <Link 
-            href="/#o-nas" 
-            className="text-sm font-light tracking-wider text-white hover:text-purple-300 transition-colors"
-          >
-            O nas
-          </Link>
         </div>
         
         <button 
@@ -50,13 +44,6 @@ export default function NavbarSimple() {
             onClick={() => setMobileMenuOpen(false)}
           >
             Strona główna
-          </Link>
-          <Link 
-            href="/#o-nas" 
-            className="block text-sm font-light tracking-wider hover:text-purple-300 transition-colors"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            O nas
           </Link>
         </div>
       )}

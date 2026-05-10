@@ -21,7 +21,6 @@ const navItems = [
     ]
   },
   { label: "Cennik", href: "/cennik" },
-  { label: "O nas", href: "/o-nas" },
   { label: "Kontakt", href: "/kontakt" },
 ];
 
@@ -31,11 +30,10 @@ const pathToNavIndex: Record<string, number> = {
   '/strony-www': 1,
   '/sklepy-internetowe': 2,
   '/agencje-marketingowe': 3,
-  '/strategia-marketingu-i-sprzedazy': 4,           // "Wiedza" dropdown
-  '/nextjs': 4,              // "Wiedza" dropdown
+  '/strategia-marketingu-i-sprzedazy': 4,           // "Blog" dropdown
+  '/nextjs': 4,              // "Blog" dropdown
   '/cennik': 5,
-  '/o-nas': 6,
-  '/kontakt': 7,
+  '/kontakt': 6,
 };
 
 // Ścieżki, na których navbar jest ukryty (strony z jednym celem — bez rozpraszaczy)
@@ -229,17 +227,6 @@ export default function NavbarStudio() {
             }`}
           >
             Cennik
-          </Link>
-          
-          {/* O nas */}
-          <Link
-            href="/o-nas"
-            onClick={() => setMobileMenuOpen(false)}
-            className={`block py-3 text-sm font-light tracking-wider transition-colors ${
-              pathname === '/o-nas' ? 'text-white' : 'text-gray-400 hover:text-purple-300'
-            }`}
-          >
-            O nas
           </Link>
           
           {/* Kontakt */}
