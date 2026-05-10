@@ -8,6 +8,7 @@ import pricingFaq from './pricingFaq'
 import bookingRules from './bookingRules'
 import bookingTimeBlock from './bookingTimeBlock'
 import meetingBooking from './meetingBooking'
+import portfolioItem from './portfolioItem'
 
 export const schemaTypes = [
   pricingCategory,
@@ -20,4 +21,5 @@ export const schemaTypes = [
   bookingRules,
   bookingTimeBlock,
   meetingBooking,
+  portfolioItem,
 ]

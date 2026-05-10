@@ -43,6 +43,14 @@ const structure = (S: any) =>
             .title('FAQ Cennika')
         ),
       S.divider(),
+      // === PORTFOLIO ===
+      S.listItem()
+        .title('🖼️ Realizacje (portfolio)')
+        .id('portfolioItem')
+        .child(
+          S.documentTypeList('portfolioItem').title('Realizacje (portfolio)')
+        ),
+      S.divider(),
       // === REZERWACJE ===
       S.listItem()
         .title('📅 Reguły rezerwacji')
@@ -69,7 +77,7 @@ const structure = (S: any) =>
       // Pozostałe dokumenty
       ...S.documentTypeListItems().filter(
         (listItem: any) =>
-          !['pricingConfig', 'seoSettings', 'pageSeo', 'pricingFaq', 'bookingRules', 'bookingTimeBlock', 'meetingBooking'].includes(
+          !['pricingConfig', 'seoSettings', 'pageSeo', 'pricingFaq', 'bookingRules', 'bookingTimeBlock', 'meetingBooking', 'portfolioItem'].includes(
             listItem.getId()
           )
       ),
