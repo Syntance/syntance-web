@@ -100,7 +100,7 @@ export default function OfferCards() {
                 </div>
                 
                 <div className={`flex items-center text-blue-400 font-medium tracking-wide transition-transform ${
-                  isMobile ? 'translate-x-2' : 'group-hover:translate-x-2'
+                  isMobile ? '' : 'group-hover:translate-x-2'
                 }`}>
                   Dowiedz się więcej 
                   <span className="ml-2">→</span>
@@ -140,7 +140,7 @@ export default function OfferCards() {
                 </div>
                 
                 <div className={`flex items-center text-purple-400 font-medium tracking-wide transition-transform ${
-                  isMobile ? 'translate-x-2' : 'group-hover:translate-x-2'
+                  isMobile ? '' : 'group-hover:translate-x-2'
                 }`}>
                   Dowiedz się więcej 
                   <span className="ml-2">→</span>

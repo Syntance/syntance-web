@@ -89,8 +89,8 @@ export default function WhySyntance() {
                     {/* Card background with gradient border */}
                     <div className="relative h-full">
                       {/* Animated gradient border */}
-                      <div className={`absolute -inset-0.5 bg-gradient-to-r transition-opacity duration-500 rounded-2xl blur-sm ${
-                        isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                      <div className={`absolute -inset-0.5 bg-gradient-to-r opacity-0 transition-opacity duration-500 rounded-2xl blur-sm ${
+                        isMobile ? '' : 'group-hover:opacity-100'
                       }`}
                         style={{
                           backgroundImage: `linear-gradient(to right, var(--tw-gradient-stops))`,
@@ -99,12 +99,12 @@ export default function WhySyntance() {
                       
                       {/* Card content */}
                       <div className={`relative h-full product-card rounded-2xl p-10 transition-all duration-500 ${
-                        isMobile ? 'border-transparent' : 'group-hover:border-transparent'
+                        isMobile ? '' : 'group-hover:border-transparent'
                       }`}>
                         {/* Glow effect on hover */}
                         <div 
-                          className={`absolute inset-0 rounded-2xl transition-opacity duration-500 -z-10 ${
-                            isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                          className={`absolute inset-0 opacity-0 rounded-2xl transition-opacity duration-500 -z-10 ${
+                            isMobile ? '' : 'group-hover:opacity-100'
                           }`}
                           style={{
                             boxShadow: `0 0 60px ${value.glowColor}`,
@@ -114,7 +114,7 @@ export default function WhySyntance() {
                         {/* Icon */}
                         <div className="mb-6 relative">
                           <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${value.gradient} flex items-center justify-center transform transition-all duration-500 ${
-                            isMobile ? 'scale-110 rotate-3' : 'group-hover:scale-110 group-hover:rotate-3'
+                            isMobile ? '' : 'group-hover:scale-110 group-hover:rotate-3'
                           }`}>
                             {value.title === "Inteligencja w tle." ? (
                               <span className="text-2xl font-bold text-white">
@@ -140,16 +140,16 @@ export default function WhySyntance() {
 
                         {/* Title */}
                         <h3 className="text-2xl md:text-3xl font-light leading-relaxed">
-                          <span className={`bg-gradient-to-br ${value.gradient} bg-clip-text text-transparent transition-all duration-500 ${
-                            isMobile ? 'tracking-wider' : 'tracking-wide group-hover:tracking-wider'
+                          <span className={`bg-gradient-to-br ${value.gradient} bg-clip-text text-transparent transition-all duration-500 tracking-wide ${
+                            isMobile ? '' : 'group-hover:tracking-wider'
                           }`}>
                             {value.title}
                           </span>
                         </h3>
 
                         {/* Animated underline */}
-                        <div className={`mt-6 h-0.5 bg-gradient-to-r transition-all duration-700 ${
-                          isMobile ? 'w-full' : 'w-0 group-hover:w-full'
+                        <div className={`mt-6 h-0.5 w-0 bg-gradient-to-r transition-all duration-700 ${
+                          isMobile ? '' : 'group-hover:w-full'
                         }`}
                           style={{
                             backgroundImage: `linear-gradient(to right, var(--tw-gradient-stops))`,
@@ -157,15 +157,15 @@ export default function WhySyntance() {
                         ></div>
 
                         {/* Decorative corner elements */}
-                        <div className={`absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 transition-opacity duration-500 ${
-                          isMobile ? 'opacity-30' : 'opacity-0 group-hover:opacity-30'
+                        <div className={`absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 opacity-0 transition-opacity duration-500 ${
+                          isMobile ? '' : 'group-hover:opacity-30'
                         }`}
                           style={{
                             borderImage: `linear-gradient(to bottom right, var(--tw-gradient-stops)) 1`,
                           }}
                         ></div>
-                        <div className={`absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 transition-opacity duration-500 ${
-                          isMobile ? 'opacity-30' : 'opacity-0 group-hover:opacity-30'
+                        <div className={`absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 opacity-0 transition-opacity duration-500 ${
+                          isMobile ? '' : 'group-hover:opacity-30'
                         }`}
                           style={{
                             borderImage: `linear-gradient(to top left, var(--tw-gradient-stops)) 1`,

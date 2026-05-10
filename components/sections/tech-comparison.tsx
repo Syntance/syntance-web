@@ -77,8 +77,8 @@ export default function TechComparison() {
           {/* Jedna duża karta z tabelą */}
           <div className="relative group">
             {/* Glow effect */}
-            <div className={`absolute -inset-0.5 bg-gradient-to-r from-purple-500 via-blue-500 to-teal-500 rounded-2xl transition-opacity blur-sm ${
-              isMobile ? 'opacity-30' : 'opacity-20 group-hover:opacity-30'
+            <div className={`absolute -inset-0.5 bg-gradient-to-r from-purple-500 via-blue-500 to-teal-500 rounded-2xl opacity-20 transition-opacity blur-sm ${
+              isMobile ? '' : 'group-hover:opacity-30'
             }`} />
             
             <div className="relative bg-black border border-white/10 rounded-2xl overflow-hidden">

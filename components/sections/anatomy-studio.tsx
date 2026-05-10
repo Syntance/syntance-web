@@ -115,8 +115,8 @@ export default function AnatomyStudio() {
                   <div className={`ml-20 md:ml-0 md:w-[calc(50%-40px)] ${isLeft ? 'md:mr-auto md:pr-8' : 'md:ml-auto md:pl-8'}`}>
                     <div className="group relative">
                       {/* Glow */}
-                      <div className={`absolute -inset-0.5 bg-gradient-to-r ${layer.gradient} rounded-2xl transition-opacity duration-500 blur-sm ${
-                        isMobile ? 'opacity-20' : 'opacity-0 group-hover:opacity-20'
+                      <div className={`absolute -inset-0.5 bg-gradient-to-r ${layer.gradient} rounded-2xl opacity-0 transition-opacity duration-500 blur-sm ${
+                        isMobile ? '' : 'group-hover:opacity-20'
                       }`} />
                       
                       {/* Content */}

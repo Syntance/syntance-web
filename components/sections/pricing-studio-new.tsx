@@ -85,8 +85,8 @@ export default function PricingStudioNew() {
         {/* CTA Box */}
         <div className="relative group">
           {/* Gradient border effect */}
-          <div className={`absolute -inset-0.5 bg-gradient-to-r from-purple-400 via-blue-400 to-pink-400 rounded-3xl transition-opacity duration-500 blur-sm ${
-            isMobile ? 'opacity-40' : 'opacity-20 group-hover:opacity-40'
+          <div className={`absolute -inset-0.5 bg-gradient-to-r from-purple-400 via-blue-400 to-pink-400 rounded-3xl opacity-20 transition-opacity duration-500 blur-sm ${
+            isMobile ? '' : 'group-hover:opacity-40'
           }`}></div>
           
           <div className="relative product-card rounded-3xl p-12 backdrop-blur-sm">
@@ -103,7 +103,7 @@ export default function PricingStudioNew() {
             >
               Sprawdź cenę strony
               <span className={`inline-block transition-transform ${
-                isMobile ? 'translate-x-1' : 'group-hover:translate-x-1'
+                isMobile ? '' : 'group-hover:translate-x-1'
               }`}>→</span>
             </a>
 

@@ -80,8 +80,8 @@ export default function PortfolioStudio() {
                 transitionDelay: `${index * 80}ms`,
               }}
             >
-              <div className={`group relative h-full overflow-hidden rounded-2xl product-card border transition-all duration-500 ${
-                isMobile ? 'border-gray-700' : 'border-gray-800 hover:border-gray-700'
+              <div className={`group relative h-full overflow-hidden rounded-2xl product-card border border-gray-800 transition-all duration-500 ${
+                isMobile ? '' : 'hover:border-gray-700'
               }`}>
                 {/* Image */}
                 <div className="relative h-64 overflow-hidden bg-gray-900">
@@ -90,17 +90,17 @@ export default function PortfolioStudio() {
                     alt={project.alt}
                     fill
                     className={`object-cover transition-transform duration-700 ${
-                      isMobile ? 'scale-110' : 'group-hover:scale-110'
+                      isMobile ? '' : 'group-hover:scale-110'
                     }`}
                   />
                   {/* Overlay on hover */}
-                  <div className={`absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent transition-opacity duration-500 ${
-                    isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                  <div className={`absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 transition-opacity duration-500 ${
+                    isMobile ? '' : 'group-hover:opacity-100'
                   }`}></div>
                   
                   {/* Hover icon */}
-                  <div className={`absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center transition-all duration-500 ${
-                    isMobile ? 'opacity-100 translate-y-0' : 'opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0'
+                  <div className={`absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center opacity-0 translate-y-2 transition-all duration-500 ${
+                    isMobile ? '' : 'group-hover:opacity-100 group-hover:translate-y-0'
                   }`}>
                     <ExternalLink size={18} className="text-white" />
                   </div>
@@ -121,14 +121,14 @@ export default function PortfolioStudio() {
                   </p>
 
                   {/* Gradient line */}
-                  <div className={`mt-4 h-0.5 bg-gradient-to-r from-purple-400 to-blue-400 transition-all duration-700 ${
-                    isMobile ? 'w-full' : 'w-0 group-hover:w-full'
+                  <div className={`mt-4 h-0.5 w-0 bg-gradient-to-r from-purple-400 to-blue-400 transition-all duration-700 ${
+                    isMobile ? '' : 'group-hover:w-full'
                   }`}></div>
                 </div>
 
                 {/* Glow effect */}
-                <div className={`absolute inset-0 rounded-2xl transition-opacity duration-500 -z-10 ${
-                  isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                <div className={`absolute inset-0 opacity-0 rounded-2xl transition-opacity duration-500 -z-10 ${
+                  isMobile ? '' : 'group-hover:opacity-100'
                 }`}
                   style={{
                     boxShadow: '0 0 40px rgba(168, 85, 247, 0.2)',
@@ -144,7 +144,7 @@ export default function PortfolioStudio() {
           <button className="px-8 py-3 bg-white/5 border border-gray-700 text-white rounded-full font-medium tracking-wider hover:bg-white/10 transition-all glow-box cursor-pointer group">
             Zobacz więcej projektów
             <span className={`inline-block ml-2 transition-transform ${
-              isMobile ? 'translate-x-1' : 'group-hover:translate-x-1'
+              isMobile ? '' : 'group-hover:translate-x-1'
             }`}>→</span>
           </button>
         </div>

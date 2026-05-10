@@ -98,19 +98,19 @@ export default function CMSSection() {
                 <div className="group relative h-full">
                   {/* Animated gradient border */}
                   <div 
-                    className={`absolute -inset-0.5 bg-gradient-to-r ${feature.gradient} rounded-2xl transition-opacity duration-500 blur-sm ${
-                      isMobile ? 'opacity-30' : 'opacity-0 group-hover:opacity-40'
+                    className={`absolute -inset-0.5 bg-gradient-to-r ${feature.gradient} rounded-2xl opacity-0 transition-opacity duration-500 blur-sm ${
+                      isMobile ? '' : 'group-hover:opacity-40'
                     }`}
                   />
                   
                   {/* Card content */}
                   <div className={`relative h-full bg-gray-900/80 backdrop-blur-sm border border-white/10 rounded-2xl p-8 transition-all duration-500 ${
-                    isMobile ? 'border-transparent' : 'group-hover:border-transparent'
+                    isMobile ? '' : 'group-hover:border-transparent'
                   }`}>
                     {/* Glow effect */}
                     <div 
-                      className={`absolute inset-0 rounded-2xl transition-opacity duration-500 -z-10 ${
-                        isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                      className={`absolute inset-0 opacity-0 rounded-2xl transition-opacity duration-500 -z-10 ${
+                        isMobile ? '' : 'group-hover:opacity-100'
                       }`}
                       style={{ boxShadow: `0 0 40px ${feature.glowColor}` }}
                     />
@@ -118,7 +118,7 @@ export default function CMSSection() {
                     {/* Icon */}
                     <div className="mb-6">
                       <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center transform transition-all duration-500 ${
-                        isMobile ? 'scale-110 rotate-3' : 'group-hover:scale-110 group-hover:rotate-3'
+                        isMobile ? '' : 'group-hover:scale-110 group-hover:rotate-3'
                       }`}>
                         <Icon className="text-white" size={28} strokeWidth={1.5} />
                       </div>
@@ -137,8 +137,8 @@ export default function CMSSection() {
                     </p>
 
                     {/* Animated underline */}
-                    <div className={`mt-6 h-0.5 bg-gradient-to-r ${feature.gradient} transition-all duration-700 ${
-                      isMobile ? 'w-full opacity-30' : 'w-0 group-hover:w-full opacity-50'
+                    <div className={`mt-6 h-0.5 w-0 bg-gradient-to-r ${feature.gradient} opacity-50 transition-all duration-700 ${
+                      isMobile ? '' : 'group-hover:w-full'
                     }`} />
                   </div>
                 </div>
@@ -149,8 +149,8 @@ export default function CMSSection() {
 
         {/* CTA - jak quote w tech-comparison */}
         <div className="relative max-w-3xl mx-auto cms-card opacity-0 translate-y-8 scale-95 transition-all duration-700 ease-out" style={{ transitionDelay: '300ms' }}>
-          <div className={`absolute -inset-0.5 bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 rounded-2xl transition-opacity blur-lg ${
-            isMobile ? 'opacity-30' : 'opacity-20 hover:opacity-30'
+          <div className={`absolute -inset-0.5 bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 rounded-2xl opacity-20 transition-opacity blur-lg ${
+            isMobile ? '' : 'hover:opacity-30'
           }`} />
           <div className="relative p-8 md:p-10 rounded-2xl bg-gray-900 border border-purple-500/30">
             <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
