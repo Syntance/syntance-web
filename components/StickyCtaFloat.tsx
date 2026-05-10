@@ -36,7 +36,7 @@ function StickyCtaFloatInner({
     el.href = href
     el.textContent = label
     el.className =
-      'px-8 py-3 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 glow-box cursor-pointer inline-flex items-center justify-center text-center whitespace-nowrap shadow-md md:shadow-lg md:shadow-white/10'
+      'px-8 py-3 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 glow-box cursor-pointer inline-flex items-center justify-center text-center whitespace-nowrap shadow-lg shadow-white/10'
     el.style.transition = 'opacity 0.3s ease-out'
     el.addEventListener('click', (e) => {
       e.preventDefault()
@@ -68,13 +68,16 @@ function StickyCtaFloatInner({
     document.body.appendChild(el)
 
     el.style.position = 'fixed'
-    el.style.bottom = '1.5rem'
-    el.style.right = '1.5rem'
+    // safe-area-inset-bottom uwzględnia iOS home indicator, fallback 1.5rem.
+    el.style.bottom = 'max(1.5rem, env(safe-area-inset-bottom))'
+    el.style.right = 'max(1.5rem, env(safe-area-inset-right))'
     el.style.left = 'auto'
     el.style.top = 'auto'
     el.style.zIndex = '50'
     el.style.fontSize = '0.875rem'
-    el.style.padding = '0.625rem 1.5rem'
+    el.style.padding = '0.75rem 1.5rem'
+    // Touch target ≥ 44px (Apple HIG / WCAG 2.2)
+    el.style.minHeight = '44px'
 
     const last = el.getBoundingClientRect()
     const dx = first.left + first.width / 2 - (last.left + last.width / 2)

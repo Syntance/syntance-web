@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, ChevronDown } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import GooeyNav from "@/components/ui/gooey-nav";
 
 // Główne linki nawigacyjne
@@ -12,13 +12,13 @@ const navItems = [
   { label: "Strony", href: "/strony-www" },
   { label: "Sklepy", href: "/sklepy-internetowe" },
   { label: "Dla agencji", href: "/agencje-marketingowe" },
-  { 
-    label: "Blog", 
+  {
+    label: "Blog",
     href: "#",
     dropdown: [
       { label: "Strategia", href: "/strategia-marketingu-i-sprzedazy" },
       { label: "Technologia", href: "/nextjs" },
-    ]
+    ],
   },
   { label: "Cennik", href: "/cennik" },
   { label: "Kontakt", href: "/kontakt" },
@@ -30,13 +30,12 @@ const pathToNavIndex: Record<string, number> = {
   '/strony-www': 1,
   '/sklepy-internetowe': 2,
   '/agencje-marketingowe': 3,
-  '/strategia-marketingu-i-sprzedazy': 4,           // "Blog" dropdown
-  '/nextjs': 4,              // "Blog" dropdown
+  '/strategia-marketingu-i-sprzedazy': 4,
+  '/nextjs': 4,
   '/cennik': 5,
   '/kontakt': 6,
 };
 
-// Ścieżki, na których navbar jest ukryty (strony z jednym celem — bez rozpraszaczy)
 const HIDDEN_NAVBAR_PATHS = new Set<string>(['/porozmawiajmy'])
 const HIDDEN_NAVBAR_PREFIXES = ['/admin']
 
@@ -44,201 +43,273 @@ export default function NavbarStudio() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileWiedzaOpen, setMobileWiedzaOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const firstLinkRef = useRef<HTMLAnchorElement | HTMLButtonElement | null>(null);
+
+  // Body scroll lock (rules: 60-quality "Memory leaks") + Escape close + focus management
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+
+    // Lock body scroll na czas otwartego menu (zachowuje pozycję scrolla)
+    const scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false);
+        menuButtonRef.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', handleEscape);
+
+    // Focus na pierwszym linku menu po otwarciu (a11y)
+    const focusTimer = setTimeout(() => firstLinkRef.current?.focus(), 100);
+
+    return () => {
+      // Restore body scroll + position
+      const top = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+      const restored = top ? parseInt(top.replace('-', '').replace('px', ''), 10) : scrollY;
+      window.scrollTo(0, restored);
+
+      document.removeEventListener('keydown', handleEscape);
+      clearTimeout(focusTimer);
+    };
+  }, [mobileMenuOpen]);
+
+  // Auto-close on pathname change (przy nawigacji między stronami)
+  useEffect(() => {
+    setMobileMenuOpen(false);
+    setMobileWiedzaOpen(false);
+  }, [pathname]);
 
   if (HIDDEN_NAVBAR_PATHS.has(pathname) || HIDDEN_NAVBAR_PREFIXES.some((p) => pathname.startsWith(p))) {
     return null;
   }
 
-  // Znajdź aktywny indeks na podstawie aktualnej ścieżki
   const activeNavIndex = useMemo(() => {
     return pathToNavIndex[pathname] ?? -1;
   }, [pathname]);
 
-  // Sprawdź czy któryś z linków w "Wiedza" jest aktywny
   const isWiedzaActive = pathname === '/strategia-marketingu-i-sprzedazy' || pathname === '/nextjs';
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 py-6 px-6 lg:px-12 backdrop-blur-md bg-black/30 transition-all duration-300">
-      <div className="flex justify-between items-center">
-        {/* Logo - na stronie głównej scroll do góry, na podstronach link do home */}
-        {pathname === '/' ? (
-          <button
-            onClick={() => {
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className="text-2xl font-medium tracking-widest glow-text cursor-pointer hover:opacity-80 transition-opacity"
-          >
-            Syntance
-          </button>
-        ) : (
-          <Link 
-            href="/"
-            className="text-2xl font-medium tracking-widest glow-text cursor-pointer hover:opacity-80 transition-opacity"
-          >
-            Syntance
-          </Link>
-        )}
-        
-        {/* Desktop Navigation with GooeyNav - od 1024px (tablet landscape + desktop) */}
-        <div className="hidden lg:flex items-center gap-4">
-          <GooeyNav 
-            items={navItems}
-            particleCount={8}
-            particleDistances={[90, 10]}
-            particleR={80}
-            initialActiveIndex={-1}
-            externalActiveIndex={activeNavIndex}
-            animationTime={450}
-            timeVariance={200}
-            colors={[1, 2, 3, 4]}
-          />
-        </div>
-        
-        {/* Mobile menu button - pokazuj do 1023px (mobile + tablet portrait) */}
-        <button 
-          className="lg:hidden text-white"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label={mobileMenuOpen ? "Zamknij menu" : "Otwórz menu"}
-          aria-expanded={mobileMenuOpen}
-        >
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* Mobile Menu - pokazuj do 1023px */}
-      <div 
-        className={`lg:hidden overflow-hidden transition-all duration-300 ${
-          mobileMenuOpen ? 'max-h-[500px] opacity-100 mt-6' : 'max-h-0 opacity-0'
+    <>
+      {/* Backdrop dla mobile drawer (poza nav żeby pokrywał całość) */}
+      <div
+        aria-hidden="true"
+        onClick={() => setMobileMenuOpen(false)}
+        className={`lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
+          mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
-      >
-        <div className="space-y-1 py-4">
-          {/* Strona główna */}
+      />
+
+      <nav className="fixed top-0 left-0 right-0 z-50 py-4 px-4 sm:py-6 sm:px-6 lg:px-12 backdrop-blur-md bg-black/30 transition-all duration-300 safe-pt">
+        <div className="flex justify-between items-center">
           {pathname === '/' ? (
             <button
               onClick={() => {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-                setMobileMenuOpen(false);
               }}
-              className="block py-3 text-sm font-light tracking-wider text-white w-full text-left"
+              className="text-xl sm:text-2xl font-medium tracking-widest glow-text cursor-pointer hover:opacity-80 transition-opacity"
             >
-              Strona główna
+              Syntance
             </button>
           ) : (
             <Link
               href="/"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block py-3 text-sm font-light tracking-wider text-gray-400 hover:text-purple-300 transition-colors"
+              className="text-xl sm:text-2xl font-medium tracking-widest glow-text cursor-pointer hover:opacity-80 transition-opacity"
             >
-              Strona główna
+              Syntance
             </Link>
           )}
-          
-          {/* Strony */}
-          <Link
-            href="/strony-www"
-            onClick={() => setMobileMenuOpen(false)}
-            className={`block py-3 text-sm font-light tracking-wider transition-colors ${
-              pathname === '/strony-www' ? 'text-white' : 'text-gray-400 hover:text-purple-300'
-            }`}
-          >
-            Strony
-          </Link>
-          
-          {/* Sklepy */}
-          <Link
-            href="/sklepy-internetowe"
-            onClick={() => setMobileMenuOpen(false)}
-            className={`block py-3 text-sm font-light tracking-wider transition-colors ${
-              pathname === '/sklepy-internetowe' ? 'text-white' : 'text-gray-400 hover:text-purple-300'
-            }`}
-          >
-            Sklepy
-          </Link>
 
-          <Link
-            href="/agencje-marketingowe"
-            onClick={() => setMobileMenuOpen(false)}
-            className={`block py-3 text-sm font-light tracking-wider transition-colors ${
-              pathname === '/agencje-marketingowe' ? 'text-white' : 'text-gray-400 hover:text-purple-300'
-            }`}
+          {/* Desktop Navigation z GooeyNav (≥1024px) */}
+          <div className="hidden lg:flex items-center gap-4">
+            <GooeyNav
+              items={navItems}
+              particleCount={8}
+              particleDistances={[90, 10]}
+              particleR={80}
+              initialActiveIndex={-1}
+              externalActiveIndex={activeNavIndex}
+              animationTime={450}
+              timeVariance={200}
+              colors={[1, 2, 3, 4]}
+            />
+          </div>
+
+          {/* Mobile menu button — tap-target zapewnia 44×44 (WCAG 2.2) */}
+          <button
+            ref={menuButtonRef}
+            className="lg:hidden tap-target text-white -mr-2 cursor-pointer"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "Zamknij menu" : "Otwórz menu"}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-menu-drawer"
           >
-            Dla agencji
-          </Link>
-          
-          {/* Wiedza dropdown */}
-          <div>
-            <button
-              onClick={() => setMobileWiedzaOpen(!mobileWiedzaOpen)}
-              className={`w-full flex items-center justify-between py-3 text-sm font-light tracking-wider transition-colors ${
-                isWiedzaActive ? 'text-white' : 'text-gray-400'
+            {mobileMenuOpen ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile drawer — pełnoekranowy, slide-in z prawej, safe-area aware (<1024px) */}
+      <aside
+        id="mobile-menu-drawer"
+        aria-label="Menu mobilne"
+        aria-hidden={!mobileMenuOpen}
+        className={`lg:hidden fixed top-0 right-0 bottom-0 z-50 w-full max-w-sm bg-black border-l border-white/10 shadow-2xl transition-transform duration-300 ease-out safe-pt safe-pb ${
+          mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+          <span className="text-xl font-medium tracking-widest glow-text">Syntance</span>
+          <button
+            className="tap-target text-white -mr-2 cursor-pointer"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-label="Zamknij menu"
+          >
+            <X size={24} aria-hidden="true" />
+          </button>
+        </div>
+
+        <div className="overflow-y-auto h-[calc(100%-72px)] px-6 py-4">
+          <div className="space-y-0.5">
+            {/* Strona główna */}
+            {pathname === '/' ? (
+              <button
+                ref={firstLinkRef as React.RefObject<HTMLButtonElement>}
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  setMobileMenuOpen(false);
+                }}
+                className="block w-full text-left tap-target justify-start py-4 text-base font-light tracking-wider text-white border-b border-white/5 cursor-pointer"
+              >
+                Strona główna
+              </button>
+            ) : (
+              <Link
+                ref={firstLinkRef as React.RefObject<HTMLAnchorElement>}
+                href="/"
+                className="block tap-target justify-start py-4 text-base font-light tracking-wider text-gray-300 hover:text-white active:text-purple-300 transition-colors border-b border-white/5"
+              >
+                Strona główna
+              </Link>
+            )}
+
+            <Link
+              href="/strony-www"
+              className={`block tap-target justify-start py-4 text-base font-light tracking-wider transition-colors border-b border-white/5 ${
+                pathname === '/strony-www' ? 'text-white' : 'text-gray-300 hover:text-white active:text-purple-300'
               }`}
             >
-              Wiedza
-              <ChevronDown 
-                size={16} 
-                className={`transition-transform duration-200 ${mobileWiedzaOpen ? 'rotate-180' : ''}`} 
-              />
-            </button>
-            
-            <div 
-              className={`overflow-hidden transition-all duration-200 ${
-                mobileWiedzaOpen ? 'max-h-[150px] opacity-100' : 'max-h-0 opacity-0'
+              Strony
+            </Link>
+
+            <Link
+              href="/sklepy-internetowe"
+              className={`block tap-target justify-start py-4 text-base font-light tracking-wider transition-colors border-b border-white/5 ${
+                pathname === '/sklepy-internetowe' ? 'text-white' : 'text-gray-300 hover:text-white active:text-purple-300'
               }`}
             >
-              <div className="pl-4 space-y-1 border-l border-white/10 ml-2">
-                <Link
-                  href="/strategia-marketingu-i-sprzedazy"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    setMobileWiedzaOpen(false);
-                  }}
-                  className={`block py-2 text-sm font-light tracking-wider transition-colors ${
-                    pathname === '/strategia-marketingu-i-sprzedazy' 
-                      ? 'text-white' 
-                      : 'text-gray-400 hover:text-purple-300'
-                  }`}
-                >
-                  Strategia
-                </Link>
-                <Link
-                  href="/nextjs"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    setMobileWiedzaOpen(false);
-                  }}
-                  className={`block py-2 text-sm font-light tracking-wider transition-colors ${
-                    pathname === '/nextjs' 
-                      ? 'text-white' 
-                      : 'text-gray-400 hover:text-purple-300'
-                  }`}
-                >
-                  Technologia
-                </Link>
+              Sklepy
+            </Link>
+
+            <Link
+              href="/agencje-marketingowe"
+              className={`block tap-target justify-start py-4 text-base font-light tracking-wider transition-colors border-b border-white/5 ${
+                pathname === '/agencje-marketingowe' ? 'text-white' : 'text-gray-300 hover:text-white active:text-purple-300'
+              }`}
+            >
+              Dla agencji
+            </Link>
+
+            {/* Wiedza dropdown */}
+            <div className="border-b border-white/5">
+              <button
+                onClick={() => setMobileWiedzaOpen(!mobileWiedzaOpen)}
+                aria-expanded={mobileWiedzaOpen}
+                aria-controls="mobile-wiedza-submenu"
+                className={`w-full flex items-center justify-between tap-target py-4 text-base font-light tracking-wider transition-colors cursor-pointer ${
+                  isWiedzaActive ? 'text-white' : 'text-gray-300'
+                }`}
+              >
+                Wiedza
+                <ChevronDown
+                  size={18}
+                  className={`transition-transform duration-200 ${mobileWiedzaOpen ? 'rotate-180' : ''}`}
+                  aria-hidden="true"
+                />
+              </button>
+
+              <div
+                id="mobile-wiedza-submenu"
+                className={`overflow-hidden transition-all duration-300 ease-out ${
+                  mobileWiedzaOpen ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'
+                }`}
+              >
+                <div className="pl-4 pb-2 space-y-0.5 border-l-2 border-purple-500/30 ml-2">
+                  <Link
+                    href="/strategia-marketingu-i-sprzedazy"
+                    className={`block tap-target justify-start py-3 text-sm font-light tracking-wider transition-colors ${
+                      pathname === '/strategia-marketingu-i-sprzedazy'
+                        ? 'text-white'
+                        : 'text-gray-400 hover:text-white active:text-purple-300'
+                    }`}
+                  >
+                    Strategia
+                  </Link>
+                  <Link
+                    href="/nextjs"
+                    className={`block tap-target justify-start py-3 text-sm font-light tracking-wider transition-colors ${
+                      pathname === '/nextjs'
+                        ? 'text-white'
+                        : 'text-gray-400 hover:text-white active:text-purple-300'
+                    }`}
+                  >
+                    Technologia
+                  </Link>
+                </div>
               </div>
             </div>
+
+            <Link
+              href="/cennik"
+              className={`block tap-target justify-start py-4 text-base font-light tracking-wider transition-colors border-b border-white/5 ${
+                pathname === '/cennik' ? 'text-white' : 'text-gray-300 hover:text-white active:text-purple-300'
+              }`}
+            >
+              Cennik
+            </Link>
+
+            <Link
+              href="/kontakt"
+              className={`block tap-target justify-start py-4 text-base font-light tracking-wider transition-colors border-b border-white/5 ${
+                pathname === '/kontakt' ? 'text-white' : 'text-gray-300 hover:text-white active:text-purple-300'
+              }`}
+            >
+              Kontakt
+            </Link>
           </div>
-          
-          {/* Cennik */}
-          <Link
-            href="/cennik"
-            onClick={() => setMobileMenuOpen(false)}
-            className={`block py-3 text-sm font-light tracking-wider transition-colors ${
-              pathname === '/cennik' ? 'text-white' : 'text-gray-400 hover:text-purple-300'
-            }`}
-          >
-            Cennik
-          </Link>
-          
-          {/* Kontakt */}
-          <Link
-            href="/#contact"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block py-3 text-sm font-light tracking-wider text-gray-400 hover:text-purple-300 transition-colors"
-          >
-            Kontakt
-          </Link>
+
+          {/* CTA primary w mobile drawer — najmocniejsza akcja na końcu listy */}
+          <div className="mt-8 pt-6 border-t border-white/10">
+            <Link
+              href="/cennik"
+              className="flex items-center justify-center gap-2 w-full px-6 py-4 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-white/90 active:bg-white/80 transition-colors glow-box cursor-pointer"
+            >
+              Sprawdź cenę
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
         </div>
-      </div>
-    </nav>
+      </aside>
+    </>
   );
 }

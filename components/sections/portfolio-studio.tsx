@@ -27,14 +27,30 @@ export default function PortfolioStudio() {
       }`
     );
 
+    // AbortController + 5s timeout (rules: 60-quality "Timeouty / Zombie state").
+    // Cancel jeśli komponent unmount albo network wisi.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
     fetch(
-      `https://${projectId}.api.sanity.io/v2024-01-01/data/query/${dataset}?query=${query}`
+      `https://${projectId}.api.sanity.io/v2024-01-01/data/query/${dataset}?query=${query}`,
+      { signal: controller.signal }
     )
       .then((res) => res.json())
       .then((data) => {
         setItems((data.result as PortfolioItem[]) ?? []);
       })
-      .catch(() => setItems([]));
+      .catch((err) => {
+        if (err?.name !== "AbortError") {
+          setItems([]);
+        }
+      })
+      .finally(() => clearTimeout(timeoutId));
+
+    return () => {
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
   }, []);
 
   // Sekcja niewidoczna gdy brak realizacji w Sanity (lub wciąż się ładuje)

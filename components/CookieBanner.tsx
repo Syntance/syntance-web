@@ -67,17 +67,24 @@ export function CookieBanner() {
   if (!isVisible) return null
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-end justify-center p-4 pointer-events-none">
+    <div
+      className="fixed inset-0 z-9999 flex items-end justify-center p-4 pointer-events-none safe-pl safe-pr"
+      style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="cookie-banner-heading"
+    >
       {/* Backdrop */}
-      <div 
+      <div
         className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 pointer-events-auto ${
           isVisible ? 'opacity-100' : 'opacity-0'
         }`}
         onClick={() => !showSettings && acceptNecessary()}
+        aria-hidden="true"
       />
-      
+
       {/* Banner */}
-      <div 
+      <div
         className={`relative w-full max-w-2xl pointer-events-auto transition-all duration-500 ease-out ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
         }`}
@@ -87,13 +94,13 @@ export function CookieBanner() {
         <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 rounded-3xl opacity-20 blur-xl" />
         
         <div className="relative bg-gray-900/95 backdrop-blur-xl border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl">
-          {/* Close button */}
+          {/* Close button — tap-target zapewnia 44×44 (WCAG 2.2) */}
           <button
             onClick={acceptNecessary}
-            className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 transition-colors"
-            aria-label="Zamknij"
+            className="absolute top-3 right-3 tap-target rounded-full hover:bg-white/10 active:bg-white/20 transition-colors cursor-pointer"
+            aria-label="Zamknij i akceptuj tylko niezbędne"
           >
-            <X size={20} className="text-gray-400" />
+            <X size={20} className="text-gray-400" aria-hidden="true" />
           </button>
 
           {!showSettings ? (
@@ -104,7 +111,7 @@ export function CookieBanner() {
                   <Cookie className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-medium text-white mb-2">
+                  <h3 id="cookie-banner-heading" className="text-xl font-medium text-white mb-2">
                     Dbamy o Twoją prywatność
                   </h3>
                   <p className="text-gray-400 text-sm leading-relaxed">
@@ -117,22 +124,22 @@ export function CookieBanner() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={acceptAll}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-medium rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40"
+                  className="flex-1 px-6 py-3 min-h-[48px] bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 active:from-purple-700 active:to-blue-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 cursor-pointer"
                 >
                   Akceptuj wszystkie
                 </button>
-                
+
                 <button
                   onClick={() => setShowSettings(true)}
-                  className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2"
+                  className="px-6 py-3 min-h-[48px] bg-white/5 hover:bg-white/10 active:bg-white/15 border border-white/10 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <Settings size={16} />
+                  <Settings size={16} aria-hidden="true" />
                   Ustawienia
                 </button>
-                
+
                 <button
                   onClick={acceptNecessary}
-                  className="px-6 py-3 text-gray-400 hover:text-white font-medium transition-all"
+                  className="px-6 py-3 min-h-[48px] text-gray-400 hover:text-white active:text-gray-200 font-medium transition-all cursor-pointer"
                 >
                   Tylko niezbędne
                 </button>
@@ -223,14 +230,14 @@ export function CookieBanner() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={saveCustom}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-medium rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/25"
+                  className="flex-1 px-6 py-3 min-h-[48px] bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 active:from-purple-700 active:to-blue-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/25 cursor-pointer"
                 >
                   Zapisz preferencje
                 </button>
-                
+
                 <button
                   onClick={() => setShowSettings(false)}
-                  className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium rounded-xl transition-all"
+                  className="px-6 py-3 min-h-[48px] bg-white/5 hover:bg-white/10 active:bg-white/15 border border-white/10 text-white font-medium rounded-xl transition-all cursor-pointer"
                 >
                   Wróć
                 </button>

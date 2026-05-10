@@ -60,20 +60,20 @@ export default function WhySyntance() {
   }, []);
 
   return (
-    <section id="why-syntance" className="relative z-10 py-32 px-6 lg:px-12 overflow-hidden">
+    <section id="why-syntance" className="relative z-10 py-16 sm:py-24 md:py-32 px-4 sm:px-6 lg:px-12 overflow-hidden">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
+        <div className="text-center mb-12 sm:mb-16 md:mb-20">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-light tracking-widest glow-text mb-4 sm:mb-6">
             Dlaczego My?
           </h2>
-          <p className="text-lg font-light tracking-wide text-gray-400">
+          <p className="text-base sm:text-lg font-light tracking-wide text-gray-400">
             Wartości i podejście
           </p>
         </div>
 
         {/* Cards Grid */}
-        <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
           {values.map((value, index) => {
             const Icon = value.icon;
             return (

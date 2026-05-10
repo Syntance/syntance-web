@@ -295,8 +295,8 @@ export default function SklepyInternetoweContent({ startPrice }: { startPrice: n
             MedusaJS + Next.js = pełna kontrola i nieograniczona skalowalność.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <div className="relative group">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div className="relative group w-fit max-w-full shrink-0">
               <div 
                 className="absolute -inset-1 rounded-full blur-md opacity-25 group-hover:opacity-40 transition-opacity animate-gradient -z-10"
                 style={{

@@ -24,7 +24,15 @@ export default function OfferCards() {
     const query = encodeURIComponent(
       `*[_type == "projectType" && !disabled]{ "id": id.current, basePrice }`
     );
-    fetch(`https://${projectId}.api.sanity.io/v2024-01-01/data/query/${dataset}?query=${query}`)
+
+    // AbortController + 5s timeout (rules: 60-quality "Timeouty / Zombie state").
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+    fetch(
+      `https://${projectId}.api.sanity.io/v2024-01-01/data/query/${dataset}?query=${query}`,
+      { signal: controller.signal }
+    )
       .then(res => res.json())
       .then(data => {
         const types = data.result as { id: string; basePrice?: number }[];
@@ -36,7 +44,17 @@ export default function OfferCards() {
           ecommerce: ecommerce?.basePrice ?? defaultBasePrices.ecommerce,
         });
       })
-      .catch(() => {});
+      .catch((err) => {
+        if (err?.name !== 'AbortError') {
+          // Silently fall back to defaultBasePrices.
+        }
+      })
+      .finally(() => clearTimeout(timeoutId));
+
+    return () => {
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
   }, []);
 
   useEffect(() => {

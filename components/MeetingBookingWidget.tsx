@@ -85,54 +85,68 @@ export default function MeetingBookingWidget({ source }: MeetingBookingWidgetPro
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
 
+  // Range fetch — AbortController + 8s timeout (rules 60-quality)
   useEffect(() => {
-    let cancelled = false
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 8_000)
+
     const load = async () => {
       setLoading(true)
       setError(null)
       try {
-        const res = await fetch('/api/meeting/slots?days=60')
+        const res = await fetch('/api/meeting/slots?days=60', {
+          signal: controller.signal,
+        })
         if (!res.ok) throw new Error('Brak dostępności')
         const data = (await res.json()) as RangeResponse
-        if (!cancelled) setRange(data)
+        setRange(data)
       } catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') return
         console.error('Range fetch error:', err)
-        if (!cancelled) {
-          setError('Nie udało się załadować kalendarza. Napisz do mnie bezpośrednio: kamil@syntance.com.')
-        }
+        setError('Nie udało się załadować kalendarza. Napisz do mnie bezpośrednio: kamil@syntance.com.')
       } finally {
-        if (!cancelled) setLoading(false)
+        clearTimeout(timeoutId)
+        setLoading(false)
       }
     }
     load()
     return () => {
-      cancelled = true
+      clearTimeout(timeoutId)
+      controller.abort()
     }
   }, [])
 
+  // Day slots fetch — AbortController + 5s timeout. Cancel poprzednie fetch przy zmianie daty.
   useEffect(() => {
     if (!selectedDate) {
       setDaySlots([])
       return
     }
-    let cancelled = false
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 5_000)
+
     const load = async () => {
       setLoadingDay(true)
       try {
-        const res = await fetch(`/api/meeting/slots?date=${selectedDate}`)
+        const res = await fetch(`/api/meeting/slots?date=${selectedDate}`, {
+          signal: controller.signal,
+        })
         if (!res.ok) throw new Error('slots error')
         const data = (await res.json()) as DayResponse
-        if (!cancelled) setDaySlots(data.slots ?? [])
+        setDaySlots(data.slots ?? [])
       } catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') return
         console.error('Day slots error:', err)
-        if (!cancelled) setDaySlots([])
+        setDaySlots([])
       } finally {
-        if (!cancelled) setLoadingDay(false)
+        clearTimeout(timeoutId)
+        setLoadingDay(false)
       }
     }
     load()
     return () => {
-      cancelled = true
+      clearTimeout(timeoutId)
+      controller.abort()
     }
   }, [selectedDate])
 
@@ -208,9 +222,11 @@ export default function MeetingBookingWidget({ source }: MeetingBookingWidgetPro
 
       setSubmitting(true)
       try {
+        // 30s timeout dla form submission (rules 60-quality)
         const res = await fetch('/api/meeting-booking', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          signal: AbortSignal.timeout(30_000),
           body: JSON.stringify({
             name: name.trim(),
             email: email.trim(),
@@ -233,7 +249,11 @@ export default function MeetingBookingWidget({ source }: MeetingBookingWidgetPro
         })
         setStep('success')
       } catch (err) {
-        setSubmitError(err instanceof Error ? err.message : 'Coś poszło nie tak. Spróbuj ponownie.')
+        if (err instanceof DOMException && err.name === 'TimeoutError') {
+          setSubmitError('Połączenie zbyt wolne. Spróbuj ponownie za chwilę.')
+        } else {
+          setSubmitError(err instanceof Error ? err.message : 'Coś poszło nie tak. Spróbuj ponownie.')
+        }
       } finally {
         setSubmitting(false)
       }
@@ -308,7 +328,10 @@ export default function MeetingBookingWidget({ source }: MeetingBookingWidgetPro
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Jan Kowalski"
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-gray-500 transition-colors focus:border-purple-500 focus:outline-none"
+              autoComplete="given-name"
+              autoCapitalize="words"
+              enterKeyHint="next"
+              className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 min-h-[48px] text-base text-white placeholder-gray-500 transition-colors focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/30"
             />
           </label>
           <label className="block">
@@ -319,7 +342,13 @@ export default function MeetingBookingWidget({ source }: MeetingBookingWidgetPro
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="jan@firma.pl"
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-gray-500 transition-colors focus:border-purple-500 focus:outline-none"
+              autoComplete="email"
+              autoCapitalize="off"
+              autoCorrect="off"
+              spellCheck={false}
+              inputMode="email"
+              enterKeyHint="next"
+              className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 min-h-[48px] text-base text-white placeholder-gray-500 transition-colors focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/30"
             />
           </label>
           <label className="block md:col-span-2">
@@ -329,7 +358,9 @@ export default function MeetingBookingWidget({ source }: MeetingBookingWidgetPro
               value={company}
               onChange={(e) => setCompany(e.target.value)}
               placeholder="Nazwa firmy / marki"
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-gray-500 transition-colors focus:border-purple-500 focus:outline-none"
+              autoComplete="organization"
+              enterKeyHint="next"
+              className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 min-h-[48px] text-base text-white placeholder-gray-500 transition-colors focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/30"
             />
           </label>
           <label className="block md:col-span-2">
@@ -339,7 +370,8 @@ export default function MeetingBookingWidget({ source }: MeetingBookingWidgetPro
               onChange={(e) => setTopic(e.target.value)}
               rows={3}
               placeholder="Np. chcę zrobić nową stronę dla gabinetu stomatologicznego."
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-gray-500 transition-colors focus:border-purple-500 focus:outline-none"
+              enterKeyHint="send"
+              className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-base text-white placeholder-gray-500 transition-colors focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/30"
             />
           </label>
         </div>

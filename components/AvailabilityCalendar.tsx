@@ -31,30 +31,45 @@ export function AvailabilityCalendar({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Pobierz dostępność
+  // Pobierz dostępność (AbortController + 8s timeout — rules 60-quality)
   useEffect(() => {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 8_000)
+
     const fetchAvailability = async () => {
       setLoading(true)
       setError(null)
-      
+
       try {
-        const response = await fetch(`/api/availability?days=${requiredDays}&months=3`)
-        
+        const response = await fetch(`/api/availability?days=${requiredDays}&months=3`, {
+          signal: controller.signal,
+        })
+
         if (!response.ok) {
           throw new Error('Nie udało się pobrać dostępności')
         }
-        
+
         const data: AvailabilityData = await response.json()
         setAvailability(data)
       } catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') {
+          // Anulowane przez unmount — nie ustawiaj state (zombie state guard)
+          return
+        }
         console.error('Availability fetch error:', err)
         setError('Nie udało się załadować kalendarza. Spróbuj ponownie.')
       } finally {
+        clearTimeout(timeoutId)
         setLoading(false)
       }
     }
 
     fetchAvailability()
+
+    return () => {
+      clearTimeout(timeoutId)
+      controller.abort()
+    }
   }, [requiredDays])
 
   // Generuj dni miesiąca

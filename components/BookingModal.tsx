@@ -55,18 +55,34 @@ export function BookingModal({
     }
   }, [isOpen])
 
-  // Blokuj scroll tła gdy modal jest otwarty
+  // Body scroll lock z zachowaniem pozycji (mobile UX) + Escape close (a11y).
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
+    if (!isOpen) return
+
+    const scrollY = window.scrollY
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${scrollY}px`
+    document.body.style.left = '0'
+    document.body.style.right = '0'
+    document.body.style.overflow = 'hidden'
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
     }
-    
+    document.addEventListener('keydown', handleEscape)
+
     return () => {
+      const top = document.body.style.top
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.left = ''
+      document.body.style.right = ''
       document.body.style.overflow = ''
+      const restored = top ? parseInt(top.replace('-', '').replace('px', ''), 10) : scrollY
+      window.scrollTo(0, restored)
+      document.removeEventListener('keydown', handleEscape)
     }
-  }, [isOpen])
+  }, [isOpen, onClose])
 
   // Oblicz datę końcową projektu
   const calculateEndDate = useCallback((startDate: string, workDays: number): string => {
@@ -97,10 +113,11 @@ export function BookingModal({
     try {
       const endDate = calculateEndDate(selectedDate, booking.days)
 
-      // 1. Wyślij rezerwację i powiadomienie
+      // 1. Wyślij rezerwację i powiadomienie (30s timeout — rules 60-quality)
       const bookingResponse = await fetch('/api/booking', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: AbortSignal.timeout(30_000),
         body: JSON.stringify({
           name,
           email,
@@ -127,11 +144,12 @@ export function BookingModal({
         throw new Error('Nie udało się wysłać rezerwacji')
       }
 
-      // 2. Zablokuj kalendarz (opcjonalne - jeśli Google Calendar jest skonfigurowany)
+      // 2. Zablokuj kalendarz (opcjonalne — graceful degradation gdy GCal niedostępny)
       try {
         await fetch('/api/availability', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          signal: AbortSignal.timeout(10_000),
           body: JSON.stringify({
             startDate: selectedDate,
             endDate,
@@ -149,7 +167,11 @@ export function BookingModal({
       setStep('success')
     } catch (err) {
       console.error('Booking failed:', err)
-      setError('Nie udało się wysłać rezerwacji. Spróbuj ponownie.')
+      if (err instanceof DOMException && err.name === 'TimeoutError') {
+        setError('Połączenie zbyt wolne. Spróbuj ponownie za chwilę.')
+      } else {
+        setError('Nie udało się wysłać rezerwacji. Spróbuj ponownie.')
+      }
     } finally {
       setIsSubmitting(false)
     }

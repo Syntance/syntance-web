@@ -76,12 +76,14 @@ export function ContactForm({
     }
 
     try {
+      // 30s timeout dla form submission (rules: 60-quality "External API: 30s upload")
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ ...formData, source }),
+        signal: AbortSignal.timeout(30_000),
       })
 
       const data = await response.json()
@@ -95,7 +97,11 @@ export function ContactForm({
       setConsentChecked(false)
     } catch (error) {
       setFormStatus('error')
-      setErrorMessage(error instanceof Error ? error.message : 'Wystąpił błąd podczas wysyłania wiadomości.')
+      if (error instanceof DOMException && error.name === 'TimeoutError') {
+        setErrorMessage('Połączenie zbyt wolne. Spróbuj ponownie za chwilę.')
+      } else {
+        setErrorMessage(error instanceof Error ? error.message : 'Wystąpił błąd podczas wysyłania wiadomości.')
+      }
     }
   }
 
@@ -113,51 +119,72 @@ export function ContactForm({
       />
       
       <div>
+        <label htmlFor={`${idPrefix}-name`} className="sr-only">Imię i nazwisko</label>
         <input
           type="text"
+          id={`${idPrefix}-name`}
           name="name"
           value={formData.name}
           onChange={handleFormChange}
           placeholder="Imię i nazwisko"
           required
+          autoComplete="name"
+          autoCapitalize="words"
+          enterKeyHint="next"
           disabled={formStatus === 'loading'}
-          className="w-full px-6 py-4 bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors disabled:opacity-50"
+          className="w-full px-5 sm:px-6 py-4 min-h-[52px] text-base bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 focus:ring-2 focus:ring-purple-500/30 transition-colors disabled:opacity-50"
         />
       </div>
       <div>
+        <label htmlFor={`${idPrefix}-email`} className="sr-only">Adres email</label>
         <input
           type="email"
+          id={`${idPrefix}-email`}
           name="email"
           value={formData.email}
           onChange={handleFormChange}
           placeholder="Email"
           required
+          autoComplete="email"
+          autoCapitalize="off"
+          autoCorrect="off"
+          spellCheck={false}
+          inputMode="email"
+          enterKeyHint="next"
           disabled={formStatus === 'loading'}
-          className="w-full px-6 py-4 bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors disabled:opacity-50"
+          className="w-full px-5 sm:px-6 py-4 min-h-[52px] text-base bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 focus:ring-2 focus:ring-purple-500/30 transition-colors disabled:opacity-50"
         />
       </div>
       <div>
+        <label htmlFor={`${idPrefix}-phone`} className="sr-only">Numer telefonu</label>
         <input
           type="tel"
+          id={`${idPrefix}-phone`}
           name="phone"
           value={formData.phone}
           onChange={handleFormChange}
           placeholder="Numer telefonu"
           required
+          autoComplete="tel"
+          inputMode="tel"
+          enterKeyHint="next"
           disabled={formStatus === 'loading'}
-          className="w-full px-6 py-4 bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors disabled:opacity-50"
+          className="w-full px-5 sm:px-6 py-4 min-h-[52px] text-base bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 focus:ring-2 focus:ring-purple-500/30 transition-colors disabled:opacity-50"
         />
       </div>
       <div>
+        <label htmlFor={`${idPrefix}-message`} className="sr-only">Wiadomość</label>
         <textarea
+          id={`${idPrefix}-message`}
           name="message"
           value={formData.message}
           onChange={handleFormChange}
           placeholder="Wiadomość (min. 10 znaków)"
           rows={5}
           required
+          enterKeyHint="send"
           disabled={formStatus === 'loading'}
-          className="w-full px-6 py-4 bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors resize-none disabled:opacity-50"
+          className="w-full px-5 sm:px-6 py-4 text-base bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 focus:ring-2 focus:ring-purple-500/30 transition-colors resize-none disabled:opacity-50"
         ></textarea>
         <div className="text-sm text-gray-400 mt-1 text-right">
           {formData.message.length} / 2000 znaków
@@ -170,9 +197,20 @@ export function ContactForm({
       <button
         type="submit"
         disabled={formStatus === 'loading' || !consentChecked}
-        className="w-full px-8 py-4 bg-white text-gray-900 rounded-lg font-medium tracking-wider hover:bg-white/90 transition-all glow-box disabled:opacity-50 disabled:cursor-not-allowed"
+        aria-busy={formStatus === 'loading'}
+        className="w-full px-8 py-4 min-h-[52px] bg-white text-gray-900 rounded-lg font-medium tracking-wider hover:bg-white/90 active:bg-white/80 transition-all glow-box disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer inline-flex items-center justify-center gap-2"
       >
-        {formStatus === 'loading' ? 'Wysyłanie...' : 'Wyślij wiadomość'}
+        {formStatus === 'loading' ? (
+          <>
+            <span
+              className="inline-block w-4 h-4 border-2 border-gray-900 border-t-transparent rounded-full animate-spin"
+              aria-hidden="true"
+            />
+            Wysyłanie...
+          </>
+        ) : (
+          'Wyślij wiadomość'
+        )}
       </button>
       
       {/* Checkbox zgody */}
@@ -217,13 +255,21 @@ export function ContactForm({
       )}
       
       {formStatus === 'success' && (
-        <div className="p-4 bg-green-500/20 border border-green-500 rounded-lg text-green-300 text-center">
-          Wiadomość została wysłana pomyślnie!
+        <div
+          role="status"
+          aria-live="polite"
+          className="p-4 bg-green-500/20 border border-green-500 rounded-lg text-green-300 text-center"
+        >
+          Gotowe. Wiadomość trafiła do nas — odezwiemy się w 24h.
         </div>
       )}
-      
+
       {formStatus === 'error' && (
-        <div className="p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-300 text-center">
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-300 text-center"
+        >
           {errorMessage || 'Wystąpił błąd podczas wysyłania wiadomości.'}
         </div>
       )}
