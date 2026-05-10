@@ -36,7 +36,7 @@ function StickyCtaFloatInner({
     el.href = href
     el.textContent = label
     el.className =
-      'px-8 py-3 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 glow-box cursor-pointer inline-flex items-center justify-center text-center whitespace-nowrap shadow-lg shadow-white/10'
+      'px-8 py-3 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 glow-box cursor-pointer inline-flex items-center justify-center text-center whitespace-nowrap shadow-md md:shadow-lg md:shadow-white/10'
     el.style.transition = 'opacity 0.3s ease-out'
     el.addEventListener('click', (e) => {
       e.preventDefault()
