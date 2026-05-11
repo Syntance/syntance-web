@@ -193,6 +193,33 @@ async function createOrUpdateContact(contact: AttioContact): Promise<string | nu
 }
 
 /**
+ * Znajduje firmę po nazwie lub tworzy rekord Company — do powiązania z dealem.
+ */
+async function createOrFindCompanyByName(companyName: string): Promise<string | null> {
+  const trimmed = companyName.trim()
+  if (!trimmed) return null
+
+  const existing = await attioRequest('/objects/companies/records/query', 'POST', {
+    filter: { name: trimmed },
+    limit: 1,
+  })
+
+  if (existing?.data?.[0]?.id?.record_id) {
+    return existing.data[0].id.record_id
+  }
+
+  const created = await attioRequest('/objects/companies/records', 'POST', {
+    data: {
+      values: {
+        name: [{ value: trimmed }],
+      },
+    },
+  })
+
+  return created?.data?.id?.record_id ?? null
+}
+
+/**
  * Tworzy deal w Attio z pełnymi danymi klienta.
  * Dane do emaili są zapisywane w notatce JSON (nie wymagają custom fields).
  */
@@ -208,15 +235,15 @@ export async function createProject(project: AttioProject): Promise<AttioRecordR
   const cleanUrl = project.existingSiteUrl?.trim() || ''
   const typOptionId = mapProjectTypeToOptionId(project.name)
 
-  // Tytuł deala w Attio: tylko firma albo imię i nazwisko — numer zlecenia jest w polu booking_id.
-  const company = project.contact.companyName?.trim()
   const person = project.contact.name.trim()
-  const dealTitle = company || person || 'Nowe zapytanie'
+  const companyTrimmed = project.contact.companyName?.trim() ?? ''
+  const companyRecordId = companyTrimmed ? await createOrFindCompanyByName(companyTrimmed) : null
 
+  // Nazwa deala = numer zlecenia; imię/nazwisko i firma w osobnych polach + Associated company.
   const dealData = await attioRequest('/objects/deals/records', 'POST', {
     data: {
       values: {
-        name: [{ value: dealTitle }],
+        name: [{ value: project.bookingId }],
         // stage: plain status UUID (not wrapped in object)
         stage: STAGE_IDS.oczekujacy,
         // owner: required field
@@ -224,12 +251,15 @@ export async function createProject(project: AttioProject): Promise<AttioRecordR
         associated_people: [{ target_object: 'people', target_record_id: contactId }],
         booking_id: [{ value: project.bookingId }],
         imie_nazwisko_klienta: [{ value: person }],
+        ...(companyTrimmed && { nazwa_firmy: [{ value: companyTrimmed }] }),
+        ...(companyRecordId && {
+          associated_company: [{ target_object: 'companies', target_record_id: companyRecordId }],
+        }),
         wartosc_brutto: [{ value: priceBrutto }],
         zaliczka: [{ value: project.deposit }],
         // typ_zlecenia: multiselect — use array of option_id strings
         ...(typOptionId && { typ_zlecenia: [typOptionId] }),
         data_zapytania: [{ value: today }],
-        ...(project.contact.companyName && { nazwa_firmy: [{ value: project.contact.companyName }] }),
         ...(project.description && { opis_potrzeb: [{ value: project.description }] }),
         ...(cleanUrl && { istniejaca_strona_url: [{ value: cleanUrl }] }),
       },
@@ -241,7 +271,9 @@ export async function createProject(project: AttioProject): Promise<AttioRecordR
 
   // ── Notatka czytelna dla człowieka ──────────────────────────────────────
   const lines = [
+    `Numer zlecenia: ${project.bookingId}`,
     `Kontakt z formularza: ${project.contact.name} · ${project.contact.email}${project.contact.phone ? ` · ${project.contact.phone}` : ''}`,
+    ...(companyTrimmed ? [`Firma: ${companyTrimmed}`] : []),
     '',
     `Typ projektu: ${project.name}`,
     `Wartość: ${project.value.toLocaleString('pl-PL')} PLN netto`,
