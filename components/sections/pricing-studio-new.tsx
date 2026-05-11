@@ -67,7 +67,7 @@ export default function PricingStudioNew() {
               Gotowy zacząć?
             </h3>
             <p className="text-sm text-gray-400 font-light mb-5 leading-relaxed">
-              Skonfiguruj projekt, zobacz cenę i czas. Zarezerwuj termin od razu.
+              Skonfiguruj projekt, zobacz cenę i czas. Wyślij zapytanie — termin ustalimy indywidualnie.
             </p>
             <a
               href="/cennik"
@@ -162,7 +162,7 @@ export default function PricingStudioNew() {
               Gotowy stworzyć coś wspaniałego?
             </h3>
             <p className="text-gray-400 font-light tracking-wide mb-8 max-w-lg mx-auto">
-              Skonfiguruj projekt i poznaj szacunkową cenę. Zarezerwuj termin od razu.
+              Skonfiguruj projekt i poznaj szacunkową cenę. Wyślij zapytanie — termin ustalimy indywidualnie.
             </p>
             
             <a 

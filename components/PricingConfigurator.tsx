@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 import { 
   Layout, FileText, Layers, Zap, Plug, CreditCard, Truck, 
   Globe, ShoppingCart, Smartphone, Check, Sparkles, Clock,
-  Calendar, Download, ChevronRight, Link2, Gift, Star, Target, Lightbulb, Activity
+  Send, Download, ChevronRight, Link2, Gift, Star, Target, Lightbulb, Activity
 } from 'lucide-react'
 import { PricingData, PricingItem } from '@/sanity/queries/pricing'
 import { ConfirmDialog } from './ConfirmDialog'
@@ -110,7 +110,7 @@ export function PricingConfigurator({ data }: Props) {
     onConfirm: () => {},
   })
 
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
+  const [isInquiryModalOpen, setIsInquiryModalOpen] = useState(false)
 
   // Filtruj elementy dla wybranego typu projektu
   const availableItems = useMemo(() => {
@@ -451,7 +451,7 @@ export function PricingConfigurator({ data }: Props) {
     }).filter(Boolean) as string[]
   }, [requiredItems, state.selectedItems, state.quantities, items])
 
-  // Dane do modalu rezerwacji
+  // Dane przekazywane do modalu zapytania o wycenę
   const getBookingDetails = useCallback(() => {
     return {
       projectType: currentProjectType?.name || 'Strona WWW',
@@ -879,11 +879,11 @@ export function PricingConfigurator({ data }: Props) {
               {/* CTAs */}
               <div className="space-y-2 sm:space-y-3 pt-2">
                 <button
-                  onClick={() => setIsBookingModalOpen(true)}
+                  onClick={() => setIsInquiryModalOpen(true)}
                   className="flex items-center justify-center gap-2 w-full py-3 sm:py-4 px-4 sm:px-6 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white text-sm sm:text-base font-medium rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40"
                 >
-                  <Calendar size={16} className="flex-shrink-0" />
-                  <span className="truncate">{config?.ctaTexts?.reserve || 'Zarezerwuj termin'}</span>
+                  <Send size={16} className="flex-shrink-0" />
+                  <span className="truncate">{config?.ctaTexts?.reserve || 'Wyślij zapytanie'}</span>
                   <ChevronRight size={14} className="flex-shrink-0" />
                 </button>
 
@@ -899,7 +899,7 @@ export function PricingConfigurator({ data }: Props) {
               <p className="text-[10px] sm:text-xs text-gray-400 text-center leading-relaxed">
                 Gwarancja 30 dni • Po tym czasie opieka w ramach abonamentu
                 <br />
-                Akceptacja zlecenia telefonicznie po rezerwacji terminu
+                Termin realizacji ustalimy indywidualnie po kontakcie
               </p>
             </div>
           </div>
@@ -918,12 +918,11 @@ export function PricingConfigurator({ data }: Props) {
         onCancel={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
       />
 
-      {/* Booking Modal */}
+      {/* Inquiry Modal (poprzednio rezerwacja terminu) */}
       <BookingModal
-        isOpen={isBookingModalOpen}
-        onClose={() => setIsBookingModalOpen(false)}
+        isOpen={isInquiryModalOpen}
+        onClose={() => setIsInquiryModalOpen(false)}
         booking={getBookingDetails()}
-        calendlyUrl={config?.calendlyUrl || 'https://calendly.com/syntance/discovery'}
       />
       </div>
     </>

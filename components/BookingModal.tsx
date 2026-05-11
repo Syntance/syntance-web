@@ -1,12 +1,11 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { 
-  X, Calendar, Clock, CreditCard, Layers, 
-  CheckCircle2, Mail, ArrowRight, ArrowLeft, Loader2
+import {
+  X, Send, Clock, CreditCard, Layers,
+  CheckCircle2, Mail, Loader2, Globe,
 } from 'lucide-react'
-import { AvailabilityCalendar } from './AvailabilityCalendar'
 
 interface BookingDetails {
   projectType: string
@@ -25,7 +24,8 @@ interface BookingModalProps {
   isOpen: boolean
   onClose: () => void
   booking: BookingDetails
-  calendlyUrl: string // Zachowujemy dla kompatybilności, ale nie używamy
+  /** Zachowane dla kompatybilności wywołania — nieużywane po usunięciu rezerwacji terminu. */
+  calendlyUrl?: string
 }
 
 export function BookingModal({
@@ -34,11 +34,13 @@ export function BookingModal({
   booking,
 }: BookingModalProps) {
   const [mounted, setMounted] = useState(false)
-  const [step, setStep] = useState<'summary' | 'calendar' | 'success'>('summary')
+  const [step, setStep] = useState<'form' | 'success'>('form')
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
-  const [selectedDate, setSelectedDate] = useState<string | null>(null)
+  const [description, setDescription] = useState('')
+  const [hasExistingSite, setHasExistingSite] = useState(false)
+  const [existingSiteUrl, setExistingSiteUrl] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
 
@@ -46,12 +48,11 @@ export function BookingModal({
     setMounted(true)
   }, [])
 
-  // Reset state when modal opens
+  // Reset stanu po otwarciu modala (rules: 60-quality / "Race conditions").
   useEffect(() => {
     if (isOpen) {
-      setStep('summary')
+      setStep('form')
       setError('')
-      setSelectedDate(null)
     }
   }, [isOpen])
 
@@ -84,100 +85,7 @@ export function BookingModal({
     }
   }, [isOpen, onClose])
 
-  // Oblicz datę końcową projektu
-  const calculateEndDate = useCallback((startDate: string, workDays: number): string => {
-    const start = new Date(startDate)
-    let daysAdded = 0
-    const end = new Date(start)
-    
-    while (daysAdded < workDays) {
-      end.setDate(end.getDate() + 1)
-      const dayOfWeek = end.getDay()
-      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-        daysAdded++
-      }
-    }
-    
-    return end.toISOString().split('T')[0]
-  }, [])
-
-  const handleSubmitBooking = useCallback(async () => {
-    if (!selectedDate) {
-      setError('Wybierz datę rozpoczęcia projektu')
-      return
-    }
-
-    setIsSubmitting(true)
-    setError('')
-
-    try {
-      const endDate = calculateEndDate(selectedDate, booking.days)
-
-      // 1. Wyślij rezerwację i powiadomienie (30s timeout — rules 60-quality)
-      const bookingResponse = await fetch('/api/booking', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        signal: AbortSignal.timeout(30_000),
-        body: JSON.stringify({
-          name,
-          email,
-          phone,
-          startDate: selectedDate,
-          endDate,
-          booking: {
-            projectType: booking.projectType,
-            priceNetto: booking.priceNetto,
-            priceBrutto: booking.priceBrutto,
-            deposit: booking.deposit,
-            days: booking.days,
-            hours: booking.hours,
-            complexity: booking.complexity,
-            itemsCount: booking.itemsCount,
-            items: booking.itemNames,
-            startDate: selectedDate,
-            endDate,
-          }
-        })
-      })
-
-      if (!bookingResponse.ok) {
-        throw new Error('Nie udało się wysłać rezerwacji')
-      }
-
-      // 2. Zablokuj kalendarz (opcjonalne — graceful degradation gdy GCal niedostępny)
-      try {
-        await fetch('/api/availability', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          signal: AbortSignal.timeout(10_000),
-          body: JSON.stringify({
-            startDate: selectedDate,
-            endDate,
-            title: `${booking.projectType} - ${name}`,
-            description: `Cena: ${booking.priceNetto.toLocaleString('pl-PL')} PLN\nDni: ${booking.days}\nElementy: ${booking.itemNames.join(', ')}`,
-            clientEmail: email,
-            clientName: name,
-          })
-        })
-      } catch (calendarErr) {
-        // Nie blokuj sukcesu jeśli kalendarz się nie zaktualizował
-        console.warn('Calendar blocking failed:', calendarErr)
-      }
-
-      setStep('success')
-    } catch (err) {
-      console.error('Booking failed:', err)
-      if (err instanceof DOMException && err.name === 'TimeoutError') {
-        setError('Połączenie zbyt wolne. Spróbuj ponownie za chwilę.')
-      } else {
-        setError('Nie udało się wysłać rezerwacji. Spróbuj ponownie.')
-      }
-    } finally {
-      setIsSubmitting(false)
-    }
-  }, [selectedDate, name, email, phone, booking, calculateEndDate])
-
-  const handleProceedToCalendar = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
 
@@ -191,7 +99,60 @@ export function BookingModal({
       return
     }
 
-    setStep('calendar')
+    // Walidacja URL gdy zaznaczono istniejącą stronę.
+    if (hasExistingSite && existingSiteUrl.trim()) {
+      const url = existingSiteUrl.trim()
+      const looksLikeUrl = /^https?:\/\/.+\..+/i.test(url) || /^[\w-]+(\.[\w-]+)+/i.test(url)
+      if (!looksLikeUrl) {
+        setError('Podaj prawidłowy link do strony (np. https://twojadomena.pl)')
+        return
+      }
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      // Send inquiry (30s timeout — rules 60-quality "Timeouty").
+      const response = await fetch('/api/booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal: AbortSignal.timeout(30_000),
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          description: description.trim() || undefined,
+          hasExistingSite,
+          existingSiteUrl: hasExistingSite ? existingSiteUrl.trim() || undefined : undefined,
+          booking: {
+            projectType: booking.projectType,
+            priceNetto: booking.priceNetto,
+            priceBrutto: booking.priceBrutto,
+            deposit: booking.deposit,
+            days: booking.days,
+            hours: booking.hours,
+            complexity: booking.complexity,
+            itemsCount: booking.itemsCount,
+            items: booking.itemNames,
+          },
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Nie udało się wysłać zapytania')
+      }
+
+      setStep('success')
+    } catch (err) {
+      console.error('Inquiry failed:', err)
+      if (err instanceof DOMException && err.name === 'TimeoutError') {
+        setError('Połączenie zbyt wolne. Spróbuj ponownie za chwilę.')
+      } else {
+        setError('Nie udało się wysłać zapytania. Spróbuj ponownie.')
+      }
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const getComplexityLabel = (complexity: string) => {
@@ -217,53 +178,55 @@ export function BookingModal({
   const modalContent = (
     <>
       {/* Backdrop */}
-      <div 
+      <div
         className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-md"
         onClick={onClose}
       />
-      
+
       {/* Modal */}
-      <div 
+      <div
         className="fixed z-[10000] w-full max-w-2xl px-4"
-        style={{ 
-          top: '50%', 
-          left: '50%', 
+        style={{
+          top: '50%',
+          left: '50%',
           transform: 'translate(-50%, -50%)',
           maxHeight: '90vh',
         }}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="inquiry-modal-title"
       >
         {/* Glow effect */}
         <div className="absolute -inset-1 bg-gradient-to-br from-purple-500 via-blue-500 to-pink-500 rounded-3xl opacity-30 blur-xl" />
-        
+
         <div className="relative bg-gray-900/95 border border-white/10 rounded-2xl shadow-2xl overflow-hidden max-h-[85vh] flex flex-col">
           {/* Header */}
           <div className="flex items-center gap-3 px-6 py-4 border-b border-white/10 shrink-0">
             <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
-              <Calendar size={20} className="text-purple-400" />
+              <Send size={18} className="text-purple-400" />
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-medium text-white">
-                {step === 'summary' && 'Podsumowanie wyceny'}
-                {step === 'calendar' && 'Wybierz termin realizacji'}
-                {step === 'success' && 'Rezerwacja wysłana!'}
+              <h3 id="inquiry-modal-title" className="text-lg font-medium text-white">
+                {step === 'form' && 'Wyślij zapytanie o wycenę'}
+                {step === 'success' && 'Zapytanie wysłane!'}
               </h3>
               <p className="text-sm text-gray-400">
-                {step === 'summary' && 'Sprawdź szczegóły przed rezerwacją terminu'}
-                {step === 'calendar' && `Projekt wymaga ${booking.days} dni roboczych`}
+                {step === 'form' && 'Sprawdź podsumowanie i napisz parę słów o projekcie'}
                 {step === 'success' && 'Otrzymasz potwierdzenie na email'}
               </p>
             </div>
             <button
               onClick={onClose}
+              aria-label="Zamknij"
               className="text-gray-400 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg"
             >
               <X size={20} />
             </button>
           </div>
-          
+
           {/* Content */}
           <div className="overflow-y-auto flex-1 scrollbar-thin pr-1">
-            {step === 'summary' && (
+            {step === 'form' && (
               <div className="p-6 space-y-6">
                 {/* Summary cards */}
                 <div className="grid grid-cols-2 gap-4">
@@ -303,7 +266,7 @@ export function BookingModal({
                     </span>
                   </div>
                   <p className="text-xs text-gray-400 mt-1">
-                    Płatność po akceptacji zlecenia, przed rozpoczęciem prac
+                    Płatność po akceptacji zlecenia, przed rozpoczęciem prac. Termin realizacji ustalimy indywidualnie.
                   </p>
                 </div>
 
@@ -325,120 +288,147 @@ export function BookingModal({
                   </div>
                 </div>
 
-                {/* Contact form */}
-                <form onSubmit={handleProceedToCalendar} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                {/* Inquiry form */}
+                <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm text-gray-400 mb-1">
+                      <label htmlFor="inquiry-name" className="block text-sm text-gray-400 mb-1">
                         Imię i nazwisko *
                       </label>
                       <input
+                        id="inquiry-name"
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Proszę wypełnić to pole.')}
-                        onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
+                        autoComplete="name"
                         placeholder="Jan Kowalski"
                         required
-                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors"
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white text-base placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm text-gray-400 mb-1">
+                      <label htmlFor="inquiry-email" className="block text-sm text-gray-400 mb-1">
                         Email *
                       </label>
                       <input
+                        id="inquiry-email"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        onInvalid={(e) => {
-                          const input = e.target as HTMLInputElement
-                          if (input.validity.valueMissing) {
-                            input.setCustomValidity('Proszę wypełnić to pole.')
-                          } else if (input.validity.typeMismatch) {
-                            input.setCustomValidity('Proszę podać prawidłowy adres email.')
-                          }
-                        }}
-                        onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
+                        autoComplete="email"
+                        inputMode="email"
                         placeholder="jan@firma.pl"
                         required
-                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors"
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white text-base placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors"
                       />
                     </div>
                   </div>
+
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">
+                    <label htmlFor="inquiry-phone" className="block text-sm text-gray-400 mb-1">
                       Telefon (opcjonalnie)
                     </label>
                     <input
+                      id="inquiry-phone"
                       type="tel"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
+                      autoComplete="tel"
+                      inputMode="tel"
                       placeholder="+48 123 456 789"
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white text-base placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors"
                     />
                   </div>
 
+                  <div>
+                    <label htmlFor="inquiry-description" className="block text-sm text-gray-400 mb-1">
+                      Krótki opis firmy i potrzeb (opcjonalnie)
+                    </label>
+                    <textarea
+                      id="inquiry-description"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      placeholder="Czym zajmuje się Twoja firma? Co chcesz osiągnąć dzięki nowej stronie?"
+                      rows={4}
+                      maxLength={2000}
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white text-base placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors resize-y min-h-[96px]"
+                    />
+                    <div className="text-right text-xs text-gray-500 mt-1">
+                      {description.length}/2000
+                    </div>
+                  </div>
+
+                  {/* Existing site checkbox + link field */}
+                  <div className="space-y-3">
+                    <label className="flex items-start gap-3 cursor-pointer select-none group">
+                      <input
+                        type="checkbox"
+                        checked={hasExistingSite}
+                        onChange={(e) => {
+                          setHasExistingSite(e.target.checked)
+                          if (!e.target.checked) setExistingSiteUrl('')
+                        }}
+                        className="mt-0.5 w-5 h-5 rounded border-white/20 bg-white/5 text-purple-500 focus:ring-2 focus:ring-purple-500/40 cursor-pointer"
+                      />
+                      <span className="text-sm text-gray-300 group-hover:text-white transition-colors">
+                        Mam już stronę internetową
+                      </span>
+                    </label>
+
+                    {hasExistingSite && (
+                      <div className="pl-8">
+                        <label htmlFor="inquiry-existing-url" className="block text-sm text-gray-400 mb-1">
+                          Link do obecnej strony
+                        </label>
+                        <div className="relative">
+                          <Globe
+                            size={16}
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+                            aria-hidden="true"
+                          />
+                          <input
+                            id="inquiry-existing-url"
+                            type="url"
+                            value={existingSiteUrl}
+                            onChange={(e) => setExistingSiteUrl(e.target.value)}
+                            autoComplete="url"
+                            inputMode="url"
+                            placeholder="https://twojadomena.pl"
+                            className="w-full pl-9 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white text-base placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   {error && (
-                    <div className="text-red-400 text-sm bg-red-500/10 px-4 py-2 rounded-lg">
+                    <div role="alert" className="text-red-400 text-sm bg-red-500/10 px-4 py-2 rounded-lg">
                       {error}
                     </div>
                   )}
 
                   <button
                     type="submit"
-                    className="w-full flex items-center justify-center gap-2 py-4 px-6 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-medium rounded-xl transition-all shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40"
+                    disabled={isSubmitting}
+                    className="w-full flex items-center justify-center gap-2 py-4 px-6 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-all shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40"
                   >
-                    <Calendar size={18} />
-                    Wybierz termin realizacji
-                    <ArrowRight size={16} />
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 size={18} className="animate-spin" aria-hidden="true" />
+                        <span>Wysyłam zapytanie...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send size={18} aria-hidden="true" />
+                        <span>Wyślij zapytanie</span>
+                      </>
+                    )}
                   </button>
+
+                  <p className="text-[11px] text-gray-500 text-center leading-relaxed">
+                    Termin realizacji ustalimy indywidualnie po kontakcie. Odpowiadamy w 24h.
+                  </p>
                 </form>
-              </div>
-            )}
-
-            {step === 'calendar' && (
-              <div className="p-6 space-y-6">
-                {/* Back button */}
-                <button
-                  onClick={() => setStep('summary')}
-                  className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm"
-                >
-                  <ArrowLeft size={16} />
-                  Wróć do podsumowania
-                </button>
-
-                {/* Calendar */}
-                <AvailabilityCalendar
-                  requiredDays={booking.days}
-                  onSelectDate={setSelectedDate}
-                  selectedDate={selectedDate}
-                />
-
-                {error && (
-                  <div className="text-red-400 text-sm bg-red-500/10 px-4 py-2 rounded-lg">
-                    {error}
-                  </div>
-                )}
-
-                {/* Submit button */}
-                <button
-                  onClick={handleSubmitBooking}
-                  disabled={!selectedDate || isSubmitting}
-                  className="w-full flex items-center justify-center gap-2 py-4 px-6 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-all shadow-lg shadow-green-500/25 hover:shadow-green-500/40"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 size={18} className="animate-spin" />
-                      Wysyłam rezerwację...
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle2 size={18} />
-                      Zarezerwuj ten termin
-                    </>
-                  )}
-                </button>
               </div>
             )}
 
@@ -447,41 +437,24 @@ export function BookingModal({
                 <div className="w-20 h-20 mx-auto rounded-full bg-green-500/20 flex items-center justify-center">
                   <CheckCircle2 size={40} className="text-green-400" />
                 </div>
-                
+
                 <div>
                   <h4 className="text-2xl font-medium text-white mb-2">
-                    Świetnie! Rezerwacja przesłana
+                    Świetnie! Zapytanie wysłane
                   </h4>
                   <p className="text-gray-400">
                     Otrzymasz email z potwierdzeniem.<br />
-                    Skontaktujemy się w celu finalizacji zlecenia.
+                    Skontaktujemy się w ciągu 24h, żeby ustalić termin realizacji.
                   </p>
                 </div>
 
                 <div className="bg-white/5 rounded-xl p-4 border border-white/10 text-left">
-                  <div className="text-sm text-gray-400 mb-2">Szczegóły rezerwacji:</div>
+                  <div className="text-sm text-gray-400 mb-2">Podsumowanie wyceny:</div>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-400">Start projektu:</span>
-                      <span className="text-white font-medium">
-                        {selectedDate && new Date(selectedDate).toLocaleDateString('pl-PL', {
-                          weekday: 'short',
-                          day: 'numeric',
-                          month: 'long',
-                        })}
-                      </span>
+                      <span className="text-gray-400">Typ projektu:</span>
+                      <span className="text-white font-medium">{booking.projectType}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Szacowany koniec:</span>
-                      <span className="text-white font-medium">
-                        {selectedDate && new Date(calculateEndDate(selectedDate, booking.days)).toLocaleDateString('pl-PL', {
-                          weekday: 'short',
-                          day: 'numeric',
-                          month: 'long',
-                        })}
-                      </span>
-                    </div>
-                    <div className="h-px bg-white/10 my-2" />
                     <div className="flex justify-between">
                       <span className="text-gray-400">Cena netto:</span>
                       <span className="text-white font-medium">{booking.priceNetto.toLocaleString('pl-PL')} PLN</span>

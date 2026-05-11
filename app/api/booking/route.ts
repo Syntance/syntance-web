@@ -13,16 +13,16 @@ const bookingSchema = z.object({
   complexity: z.enum(['low', 'medium', 'high', 'very-high']),
   itemsCount: z.number(),
   items: z.array(z.string()),
-  startDate: z.string().optional(), // YYYY-MM-DD
-  endDate: z.string().optional(), // YYYY-MM-DD
 });
 
 const schema = z.object({
   name: z.string().min(2).max(120),
   email: z.string().email(),
-  phone: z.string().optional(),
+  phone: z.string().max(40).optional(),
+  description: z.string().max(2000).optional(),
+  hasExistingSite: z.boolean().optional().default(false),
+  existingSiteUrl: z.string().max(500).optional(),
   booking: bookingSchema,
-  status: z.enum(['pending', 'confirmed']).optional().default('confirmed'),
 });
 
 // Lazy initialization to avoid build-time errors
@@ -53,6 +53,33 @@ const getComplexityLabel = (complexity: string) => {
   }
 };
 
+// HTML escape (rules: 55-security "Input validation / XSS").
+// Każdy user-input idący do HTML maila musi przejść przez tę funkcję.
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// URL z user inputu — dopuszczamy tylko http(s); inne schematy zamieniamy na "#".
+function safeUrl(url: string): string {
+  const trimmed = url.trim();
+  if (!trimmed) return '#';
+  const candidate = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+  try {
+    const parsed = new URL(candidate);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+      return parsed.toString();
+    }
+  } catch {
+    return '#';
+  }
+  return '#';
+}
+
 export async function POST(req: Request) {
   try {
     const ip = (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || "0.0.0.0";
@@ -68,11 +95,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: 'Invalid data' }, { status: 400 });
     }
 
-    const { name, email, phone, booking, status } = parsed.data;
+    const { name, email, phone, description, hasExistingSite, existingSiteUrl, booking } = parsed.data;
 
-    // Generate unique booking ID
+    // Generate unique inquiry ID
     const bookingId = `SYN-${Date.now().toString(36).toUpperCase()}`;
-    
+
     // Prepare acceptance URLs with encoded client data for email confirmation
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://syntance.com';
     const clientData = Buffer.from(JSON.stringify({
@@ -84,15 +111,21 @@ export async function POST(req: Request) {
       priceBrutto: booking.priceBrutto,
       deposit: booking.deposit,
       days: booking.days,
-      startDate: booking.startDate,
-      endDate: booking.endDate,
     })).toString('base64url');
-    
+
     const acceptUrl = `${baseUrl}/api/booking/accept?id=${bookingId}&action=accept&data=${clientData}`;
     const rejectUrl = `${baseUrl}/api/booking/accept?id=${bookingId}&action=reject&data=${clientData}`;
 
     // Format items list for email
     const itemsList = booking.items.map(item => `• ${item}`).join('\n');
+
+    // Pre-escape user inputs (rules: 55-security).
+    const safeName = escapeHtml(name);
+    const safeEmail = escapeHtml(email);
+    const safePhone = phone ? escapeHtml(phone) : '';
+    const safeDescription = description ? escapeHtml(description).replace(/\n/g, '<br>') : '';
+    const safeExistingUrlRaw = existingSiteUrl ? safeUrl(existingSiteUrl) : '';
+    const safeExistingUrlText = existingSiteUrl ? escapeHtml(existingSiteUrl.trim()) : '';
 
     // Email to owner with accept/reject buttons
     const ownerEmailHtml = `
@@ -116,7 +149,7 @@ export async function POST(req: Request) {
                 <tr>
                   <td>
                     <h1 style="margin: 0; color: #fff; font-size: 24px; font-weight: 600;">
-                      ${status === 'pending' ? '🔔 Nowe zapytanie o zlecenie' : '✅ Rezerwacja potwierdzona'}
+                      🔔 Nowe zapytanie o wycenę
                     </h1>
                     <p style="margin: 8px 0 0; color: #888; font-size: 14px;">
                       ID: ${bookingId} • ${new Date().toLocaleDateString('pl-PL', { 
@@ -141,23 +174,23 @@ export async function POST(req: Request) {
                 <tr>
                   <td style="padding: 12px 16px;">
                     <p style="margin: 0; color: #888; font-size: 13px;">Imię i nazwisko</p>
-                    <p style="margin: 4px 0 0; color: #fff; font-size: 16px; font-weight: 500;">${name}</p>
+                    <p style="margin: 4px 0 0; color: #fff; font-size: 16px; font-weight: 500;">${safeName}</p>
                   </td>
                 </tr>
                 <tr>
                   <td style="padding: 12px 16px;">
                     <p style="margin: 0; color: #888; font-size: 13px;">Email</p>
                     <p style="margin: 4px 0 0; color: #a78bfa; font-size: 16px;">
-                      <a href="mailto:${email}" style="color: #a78bfa; text-decoration: none;">${email}</a>
+                      <a href="mailto:${safeEmail}" style="color: #a78bfa; text-decoration: none;">${safeEmail}</a>
                     </p>
                   </td>
                 </tr>
-                ${phone ? `
+                ${safePhone ? `
                 <tr>
                   <td style="padding: 12px 16px;">
                     <p style="margin: 0; color: #888; font-size: 13px;">Telefon</p>
                     <p style="margin: 4px 0 0; color: #fff; font-size: 16px;">
-                      <a href="tel:${phone}" style="color: #fff; text-decoration: none;">${phone}</a>
+                      <a href="tel:${safePhone}" style="color: #fff; text-decoration: none;">${safePhone}</a>
                     </p>
                   </td>
                 </tr>
@@ -165,34 +198,30 @@ export async function POST(req: Request) {
               </table>
             </td>
           </tr>
-          
-          ${booking.startDate ? `
-          <!-- Terminy realizacji -->
+
+          ${safeDescription ? `
+          <!-- Opis firmy / potrzeb -->
           <tr>
             <td style="padding: 0 32px 24px;">
-              <h2 style="margin: 0 0 16px; color: #fff; font-size: 16px; font-weight: 600;">📅 Terminy realizacji</h2>
-              <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #22c55e20; border-radius: 12px; border: 1px solid #22c55e40;">
-                <tr>
-                  <td style="padding: 16px; border-bottom: 1px solid #22c55e30;">
-                    <table width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td style="color: #888; font-size: 14px;">🚀 Start projektu</td>
-                        <td align="right" style="color: #22c55e; font-size: 16px; font-weight: 700;">${new Date(booking.startDate).toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding: 16px;">
-                    <table width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td style="color: #888; font-size: 14px;">🏁 Szacowany koniec</td>
-                        <td align="right" style="color: #4ade80; font-size: 16px; font-weight: 600;">${booking.endDate ? new Date(booking.endDate).toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : 'Do ustalenia'}</td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
+              <h2 style="margin: 0 0 16px; color: #fff; font-size: 16px; font-weight: 600;">📝 Opis firmy i potrzeb</h2>
+              <div style="background-color: #1a1a1a; border-radius: 12px; padding: 16px; color: #ccc; font-size: 14px; line-height: 1.6;">
+                ${safeDescription}
+              </div>
+            </td>
+          </tr>
+          ` : ''}
+
+          ${hasExistingSite ? `
+          <!-- Istniejąca strona -->
+          <tr>
+            <td style="padding: 0 32px 24px;">
+              <h2 style="margin: 0 0 16px; color: #fff; font-size: 16px; font-weight: 600;">🌐 Obecna strona klienta</h2>
+              <div style="background-color: #1a1a1a; border-radius: 12px; padding: 16px; color: #ccc; font-size: 14px;">
+                ${safeExistingUrlText
+                  ? `<a href="${safeExistingUrlRaw}" target="_blank" rel="noopener noreferrer" style="color: #a78bfa; text-decoration: none; word-break: break-all;">${safeExistingUrlText}</a>`
+                  : 'Klient zaznaczył, że ma już stronę, ale nie podał linku.'
+                }
+              </div>
             </td>
           </tr>
           ` : ''}
@@ -326,27 +355,21 @@ export async function POST(req: Request) {
 `;
 
     // Plain text version for owner
-    const startDateFormatted = booking.startDate 
-      ? new Date(booking.startDate).toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
-      : null;
-    const endDateFormatted = booking.endDate 
-      ? new Date(booking.endDate).toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
-      : null;
-
     const ownerEmailText = `
-NOWE ZLECENIE - ${bookingId}
+NOWE ZAPYTANIE O WYCENĘ - ${bookingId}
 ============================
 
-Status: ${status === 'pending' ? 'Oczekuje na rezerwację terminu' : 'Termin zarezerwowany'}
+Status: Oczekuje na kontakt — termin do ustalenia indywidualnie
 
 DANE KLIENTA:
 - Imię i nazwisko: ${name}
 - Email: ${email}
 ${phone ? `- Telefon: ${phone}` : ''}
-${startDateFormatted ? `
-TERMINY REALIZACJI:
-- 🚀 Start projektu: ${startDateFormatted}
-- 🏁 Szacowany koniec: ${endDateFormatted || 'Do ustalenia'}
+${description ? `
+OPIS FIRMY I POTRZEB:
+${description}
+` : ''}${hasExistingSite ? `
+OBECNA STRONA: ${existingSiteUrl?.trim() || 'klient nie podał linku'}
 ` : ''}
 WYCENA:
 - Typ projektu: ${booking.projectType}
@@ -364,10 +387,8 @@ AKCJE:
 - Odrzuć: ${rejectUrl}
 `;
 
-    // Format daty dla tytułu
-    const titleDate = booking.startDate 
-      ? new Date(booking.startDate).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' })
-      : new Date().toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    // Format daty dla tytułu (dziś — nie ma już rezerwowanej daty startu)
+    const titleDate = new Date().toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
     // Konwersja typu projektu na formę dopełniacza (małe litery)
     const getProjectTypeGenitive = (type: string) => {
@@ -386,7 +407,7 @@ AKCJE:
       from: "Syntance Konfigurator <konfigurator@syntance.com>",
       to: ["kontakt@syntance.com"],
       replyTo: email,
-      subject: `Syntance Studio - Rezerwacja realizacji ${projectTypeGenitive} - ${titleDate}`,
+      subject: `Syntance Studio - Zapytanie o wycenę ${projectTypeGenitive} - ${titleDate}`,
       text: ownerEmailText,
       html: ownerEmailHtml,
     });
@@ -406,37 +427,20 @@ AKCJE:
         <table width="600" cellpadding="0" cellspacing="0" style="background-color: #111; border-radius: 16px; border: 1px solid #222;">
           <tr>
             <td style="padding: 32px; text-align: center; border-bottom: 1px solid #222;">
-              <div style="font-size: 48px; margin-bottom: 16px;">⏳</div>
-              <h1 style="margin: 0; color: #fff; font-size: 24px;">Oczekujemy na potwierdzenie</h1>
+              <div style="font-size: 48px; margin-bottom: 16px;">📨</div>
+              <h1 style="margin: 0; color: #fff; font-size: 24px;">Zapytanie o wycenę przyjęte</h1>
               <p style="margin: 8px 0 0; color: #888;">Numer referencyjny: ${bookingId}</p>
             </td>
           </tr>
           <tr>
             <td style="padding: 32px;">
               <p style="color: #ccc; font-size: 16px; line-height: 1.6;">
-                Cześć <strong style="color: #fff;">${name}</strong>,
+                Cześć <strong style="color: #fff;">${safeName}</strong>,
               </p>
               <p style="color: #ccc; font-size: 16px; line-height: 1.6;">
-                Dziękujemy za zainteresowanie współpracą z Syntance! Otrzymaliśmy Twoją rezerwację i <strong style="color: #fbbf24;">czekamy na potwierdzenie dostępności terminu</strong>.
+                Dziękujemy za zainteresowanie współpracą z Syntance! Otrzymaliśmy Twoje zapytanie i <strong style="color: #fbbf24;">odezwiemy się w ciągu 24 godzin</strong>, żeby ustalić termin realizacji.
               </p>
-              <p style="color: #ccc; font-size: 16px; line-height: 1.6;">
-                Sprawdzimy nasz kalendarz i odpowiemy najszybciej jak to możliwe - zazwyczaj w ciągu 24 godzin.
-              </p>
-              
-              ${booking.startDate ? `
-              <div style="background: linear-gradient(135deg, #fbbf2420, #f59e0b20); border-radius: 12px; padding: 20px; margin: 24px 0; border: 1px solid #fbbf2440;">
-                <h3 style="margin: 0 0 12px; color: #fbbf24; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">📅 Wybrany termin</h3>
-                <p style="margin: 0; color: #fff; font-size: 18px; font-weight: 600;">
-                  ${new Date(booking.startDate).toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-                </p>
-                ${booking.endDate ? `
-                <p style="margin: 8px 0 0; color: #888; font-size: 14px;">
-                  Szacowany koniec: ${new Date(booking.endDate).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' })}
-                </p>
-                ` : ''}
-              </div>
-              ` : ''}
-              
+
               <div style="background-color: #1a1a1a; border-radius: 12px; padding: 24px; margin: 24px 0;">
                 <h3 style="margin: 0 0 16px; color: #fff; font-size: 16px;">📋 Podsumowanie wyceny:</h3>
                 <table width="100%" style="color: #ccc; font-size: 14px;">
@@ -475,7 +479,7 @@ AKCJE:
               
               <div style="background-color: #22c55e15; border-radius: 12px; padding: 16px; margin: 24px 0; border: 1px solid #22c55e30;">
                 <p style="margin: 0; color: #22c55e; font-size: 14px; line-height: 1.6;">
-                  💡 <strong>Co dalej?</strong> Po potwierdzeniu terminu otrzymasz email z instrukcjami dotyczącymi płatności zaliczki i rozpoczęcia projektu.
+                  💡 <strong>Co dalej?</strong> Skontaktujemy się z Tobą, żeby omówić szczegóły, ustalić termin realizacji i przejść do akceptacji wyceny.
                 </p>
               </div>
               
@@ -503,7 +507,7 @@ AKCJE:
     await getResend().emails.send({
       from: "Syntance <kontakt@syntance.com>",
       to: [email],
-      subject: `Syntance Studio - Rezerwacja realizacji ${projectTypeGenitive} - ${titleDate}`,
+      subject: `Syntance Studio - Zapytanie o wycenę ${projectTypeGenitive} - ${titleDate}`,
       html: clientEmailHtml,
     });
 
@@ -523,8 +527,6 @@ AKCJE:
         },
         value: booking.priceNetto,
         status: 'pending',
-        startDate: booking.startDate,
-        endDate: booking.endDate,
         days: booking.days,
         deposit: booking.deposit,
         bookingId,

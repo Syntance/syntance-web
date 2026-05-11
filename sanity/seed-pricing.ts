@@ -141,7 +141,7 @@ const config = {
   workHoursPerDay: 6,
   calendlyUrl: 'https://calendly.com/syntance/discovery',
   ctaTexts: {
-    reserve: 'Zarezerwuj termin w tej cenie',
+    reserve: 'Wyślij zapytanie',
     workshop: 'Zamów Strategię marketingu i sprzedaży',
     pdf: 'Pobierz wycenę PDF',
   },

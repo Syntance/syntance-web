@@ -123,9 +123,10 @@ export default defineType({
       fields: [
         defineField({ 
           name: 'reserve', 
-          title: 'Przycisk rezerwacji', 
+          title: 'Przycisk zapytania o wycenę', 
+          description: 'Główny CTA przy podsumowaniu konfiguratora (np. „Wyślij zapytanie").', 
           type: 'string', 
-          initialValue: 'Zarezerwuj termin w tej cenie' 
+          initialValue: 'Wyślij zapytanie' 
         }),
         defineField({ 
           name: 'workshop', 
