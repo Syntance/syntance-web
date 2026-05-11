@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createHmac, timingSafeEqual } from 'crypto'
 import { Resend } from 'resend'
-import { getClientDataByDealId, type AttioClientData } from '@/lib/attio'
+import { getClientDataByDealId, getDealNativeStageTitle, type AttioClientData } from '@/lib/attio'
 import { getPaymentSettings, resolveTransferTitle, type PaymentSettings } from '@/sanity/queries/paymentSettings'
 import { getContractFiles } from '@/sanity/queries/contractFiles'
 
@@ -14,9 +14,33 @@ const STATUS_ACTIONS: Record<string, 'contracts' | 'payment' | 'reject'> = {
   // Oczekujący / Aktywny / Zakończony — bez emaila
 }
 
+/**
+ * Attio V2 webhooks: filtrujemy po object_id / attribute_id z payloadu.
+ * Nadpisz ENV przy innym workspace.
+ */
+const DEALS_OBJECT_ID =
+  process.env.ATTIO_DEALS_OBJECT_ID ?? '792f370a-1dba-443e-936c-dea8c9e31f8e'
+/** Atrybut „Deal stage” (status) na obiekcie deals */
+const DEAL_STAGE_ATTRIBUTE_ID =
+  process.env.ATTIO_DEAL_STAGE_ATTRIBUTE_ID ?? '08d5c35c-afa2-407c-8ee4-a9a154bcee09'
+/**
+ * Opcjonalnie: UUID atrybutu kolumny etapu na liście (kanban „Pipeline”).
+ * Gdy przeciągasz kartę i Attio wysyła list-entry.updated — wpisz tu attribute_id
+ * kolumny statusu z tej listy (wiele po przecinku). Inaczej obsługiwany jest tylko
+ * natywny stage deala (record.updated).
+ */
+const LIST_STAGE_ATTRIBUTE_IDS = (process.env.ATTIO_LIST_STAGE_ATTRIBUTE_IDS ?? '')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean)
+
 let resend: Resend | null = null
-function getResend() {
-  if (!resend) resend = new Resend(process.env.RESEND_API_KEY || '')
+function requireResend(): Resend {
+  const key = process.env.RESEND_API_KEY
+  if (!key) {
+    throw new Error('RESEND_API_KEY is not configured')
+  }
+  if (!resend) resend = new Resend(key)
   return resend
 }
 
@@ -47,14 +71,27 @@ function verifyAttioSignature(rawBody: string, signature: string | null): boolea
   }
 }
 
-// ─── Ekstrakcja wartości z formatu Attio [{value: ...}] ───────────────────
-function attioVal(arr: Array<{ value: unknown }> | undefined): string {
-  return String(arr?.[0]?.value ?? '')
+type V2Event = {
+  event_type?: string
+  id?: {
+    workspace_id?: string
+    object_id?: string
+    record_id?: string
+    attribute_id?: string
+    list_id?: string
+    entry_id?: string
+  }
+  parent_object_id?: string
+  parent_record_id?: string
+  actor?: unknown
 }
 
 export async function POST(req: NextRequest) {
   const rawBody = await req.text()
-  const signature = req.headers.get('x-attio-signature')
+  const signature =
+    req.headers.get('Attio-Signature') ??
+    req.headers.get('X-Attio-Signature') ??
+    req.headers.get('x-attio-signature')
 
   if (!verifyAttioSignature(rawBody, signature)) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
@@ -62,54 +99,87 @@ export async function POST(req: NextRequest) {
 
   let payload: Record<string, unknown>
   try {
-    payload = JSON.parse(rawBody)
+    payload = JSON.parse(rawBody) as Record<string, unknown>
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  // Attio webhook payload shape:
-  // { event_type: "record.updated", object_slug: "deals", data: { record: {...}, changed_attributes: [...] } }
-  const eventType = payload.event_type as string
-  const objectSlug = payload.object_slug as string
-
-  if (objectSlug !== 'deals') {
-    return NextResponse.json({ ok: true, skipped: 'not a deal' })
+  // ── Attio V2: { webhook_id, events: [...] } ──────────────────────────────
+  const events = payload.events as V2Event[] | undefined
+  if (Array.isArray(events) && events.length > 0) {
+    const results: Record<string, unknown>[] = []
+    let httpStatus = 200
+    for (const ev of events) {
+      const r = await processV2Event(ev)
+      results.push(r)
+      if ('error' in r && r.error) httpStatus = 500
+    }
+    return NextResponse.json({ ok: httpStatus === 200, results }, { status: httpStatus })
   }
 
-  // Obsługujemy tylko tworzenie i aktualizację rekordów
-  if (eventType !== 'record.updated' && eventType !== 'record.created') {
-    return NextResponse.json({ ok: true, skipped: `event ${eventType} ignored` })
+  // ── Legacy (stary kształt body — zachowany na wszelki wypadek) ─────────
+  return processLegacyAttioPayload(payload)
+}
+
+/** Attio V2 record.updated / list-entry.updated */
+async function processV2Event(event: V2Event): Promise<Record<string, unknown>> {
+  const eventType = event.event_type ?? ''
+  const id = event.id ?? {}
+
+  if (eventType === 'record.updated') {
+    const objectId = id.object_id
+    const recordId = id.record_id
+    const attributeId = id.attribute_id
+    if (!objectId || !recordId || !attributeId) {
+      return { skipped: 'record.updated: brak object_id / record_id / attribute_id' }
+    }
+    if (objectId !== DEALS_OBJECT_ID) {
+      return { skipped: 'record.updated: nie jest to obiekt deals' }
+    }
+    if (attributeId !== DEAL_STAGE_ATTRIBUTE_ID) {
+      return { skipped: 'record.updated: zmieniono inny atrybut niż Deal stage' }
+    }
+    return handleDealStageChange(recordId)
   }
 
-  // Sprawdź czy zmieniał się status (natywne pole stage)
-  const data = payload.data as Record<string, unknown>
-  const changedAttrs = (data?.changed_attributes as string[]) ?? []
-  if (eventType === 'record.updated' && !changedAttrs.includes('stage')) {
-    return NextResponse.json({ ok: true, skipped: 'stage not changed' })
+  if (eventType === 'list-entry.updated') {
+    const parentObjectId = event.parent_object_id
+    const parentRecordId = event.parent_record_id
+    const attributeId = id.attribute_id
+    if (!parentObjectId || !parentRecordId || !attributeId) {
+      return { skipped: 'list-entry.updated: brak parent_record_id / attribute_id' }
+    }
+    if (parentObjectId !== DEALS_OBJECT_ID) {
+      return { skipped: 'list-entry.updated: parent nie jest deal' }
+    }
+    if (LIST_STAGE_ATTRIBUTE_IDS.length === 0) {
+      return {
+        skipped:
+          'list-entry.updated: ustaw ATTIO_LIST_STAGE_ATTRIBUTE_IDS (UUID kolumny etapu z listy / kanban)',
+      }
+    }
+    if (!LIST_STAGE_ATTRIBUTE_IDS.includes(attributeId)) {
+      return { skipped: 'list-entry.updated: inny atrybut niż skonfigurowana kolumna etapu' }
+    }
+    return handleDealStageChange(parentRecordId)
   }
 
-  const record = data?.record as Record<string, unknown>
-  const recordId = (record?.id as { record_id?: string })?.record_id
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const values = record?.values as Record<string, any[]> | undefined
+  return { skipped: `event_type "${eventType}" — brak obsługi` }
+}
 
-  if (!recordId) {
-    return NextResponse.json({ error: 'Missing record id' }, { status: 400 })
-  }
-
-  // Status type ma inną strukturę: values.stage[0].status.title
-  const newStatus = (values?.stage?.[0]?.status?.title as string) ?? ''
-  const action = STATUS_ACTIONS[newStatus]
+async function handleDealStageChange(dealRecordId: string): Promise<Record<string, unknown>> {
+  const stageTitle = await getDealNativeStageTitle(dealRecordId)
+  const normalized = stageTitle ?? ''
+  const action = STATUS_ACTIONS[normalized]
 
   if (!action) {
-    return NextResponse.json({ ok: true, skipped: `status "${newStatus}" has no mapped action` })
+    return { skipped: `etap "${normalized}" bez mapowanego emaila` }
   }
 
-  // Pobierz dane klienta z notatki JSON w Attio
-  const clientData = await getClientDataByDealId(recordId)
+  const clientData = await getClientDataByDealId(dealRecordId)
   if (!clientData) {
-    console.error(`[attio-webhook] No client data found for deal ${recordId}`)
-    return NextResponse.json({ error: 'Client data not found in deal notes' }, { status: 422 })
+    console.error(`[attio-webhook] Brak danych klienta / osoby dla deala ${dealRecordId}`)
+    return { error: 'Brak danych klienta (email / powiązana osoba)', dealRecordId }
   }
 
   try {
@@ -120,8 +190,63 @@ export async function POST(req: NextRequest) {
     } else if (action === 'reject') {
       await sendRejectionEmail(clientData)
     }
+    return { ok: true, action, bookingId: clientData.bookingId, stage: normalized }
+  } catch (err) {
+    console.error('[attio-webhook] Email send failed:', err)
+    return { error: err instanceof Error ? err.message : 'Email failed', dealRecordId }
+  }
+}
 
-    return NextResponse.json({ ok: true, action, bookingId: clientData.bookingId })
+/** Stary format webhooka (event_type na root + data.record) */
+async function processLegacyAttioPayload(payload: Record<string, unknown>): Promise<Response> {
+  const eventType = payload.event_type as string
+  const objectSlug = payload.object_slug as string | undefined
+  const data = payload.data as Record<string, unknown> | undefined
+
+  if (objectSlug !== 'deals' && objectSlug !== undefined) {
+    return NextResponse.json({ ok: true, skipped: 'not a deal' })
+  }
+
+  if (eventType !== 'record.updated' && eventType !== 'record.created') {
+    return NextResponse.json({ ok: true, skipped: `event ${eventType} ignored` })
+  }
+
+  const changedAttrs = (data?.changed_attributes as string[]) ?? []
+  if (eventType === 'record.updated' && changedAttrs.length > 0 && !changedAttrs.includes('stage')) {
+    return NextResponse.json({ ok: true, skipped: 'stage not changed (legacy)' })
+  }
+
+  const record = data?.record as Record<string, unknown> | undefined
+  const recordId = (record?.id as { record_id?: string })?.record_id
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const values = record?.values as Record<string, any[]> | undefined
+
+  if (!recordId) {
+    return NextResponse.json({ error: 'Missing record id (legacy)' }, { status: 400 })
+  }
+
+  const newStatus = (values?.stage?.[0]?.status?.title as string) ?? ''
+  const action = STATUS_ACTIONS[newStatus]
+
+  if (!action) {
+    return NextResponse.json({ ok: true, skipped: `status "${newStatus}" has no mapped action` })
+  }
+
+  const clientData = await getClientDataByDealId(recordId)
+  if (!clientData) {
+    console.error(`[attio-webhook] No client data for deal ${recordId}`)
+    return NextResponse.json({ error: 'Client data not found' }, { status: 422 })
+  }
+
+  try {
+    if (action === 'contracts') {
+      await sendContractsEmail(clientData)
+    } else if (action === 'payment') {
+      await sendPaymentEmail(clientData)
+    } else if (action === 'reject') {
+      await sendRejectionEmail(clientData)
+    }
+    return NextResponse.json({ ok: true, action, bookingId: clientData.bookingId, legacy: true })
   } catch (err) {
     console.error('[attio-webhook] Email send failed:', err)
     return NextResponse.json({ error: 'Email failed' }, { status: 500 })
@@ -149,7 +274,7 @@ async function sendContractsEmail(data: AttioClientData) {
     ? escapeHtml(contracts.introText).replace(/\n/g, '<br>')
     : `W załączeniu przesyłamy umowy dotyczące realizacji Twojego zlecenia (<strong>${escapeHtml(data.bookingId)}</strong>).<br><br>Prosimy o zapoznanie się z dokumentami, podpisanie ich i odesłanie skanów na <a href="mailto:kontakt@syntance.com" style="color:#a78bfa;">kontakt@syntance.com</a>. Po otrzymaniu podpisanych umów wyślemy dane do płatności zaliczki.`
 
-  await getResend().emails.send({
+  await requireResend().emails.send({
     from: 'Syntance <kontakt@syntance.com>',
     to: [data.email],
     subject: `Syntance - Umowy do zlecenia ${data.bookingId}`,
@@ -163,7 +288,7 @@ async function sendContractsEmail(data: AttioClientData) {
 async function sendPaymentEmail(data: AttioClientData) {
   const payment = await getPaymentSettings()
 
-  await getResend().emails.send({
+  await requireResend().emails.send({
     from: 'Syntance <kontakt@syntance.com>',
     to: [data.email],
     subject: `Syntance - Dane do płatności - ${data.bookingId}`,
@@ -174,7 +299,7 @@ async function sendPaymentEmail(data: AttioClientData) {
 // ─── EMAIL: Odrzucenie ─────────────────────────────────────────────────────
 
 async function sendRejectionEmail(data: AttioClientData) {
-  await getResend().emails.send({
+  await requireResend().emails.send({
     from: 'Syntance <kontakt@syntance.com>',
     to: [data.email],
     subject: `Syntance - Informacja o zleceniu`,

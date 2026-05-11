@@ -240,6 +240,27 @@ function pickValue(values: Record<string, any[]> | undefined, slug: string): unk
   return values?.[slug]?.[0]?.value
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function pickSelectFirstTitle(values: Record<string, any[]> | undefined, slug: string): string | undefined {
+  const row = values?.[slug]?.[0]
+  if (!row) return undefined
+  const opt = row.option as { title?: string } | undefined
+  if (opt?.title) return opt.title
+  if (typeof row.value === 'string') return row.value
+  return undefined
+}
+
+/**
+ * Tytuł natywnego etapu deala (Deal stage) — używane przez webhook po record.updated.
+ */
+export async function getDealNativeStageTitle(dealId: string): Promise<string | undefined> {
+  const deal = await attioRequest(`/objects/deals/records/${dealId}`, 'GET')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const row = (deal?.data?.values as Record<string, any[]> | undefined)?.stage?.[0]
+  const title = (row?.status as { title?: string } | undefined)?.title
+  return typeof title === 'string' ? title.trim() : undefined
+}
+
 /**
  * Pobiera dane klienta z pól deala + powiązanej osoby.
  * Jeśli deal nie ma booking_id (klient z poza formularza),
@@ -292,7 +313,7 @@ export async function getClientDataByDealId(dealId: string): Promise<AttioClient
     name: fullName || email,
     phone,
     bookingId,
-    projectType: (pickValue(values, 'typ_zlecenia') as string) || 'Projekt',
+    projectType: pickSelectFirstTitle(values, 'typ_zlecenia') || 'Projekt',
     priceNetto: valueNetto,
     priceBrutto: (pickValue(values, 'wartosc_brutto') as number) || Math.round(valueNetto * 1.23),
     deposit: (pickValue(values, 'zaliczka') as number) || 0,
