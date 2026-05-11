@@ -25,7 +25,16 @@ const structure = (S: any) =>
             .title('SEO Podstron')
         ),
       S.divider(),
-      // === PŁATNOŚCI ===
+      // === ZLECENIA ===
+      S.listItem()
+        .title('📄 Szablony umów')
+        .id('contractFiles')
+        .child(
+          S.document()
+            .schemaType('contractFiles')
+            .documentId('contractFiles')
+            .title('Szablony umów')
+        ),
       S.listItem()
         .title('🏦 Dane do przelewu')
         .id('paymentSettings')
@@ -34,6 +43,15 @@ const structure = (S: any) =>
             .schemaType('paymentSettings')
             .documentId('paymentSettings')
             .title('Dane do przelewu')
+        ),
+      S.listItem()
+        .title('🔢 Licznik zleceń')
+        .id('orderCounter')
+        .child(
+          S.document()
+            .schemaType('orderCounter')
+            .documentId('orderCounter')
+            .title('Licznik zleceń')
         ),
       S.divider(),
       // === CENNIK ===
@@ -88,7 +106,7 @@ const structure = (S: any) =>
       // Pozostałe dokumenty
       ...S.documentTypeListItems().filter(
         (listItem: any) =>
-          !['pricingConfig', 'seoSettings', 'pageSeo', 'pricingFaq', 'bookingRules', 'bookingTimeBlock', 'meetingBooking', 'portfolioItem', 'paymentSettings'].includes(
+          !['pricingConfig', 'seoSettings', 'pageSeo', 'pricingFaq', 'bookingRules', 'bookingTimeBlock', 'meetingBooking', 'portfolioItem', 'paymentSettings', 'orderCounter', 'contractFiles'].includes(
             listItem.getId()
           )
       ),

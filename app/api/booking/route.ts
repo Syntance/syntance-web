@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { Resend } from "resend";
 import { createProject } from "@/lib/attio";
+import { getNextOrderNumber } from "@/sanity/queries/orderCounter";
 
 const bookingSchema = z.object({
   projectType: z.string(),
@@ -97,8 +98,8 @@ export async function POST(req: Request) {
 
     const { name, email, phone, description, hasExistingSite, existingSiteUrl, booking } = parsed.data;
 
-    // Generate unique inquiry ID
-    const bookingId = `SYN-${Date.now().toString(36).toUpperCase()}`;
+    // Generate sequential inquiry ID (SYN-0001, SYN-0002, …)
+    const bookingId = await getNextOrderNumber();
 
     // Prepare acceptance URLs with encoded client data for email confirmation
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://syntance.com';
