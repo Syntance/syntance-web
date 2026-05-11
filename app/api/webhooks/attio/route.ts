@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createHmac, timingSafeEqual } from 'crypto'
 import { Resend } from 'resend'
-import { getClientDataByDealId, getDealNativeStageTitle, type AttioClientData } from '@/lib/attio'
+import { getClientDataByDealId, getDealNativeStageTitle, getAttioDealsStageIds, type AttioClientData } from '@/lib/attio'
 import { getPaymentSettings, resolveTransferTitle, type PaymentSettings } from '@/sanity/queries/paymentSettings'
 import { getContractFiles } from '@/sanity/queries/contractFiles'
 
@@ -15,19 +15,9 @@ const STATUS_ACTIONS: Record<string, 'contracts' | 'payment' | 'reject'> = {
 }
 
 /**
- * Attio V2 webhooks: filtrujemy po object_id / attribute_id z payloadu.
- * Nadpisz ENV przy innym workspace.
- */
-const DEALS_OBJECT_ID =
-  process.env.ATTIO_DEALS_OBJECT_ID ?? '792f370a-1dba-443e-936c-dea8c9e31f8e'
-/** Atrybut „Deal stage” (status) na obiekcie deals */
-const DEAL_STAGE_ATTRIBUTE_ID =
-  process.env.ATTIO_DEAL_STAGE_ATTRIBUTE_ID ?? '08d5c35c-afa2-407c-8ee4-a9a154bcee09'
-/**
- * Opcjonalnie: UUID atrybutu kolumny etapu na liście (kanban „Pipeline”).
- * Gdy przeciągasz kartę i Attio wysyła list-entry.updated — wpisz tu attribute_id
- * kolumny statusu z tej listy (wiele po przecinku). Inaczej obsługiwany jest tylko
- * natywny stage deala (record.updated).
+ * Opcjonalnie: dodatkowe UUID kolumn etapu na listach (gdy ≠ natywny stage deala).
+ * Zwykle niepotrzebne — ta sama kolumna „Deal stage” na kanbanie ma często ten sam
+ * attribute_id co GET /objects/deals/attributes/stage.
  */
 const LIST_STAGE_ATTRIBUTE_IDS = (process.env.ATTIO_LIST_STAGE_ATTRIBUTE_IDS ?? '')
   .split(',')
@@ -64,8 +54,10 @@ function verifyAttioSignature(rawBody: string, signature: string | null): boolea
   if (!signature) return false
 
   const expected = createHmac('sha256', secret).update(rawBody).digest('hex')
+  const sig = signature.trim().toLowerCase()
+  const exp = expected.toLowerCase()
   try {
-    return timingSafeEqual(Buffer.from(signature), Buffer.from(expected))
+    return timingSafeEqual(Buffer.from(sig, 'utf8'), Buffer.from(exp, 'utf8'))
   } catch {
     return false
   }
@@ -121,8 +113,22 @@ export async function POST(req: NextRequest) {
   return processLegacyAttioPayload(payload)
 }
 
+function actionForStageTitle(title: string | undefined): 'contracts' | 'payment' | 'reject' | undefined {
+  if (!title) return undefined
+  const k = title.normalize('NFC').trim().replace(/\u00a0/g, ' ')
+  return STATUS_ACTIONS[k]
+}
+
 /** Attio V2 record.updated / list-entry.updated */
 async function processV2Event(event: V2Event): Promise<Record<string, unknown>> {
+  const meta = await getAttioDealsStageIds()
+  if (!meta) {
+    return {
+      error:
+        'Brak mapowania Attio (ATTIO_API_KEY lub GET /objects/deals/attributes/stage); sprawdź logi',
+    }
+  }
+
   const eventType = event.event_type ?? ''
   const id = event.id ?? {}
 
@@ -133,11 +139,15 @@ async function processV2Event(event: V2Event): Promise<Record<string, unknown>> 
     if (!objectId || !recordId || !attributeId) {
       return { skipped: 'record.updated: brak object_id / record_id / attribute_id' }
     }
-    if (objectId !== DEALS_OBJECT_ID) {
-      return { skipped: 'record.updated: nie jest to obiekt deals' }
+    if (objectId !== meta.objectId) {
+      return { skipped: 'record.updated: nie jest to obiekt deals', gotObjectId: objectId }
     }
-    if (attributeId !== DEAL_STAGE_ATTRIBUTE_ID) {
-      return { skipped: 'record.updated: zmieniono inny atrybut niż Deal stage' }
+    if (attributeId !== meta.stageAttributeId) {
+      return {
+        skipped: 'record.updated: zmieniono inny atrybut niż Deal stage',
+        attributeId,
+        expectedStageAttributeId: meta.stageAttributeId,
+      }
     }
     return handleDealStageChange(recordId)
   }
@@ -149,17 +159,17 @@ async function processV2Event(event: V2Event): Promise<Record<string, unknown>> 
     if (!parentObjectId || !parentRecordId || !attributeId) {
       return { skipped: 'list-entry.updated: brak parent_record_id / attribute_id' }
     }
-    if (parentObjectId !== DEALS_OBJECT_ID) {
+    if (parentObjectId !== meta.objectId) {
       return { skipped: 'list-entry.updated: parent nie jest deal' }
     }
-    if (LIST_STAGE_ATTRIBUTE_IDS.length === 0) {
+    const isStageColumn =
+      attributeId === meta.stageAttributeId || LIST_STAGE_ATTRIBUTE_IDS.includes(attributeId)
+    if (!isStageColumn) {
       return {
-        skipped:
-          'list-entry.updated: ustaw ATTIO_LIST_STAGE_ATTRIBUTE_IDS (UUID kolumny etapu z listy / kanban)',
+        skipped: 'list-entry.updated: nie jest to kolumna etapu',
+        attributeId,
+        dealStageAttributeId: meta.stageAttributeId,
       }
-    }
-    if (!LIST_STAGE_ATTRIBUTE_IDS.includes(attributeId)) {
-      return { skipped: 'list-entry.updated: inny atrybut niż skonfigurowana kolumna etapu' }
     }
     return handleDealStageChange(parentRecordId)
   }
@@ -169,10 +179,10 @@ async function processV2Event(event: V2Event): Promise<Record<string, unknown>> 
 
 async function handleDealStageChange(dealRecordId: string): Promise<Record<string, unknown>> {
   const stageTitle = await getDealNativeStageTitle(dealRecordId)
-  const normalized = stageTitle ?? ''
-  const action = STATUS_ACTIONS[normalized]
+  const action = actionForStageTitle(stageTitle)
 
   if (!action) {
+    const normalized = stageTitle?.normalize('NFC').trim() ?? ''
     return { skipped: `etap "${normalized}" bez mapowanego emaila` }
   }
 
@@ -190,7 +200,12 @@ async function handleDealStageChange(dealRecordId: string): Promise<Record<strin
     } else if (action === 'reject') {
       await sendRejectionEmail(clientData)
     }
-    return { ok: true, action, bookingId: clientData.bookingId, stage: normalized }
+    return {
+      ok: true,
+      action,
+      bookingId: clientData.bookingId,
+      stage: stageTitle?.normalize('NFC').trim() ?? '',
+    }
   } catch (err) {
     console.error('[attio-webhook] Email send failed:', err)
     return { error: err instanceof Error ? err.message : 'Email failed', dealRecordId }
@@ -226,7 +241,7 @@ async function processLegacyAttioPayload(payload: Record<string, unknown>): Prom
   }
 
   const newStatus = (values?.stage?.[0]?.status?.title as string) ?? ''
-  const action = STATUS_ACTIONS[newStatus]
+  const action = actionForStageTitle(newStatus)
 
   if (!action) {
     return NextResponse.json({ ok: true, skipped: `status "${newStatus}" has no mapped action` })

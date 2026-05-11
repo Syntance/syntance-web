@@ -120,6 +120,38 @@ async function attioRequest(
   }
 }
 
+/** ID obiektu „deals” i atrybutu „Deal stage” — z ENV lub z GET /objects/deals/attributes/stage */
+export interface AttioDealsStageIds {
+  objectId: string
+  stageAttributeId: string
+}
+
+let dealsStageIdsCache: AttioDealsStageIds | null = null
+
+/**
+ * Rozwiązuje UUID potrzebne do webhooka (record.updated / list-entry).
+ * Unika zahardkodowanych wartości z innego workspace / środowiska.
+ */
+export async function getAttioDealsStageIds(): Promise<AttioDealsStageIds | null> {
+  const envO = process.env.ATTIO_DEALS_OBJECT_ID?.trim()
+  const envA = process.env.ATTIO_DEAL_STAGE_ATTRIBUTE_ID?.trim()
+  if (envO && envA) {
+    return { objectId: envO, stageAttributeId: envA }
+  }
+  if (dealsStageIdsCache) return dealsStageIdsCache
+
+  const res = await attioRequest('/objects/deals/attributes/stage', 'GET')
+  const id = res?.data?.id as { object_id?: string; attribute_id?: string } | undefined
+  const objectId = id?.object_id
+  const stageAttributeId = id?.attribute_id
+  if (!objectId || !stageAttributeId) {
+    console.error('[attio] getAttioDealsStageIds: brak object_id / attribute_id (GET …/attributes/stage)')
+    return null
+  }
+  dealsStageIdsCache = { objectId, stageAttributeId }
+  return dealsStageIdsCache
+}
+
 async function createOrUpdateContact(contact: AttioContact): Promise<string | null> {
   // Attio API v2: email filter accepts plain string match on email_addresses slug.
   // Old `{ any: { email_address: ... } }` shape returns 400 "Failed to transform constraints".
@@ -258,7 +290,8 @@ export async function getDealNativeStageTitle(dealId: string): Promise<string | 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const row = (deal?.data?.values as Record<string, any[]> | undefined)?.stage?.[0]
   const title = (row?.status as { title?: string } | undefined)?.title
-  return typeof title === 'string' ? title.trim() : undefined
+  if (typeof title !== 'string') return undefined
+  return title.normalize('NFC').trim()
 }
 
 /**
