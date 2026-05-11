@@ -1,5 +1,5 @@
 /**
- * Wspólne renderowanie HTML emaili (umowa / przelew / start realizacji / odrzucenie).
+ * Wspólne renderowanie HTML emaili (umowa / przelew / start i koniec realizacji / odrzucenie).
  *
  * Plik jest "czysty" — bez Node API. Może być importowany zarówno przez:
  *  - serwerowe route handlery Next.js (`/api/webhooks/attio`, `/api/booking/accept`),
@@ -233,6 +233,34 @@ export function renderProjectKickoffEmail(
   templates: EmailTemplates,
 ): { subject: string; html: string } {
   const t = templates.projectKickoff
+  const tokens = { bookingId: data.bookingId, name: data.name }
+  const subject = applyEmailTokens(t.subjectTemplate, tokens)
+  const greeting = applyEmailTokens(t.greetingTemplate ?? 'Cześć {name},', tokens)
+  const intro = applyEmailTokens(t.intro ?? '', tokens)
+  const footer = applyEmailTokens(t.footerNote ?? '', tokens)
+
+  const header = `<td style="padding:32px;text-align:center;border-bottom:1px solid ${SHELL_CARD_BORDER};">
+    ${headerHeroEmojiHtml(t.headerEmoji, 56)}
+    <h1 style="margin:0;color:${t.headingColor};font-size:26px;">${escapeHtml(t.heading)}</h1>
+    ${referenceNumberHeaderLineHtml(data.bookingId, t.referenceLineMutedColor, t.referenceLineAccentColor)}
+  </td>`
+
+  const bodyHtml = `
+    <p style="color:${t.greetingColor};font-size:16px;line-height:1.6;margin:0 0 12px;"><strong style="color:${t.headingColor};">${escapeHtml(greeting)}</strong></p>
+    ${paragraphsHtml(intro, t.introColor)}
+    ${footer ? paragraphsHtml(footer, t.footerNoteColor, 13) : ''}
+  `
+
+  return { subject, html: shellHtml(header, bodyHtml, t.mailBackgroundColor) }
+}
+
+/* ─── Koniec realizacji (status Zakończony w CRM) ───────────────────────── */
+
+export function renderProjectCompleteEmail(
+  data: EmailRenderData,
+  templates: EmailTemplates,
+): { subject: string; html: string } {
+  const t = templates.projectComplete
   const tokens = { bookingId: data.bookingId, name: data.name }
   const subject = applyEmailTokens(t.subjectTemplate, tokens)
   const greeting = applyEmailTokens(t.greetingTemplate ?? 'Cześć {name},', tokens)

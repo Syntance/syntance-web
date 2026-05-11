@@ -15,21 +15,24 @@ import { getEmailTemplates } from '@/sanity/queries/emailTemplates'
 import {
   renderContractsEmail,
   renderPaymentEmail,
+  renderProjectCompleteEmail,
   renderProjectKickoffEmail,
   renderRejectionEmail,
 } from '@/lib/emails/templates'
 
 // ─── Mapowanie natywnego Status (stage) → akcja emailowa ──────────────────
 // Pole: stage (system status) na obiekcie deals — to co widzisz w Attio UI
-const STATUS_ACTIONS: Record<string, 'contracts' | 'payment' | 'kickoff' | 'reject'> = {
+const STATUS_ACTIONS: Record<string, 'contracts' | 'payment' | 'kickoff' | 'complete' | 'reject'> = {
   'Umowa':     'contracts',  // → wyślij umowy PDF
   'Zaliczka':  'payment',    // → wyślij dane bankowe (IBAN)
   /** Po wpłacie zaliczki — potwierdzenie startu (tytuł etapu musi być 1:1 jak w Attio). */
   'Aktywny': 'kickoff',
   'Realizacja': 'kickoff',
   'W realizacji': 'kickoff',
+  /** Zamknięcie projektu — podziękowanie dla klienta. */
+  'Zakończony': 'complete',
   'Anulowany': 'reject',     // → wyślij email o odrzuceniu
-  // Oczekujący / Zakończony — bez emaila (uwaga: wiele etapów → kickoff może wysłać mail wielokrotnie przy kolejnych ruchach)
+  // Oczekujący — bez emaila (uwaga: wiele etapów „kickoff” może wysłać mail wielokrotnie przy kolejnych ruchach)
 }
 
 /**
@@ -124,13 +127,13 @@ export async function POST(req: NextRequest) {
 
 function actionForStageTitle(
   title: string | undefined,
-): 'contracts' | 'payment' | 'kickoff' | 'reject' | undefined {
+): 'contracts' | 'payment' | 'kickoff' | 'complete' | 'reject' | undefined {
   if (!title) return undefined
   const k = title.normalize('NFC').trim().replace(/\u00a0/g, ' ')
   return STATUS_ACTIONS[k]
 }
 
-/** Świeży numer zlecenia z CRM tuż przed mailem (umowa / przelew / odrzucenie). */
+/** Świeży numer zlecenia z CRM tuż przed mailem (umowa / przelew / start / koniec / odrzucenie). */
 async function mergeFreshBookingId(dealRecordId: string, data: AttioClientData): Promise<AttioClientData> {
   const live = await fetchCurrentDealBookingId(dealRecordId)
   if (!live || live === data.bookingId) return data
@@ -240,6 +243,8 @@ async function handleDealStageChange(dealRecordId: string): Promise<Record<strin
       await sendPaymentEmail(forEmail)
     } else if (action === 'kickoff') {
       await sendProjectKickoffEmail(forEmail)
+    } else if (action === 'complete') {
+      await sendProjectCompleteEmail(forEmail)
     } else if (action === 'reject') {
       await sendRejectionEmail(forEmail)
     }
@@ -306,6 +311,8 @@ async function processLegacyAttioPayload(payload: Record<string, unknown>): Prom
       await sendPaymentEmail(forEmail)
     } else if (action === 'kickoff') {
       await sendProjectKickoffEmail(forEmail)
+    } else if (action === 'complete') {
+      await sendProjectCompleteEmail(forEmail)
     } else if (action === 'reject') {
       await sendRejectionEmail(forEmail)
     }
@@ -379,6 +386,18 @@ async function sendPaymentEmail(data: AttioClientData) {
 async function sendProjectKickoffEmail(data: AttioClientData) {
   const templates = await getEmailTemplates()
   const { subject, html } = renderProjectKickoffEmail(data, templates)
+
+  await requireResend().emails.send({
+    from: 'Syntance <kontakt@syntance.com>',
+    to: [data.email],
+    subject,
+    html,
+  })
+}
+
+async function sendProjectCompleteEmail(data: AttioClientData) {
+  const templates = await getEmailTemplates()
+  const { subject, html } = renderProjectCompleteEmail(data, templates)
 
   await requireResend().emails.send({
     from: 'Syntance <kontakt@syntance.com>',

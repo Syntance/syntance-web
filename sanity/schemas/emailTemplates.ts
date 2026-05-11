@@ -43,7 +43,7 @@ export default defineType({
     { name: 'quote', title: 'Konfigurator wyceny', default: true },
     { name: 'contact', title: 'Formularz kontaktowy' },
     { name: 'meeting', title: 'Rezerwacja rozmowy' },
-    { name: 'pipeline', title: 'Zlecenie (umowa · przelew · start · odrzucenie)' },
+    { name: 'pipeline', title: 'Zlecenie (umowa · przelew · start · koniec · odrzucenie)' },
   ],
   fields: [
     defineField({
@@ -692,6 +692,69 @@ Email: {email}
       ],
     }),
     defineField({
+      name: 'projectComplete',
+      title: '✨ Koniec realizacji (status Zakończony)',
+      description:
+        'Wysyłany z webhooka Attio, gdy deal trafi na etap „Zakończony” (tytuł musi być identyczny jak status w CRM).',
+      group: 'pipeline',
+      type: 'object',
+      fields: [
+        defineField({
+          name: 'subjectTemplate',
+          title: 'Temat',
+          description: tokenHelp,
+          type: 'string',
+          initialValue: 'Syntance - Dziękujemy — projekt {bookingId} zakończony',
+          validation: (Rule) => Rule.required(),
+        }),
+        defineField({
+          name: 'headerEmoji',
+          title: '😀 Emotka nad tytułem',
+          description: headerEmojiHelp,
+          type: 'string',
+          initialValue: '✨',
+          validation: (Rule) => Rule.max(32),
+        }),
+        ec('mailBackgroundColor', 'Tło karty maila', '#111111'),
+        defineField({
+          name: 'heading',
+          title: 'Nagłówek (h1)',
+          type: 'string',
+          initialValue: 'Realizacja zamknięta',
+          validation: (Rule) => Rule.required(),
+        }),
+        ec('headingColor', 'Kolor — nagłówek h1', '#a78bfa'),
+        defineField({
+          name: 'greetingTemplate',
+          title: 'Powitanie',
+          description: 'Użyj {name}.',
+          type: 'string',
+          initialValue: 'Cześć {name},',
+        }),
+        ec('greetingColor', 'Kolor — powitanie (akcent)', '#93c5fd'),
+        defineField({
+          name: 'intro',
+          title: 'Treść główna',
+          description: tokenHelp,
+          type: 'text',
+          rows: 5,
+          initialValue:
+            'Dziękujemy za współpracę — zakończyliśmy uzgodniony zakres prac dla Twojego zlecenia ({bookingId}).\n\nJeśli pojawią się pytania lub potrzeba wsparcia po wdrożeniu, napisz na kontakt@syntance.com.',
+        }),
+        ec('introColor', 'Kolor — treść główna', '#cccccc'),
+        defineField({
+          name: 'footerNote',
+          title: 'Stopka treści (opcjonalnie)',
+          type: 'text',
+          rows: 2,
+          initialValue: 'Do zobaczenia przy kolejnych projektach — zespół Syntance',
+        }),
+        ec('footerNoteColor', 'Kolor — stopka treści', '#888888'),
+        ec('referenceLineMutedColor', 'Kolor — etykieta „Nr referencyjny:” (tekst przed numerem)', '#9e9e9e'),
+        ec('referenceLineAccentColor', 'Kolor — numer referencyjny w nagłówku', '#a29bfe'),
+      ],
+    }),
+    defineField({
       name: 'rejection',
       title: '❌ Email o odrzuceniu',
       group: 'pipeline',
@@ -765,7 +828,7 @@ Email: {email}
       return {
         title: '📧 Treści emaili',
         subtitle:
-          'Konfigurator · Kontakt · Rozmowa · Umowa · Przelew · Start realizacji · Odrzucenie',
+          'Konfigurator · Kontakt · Rozmowa · Umowa · Przelew · Start · Koniec · Odrzucenie',
       }
     },
   },

@@ -70,6 +70,23 @@ export interface EmailTemplateProjectKickoff {
   referenceLineAccentColor: string
 }
 
+/** Po zamknięciu realizacji — podziękowanie (etap „Zakończony” w CRM). */
+export interface EmailTemplateProjectComplete {
+  subjectTemplate: string
+  headerEmoji?: string
+  mailBackgroundColor: string
+  heading: string
+  headingColor: string
+  greetingTemplate?: string
+  greetingColor: string
+  intro?: string
+  introColor: string
+  footerNote?: string
+  footerNoteColor: string
+  referenceLineMutedColor: string
+  referenceLineAccentColor: string
+}
+
 export interface EmailTemplateRejection {
   subjectTemplate: string
   headerEmoji?: string
@@ -232,6 +249,7 @@ export interface EmailTemplates {
   contracts: EmailTemplateContract
   payment: EmailTemplatePayment
   projectKickoff: EmailTemplateProjectKickoff
+  projectComplete: EmailTemplateProjectComplete
   rejection: EmailTemplateRejection
   quoteRequestClient: EmailTemplateQuoteRequestClient
   quoteRequestOwner: EmailTemplateQuoteRequestOwner
@@ -331,6 +349,22 @@ export const DEFAULT_EMAIL_TEMPLATES: EmailTemplates = {
       'Dziękujemy za wpłatę zaliczki — mamy ją zaksięgowaną i uruchamiamy Twój projekt.\n\nW kolejnych dniach skontaktujemy się w sprawie pierwszych kroków i harmonogramu. Pytania? kontakt@syntance.com.',
     introColor: C.body,
     footerNote: 'Do zobaczenia po drugiej stronie kodu — zespół Syntance',
+    footerNoteColor: C.muted,
+    referenceLineMutedColor: REF_LINE.muted,
+    referenceLineAccentColor: REF_LINE.accent,
+  },
+  projectComplete: {
+    subjectTemplate: 'Syntance - Dziękujemy — projekt {bookingId} zakończony',
+    headerEmoji: '✨',
+    mailBackgroundColor: C.card,
+    heading: 'Realizacja zamknięta',
+    headingColor: C.accent,
+    greetingTemplate: 'Cześć {name},',
+    greetingColor: C.link2,
+    intro:
+      'Dziękujemy za współpracę — zakończyliśmy uzgodniony zakres prac dla Twojego zlecenia ({bookingId}).\n\nJeśli pojawią się pytania lub potrzeba wsparcia po wdrożeniu, napisz na kontakt@syntance.com.',
+    introColor: C.body,
+    footerNote: 'Do zobaczenia przy kolejnych projektach — zespół Syntance',
     footerNoteColor: C.muted,
     referenceLineMutedColor: REF_LINE.muted,
     referenceLineAccentColor: REF_LINE.accent,
@@ -525,6 +559,11 @@ export const emailTemplatesQuery = `*[_type == "emailTemplates" && _id == "email
     heading, headingColor, greetingTemplate, greetingColor, intro, introColor, footerNote, footerNoteColor,
     referenceLineMutedColor, referenceLineAccentColor
   },
+  projectComplete{
+    subjectTemplate, headerEmoji, mailBackgroundColor,
+    heading, headingColor, greetingTemplate, greetingColor, intro, introColor, footerNote, footerNoteColor,
+    referenceLineMutedColor, referenceLineAccentColor
+  },
   rejection{
     subjectTemplate, headerEmoji,
     mailBackgroundColor,
@@ -584,6 +623,10 @@ export function mergeEmailTemplatesWithDefaults(
     projectKickoff: {
       ...DEFAULT_EMAIL_TEMPLATES.projectKickoff,
       ...(raw?.projectKickoff ?? {}),
+    },
+    projectComplete: {
+      ...DEFAULT_EMAIL_TEMPLATES.projectComplete,
+      ...(raw?.projectComplete ?? {}),
     },
     rejection: { ...DEFAULT_EMAIL_TEMPLATES.rejection, ...(raw?.rejection ?? {}) },
     quoteRequestClient: {
