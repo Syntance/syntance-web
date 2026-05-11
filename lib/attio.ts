@@ -176,10 +176,15 @@ export async function createProject(project: AttioProject): Promise<AttioRecordR
   const cleanUrl = project.existingSiteUrl?.trim() || ''
   const typOptionId = mapProjectTypeToOptionId(project.name)
 
+  // Tytuł deala w Attio: tylko firma albo imię i nazwisko — numer zlecenia jest w polu booking_id.
+  const company = project.contact.companyName?.trim()
+  const person = project.contact.name.trim()
+  const dealTitle = company || person || 'Nowe zapytanie'
+
   const dealData = await attioRequest('/objects/deals/records', 'POST', {
     data: {
       values: {
-        name: [{ value: `${project.bookingId} — ${project.contact.name}` }],
+        name: [{ value: dealTitle }],
         // stage: plain status UUID (not wrapped in object)
         stage: STAGE_IDS.oczekujacy,
         // owner: required field
