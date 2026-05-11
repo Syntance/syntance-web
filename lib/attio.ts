@@ -3,9 +3,6 @@
 
 const ATTIO_API_URL = 'https://api.attio.com/v2'
 
-// Klucz tej notatki identyfikuje nasze dane systemowe (nie zmieniaj)
-const SYSTEM_NOTE_TITLE = '[[SYNTANCE_DATA]]'
-
 export interface AttioClientData {
   email: string
   name: string
@@ -128,45 +125,30 @@ export async function createProject(project: AttioProject): Promise<AttioRecordR
     completed: 'Zakończone',
   }[project.status]
 
+  const priceBrutto = Math.round(project.value * 1.23)
+  const today = new Date().toISOString().slice(0, 10)
+  const cleanUrl = project.existingSiteUrl?.trim() || ''
+
   const dealData = await attioRequest('/objects/deals/records', 'POST', {
     data: {
       values: {
         name: [{ value: `${project.bookingId} — ${project.contact.name}` }],
         etap_zlecenia: [{ value: statusLabel }],
         value: [{ value: project.value, currency_code: 'PLN' }],
-        people: [{ referenced_actor_type: 'person-reference', referenced_actor_id: contactId }],
+        associated_people: [{ target_object: 'people', target_record_id: contactId }],
+        booking_id: [{ value: project.bookingId }],
+        wartosc_brutto: [{ value: priceBrutto }],
+        zaliczka: [{ value: project.deposit }],
+        typ_zlecenia: [{ value: project.name }],
+        data_zapytania: [{ value: today }],
+        ...(project.description && { opis_potrzeb: [{ value: project.description }] }),
+        ...(cleanUrl && { istniejaca_strona_url: [{ value: cleanUrl }] }),
       },
     },
   })
 
   const dealId = dealData?.data?.id?.record_id
   if (!dealId) return null
-
-  // ── Notatka z danymi systemowymi (JSON) — używana przez webhook do wysyłki emaili ──
-  const clientData: AttioClientData = {
-    email: project.contact.email,
-    name: project.contact.name,
-    phone: project.contact.phone,
-    bookingId: project.bookingId,
-    projectType: project.name,
-    priceNetto: project.value,
-    priceBrutto: Math.round(project.value * 1.23),
-    deposit: project.deposit,
-    days: project.days,
-    description: project.description,
-    hasExistingSite: project.hasExistingSite,
-    existingSiteUrl: project.existingSiteUrl,
-  }
-
-  await attioRequest('/notes', 'POST', {
-    data: {
-      parent_object: 'deals',
-      parent_record_id: dealId,
-      title: SYSTEM_NOTE_TITLE,
-      content: JSON.stringify(clientData),
-      format: 'plaintext',
-    },
-  })
 
   // ── Notatka czytelna dla człowieka ──────────────────────────────────────
   const lines = [
@@ -197,27 +179,64 @@ export async function createProject(project: AttioProject): Promise<AttioRecordR
   return dealData?.data
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function pickValue(values: Record<string, any[]> | undefined, slug: string): unknown {
+  return values?.[slug]?.[0]?.value
+}
+
 /**
- * Pobiera dane klienta z notatki JSON przypiętej do deala.
- * Używane przez webhook Attio do wysyłki emaili po zmianie statusu.
+ * Pobiera dane klienta z pól deala + powiązanej osoby.
+ * Wszystkie pola są widoczne w Attio UI — możesz je edytować ręcznie.
  */
 export async function getClientDataByDealId(dealId: string): Promise<AttioClientData | null> {
-  const notes = await attioRequest(`/notes?parent_object=deals&parent_record_id=${dealId}&limit=50`, 'GET')
+  const deal = await attioRequest(`/objects/deals/records/${dealId}`, 'GET')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const values = (deal?.data?.values as Record<string, any[]>) ?? {}
 
-  if (!notes?.data) return null
-
-  for (const note of notes.data) {
-    if (note.data?.title === SYSTEM_NOTE_TITLE) {
-      try {
-        return JSON.parse(note.data.content_plaintext ?? note.data.content ?? '') as AttioClientData
-      } catch {
-        console.error('Failed to parse Attio system note JSON')
-        return null
-      }
-    }
+  const bookingId = pickValue(values, 'booking_id') as string | undefined
+  if (!bookingId) {
+    console.error('[attio] Deal missing booking_id field')
+    return null
   }
 
-  return null
+  // Powiązana osoba (klient)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const personRef = (values.associated_people as any[])?.[0]
+  const personId = personRef?.target_record_id
+  if (!personId) {
+    console.error('[attio] Deal missing associated_people')
+    return null
+  }
+
+  const person = await attioRequest(`/objects/people/records/${personId}`, 'GET')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const personValues = (person?.data?.values as Record<string, any[]>) ?? {}
+
+  const email = personValues.email_addresses?.[0]?.email_address as string | undefined
+  const fullName = personValues.name?.[0]?.full_name as string | undefined
+  const phone = personValues.phone_numbers?.[0]?.original_phone_number as string | undefined
+
+  if (!email || !fullName) {
+    console.error('[attio] Person missing email or name')
+    return null
+  }
+
+  const valueNetto = (values.value?.[0]?.currency_value as number) ?? 0
+
+  return {
+    email,
+    name: fullName,
+    phone,
+    bookingId,
+    projectType: (pickValue(values, 'typ_zlecenia') as string) || 'Projekt',
+    priceNetto: valueNetto,
+    priceBrutto: (pickValue(values, 'wartosc_brutto') as number) || Math.round(valueNetto * 1.23),
+    deposit: (pickValue(values, 'zaliczka') as number) || 0,
+    days: 0,
+    description: (pickValue(values, 'opis_potrzeb') as string) || undefined,
+    existingSiteUrl: (pickValue(values, 'istniejaca_strona_url') as string) || undefined,
+    hasExistingSite: !!pickValue(values, 'istniejaca_strona_url'),
+  }
 }
 
 /**
