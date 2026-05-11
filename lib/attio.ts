@@ -3,6 +3,44 @@
 
 const ATTIO_API_URL = 'https://api.attio.com/v2'
 
+// Deal stage IDs (native "Deal stage" status attribute)
+const STAGE_IDS = {
+  oczekujacy: '3f17ccc3-37b7-480c-9e06-20d0744548ad',
+  umowa:      '06ad7243-aae8-4f56-987f-2e5cb3c6ce9f',
+  zaliczka:   'd4b8427d-8898-47ed-84d5-f8b1b0cc033e',
+  aktywny:    'e4794d3f-7535-48bf-8fef-d87131ab140e',
+  zakonczony: '040f06c6-5c8a-4b7e-afb6-c4aa4a4c1c3e',
+  anulowany:  '6a76ae6a-8b87-43d8-9d08-e4b65f27e7cf',
+} as const
+
+// typ_zlecenia select option IDs
+const TYP_ZLECENIA_OPTIONS: Record<string, string> = {
+  'strona':       '08b18e41-e871-4754-85e2-574342137fab', // Strona WWW
+  'sklep':        '41499c07-c2eb-4ef0-b5bf-f2e0b6993587', // Sklep
+  'abonament':    '2b02ff6c-be3d-4834-9f77-bdad4792a991', // Abonament
+  'aplikacja':    'df51554d-8377-4eeb-86e5-32eec377dbe5', // Aplikacja
+}
+
+// Workspace member (deal owner)
+const OWNER_MEMBER_ID = '6213f7e1-b35b-498f-840d-ae1126c19d03'
+
+function mapProjectTypeToOptionId(projectType: string): string | null {
+  const lower = projectType.toLowerCase()
+  if (lower.includes('sklep') || lower.includes('shop') || lower.includes('e-com')) {
+    return TYP_ZLECENIA_OPTIONS['sklep']
+  }
+  if (lower.includes('abonament') || lower.includes('opieka')) {
+    return TYP_ZLECENIA_OPTIONS['abonament']
+  }
+  if (lower.includes('aplikacja') || lower.includes('app')) {
+    return TYP_ZLECENIA_OPTIONS['aplikacja']
+  }
+  if (lower.includes('strona') || lower.includes('www') || lower.includes('web')) {
+    return TYP_ZLECENIA_OPTIONS['strona']
+  }
+  return null
+}
+
 export interface AttioClientData {
   email: string
   name: string
@@ -91,19 +129,32 @@ async function createOrUpdateContact(contact: AttioContact): Promise<string | nu
     return existing.data[0].id.record_id
   }
 
+  // Attio API v2 format:
+  // - email_addresses: { email_address } only (no attribute_type)
+  // - phone_numbers: { original_phone_number } (not phone_number)
+  // - personal-name type cannot be written via /records POST; we patch job_title instead
   const newContact = await attioRequest('/objects/people/records', 'POST', {
     data: {
       values: {
-        name: [{ value: contact.name }],
-        email_addresses: [{ email_address: contact.email, attribute_type: 'work' }],
+        email_addresses: [{ email_address: contact.email }],
         ...(contact.phone && {
-          phone_numbers: [{ phone_number: contact.phone, attribute_type: 'work' }],
+          phone_numbers: [{ original_phone_number: contact.phone }],
         }),
       },
     },
   })
 
-  return newContact?.data?.id?.record_id || null
+  const personId = newContact?.data?.id?.record_id
+  if (!personId) return null
+
+  // Set display name via job_title (text field) so we can identify the client in Attio UI
+  if (contact.name) {
+    await attioRequest(`/objects/people/records/${personId}`, 'PATCH', {
+      data: { values: { job_title: [{ value: contact.name }] } },
+    })
+  }
+
+  return personId
 }
 
 /**
@@ -117,24 +168,25 @@ export async function createProject(project: AttioProject): Promise<AttioRecordR
     return null
   }
 
-  // stage ID dla "Oczekujący" — nowe zapytanie z formularza
-  const STAGE_OCZEKUJACY = '3f17ccc3-37b7-480c-9e06-20d0744548ad'
-
   const priceBrutto = Math.round(project.value * 1.23)
   const today = new Date().toISOString().slice(0, 10)
   const cleanUrl = project.existingSiteUrl?.trim() || ''
+  const typOptionId = mapProjectTypeToOptionId(project.name)
 
   const dealData = await attioRequest('/objects/deals/records', 'POST', {
     data: {
       values: {
         name: [{ value: `${project.bookingId} — ${project.contact.name}` }],
-        stage: [{ status_id: STAGE_OCZEKUJACY }],
-        value: [{ value: project.value, currency_code: 'PLN' }],
+        // stage: plain status UUID (not wrapped in object)
+        stage: STAGE_IDS.oczekujacy,
+        // owner: required field
+        owner: [{ referenced_actor_type: 'workspace-member', referenced_actor_id: OWNER_MEMBER_ID }],
         associated_people: [{ target_object: 'people', target_record_id: contactId }],
         booking_id: [{ value: project.bookingId }],
         wartosc_brutto: [{ value: priceBrutto }],
         zaliczka: [{ value: project.deposit }],
-        typ_zlecenia: [{ value: project.name }],
+        // typ_zlecenia: multiselect — use array of option_id strings
+        ...(typOptionId && { typ_zlecenia: [typOptionId] }),
         data_zapytania: [{ value: today }],
         ...(project.description && { opis_potrzeb: [{ value: project.description }] }),
         ...(cleanUrl && { istniejaca_strona_url: [{ value: cleanUrl }] }),
@@ -215,7 +267,8 @@ export async function getClientDataByDealId(dealId: string): Promise<AttioClient
   const personValues = (person?.data?.values as Record<string, any[]>) ?? {}
 
   const email = personValues.email_addresses?.[0]?.email_address as string | undefined
-  const fullName = personValues.name?.[0]?.full_name as string | undefined
+  const fullName = (personValues.name?.[0]?.full_name
+    ?? personValues.job_title?.[0]?.value) as string | undefined
   const phone = personValues.phone_numbers?.[0]?.original_phone_number as string | undefined
 
   if (!email) {
@@ -259,19 +312,18 @@ export async function updateProjectStatus(
     return false
   }
 
-  // Mapowanie na status_id (natywne pole stage w Attio)
-  const STAGE_IDS: Record<string, string> = {
-    pending:    '3f17ccc3-37b7-480c-9e06-20d0744548ad', // Oczekujący
-    confirmed:  '06ad7243-aae8-4f56-987f-2e5cb3c6ce9f', // Umowa
-    rejected:   '6a76ae6a-8b87-43d8-9d08-e4b65f27e7cf', // Anulowany
-    in_progress: 'e4794d3f-7535-48bf-8fef-d87131ab140e', // Aktywny
-    completed:  '040f06c6-5c8a-4b7e-afb6-c4aa4a4c1c3e', // Zakończony
+  const STATUS_MAP: Record<string, string> = {
+    pending:     STAGE_IDS.oczekujacy,
+    confirmed:   STAGE_IDS.umowa,
+    rejected:    STAGE_IDS.anulowany,
+    in_progress: STAGE_IDS.aktywny,
+    completed:   STAGE_IDS.zakonczony,
   }
-  const statusId = STAGE_IDS[status]
+  const statusId = STATUS_MAP[status]
   if (!statusId) return false
 
   const updated = await attioRequest(`/objects/deals/records/${projectId}`, 'PATCH', {
-    data: { values: { stage: [{ status_id: statusId }] } },
+    data: { values: { stage: statusId } },
   })
 
   return !!updated
