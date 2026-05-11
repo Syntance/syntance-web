@@ -533,6 +533,9 @@ AKCJE:
         bookingId,
         items: booking.items,
         complexity: complexityLabel,
+        description,
+        hasExistingSite,
+        existingSiteUrl,
       });
     } catch (attioError) {
       console.error('Failed to create project in Attio:', attioError);

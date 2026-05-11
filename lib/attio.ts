@@ -1,284 +1,283 @@
 // Attio CRM Integration
 // Dokumentacja API: https://developers.attio.com/reference/introduction
 
+const ATTIO_API_URL = 'https://api.attio.com/v2'
+
+// Klucz tej notatki identyfikuje nasze dane systemowe (nie zmieniaj)
+const SYSTEM_NOTE_TITLE = '[[SYNTANCE_DATA]]'
+
+export interface AttioClientData {
+  email: string
+  name: string
+  phone?: string
+  bookingId: string
+  projectType: string
+  priceNetto: number
+  priceBrutto: number
+  deposit: number
+  days: number
+  description?: string
+  hasExistingSite?: boolean
+  existingSiteUrl?: string
+}
+
 interface AttioContact {
-  name: string;
-  email: string;
-  phone?: string;
+  name: string
+  email: string
+  phone?: string
 }
 
 interface AttioProject {
-  name: string;
-  contact: AttioContact;
-  value: number; // Cena netto
-  status: 'pending' | 'confirmed' | 'rejected' | 'in_progress' | 'completed';
-  startDate?: string;
-  endDate?: string;
-  days: number;
-  deposit: number;
-  bookingId: string;
-  items: string[];
-  complexity: string;
+  name: string
+  contact: AttioContact
+  value: number
+  status: 'pending' | 'confirmed' | 'rejected' | 'in_progress' | 'completed'
+  days: number
+  deposit: number
+  bookingId: string
+  items: string[]
+  complexity: string
+  description?: string
+  hasExistingSite?: boolean
+  existingSiteUrl?: string
 }
 
 interface AttioRecordResponse {
-  id: string;
-  created_at: string;
+  id: { record_id: string }
+  created_at: string
 }
-
-const ATTIO_API_URL = 'https://api.attio.com/v2';
 
 async function attioRequest(
   endpoint: string,
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' = 'GET',
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body?: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
-  const apiKey = process.env.ATTIO_API_KEY;
-  
+  const apiKey = process.env.ATTIO_API_KEY
   if (!apiKey) {
-    console.warn('ATTIO_API_KEY not configured - skipping Attio integration');
-    return null;
+    console.warn('ATTIO_API_KEY not configured — skipping Attio integration')
+    return null
   }
 
   try {
     const response = await fetch(`${ATTIO_API_URL}${endpoint}`, {
       method,
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: body ? JSON.stringify(body) : undefined,
-    });
+      signal: AbortSignal.timeout(8_000),
+    })
 
     if (!response.ok) {
-      const error = await response.text();
-      console.error(`Attio API error (${response.status}):`, error);
-      return null;
+      const error = await response.text()
+      console.error(`Attio API error (${response.status}):`, error)
+      return null
     }
 
-    return await response.json();
+    return await response.json()
   } catch (error) {
-    console.error('Attio API request failed:', error);
-    return null;
+    console.error('Attio API request failed:', error)
+    return null
   }
 }
 
-/**
- * Tworzy lub aktualizuje kontakt w Attio
- */
-export async function createOrUpdateContact(contact: AttioContact): Promise<string | null> {
-  // Najpierw sprawdź czy kontakt istnieje (po emailu)
-  const existing = await attioRequest(
-    `/objects/people/records/query`,
-    'POST',
-    {
-      filter: {
-        email_addresses: {
-          any: {
-            email_address: contact.email
-          }
-        }
+async function createOrUpdateContact(contact: AttioContact): Promise<string | null> {
+  const existing = await attioRequest('/objects/people/records/query', 'POST', {
+    filter: { email_addresses: { any: { email_address: contact.email } } },
+    limit: 1,
+  })
+
+  if (existing?.data?.[0]?.id?.record_id) {
+    return existing.data[0].id.record_id
+  }
+
+  const newContact = await attioRequest('/objects/people/records', 'POST', {
+    data: {
+      values: {
+        name: [{ value: contact.name }],
+        email_addresses: [{ email_address: contact.email, attribute_type: 'work' }],
+        ...(contact.phone && {
+          phone_numbers: [{ phone_number: contact.phone, attribute_type: 'work' }],
+        }),
       },
-      limit: 1
-    }
-  );
+    },
+  })
 
-  if (existing?.data?.[0]?.id) {
-    // Kontakt istnieje - zwróć ID
-    return existing.data[0].id.record_id;
-  }
-
-  // Stwórz nowy kontakt
-  const newContact = await attioRequest(
-    `/objects/people/records`,
-    'POST',
-    {
-      data: {
-        values: {
-          name: [{ value: contact.name }],
-          email_addresses: [{ 
-            email_address: contact.email,
-            attribute_type: 'work'
-          }],
-          ...(contact.phone && {
-            phone_numbers: [{
-              phone_number: contact.phone,
-              attribute_type: 'work'
-            }]
-          })
-        }
-      }
-    }
-  );
-
-  return newContact?.data?.id?.record_id || null;
+  return newContact?.data?.id?.record_id || null
 }
 
 /**
- * Tworzy projekt/deal w Attio
+ * Tworzy deal w Attio z pełnymi danymi klienta.
+ * Dane do emaili są zapisywane w notatce JSON (nie wymagają custom fields).
  */
 export async function createProject(project: AttioProject): Promise<AttioRecordResponse | null> {
-  // Najpierw stwórz/pobierz kontakt
-  const contactId = await createOrUpdateContact(project.contact);
-  
+  const contactId = await createOrUpdateContact(project.contact)
   if (!contactId) {
-    console.error('Failed to create/get contact for project');
-    return null;
+    console.error('Failed to create/get contact for project')
+    return null
   }
 
-  // Stwórz projekt w Attio (używamy obiektu "deals" lub custom "projects")
-  // Dostosuj nazwy pól do Twojego workspace w Attio
-  const projectData = await attioRequest(
-    `/objects/deals/records`,
-    'POST',
-    {
-      data: {
-        values: {
-          name: [{ value: `${project.name} - ${project.contact.name}` }],
-          status: [{ 
-            value: project.status === 'pending' ? 'Oczekujące' :
-                   project.status === 'confirmed' ? 'Potwierdzone' :
-                   project.status === 'rejected' ? 'Odrzucone' :
-                   project.status === 'in_progress' ? 'W realizacji' :
-                   'Zakończone'
-          }],
-          value: [{ 
-            value: project.value,
-            currency_code: 'PLN'
-          }],
-          // Powiązanie z kontaktem
-          people: [{ 
-            referenced_actor_type: 'person-reference',
-            referenced_actor_id: contactId
-          }],
-          // Custom fields - możesz je dodać w Attio
-          ...(project.startDate && {
-            'start_date': [{ value: project.startDate }]
-          }),
-          ...(project.endDate && {
-            'end_date': [{ value: project.endDate }]
-          }),
-          'booking_id': [{ value: project.bookingId }],
-          'days': [{ value: project.days }],
-          'deposit': [{ value: project.deposit }],
-          'complexity': [{ value: project.complexity }],
-        }
-      }
-    }
-  );
+  const statusLabel = {
+    pending: 'Nowe zapytanie',
+    confirmed: 'Zaakceptowane',
+    rejected: 'Odrzucone',
+    in_progress: 'W realizacji',
+    completed: 'Zakończone',
+  }[project.status]
 
-  // Dodaj notatkę z listą elementów
-  if (projectData?.data?.id?.record_id && project.items.length > 0) {
-    await attioRequest(
-      `/notes`,
-      'POST',
-      {
-        data: {
-          parent_object: 'deals',
-          parent_record_id: projectData.data.id.record_id,
-          title: 'Wybrane elementy projektu',
-          content: project.items.map((item, i) => `${i + 1}. ${item}`).join('\n'),
-          format: 'plaintext'
-        }
-      }
-    );
+  const dealData = await attioRequest('/objects/deals/records', 'POST', {
+    data: {
+      values: {
+        name: [{ value: `${project.bookingId} — ${project.contact.name}` }],
+        status: [{ value: statusLabel }],
+        value: [{ value: project.value, currency_code: 'PLN' }],
+        people: [{ referenced_actor_type: 'person-reference', referenced_actor_id: contactId }],
+      },
+    },
+  })
+
+  const dealId = dealData?.data?.id?.record_id
+  if (!dealId) return null
+
+  // ── Notatka z danymi systemowymi (JSON) — używana przez webhook do wysyłki emaili ──
+  const clientData: AttioClientData = {
+    email: project.contact.email,
+    name: project.contact.name,
+    phone: project.contact.phone,
+    bookingId: project.bookingId,
+    projectType: project.name,
+    priceNetto: project.value,
+    priceBrutto: Math.round(project.value * 1.23),
+    deposit: project.deposit,
+    days: project.days,
+    description: project.description,
+    hasExistingSite: project.hasExistingSite,
+    existingSiteUrl: project.existingSiteUrl,
   }
 
-  return projectData?.data;
+  await attioRequest('/notes', 'POST', {
+    data: {
+      parent_object: 'deals',
+      parent_record_id: dealId,
+      title: SYSTEM_NOTE_TITLE,
+      content: JSON.stringify(clientData),
+      format: 'plaintext',
+    },
+  })
+
+  // ── Notatka czytelna dla człowieka ──────────────────────────────────────
+  const lines = [
+    `Typ projektu: ${project.name}`,
+    `Wartość: ${project.value.toLocaleString('pl-PL')} PLN netto`,
+    `Zaliczka: ${project.deposit.toLocaleString('pl-PL')} PLN`,
+    `Złożoność: ${project.complexity}`,
+    `Czas realizacji: ${project.days} dni roboczych`,
+    '',
+    ...(project.description ? [`Opis potrzeb:\n${project.description}`, ''] : []),
+    ...(project.hasExistingSite
+      ? [`Istniejąca strona: TAK${project.existingSiteUrl ? `\nURL: ${project.existingSiteUrl}` : ''}`]
+      : ['Istniejąca strona: NIE']),
+    '',
+    `Elementy:\n${project.items.map((i, n) => `${n + 1}. ${i}`).join('\n')}`,
+  ]
+
+  await attioRequest('/notes', 'POST', {
+    data: {
+      parent_object: 'deals',
+      parent_record_id: dealId,
+      title: 'Szczegóły zapytania',
+      content: lines.join('\n'),
+      format: 'plaintext',
+    },
+  })
+
+  return dealData?.data
 }
 
 /**
- * Aktualizuje status projektu w Attio
+ * Pobiera dane klienta z notatki JSON przypiętej do deala.
+ * Używane przez webhook Attio do wysyłki emaili po zmianie statusu.
+ */
+export async function getClientDataByDealId(dealId: string): Promise<AttioClientData | null> {
+  const notes = await attioRequest(`/notes?parent_object=deals&parent_record_id=${dealId}&limit=50`, 'GET')
+
+  if (!notes?.data) return null
+
+  for (const note of notes.data) {
+    if (note.data?.title === SYSTEM_NOTE_TITLE) {
+      try {
+        return JSON.parse(note.data.content_plaintext ?? note.data.content ?? '') as AttioClientData
+      } catch {
+        console.error('Failed to parse Attio system note JSON')
+        return null
+      }
+    }
+  }
+
+  return null
+}
+
+/**
+ * Aktualizuje status deala w Attio.
  */
 export async function updateProjectStatus(
   bookingId: string,
   status: 'pending' | 'confirmed' | 'rejected' | 'in_progress' | 'completed'
 ): Promise<boolean> {
-  // Znajdź projekt po booking_id
-  const projects = await attioRequest(
-    `/objects/deals/records/query`,
-    'POST',
-    {
-      filter: {
-        booking_id: {
-          equals: bookingId
-        }
-      },
-      limit: 1
-    }
-  );
+  const projects = await attioRequest('/objects/deals/records/query', 'POST', {
+    filter: { booking_id: { equals: bookingId } },
+    limit: 1,
+  })
 
-  const projectId = projects?.data?.[0]?.id?.record_id;
-  
+  const projectId = projects?.data?.[0]?.id?.record_id
   if (!projectId) {
-    console.warn(`Project with booking_id ${bookingId} not found in Attio`);
-    return false;
+    console.warn(`Project ${bookingId} not found in Attio`)
+    return false
   }
 
-  // Aktualizuj status
-  const statusLabel = 
-    status === 'pending' ? 'Oczekujące' :
-    status === 'confirmed' ? 'Potwierdzone' :
-    status === 'rejected' ? 'Odrzucone' :
-    status === 'in_progress' ? 'W realizacji' :
-    'Zakończone';
+  const statusLabel = {
+    pending: 'Nowe zapytanie',
+    confirmed: 'Zaakceptowane',
+    rejected: 'Odrzucone',
+    in_progress: 'W realizacji',
+    completed: 'Zakończone',
+  }[status]
 
-  const updated = await attioRequest(
-    `/objects/deals/records/${projectId}`,
-    'PATCH',
-    {
-      data: {
-        values: {
-          status: [{ value: statusLabel }]
-        }
-      }
-    }
-  );
+  const updated = await attioRequest(`/objects/deals/records/${projectId}`, 'PATCH', {
+    data: { values: { status: [{ value: statusLabel }] } },
+  })
 
-  return !!updated;
+  return !!updated
 }
 
 /**
- * Dodaje notatkę do projektu
+ * Dodaje notatkę do deala.
  */
 export async function addProjectNote(
   bookingId: string,
   title: string,
   content: string
 ): Promise<boolean> {
-  // Znajdź projekt
-  const projects = await attioRequest(
-    `/objects/deals/records/query`,
-    'POST',
-    {
-      filter: {
-        booking_id: {
-          equals: bookingId
-        }
-      },
-      limit: 1
-    }
-  );
+  const projects = await attioRequest('/objects/deals/records/query', 'POST', {
+    filter: { booking_id: { equals: bookingId } },
+    limit: 1,
+  })
 
-  const projectId = projects?.data?.[0]?.id?.record_id;
-  
-  if (!projectId) {
-    return false;
-  }
+  const projectId = projects?.data?.[0]?.id?.record_id
+  if (!projectId) return false
 
-  const note = await attioRequest(
-    `/notes`,
-    'POST',
-    {
-      data: {
-        parent_object: 'deals',
-        parent_record_id: projectId,
-        title,
-        content,
-        format: 'plaintext'
-      }
-    }
-  );
+  const note = await attioRequest('/notes', 'POST', {
+    data: {
+      parent_object: 'deals',
+      parent_record_id: projectId,
+      title,
+      content,
+      format: 'plaintext',
+    },
+  })
 
-  return !!note;
+  return !!note
 }
