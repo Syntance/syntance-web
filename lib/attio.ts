@@ -117,13 +117,8 @@ export async function createProject(project: AttioProject): Promise<AttioRecordR
     return null
   }
 
-  const statusLabel = {
-    pending: 'Nowe zapytanie',
-    confirmed: 'Zaakceptowane',
-    rejected: 'Odrzucone',
-    in_progress: 'W realizacji',
-    completed: 'Zakończone',
-  }[project.status]
+  // stage ID dla "Oczekujący" — nowe zapytanie z formularza
+  const STAGE_OCZEKUJACY = '3f17ccc3-37b7-480c-9e06-20d0744548ad'
 
   const priceBrutto = Math.round(project.value * 1.23)
   const today = new Date().toISOString().slice(0, 10)
@@ -133,7 +128,7 @@ export async function createProject(project: AttioProject): Promise<AttioRecordR
     data: {
       values: {
         name: [{ value: `${project.bookingId} — ${project.contact.name}` }],
-        etap_zlecenia: [{ value: statusLabel }],
+        stage: [{ status_id: STAGE_OCZEKUJACY }],
         value: [{ value: project.value, currency_code: 'PLN' }],
         associated_people: [{ target_object: 'people', target_record_id: contactId }],
         booking_id: [{ value: project.bookingId }],
@@ -264,16 +259,19 @@ export async function updateProjectStatus(
     return false
   }
 
-  const statusLabel = {
-    pending: 'Nowe zapytanie',
-    confirmed: 'Zaakceptowane',
-    rejected: 'Odrzucone',
-    in_progress: 'W realizacji',
-    completed: 'Zakończone',
-  }[status]
+  // Mapowanie na status_id (natywne pole stage w Attio)
+  const STAGE_IDS: Record<string, string> = {
+    pending:    '3f17ccc3-37b7-480c-9e06-20d0744548ad', // Oczekujący
+    confirmed:  '06ad7243-aae8-4f56-987f-2e5cb3c6ce9f', // Umowa
+    rejected:   '6a76ae6a-8b87-43d8-9d08-e4b65f27e7cf', // Anulowany
+    in_progress: 'e4794d3f-7535-48bf-8fef-d87131ab140e', // Aktywny
+    completed:  '040f06c6-5c8a-4b7e-afb6-c4aa4a4c1c3e', // Zakończony
+  }
+  const statusId = STAGE_IDS[status]
+  if (!statusId) return false
 
   const updated = await attioRequest(`/objects/deals/records/${projectId}`, 'PATCH', {
-    data: { values: { etap_zlecenia: [{ value: statusLabel }] } },
+    data: { values: { stage: [{ status_id: statusId }] } },
   })
 
   return !!updated

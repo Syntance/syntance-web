@@ -5,12 +5,13 @@ import { getClientDataByDealId, type AttioClientData } from '@/lib/attio'
 import { getPaymentSettings, resolveTransferTitle, type PaymentSettings } from '@/sanity/queries/paymentSettings'
 import { getContractFiles } from '@/sanity/queries/contractFiles'
 
-// ─── Mapowanie pola "Etap zlecenia" → akcja emailowa ──────────────────────
-// Pole: etap_zlecenia (select) na obiekcie deals
+// ─── Mapowanie natywnego Status (stage) → akcja emailowa ──────────────────
+// Pole: stage (system status) na obiekcie deals — to co widzisz w Attio UI
 const STATUS_ACTIONS: Record<string, 'contracts' | 'payment' | 'reject'> = {
-  'Zaakceptowane':  'contracts',  // → wyślij umowy PDF
-  'Do przelewu':    'payment',    // → wyślij dane bankowe
-  'Odrzucone':      'reject',     // → wyślij email o odrzuceniu
+  'Umowa':     'contracts',  // → wyślij umowy PDF
+  'Zaliczka':  'payment',    // → wyślij dane bankowe (IBAN)
+  'Anulowany': 'reject',     // → wyślij email o odrzuceniu
+  // Oczekujący / Aktywny / Zakończony — bez emaila
 }
 
 let resend: Resend | null = null
@@ -80,22 +81,24 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, skipped: `event ${eventType} ignored` })
   }
 
-  // Sprawdź czy zmieniało się pole etap_zlecenia
+  // Sprawdź czy zmieniał się status (natywne pole stage)
   const data = payload.data as Record<string, unknown>
   const changedAttrs = (data?.changed_attributes as string[]) ?? []
-  if (eventType === 'record.updated' && !changedAttrs.includes('etap_zlecenia')) {
-    return NextResponse.json({ ok: true, skipped: 'etap_zlecenia not changed' })
+  if (eventType === 'record.updated' && !changedAttrs.includes('stage')) {
+    return NextResponse.json({ ok: true, skipped: 'stage not changed' })
   }
 
   const record = data?.record as Record<string, unknown>
   const recordId = (record?.id as { record_id?: string })?.record_id
-  const values = record?.values as Record<string, Array<{ value: unknown }>> | undefined
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const values = record?.values as Record<string, any[]> | undefined
 
   if (!recordId) {
     return NextResponse.json({ error: 'Missing record id' }, { status: 400 })
   }
 
-  const newStatus = attioVal(values?.etap_zlecenia)
+  // Status type ma inną strukturę: values.stage[0].status.title
+  const newStatus = (values?.stage?.[0]?.status?.title as string) ?? ''
   const action = STATUS_ACTIONS[newStatus]
 
   if (!action) {
