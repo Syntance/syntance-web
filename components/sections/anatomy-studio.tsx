@@ -73,17 +73,88 @@ export default function AnatomyStudio() {
   }, []);
 
   return (
-    <section 
+    <section
       id="anatomy-studio"
       ref={sectionRef}
       aria-labelledby="anatomy-heading"
-      className="relative z-10 py-32 px-6 lg:px-12 overflow-hidden"
+      className="relative z-10 py-20 md:py-32 px-5 md:px-6 lg:px-12 overflow-hidden"
     >
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
+      {/* ─────────────────────  MOBILE  ───────────────────── */}
+      <div className="md:hidden max-w-md mx-auto">
+        <AnimatedSection>
+          <header className="text-center mb-10">
+            <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-purple-300/70 mb-3">
+              Jak pracujemy
+            </p>
+            <h2 id="anatomy-heading" className="text-3xl font-light tracking-tight leading-[1.15] mb-3">
+              <span className="text-gray-400">Większość zaczyna od grafiki.</span>
+              <br />
+              <span className="text-white">My — od biznesu.</span>
+            </h2>
+          </header>
+        </AnimatedSection>
+
+        {/* Mobile: 3 zwarte karty pełnoszerokie, bez timeline visual'u */}
+        <ol className="space-y-4">
+          {layers.map((layer, index) => (
+            <li
+              key={layer.level}
+              className="anatomy-card opacity-0 translate-y-6 transition-all duration-700 ease-out"
+              style={{ transitionDelay: `${index * 80}ms` }}
+            >
+              <article className="relative bg-white/[0.03] border border-white/10 rounded-2xl p-5">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className={`shrink-0 w-9 h-9 rounded-full bg-gradient-to-br ${layer.gradient} flex items-center justify-center text-white text-sm font-semibold`}>
+                    {layer.level}
+                  </span>
+                  <h3 className="text-base font-medium text-white">
+                    <span className={`bg-gradient-to-r ${layer.gradient} bg-clip-text text-transparent`}>
+                      {layer.title}
+                    </span>
+                    <span className="text-gray-400 text-sm font-light"> · {layer.subtitle}</span>
+                  </h3>
+                </div>
+                <p className="text-sm text-gray-400 leading-relaxed mb-4 italic">
+                  {layer.tagline}
+                </p>
+                <ul className="space-y-2">
+                  {layer.items.map((item, i) => {
+                    const Icon = item.icon;
+                    return (
+                      <li key={i} className="flex items-start gap-2.5 text-sm">
+                        <Icon size={14} className={`mt-0.5 ${layer.textColor} shrink-0`} aria-hidden="true" />
+                        <span>
+                          <span className="text-white font-medium">{item.label}</span>
+                          <span className="text-gray-400"> — {item.desc}</span>
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </article>
+            </li>
+          ))}
+        </ol>
+
+        <div className="mt-10 text-center anatomy-card opacity-0 translate-y-6 transition-all duration-700 ease-out">
+          <p className="text-base text-gray-300 mb-5 leading-relaxed">
+            Efekt? <span className="text-white font-medium">Strona, która pracuje na Twój wynik.</span>
+          </p>
+          <a
+            href="/strategia-marketingu-i-sprzedazy"
+            className="inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 min-h-[48px] rounded-full bg-white/[0.04] border border-white/10 text-gray-200 text-sm font-medium tracking-wide active:bg-white/[0.08] transition-colors"
+          >
+            Strategia marketingu i sprzedaży
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+
+      {/* ─────────────────────  DESKTOP  ───────────────────── */}
+      <div className="hidden md:block max-w-4xl mx-auto">
         <AnimatedSection>
           <header className="text-center mb-32">
-            <h2 id="anatomy-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
+            <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
               Większość agencji zaczyna od grafiki.
             </h2>
             <p className="text-2xl md:text-3xl font-light tracking-wide text-gray-400">
@@ -169,21 +240,21 @@ export default function AnatomyStudio() {
           </div>
         </div>
 
-        {/* Bottom Quote + CTA */}
+        {/* Bottom Quote + CTA — desktop only */}
         <div className="mt-32 text-center anatomy-card opacity-0 translate-y-12 transition-all duration-1000 ease-out">
           <p className="text-xl md:text-2xl font-light text-gray-400 mb-8">
             Efekt? <span className="text-white">Strona, która pracuje na Twój wynik.</span>
           </p>
-          
-          <a 
-            href="/strategia-marketingu-i-sprzedazy" 
+
+          <a
+            href="/strategia-marketingu-i-sprzedazy"
             className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-105"
           >
             <span>Strategia marketingu i sprzedaży — więcej</span>
-            <svg 
-              className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" 
-              fill="none" 
-              viewBox="0 0 24 24" 
+            <svg
+              className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
+              fill="none"
+              viewBox="0 0 24 24"
               stroke="currentColor"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />

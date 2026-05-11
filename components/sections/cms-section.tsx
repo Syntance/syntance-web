@@ -55,19 +55,71 @@ export default function CMSSection() {
   }, []);
 
   return (
-    <section 
-      id="cms-section" 
-      aria-labelledby="cms-heading" 
-      className="relative z-10 py-24 px-6 lg:px-12"
+    <section
+      id="cms-section"
+      aria-labelledby="cms-heading"
+      className="relative z-10 py-20 md:py-24 px-5 md:px-6 lg:px-12"
     >
-      <div className="max-w-6xl mx-auto">
+      {/* ─────────────────────  MOBILE  ───────────────────── */}
+      <div className="md:hidden max-w-md mx-auto">
+        <header className="text-center mb-7">
+          <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-purple-300/70 mb-3">
+            Panel CMS
+          </p>
+          <h2 id="cms-heading" className="text-3xl font-light tracking-tight leading-[1.15] text-white mb-3">
+            Edytuj sam z <GradientText className="font-medium">Sanity</GradientText>
+          </h2>
+          <p className="text-sm text-gray-400 leading-relaxed">
+            Panel <span className="text-white">prosty jak Word</span>. Używają go Figma, Shopify i Sonos.
+          </p>
+        </header>
+
+        <ul className="space-y-3 mb-6">
+          {features.map((feature, index) => {
+            const Icon = feature.icon;
+            return (
+              <li key={index} className="flex items-start gap-3.5 bg-white/[0.03] border border-white/10 rounded-2xl p-4">
+                <span className={`shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br ${feature.gradient} flex items-center justify-center`}>
+                  <Icon className="text-white" size={18} strokeWidth={1.75} aria-hidden="true" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <h3 className={`text-sm font-medium mb-1 bg-gradient-to-r ${feature.gradient} bg-clip-text text-transparent`}>
+                    {feature.title}
+                  </h3>
+                  <p className="text-xs text-gray-400 leading-relaxed">
+                    {feature.description}
+                  </p>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+
+        <div className="bg-purple-500/5 border border-purple-500/20 rounded-2xl p-4 mb-4">
+          <p className="text-sm text-gray-300 leading-relaxed mb-3">
+            <CheckCircle size={14} className="inline-block text-purple-400 mr-1.5 -mt-0.5" aria-hidden="true" />
+            <span className="text-white font-medium">Panel CMS to opcja w konfiguratorze.</span>
+          </p>
+          <p className="text-xs text-gray-400 leading-relaxed">
+            Decydujesz, czy chcesz samodzielnie zarządzać treścią.
+          </p>
+        </div>
+
+        <a
+          href="/cennik?highlight=cms"
+          className="flex items-center justify-center gap-2 w-full px-6 py-3.5 min-h-[48px] rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white text-sm font-medium tracking-wide active:opacity-90 transition-opacity"
+        >
+          Sprawdź cenę w konfiguratorze
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      {/* ─────────────────────  DESKTOP  ───────────────────── */}
+      <div className="hidden md:block max-w-6xl mx-auto">
         {/* Header - spójny z resztą strony */}
         <AnimatedSection>
           <header className="text-center mb-16">
-            <h2 
-              id="cms-heading" 
-              className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6"
-            >
+            <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
               Edytuj sam z <GradientText>Sanity CMS</GradientText>
             </h2>
             <p className="text-xl font-light tracking-wide text-gray-400 max-w-3xl mx-auto mb-4">
@@ -181,6 +233,7 @@ export default function CMSSection() {
           </div>
         </div>
       </div>
+      {/* /Desktop */}
 
       <style jsx>{`
         .cms-card.card-visible {

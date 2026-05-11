@@ -44,23 +44,88 @@ export default function TechComparison() {
   const isMobile = useIsMobile();
   
   return (
-    <section id="tech-comparison" aria-labelledby="tech-heading" className="relative z-10 py-24 px-6 lg:px-12">
-      <div className="max-w-6xl mx-auto">
+    <section id="tech-comparison" aria-labelledby="tech-heading" className="relative z-10 py-20 md:py-24 px-5 md:px-6 lg:px-12">
+      {/* ─────────────────────  MOBILE  ─────────────────────
+          Bez tabeli — 4 zwarte karty per kryterium z ikoną i kontrastem
+          WP vs Next.js. Dużo czytelniejsze niż squashed table na ~360px.
+      */}
+      <div className="md:hidden max-w-md mx-auto">
+        <header className="text-center mb-7">
+          <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-purple-300/70 mb-3">
+            Technologia
+          </p>
+          <h2 id="tech-heading" className="text-3xl font-light tracking-tight leading-[1.15] text-white mb-3">
+            Dlaczego <GradientText className="font-medium">Next.js</GradientText>?
+          </h2>
+          <p className="text-sm text-gray-400 leading-relaxed">
+            Standard używany przez <span className="text-white">Netflix, TikTok, Nike, Notion</span>.
+          </p>
+        </header>
+
+        <ul className="space-y-3 mb-8">
+          {comparisonData.map((item, index) => {
+            const Icon = item.icon
+            return (
+              <li key={index} className="bg-white/[0.03] border border-white/10 rounded-2xl p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className={`shrink-0 w-9 h-9 rounded-lg bg-gradient-to-br ${item.color} flex items-center justify-center`}>
+                    <Icon size={16} className="text-white" aria-hidden="true" />
+                  </span>
+                  <h3 className="text-sm font-semibold text-white tracking-wide uppercase">{item.label}</h3>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="bg-white/[0.02] rounded-lg p-3 border border-white/5">
+                    <div className="text-[10px] font-medium uppercase tracking-wider text-gray-500 mb-1">WordPress</div>
+                    <div className="text-gray-400 leading-snug">{item.wordpress}</div>
+                  </div>
+                  <div className="bg-purple-500/[0.05] rounded-lg p-3 border border-purple-400/20">
+                    <div className="text-[10px] font-medium uppercase tracking-wider text-purple-300/70 mb-1">Next.js</div>
+                    <div className="text-white leading-snug font-medium">
+                      <GradientText>{item.nextjs}</GradientText>
+                      {item.nextjsSuffix && <span className="text-gray-400 font-light">{item.nextjsSuffix}</span>}
+                    </div>
+                  </div>
+                </div>
+              </li>
+            )
+          })}
+        </ul>
+
+        <div className="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-4 mb-6">
+          <p className="text-xs font-medium uppercase tracking-wider text-amber-300/80 mb-2">
+            Kiedy WordPress ma sens?
+          </p>
+          <p className="text-sm text-gray-400 leading-relaxed">
+            Prosty blog, niski budżet, zero ambicji wzrostu. We wszystkich innych przypadkach — Next.js.
+          </p>
+        </div>
+
+        <a
+          href="/nextjs"
+          className="flex items-center justify-center gap-2 w-full px-6 py-3.5 min-h-[48px] rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-sm font-medium tracking-wide active:opacity-90 transition-opacity"
+        >
+          Dlaczego Next.js zmienia zasady gry
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      {/* ─────────────────────  DESKTOP  ───────────────────── */}
+      <div className="hidden md:block max-w-6xl mx-auto">
         {/* Header */}
         <AnimatedSection>
           <header className="text-center mb-16">
-            <h2 id="tech-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
+            <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
               Dlaczego <GradientText>NEXT.JS</GradientText>?
             </h2>
             <p className="text-xl font-light tracking-wide text-gray-400 max-w-3xl mx-auto mb-4">
               Większość stron działa na WordPressie. My budujemy na Next.js — i oto dlaczego.
             </p>
-            
+
             {/* Czym jest Next.js */}
             <div className="mt-8 p-6 rounded-2xl bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/20 max-w-3xl mx-auto">
               <p className="text-gray-400 leading-relaxed">
-                <span className="font-medium text-white">Next.js</span> to nowoczesny framework do tworzenia stron i aplikacji webowych, 
-                używany przez <GradientText className="font-medium">Netflix, TikTok, Nike i Notion</GradientText>. 
+                <span className="font-medium text-white">Next.js</span> to nowoczesny framework do tworzenia stron i aplikacji webowych,
+                używany przez <GradientText className="font-medium">Netflix, TikTok, Nike i Notion</GradientText>.
                 To standard wśród firm, które traktują web poważnie.
               </p>
             </div>
@@ -174,6 +239,7 @@ export default function TechComparison() {
         </div>
         </AnimatedSection>
       </div>
+      {/* /Desktop */}
     </section>
   )
 }

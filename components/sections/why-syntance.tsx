@@ -60,8 +60,51 @@ export default function WhySyntance() {
   }, []);
 
   return (
-    <section id="why-syntance" className="relative z-10 py-16 sm:py-24 md:py-32 px-4 sm:px-6 lg:px-12 overflow-hidden">
-      <div className="max-w-6xl mx-auto">
+    <section id="why-syntance" className="relative z-10 py-20 md:py-24 lg:py-32 px-5 md:px-6 lg:px-12 overflow-hidden">
+      {/* ─────────────────────  MOBILE  ───────────────────── */}
+      <div className="md:hidden max-w-md mx-auto">
+        <header className="text-center mb-8">
+          <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-purple-300/70 mb-3">
+            Wartości
+          </p>
+          <h2 className="text-3xl font-light tracking-tight leading-[1.15] text-white">
+            Dlaczego <span className="bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">my?</span>
+          </h2>
+        </header>
+
+        <ul className="space-y-3">
+          {values.map((value, index) => {
+            const Icon = value.icon;
+            return (
+              <li
+                key={index}
+                className="value-card opacity-0 translate-y-4 transition-all duration-500 ease-out"
+                style={{ transitionDelay: `${index * 60}ms` }}
+              >
+                <article className="flex items-center gap-4 bg-white/[0.03] border border-white/10 rounded-2xl p-5">
+                  <span className={`shrink-0 w-11 h-11 rounded-xl bg-gradient-to-br ${value.gradient} flex items-center justify-center`}>
+                    {value.title === "Inteligencja w tle." ? (
+                      <span className="text-sm font-bold text-white">AI</span>
+                    ) : value.title === "Spokój zamiast chaosu." ? (
+                      <LotusIcon className="text-white" size={20} />
+                    ) : value.title === "Technologia, która zachwyca." ? (
+                      <DiamondIcon className="text-white" size={20} />
+                    ) : (
+                      <Icon className="text-white" size={20} strokeWidth={1.75} aria-hidden="true" />
+                    )}
+                  </span>
+                  <h3 className={`text-base font-medium leading-snug bg-gradient-to-r ${value.gradient} bg-clip-text text-transparent`}>
+                    {value.title}
+                  </h3>
+                </article>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      {/* ─────────────────────  DESKTOP  ───────────────────── */}
+      <div className="hidden md:block max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12 sm:mb-16 md:mb-20">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-light tracking-widest glow-text mb-4 sm:mb-6">
@@ -180,6 +223,7 @@ export default function WhySyntance() {
           })}
         </div>
       </div>
+      {/* /Desktop */}
 
       <style jsx>{`
         .value-card.card-visible {

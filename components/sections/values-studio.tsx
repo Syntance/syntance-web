@@ -71,12 +71,57 @@ export default function ValuesStudio() {
   }, []);
 
   return (
-    <section id="values-studio" aria-labelledby="values-heading" className="relative z-10 py-32 px-6 lg:px-12 overflow-hidden">
-      <div className="max-w-6xl mx-auto">
+    <section id="values-studio" aria-labelledby="values-heading" className="relative z-10 py-20 md:py-32 px-5 md:px-6 lg:px-12 overflow-hidden">
+      {/* ─────────────────────  MOBILE  ───────────────────── */}
+      <div className="md:hidden max-w-md mx-auto">
+        <header className="text-center mb-8">
+          <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-purple-300/70 mb-3">
+            Dlaczego my
+          </p>
+          <h2 id="values-heading" className="text-3xl font-light tracking-tight leading-[1.15] mb-3 text-white">
+            Jakość agencji <span className="text-gray-400">w tempie</span> freelancera
+          </h2>
+        </header>
+
+        <ul className="space-y-3">
+          {values.map((value, index) => {
+            const Icon = value.icon;
+            return (
+              <li
+                key={index}
+                className="value-card-studio opacity-0 translate-y-4 transition-all duration-500 ease-out"
+                style={{ transitionDelay: `${index * 60}ms` }}
+              >
+                <article className="flex items-start gap-4 bg-white/[0.03] border border-white/10 rounded-2xl p-5">
+                  <span className={`shrink-0 w-11 h-11 rounded-xl bg-gradient-to-br ${value.gradient} flex items-center justify-center`}>
+                    <Icon className="text-white" size={20} strokeWidth={1.75} aria-hidden="true" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <h3 className={`text-base font-medium mb-1 bg-gradient-to-r ${value.gradient} bg-clip-text text-transparent`}>
+                      {value.title}
+                    </h3>
+                    <p className="text-sm text-gray-300 leading-snug mb-1">
+                      {value.description}
+                    </p>
+                    {value.proof && (
+                      <p className="text-xs text-gray-500 leading-snug">
+                        {value.proof}
+                      </p>
+                    )}
+                  </div>
+                </article>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      {/* ─────────────────────  DESKTOP  ───────────────────── */}
+      <div className="hidden md:block max-w-6xl mx-auto">
         {/* Header */}
         <AnimatedSection>
           <header className="text-center mb-20">
-            <h2 id="values-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
+            <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
               Dlaczego My?
             </h2>
             <p className="text-lg font-light tracking-wide text-gray-400">
@@ -195,6 +240,7 @@ export default function ValuesStudio() {
           })}
         </div>
       </div>
+      {/* /Desktop */}
 
       <style jsx>{`
         .value-card-studio.card-visible {

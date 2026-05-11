@@ -47,55 +47,77 @@ export default function HomePage() {
         <PortfolioStudio />
         <PricingStudioNew />
         
-        {/* Contact Section */}
-        <section id="contact" aria-labelledby="contact-heading" className="relative z-10 px-6 lg:px-12 py-32">
+        {/* Contact Section — mobile zwięzła hierarchia: kontakt szybki nad formą */}
+        <section id="contact" aria-labelledby="contact-heading" className="relative z-10 px-5 md:px-6 lg:px-12 py-20 md:py-32">
           <div className="max-w-4xl mx-auto">
             <AnimatedSection>
-              <h2 id="contact-heading" className="text-4xl md:text-5xl font-light tracking-wider mb-8 text-center glow-text">
+              <p className="md:hidden text-[11px] font-medium uppercase tracking-[0.2em] text-purple-300/70 mb-3 text-center">
+                Kontakt
+              </p>
+              <h2 id="contact-heading" className="text-3xl md:text-5xl font-light tracking-tight md:tracking-wider leading-[1.15] md:leading-normal mb-3 md:mb-8 text-center md:glow-text">
                 Porozmawiajmy
               </h2>
-              <p className="text-xl text-gray-400 font-light tracking-wide text-center mb-16">
-                Jeśli masz pytania, na które nie znalazłeś odpowiedzi, skontaktuj się z nami.
+              <p className="text-sm md:text-xl text-gray-400 font-light tracking-wide text-center mb-8 md:mb-16 max-w-xl mx-auto leading-relaxed">
+                Masz pytania? <span className="text-white">Odpowiadamy w 24h</span>.
               </p>
             </AnimatedSection>
-            
+
+            {/* Mobile: szybki kontakt nad formą (najpierw najszybsza akcja) */}
             <AnimatedSection delay={100}>
-            <div className="grid md:grid-cols-2 gap-12 mb-16">
-              {/* Contact Info */}
-              <address className="space-y-8 not-italic">
-                <div>
-                  <h3 className="text-xl font-medium tracking-wider mb-4">Email</h3>
-                  <a href="mailto:kontakt@syntance.com" className="text-gray-400 hover:text-white transition-colors text-lg">
-                    kontakt@syntance.com
-                  </a>
-                </div>
-                
-                <div>
-                  <h3 className="text-xl font-medium tracking-wider mb-4">Telefon</h3>
-                  <a href="tel:+48662519544" className="text-gray-400 hover:text-white transition-colors text-lg">
-                    +48 662 519 544
-                  </a>
-                </div>
-                
-                <div>
-                  <h3 className="text-xl font-medium tracking-wider mb-4">Social Media</h3>
-                  <nav aria-label="Social media" className="flex space-x-4">
-                    <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Twitter/X">
-                      <Twitter size={24} aria-hidden="true" />
+              <div className="md:hidden grid grid-cols-2 gap-3 mb-6">
+                <a
+                  href="mailto:kontakt@syntance.com"
+                  className="flex flex-col items-center gap-1.5 p-4 min-h-[80px] rounded-2xl bg-white/[0.03] border border-white/10 active:bg-white/[0.06] transition-colors"
+                >
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-gray-500">Email</span>
+                  <span className="text-sm text-white font-light text-center leading-tight">kontakt@syntance.com</span>
+                </a>
+                <a
+                  href="tel:+48662519544"
+                  className="flex flex-col items-center gap-1.5 p-4 min-h-[80px] rounded-2xl bg-white/[0.03] border border-white/10 active:bg-white/[0.06] transition-colors"
+                >
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-gray-500">Telefon</span>
+                  <span className="text-sm text-white font-light">+48 662 519 544</span>
+                </a>
+              </div>
+            </AnimatedSection>
+
+            <AnimatedSection delay={150}>
+              <div className="grid md:grid-cols-2 gap-12 mb-8 md:mb-16">
+                {/* Contact Info — desktop only (na mobile mamy compact wyżej) */}
+                <address className="hidden md:block space-y-8 not-italic">
+                  <div>
+                    <h3 className="text-xl font-medium tracking-wider mb-4">Email</h3>
+                    <a href="mailto:kontakt@syntance.com" className="text-gray-400 hover:text-white transition-colors text-lg">
+                      kontakt@syntance.com
                     </a>
-                    <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="LinkedIn">
-                      <Linkedin size={24} aria-hidden="true" />
+                  </div>
+
+                  <div>
+                    <h3 className="text-xl font-medium tracking-wider mb-4">Telefon</h3>
+                    <a href="tel:+48662519544" className="text-gray-400 hover:text-white transition-colors text-lg">
+                      +48 662 519 544
                     </a>
-                    <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="GitHub">
-                      <Github size={24} aria-hidden="true" />
-                    </a>
-                  </nav>
-                </div>
-              </address>
-            
-              {/* Contact Form - używamy komponentu zamiast duplikacji */}
-              <ContactForm idPrefix="home" source="homepage" showFullRodo={true} />
-            </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-xl font-medium tracking-wider mb-4">Social Media</h3>
+                    <nav aria-label="Social media" className="flex space-x-4">
+                      <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Twitter/X">
+                        <Twitter size={24} aria-hidden="true" />
+                      </a>
+                      <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="LinkedIn">
+                        <Linkedin size={24} aria-hidden="true" />
+                      </a>
+                      <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="GitHub">
+                        <Github size={24} aria-hidden="true" />
+                      </a>
+                    </nav>
+                  </div>
+                </address>
+
+                <ContactForm idPrefix="home" source="homepage" showFullRodo={true} />
+              </div>
             </AnimatedSection>
           </div>
         </section>
