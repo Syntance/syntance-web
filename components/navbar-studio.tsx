@@ -42,7 +42,7 @@ const HIDDEN_NAVBAR_PREFIXES = ['/admin']
 export default function NavbarStudio() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [mobileWiedzaOpen, setMobileWiedzaOpen] = useState(false);
+  const [mobileBlogOpen, setMobileBlogOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement | HTMLButtonElement | null>(null);
 
@@ -98,7 +98,7 @@ export default function NavbarStudio() {
   // Auto-close on pathname change (przy nawigacji między stronami)
   useEffect(() => {
     setMobileMenuOpen(false);
-    setMobileWiedzaOpen(false);
+    setMobileBlogOpen(false);
   }, [pathname]);
 
   if (HIDDEN_NAVBAR_PATHS.has(pathname) || HIDDEN_NAVBAR_PREFIXES.some((p) => pathname.startsWith(p))) {
@@ -109,7 +109,7 @@ export default function NavbarStudio() {
     return pathToNavIndex[pathname] ?? -1;
   }, [pathname]);
 
-  const isWiedzaActive = pathname === '/strategia-marketingu-i-sprzedazy' || pathname === '/nextjs';
+  const isBlogActive = pathname === '/strategia-marketingu-i-sprzedazy' || pathname === '/nextjs';
 
   return (
     <>
@@ -242,28 +242,28 @@ export default function NavbarStudio() {
               Dla agencji
             </Link>
 
-            {/* Wiedza dropdown */}
+            {/* Blog dropdown */}
             <div className="border-b border-white/5">
               <button
-                onClick={() => setMobileWiedzaOpen(!mobileWiedzaOpen)}
-                aria-expanded={mobileWiedzaOpen}
-                aria-controls="mobile-wiedza-submenu"
+                onClick={() => setMobileBlogOpen(!mobileBlogOpen)}
+                aria-expanded={mobileBlogOpen}
+                aria-controls="mobile-blog-submenu"
                 className={`w-full flex items-center justify-between tap-target py-4 text-base font-light tracking-wider transition-colors cursor-pointer ${
-                  isWiedzaActive ? 'text-white' : 'text-gray-300'
+                  isBlogActive ? 'text-white' : 'text-gray-300'
                 }`}
               >
-                Wiedza
+                Blog
                 <ChevronDown
                   size={18}
-                  className={`transition-transform duration-200 ${mobileWiedzaOpen ? 'rotate-180' : ''}`}
+                  className={`transition-transform duration-200 ${mobileBlogOpen ? 'rotate-180' : ''}`}
                   aria-hidden="true"
                 />
               </button>
 
               <div
-                id="mobile-wiedza-submenu"
+                id="mobile-blog-submenu"
                 className={`overflow-hidden transition-all duration-300 ease-out ${
-                  mobileWiedzaOpen ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'
+                  mobileBlogOpen ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'
                 }`}
               >
                 <div className="pl-4 pb-2 space-y-0.5 border-l-2 border-purple-500/30 ml-2">
