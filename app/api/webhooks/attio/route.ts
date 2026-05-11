@@ -5,12 +5,12 @@ import { getClientDataByDealId, type AttioClientData } from '@/lib/attio'
 import { getPaymentSettings, resolveTransferTitle, type PaymentSettings } from '@/sanity/queries/paymentSettings'
 import { getContractFiles } from '@/sanity/queries/contractFiles'
 
-// ─── Mapowanie statusów Attio → akcja emailowa ─────────────────────────────
-// Ustaw dokładnie te same nazwy statusów w Attio!
+// ─── Mapowanie pola "Etap zlecenia" → akcja emailowa ──────────────────────
+// Pole: etap_zlecenia (select) na obiekcie deals
 const STATUS_ACTIONS: Record<string, 'contracts' | 'payment' | 'reject'> = {
-  'Zaakceptowane':       'contracts',  // → wyślij umowy
-  'Do przelewu':         'payment',    // → wyślij dane bankowe
-  'Odrzucone':           'reject',     // → wyślij email o odrzuceniu
+  'Zaakceptowane':  'contracts',  // → wyślij umowy PDF
+  'Do przelewu':    'payment',    // → wyślij dane bankowe
+  'Odrzucone':      'reject',     // → wyślij email o odrzuceniu
 }
 
 let resend: Resend | null = null
@@ -80,11 +80,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, skipped: `event ${eventType} ignored` })
   }
 
-  // Sprawdź czy zmieniał się status
+  // Sprawdź czy zmieniało się pole etap_zlecenia
   const data = payload.data as Record<string, unknown>
   const changedAttrs = (data?.changed_attributes as string[]) ?? []
-  if (eventType === 'record.updated' && !changedAttrs.includes('status')) {
-    return NextResponse.json({ ok: true, skipped: 'status not changed' })
+  if (eventType === 'record.updated' && !changedAttrs.includes('etap_zlecenia')) {
+    return NextResponse.json({ ok: true, skipped: 'etap_zlecenia not changed' })
   }
 
   const record = data?.record as Record<string, unknown>
@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing record id' }, { status: 400 })
   }
 
-  const newStatus = attioVal(values?.status)
+  const newStatus = attioVal(values?.etap_zlecenia)
   const action = STATUS_ACTIONS[newStatus]
 
   if (!action) {

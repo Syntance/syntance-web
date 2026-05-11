@@ -132,7 +132,7 @@ export async function createProject(project: AttioProject): Promise<AttioRecordR
     data: {
       values: {
         name: [{ value: `${project.bookingId} — ${project.contact.name}` }],
-        status: [{ value: statusLabel }],
+        etap_zlecenia: [{ value: statusLabel }],
         value: [{ value: project.value, currency_code: 'PLN' }],
         people: [{ referenced_actor_type: 'person-reference', referenced_actor_id: contactId }],
       },
@@ -247,7 +247,7 @@ export async function updateProjectStatus(
   }[status]
 
   const updated = await attioRequest(`/objects/deals/records/${projectId}`, 'PATCH', {
-    data: { values: { status: [{ value: statusLabel }] } },
+    data: { values: { etap_zlecenia: [{ value: statusLabel }] } },
   })
 
   return !!updated
