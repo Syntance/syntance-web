@@ -632,7 +632,7 @@ Email: {email}
       name: 'projectKickoff',
       title: '🎊 Start realizacji (po zaksięgowaniu zaliczki)',
       description:
-        'Wysyłany z webhooka Attio, gdy deal trafi na etap „Realizacja” lub „W realizacji” (nazwa musi być identyczna jak status w CRM).',
+        'Wysyłany z webhooka Attio, gdy deal trafi na etap „Aktywny”, „Realizacja” lub „W realizacji” (tytuł musi być identyczny jak status w CRM).',
       group: 'pipeline',
       type: 'object',
       fields: [

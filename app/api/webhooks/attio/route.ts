@@ -24,11 +24,12 @@ import {
 const STATUS_ACTIONS: Record<string, 'contracts' | 'payment' | 'kickoff' | 'reject'> = {
   'Umowa':     'contracts',  // → wyślij umowy PDF
   'Zaliczka':  'payment',    // → wyślij dane bankowe (IBAN)
-  /** Po wpłacie zaliczki — deal przesuń na ten etap, żeby wysłać potwierdzenie startu (nazwa jak w Attio). */
+  /** Po wpłacie zaliczki — potwierdzenie startu (tytuł etapu musi być 1:1 jak w Attio). */
+  'Aktywny': 'kickoff',
   'Realizacja': 'kickoff',
   'W realizacji': 'kickoff',
   'Anulowany': 'reject',     // → wyślij email o odrzuceniu
-  // Oczekujący / Aktywny / Zakończony — bez emaila
+  // Oczekujący / Zakończony — bez emaila (uwaga: wiele etapów → kickoff może wysłać mail wielokrotnie przy kolejnych ruchach)
 }
 
 /**
