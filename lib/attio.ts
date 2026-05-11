@@ -223,6 +223,7 @@ export async function createProject(project: AttioProject): Promise<AttioRecordR
         owner: [{ referenced_actor_type: 'workspace-member', referenced_actor_id: OWNER_MEMBER_ID }],
         associated_people: [{ target_object: 'people', target_record_id: contactId }],
         booking_id: [{ value: project.bookingId }],
+        imie_nazwisko_klienta: [{ value: person }],
         wartosc_brutto: [{ value: priceBrutto }],
         zaliczka: [{ value: project.deposit }],
         // typ_zlecenia: multiselect — use array of option_id strings
@@ -240,6 +241,8 @@ export async function createProject(project: AttioProject): Promise<AttioRecordR
 
   // ── Notatka czytelna dla człowieka ──────────────────────────────────────
   const lines = [
+    `Kontakt z formularza: ${project.contact.name} · ${project.contact.email}${project.contact.phone ? ` · ${project.contact.phone}` : ''}`,
+    '',
     `Typ projektu: ${project.name}`,
     `Wartość: ${project.value.toLocaleString('pl-PL')} PLN netto`,
     `Zaliczka: ${project.deposit.toLocaleString('pl-PL')} PLN`,
@@ -334,6 +337,8 @@ export async function getClientDataByDealId(dealId: string): Promise<AttioClient
     ?? personValues.job_title?.[0]?.value) as string | undefined
   const phone = personValues.phone_numbers?.[0]?.original_phone_number as string | undefined
 
+  const contactNameFromDeal = pickValue(values, 'imie_nazwisko_klienta') as string | undefined
+
   if (!email) {
     console.error(`[attio] Person on deal ${bookingId} has no email — add email to the contact in Attio`)
     return null
@@ -343,7 +348,7 @@ export async function getClientDataByDealId(dealId: string): Promise<AttioClient
 
   return {
     email,
-    name: fullName || email,
+    name: fullName || (typeof contactNameFromDeal === 'string' ? contactNameFromDeal.trim() : '') || email,
     phone,
     bookingId,
     projectType: pickSelectFirstTitle(values, 'typ_zlecenia') || 'Projekt',
