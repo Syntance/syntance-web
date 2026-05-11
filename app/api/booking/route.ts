@@ -407,7 +407,7 @@ AKCJE:
       from: "Syntance Konfigurator <konfigurator@syntance.com>",
       to: ["kontakt@syntance.com"],
       replyTo: email,
-      subject: `Syntance Studio - Zapytanie o wycenę ${projectTypeGenitive} - ${titleDate}`,
+      subject: `Syntance - Zapytanie o wycenę ${projectTypeGenitive} - ${titleDate}`,
       text: ownerEmailText,
       html: ownerEmailHtml,
     });
@@ -507,7 +507,7 @@ AKCJE:
     await getResend().emails.send({
       from: "Syntance <kontakt@syntance.com>",
       to: [email],
-      subject: `Syntance Studio - Zapytanie o wycenę ${projectTypeGenitive} - ${titleDate}`,
+      subject: `Syntance - Zapytanie o wycenę ${projectTypeGenitive} - ${titleDate}`,
       html: clientEmailHtml,
     });
 

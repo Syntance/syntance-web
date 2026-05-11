@@ -136,7 +136,7 @@ export async function GET(req: NextRequest) {
         await getResend().emails.send({
           from: "Syntance <kontakt@syntance.com>",
           to: [clientData.email],
-          subject: `Syntance Studio - Zlecenie ${projectTypeGenitive} potwierdzone!`,
+          subject: `Syntance - Zlecenie ${projectTypeGenitive} potwierdzone!`,
           html: getClientAcceptedEmailHtml(clientData, paymentSettings),
         });
 
@@ -163,7 +163,7 @@ export async function GET(req: NextRequest) {
         await getResend().emails.send({
           from: "Syntance <kontakt@syntance.com>",
           to: [clientData.email],
-          subject: `Syntance Studio - Rezerwacja realizacji ${projectTypeGenitive} - ${titleDate} - informacja`,
+          subject: `Syntance - Realizacja ${projectTypeGenitive} - informacja`,
           html: getClientRejectedEmailHtml(clientData),
         });
 
