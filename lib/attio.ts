@@ -482,6 +482,30 @@ export async function getDealNativeStageTitle(dealId: string): Promise<string | 
   return title.normalize('NFC').trim()
 }
 
+/** Tytuł wybranej opcji w polu typu select na dealu (slug atrybutu z Attio). */
+export async function getDealSelectOptionTitle(
+  dealId: string,
+  attributeSlug: string,
+): Promise<string | undefined> {
+  const deal = await attioRequest(`/objects/deals/records/${dealId}`, 'GET')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const values = deal?.data?.values as Record<string, any[]> | undefined
+  const t = pickSelectFirstTitle(values, attributeSlug)
+  return t?.normalize('NFC').trim()
+}
+
+/** Ustawia select deala na konkretną opcję (UUID opcji) — np. „Brak” po wysłanym przypomnieniu. */
+export async function resetDealSelectToOption(
+  dealId: string,
+  attributeSlug: string,
+  optionId: string,
+): Promise<boolean> {
+  const res = await attioRequest(`/objects/deals/records/${dealId}`, 'PATCH', {
+    data: { values: { [attributeSlug]: [{ option: optionId }] } },
+  })
+  return !!res?.data?.id?.record_id
+}
+
 /**
  * Pobiera dane klienta z pól deala + powiązanej osoby.
  * Jeśli deal nie ma booking_id (klient z poza formularza),

@@ -87,6 +87,23 @@ export interface EmailTemplateProjectComplete {
   referenceLineAccentColor: string
 }
 
+/** Przypomnienie / dodatkowa wiadomość — ręczny trigger pola select w dealu (Attio). */
+export interface EmailTemplateDealReminder {
+  subjectTemplate: string
+  headerEmoji?: string
+  mailBackgroundColor: string
+  heading: string
+  headingColor: string
+  greetingTemplate?: string
+  greetingColor: string
+  intro?: string
+  introColor: string
+  footerNote?: string
+  footerNoteColor: string
+  referenceLineMutedColor: string
+  referenceLineAccentColor: string
+}
+
 export interface EmailTemplateRejection {
   subjectTemplate: string
   headerEmoji?: string
@@ -250,6 +267,7 @@ export interface EmailTemplates {
   payment: EmailTemplatePayment
   projectKickoff: EmailTemplateProjectKickoff
   projectComplete: EmailTemplateProjectComplete
+  dealReminder: EmailTemplateDealReminder
   rejection: EmailTemplateRejection
   quoteRequestClient: EmailTemplateQuoteRequestClient
   quoteRequestOwner: EmailTemplateQuoteRequestOwner
@@ -365,6 +383,22 @@ export const DEFAULT_EMAIL_TEMPLATES: EmailTemplates = {
       'Dziękujemy za współpracę — zakończyliśmy uzgodniony zakres prac dla Twojego zlecenia ({bookingId}).\n\nJeśli pojawią się pytania lub potrzeba wsparcia po wdrożeniu, napisz na kontakt@syntance.com.',
     introColor: C.body,
     footerNote: 'Do zobaczenia przy kolejnych projektach — zespół Syntance',
+    footerNoteColor: C.muted,
+    referenceLineMutedColor: REF_LINE.muted,
+    referenceLineAccentColor: REF_LINE.accent,
+  },
+  dealReminder: {
+    subjectTemplate: 'Syntance - Przypomnienie — zlecenie {bookingId}',
+    headerEmoji: '⏰',
+    mailBackgroundColor: C.card,
+    heading: 'Małe przypomnienie od Syntance',
+    headingColor: C.link2,
+    greetingTemplate: 'Cześć {name},',
+    greetingColor: C.body,
+    intro:
+      'Chcieliśmy przypomnieć o zleceniu {bookingId}. Jeśli coś jest niejasne albo potrzebujesz pomocy — odezwij się.\n\nNapisz na kontakt@syntance.com lub po prostu odpowiedz na tego maila.',
+    introColor: C.body,
+    footerNote: 'Dzięki za czas — zespół Syntance',
     footerNoteColor: C.muted,
     referenceLineMutedColor: REF_LINE.muted,
     referenceLineAccentColor: REF_LINE.accent,
@@ -564,6 +598,11 @@ export const emailTemplatesQuery = `*[_type == "emailTemplates" && _id == "email
     heading, headingColor, greetingTemplate, greetingColor, intro, introColor, footerNote, footerNoteColor,
     referenceLineMutedColor, referenceLineAccentColor
   },
+  dealReminder{
+    subjectTemplate, headerEmoji, mailBackgroundColor,
+    heading, headingColor, greetingTemplate, greetingColor, intro, introColor, footerNote, footerNoteColor,
+    referenceLineMutedColor, referenceLineAccentColor
+  },
   rejection{
     subjectTemplate, headerEmoji,
     mailBackgroundColor,
@@ -627,6 +666,10 @@ export function mergeEmailTemplatesWithDefaults(
     projectComplete: {
       ...DEFAULT_EMAIL_TEMPLATES.projectComplete,
       ...(raw?.projectComplete ?? {}),
+    },
+    dealReminder: {
+      ...DEFAULT_EMAIL_TEMPLATES.dealReminder,
+      ...(raw?.dealReminder ?? {}),
     },
     rejection: { ...DEFAULT_EMAIL_TEMPLATES.rejection, ...(raw?.rejection ?? {}) },
     quoteRequestClient: {

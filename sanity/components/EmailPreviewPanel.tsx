@@ -11,6 +11,7 @@ import {
 import {
   renderContactFormClientEmail,
   renderContractsEmail,
+  renderDealReminderEmail,
   renderMeetingBookingClientEmail,
   renderPaymentEmail,
   renderProjectCompleteEmail,
@@ -27,6 +28,7 @@ type TemplateKey =
   | 'payment'
   | 'projectKickoff'
   | 'projectComplete'
+  | 'dealReminder'
   | 'rejection'
   | 'quoteRequestClient'
   | 'contactFormClient'
@@ -37,6 +39,7 @@ const TEMPLATE_LABELS: Record<TemplateKey, string> = {
   payment: '💳 Dane do przelewu',
   projectKickoff: '🎊 Start realizacji',
   projectComplete: '✨ Koniec realizacji',
+  dealReminder: '⏰ Przypomnienie (Attio)',
   rejection: '❌ Odrzucenie',
   quoteRequestClient: '📨 Konfigurator → klient',
   contactFormClient: '✉️ Formularz → klient',
@@ -110,6 +113,7 @@ export default function EmailPreviewPanel() {
     if (templateKey === 'payment') return renderPaymentEmail(data, templates, payment)
     if (templateKey === 'projectKickoff') return renderProjectKickoffEmail(data, templates)
     if (templateKey === 'projectComplete') return renderProjectCompleteEmail(data, templates)
+    if (templateKey === 'dealReminder') return renderDealReminderEmail(data, templates)
     if (templateKey === 'rejection') return renderRejectionEmail(data, templates)
     if (templateKey === 'quoteRequestClient') {
       const items = quoteItemsRaw
@@ -164,6 +168,7 @@ export default function EmailPreviewPanel() {
     templateKey === 'payment' ||
     templateKey === 'projectKickoff' ||
     templateKey === 'projectComplete' ||
+    templateKey === 'dealReminder' ||
     templateKey === 'rejection' ||
     templateKey === 'quoteRequestClient'
   const showQuoteExtras = templateKey === 'quoteRequestClient'

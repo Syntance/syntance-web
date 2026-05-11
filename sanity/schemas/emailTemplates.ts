@@ -47,6 +47,7 @@ export default defineType({
     { name: 'orderPayment', title: '💳 Przelew' },
     { name: 'orderKickoff', title: '🎊 Start realizacji' },
     { name: 'orderComplete', title: '✨ Koniec realizacji' },
+    { name: 'orderReminder', title: '⏰ Przypomnienie (Attio)' },
     { name: 'orderReject', title: '❌ Odrzucenie' },
   ],
   fields: [
@@ -759,6 +760,69 @@ Email: {email}
       ],
     }),
     defineField({
+      name: 'dealReminder',
+      title: '⏰ Przypomnienie / dodatkowy mail (trigger z Attio)',
+      description:
+        'Wysyłany gdy w dealu ustawisz pole select (slug + opcja trigger — patrz zmienne ATTIO_REMINDER_* w backendzie). Inna logika niż etapy: cooldown między wysyłkami per deal.',
+      group: 'orderReminder',
+      type: 'object',
+      fields: [
+        defineField({
+          name: 'subjectTemplate',
+          title: 'Temat',
+          description: tokenHelp,
+          type: 'string',
+          initialValue: 'Syntance - Przypomnienie — zlecenie {bookingId}',
+          validation: (Rule) => Rule.required(),
+        }),
+        defineField({
+          name: 'headerEmoji',
+          title: '😀 Emotka nad tytułem',
+          description: headerEmojiHelp,
+          type: 'string',
+          initialValue: '⏰',
+          validation: (Rule) => Rule.max(32),
+        }),
+        ec('mailBackgroundColor', 'Tło karty maila', '#111111'),
+        defineField({
+          name: 'heading',
+          title: 'Nagłówek (h1)',
+          type: 'string',
+          initialValue: 'Małe przypomnienie od Syntance',
+          validation: (Rule) => Rule.required(),
+        }),
+        ec('headingColor', 'Kolor — nagłówek h1', '#93c5fd'),
+        defineField({
+          name: 'greetingTemplate',
+          title: 'Powitanie',
+          description: 'Użyj {name}.',
+          type: 'string',
+          initialValue: 'Cześć {name},',
+        }),
+        ec('greetingColor', 'Kolor — powitanie', '#cccccc'),
+        defineField({
+          name: 'intro',
+          title: 'Treść główna',
+          description: tokenHelp,
+          type: 'text',
+          rows: 5,
+          initialValue:
+            'Chcieliśmy przypomnieć o zleceniu {bookingId}. Jeśli coś jest niejasne albo potrzebujesz pomocy — odezwij się.\n\nNapisz na kontakt@syntance.com lub po prostu odpowiedz na tego maila.',
+        }),
+        ec('introColor', 'Kolor — treść główna', '#cccccc'),
+        defineField({
+          name: 'footerNote',
+          title: 'Stopka treści (opcjonalnie)',
+          type: 'text',
+          rows: 2,
+          initialValue: 'Dzięki za czas — zespół Syntance',
+        }),
+        ec('footerNoteColor', 'Kolor — stopka treści', '#888888'),
+        ec('referenceLineMutedColor', 'Kolor — etykieta „Nr referencyjny:” (tekst przed numerem)', '#9e9e9e'),
+        ec('referenceLineAccentColor', 'Kolor — numer referencyjny w nagłówku', '#a29bfe'),
+      ],
+    }),
+    defineField({
       name: 'rejection',
       title: '❌ Email o odrzuceniu',
       group: 'orderReject',
@@ -832,7 +896,7 @@ Email: {email}
       return {
         title: '📧 Treści emaili',
         subtitle:
-          'Konfigurator · Kontakt · Rozmowa · Umowy · Przelew · Start · Koniec · Odrzucenie',
+          'Konfigurator · Kontakt · Rozmowa · Umowy · Przelew · Start · Koniec · Przypomnienie · Odrzucenie',
       }
     },
   },

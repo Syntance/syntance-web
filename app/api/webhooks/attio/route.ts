@@ -7,13 +7,22 @@ import {
   getClientDataByDealId,
   getDealNativeStageTitle,
   getAttioDealsStageIds,
+  getDealSelectOptionTitle,
+  resetDealSelectToOption,
   type AttioClientData,
 } from '@/lib/attio'
+import {
+  acquireAttioReminderSend,
+  acquireAttioStageEmailSend,
+  releaseAttioReminderSend,
+  releaseAttioStageEmailSend,
+} from '@/lib/attio-email-dedupe'
 import { getPaymentSettings } from '@/sanity/queries/paymentSettings'
 import { getContractFiles } from '@/sanity/queries/contractFiles'
 import { getEmailTemplates } from '@/sanity/queries/emailTemplates'
 import {
   renderContractsEmail,
+  renderDealReminderEmail,
   renderPaymentEmail,
   renderProjectCompleteEmail,
   renderProjectKickoffEmail,
@@ -44,6 +53,16 @@ const LIST_STAGE_ATTRIBUTE_IDS = (process.env.ATTIO_LIST_STAGE_ATTRIBUTE_IDS ?? 
   .split(',')
   .map((s) => s.trim())
   .filter(Boolean)
+
+/** UUID atrybutu(ów) select „przypomnienie” w Attio — ten sam co w webhooku record.updated. */
+function reminderAttributeIdList(): string[] {
+  const main = process.env.ATTIO_REMINDER_EMAIL_ATTRIBUTE_ID?.trim()
+  const extra = (process.env.ATTIO_REMINDER_LIST_ATTRIBUTE_IDS ?? '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+  return [...(main ? [main] : []), ...extra]
+}
 
 let resend: Resend | null = null
 function requireResend(): Resend {
@@ -184,9 +203,12 @@ async function processV2Event(event: V2Event): Promise<Record<string, unknown>> 
     if (objectId !== meta.objectId) {
       return { skipped: 'record.updated: nie jest to obiekt deals', gotObjectId: objectId }
     }
+    if (reminderAttributeIdList().includes(attributeId)) {
+      return handleDealReminderTrigger(recordId)
+    }
     if (attributeId !== meta.stageAttributeId) {
       return {
-        skipped: 'record.updated: zmieniono inny atrybut niż Deal stage',
+        skipped: 'record.updated: zmieniono inny atrybut niż Deal stage / przypomnienie',
         attributeId,
         expectedStageAttributeId: meta.stageAttributeId,
       }
@@ -206,14 +228,18 @@ async function processV2Event(event: V2Event): Promise<Record<string, unknown>> 
     }
     const isStageColumn =
       attributeId === meta.stageAttributeId || LIST_STAGE_ATTRIBUTE_IDS.includes(attributeId)
-    if (!isStageColumn) {
-      return {
-        skipped: 'list-entry.updated: nie jest to kolumna etapu',
-        attributeId,
-        dealStageAttributeId: meta.stageAttributeId,
-      }
+    const isReminderColumn = reminderAttributeIdList().includes(attributeId)
+    if (isStageColumn) {
+      return handleDealStageChange(parentRecordId)
     }
-    return handleDealStageChange(parentRecordId)
+    if (isReminderColumn) {
+      return handleDealReminderTrigger(parentRecordId)
+    }
+    return {
+      skipped: 'list-entry.updated: nie jest to kolumna etapu ani przypomnienia',
+      attributeId,
+      dealStageAttributeId: meta.stageAttributeId,
+    }
   }
 
   return { skipped: `event_type "${eventType}" — brak obsługi` }
@@ -236,6 +262,17 @@ async function handleDealStageChange(dealRecordId: string): Promise<Record<strin
 
   const forEmail = await mergeFreshBookingId(dealRecordId, clientData)
 
+  const acquired = await acquireAttioStageEmailSend(dealRecordId, action)
+  if (!acquired) {
+    return {
+      ok: true,
+      skipped: 'duplicate_stage_email',
+      action,
+      bookingId: forEmail.bookingId,
+      stage: stageTitle?.normalize('NFC').trim() ?? '',
+    }
+  }
+
   try {
     if (action === 'contracts') {
       await sendContractsEmail(forEmail)
@@ -255,7 +292,83 @@ async function handleDealStageChange(dealRecordId: string): Promise<Record<strin
       stage: stageTitle?.normalize('NFC').trim() ?? '',
     }
   } catch (err) {
+    await releaseAttioStageEmailSend(dealRecordId, action)
     console.error('[attio-webhook] Email send failed:', err)
+    return { error: err instanceof Error ? err.message : 'Email failed', dealRecordId }
+  }
+}
+
+/**
+ * Pole select na dealu (osobny atrybut niż etap).
+ * ENV: ATTIO_REMINDER_EMAIL_ATTRIBUTE_ID (UUID), ATTIO_REMINDER_EMAIL_ATTRIBUTE_SLUG (slug z Attio),
+ * ATTIO_REMINDER_EMAIL_TRIGGER_TITLE (domyślnie „Wyślij przypomnienie”),
+ * opcjonalnie ATTIO_REMINDER_EMAIL_IDLE_OPTION_ID (UUID opcji „Brak” — auto-reset po wysyłce).
+ */
+async function handleDealReminderTrigger(dealRecordId: string): Promise<Record<string, unknown>> {
+  const slug = process.env.ATTIO_REMINDER_EMAIL_ATTRIBUTE_SLUG?.trim()
+  if (!slug || reminderAttributeIdList().length === 0) {
+    return {
+      skipped:
+        'reminder: ustaw ATTIO_REMINDER_EMAIL_ATTRIBUTE_ID i ATTIO_REMINDER_EMAIL_ATTRIBUTE_SLUG (oraz webhook na ten atrybut)',
+    }
+  }
+
+  const triggerTitle = (process.env.ATTIO_REMINDER_EMAIL_TRIGGER_TITLE ?? 'Wyślij przypomnienie')
+    .normalize('NFC')
+    .trim()
+    .replace(/\u00a0/g, ' ')
+
+  const currentRaw = await getDealSelectOptionTitle(dealRecordId, slug)
+  const current = (currentRaw ?? '')
+    .normalize('NFC')
+    .trim()
+    .replace(/\u00a0/g, ' ')
+
+  if (current !== triggerTitle) {
+    return {
+      skipped: 'reminder: select nie wskazuje opcji trigger',
+      got: currentRaw ?? null,
+      expected: triggerTitle,
+    }
+  }
+
+  const clientData = await getClientDataByDealId(dealRecordId)
+  if (!clientData) {
+    console.error(`[attio-webhook] Brak danych klienta dla przypomnienia, deal ${dealRecordId}`)
+    return { error: 'Brak danych klienta (email / powiązana osoba)', dealRecordId }
+  }
+
+  const forEmail = await mergeFreshBookingId(dealRecordId, clientData)
+
+  const acquired = await acquireAttioReminderSend(dealRecordId)
+  if (!acquired) {
+    return {
+      ok: true,
+      skipped: 'reminder_cooldown',
+      bookingId: forEmail.bookingId,
+    }
+  }
+
+  try {
+    await sendDealReminderEmail(forEmail)
+    const idleOptionId = process.env.ATTIO_REMINDER_EMAIL_IDLE_OPTION_ID?.trim()
+    if (idleOptionId) {
+      const resetOk = await resetDealSelectToOption(dealRecordId, slug, idleOptionId)
+      if (!resetOk) {
+        console.warn('[attio-webhook] Nie udało się zresetować pola przypomnienia w Attio', {
+          dealRecordId,
+          slug,
+        })
+      }
+    }
+    return {
+      ok: true,
+      action: 'reminder',
+      bookingId: forEmail.bookingId,
+    }
+  } catch (err) {
+    await releaseAttioReminderSend(dealRecordId)
+    console.error('[attio-webhook] Reminder email failed:', err)
     return { error: err instanceof Error ? err.message : 'Email failed', dealRecordId }
   }
 }
@@ -304,6 +417,17 @@ async function processLegacyAttioPayload(payload: Record<string, unknown>): Prom
 
   const forEmail = await mergeFreshBookingId(recordId, clientData)
 
+  const acquired = await acquireAttioStageEmailSend(recordId, action)
+  if (!acquired) {
+    return NextResponse.json({
+      ok: true,
+      skipped: 'duplicate_stage_email',
+      action,
+      bookingId: forEmail.bookingId,
+      legacy: true,
+    })
+  }
+
   try {
     if (action === 'contracts') {
       await sendContractsEmail(forEmail)
@@ -318,6 +442,7 @@ async function processLegacyAttioPayload(payload: Record<string, unknown>): Prom
     }
     return NextResponse.json({ ok: true, action, bookingId: forEmail.bookingId, legacy: true })
   } catch (err) {
+    await releaseAttioStageEmailSend(recordId, action)
     console.error('[attio-webhook] Email send failed:', err)
     return NextResponse.json({ error: 'Email failed' }, { status: 500 })
   }
@@ -398,6 +523,18 @@ async function sendProjectKickoffEmail(data: AttioClientData) {
 async function sendProjectCompleteEmail(data: AttioClientData) {
   const templates = await getEmailTemplates()
   const { subject, html } = renderProjectCompleteEmail(data, templates)
+
+  await requireResend().emails.send({
+    from: 'Syntance <kontakt@syntance.com>',
+    to: [data.email],
+    subject,
+    html,
+  })
+}
+
+async function sendDealReminderEmail(data: AttioClientData) {
+  const templates = await getEmailTemplates()
+  const { subject, html } = renderDealReminderEmail(data, templates)
 
   await requireResend().emails.send({
     from: 'Syntance <kontakt@syntance.com>',

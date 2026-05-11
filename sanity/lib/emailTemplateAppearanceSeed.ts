@@ -37,6 +37,7 @@ export async function seedEmailTemplateAppearance(client: SanityClient): Promise
     'payment',
     'projectKickoff',
     'projectComplete',
+    'dealReminder',
     'rejection',
     'quoteRequestClient',
     'quoteRequestOwner',
