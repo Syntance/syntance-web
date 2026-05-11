@@ -186,25 +186,32 @@ function pickValue(values: Record<string, any[]> | undefined, slug: string): unk
 
 /**
  * Pobiera dane klienta z pól deala + powiązanej osoby.
- * Wszystkie pola są widoczne w Attio UI — możesz je edytować ręcznie.
+ * Jeśli deal nie ma booking_id (klient z poza formularza),
+ * generuje nowy numer i zapisuje go w Attio automatycznie.
  */
 export async function getClientDataByDealId(dealId: string): Promise<AttioClientData | null> {
   const deal = await attioRequest(`/objects/deals/records/${dealId}`, 'GET')
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const values = (deal?.data?.values as Record<string, any[]>) ?? {}
 
-  const bookingId = pickValue(values, 'booking_id') as string | undefined
+  // ── Booking ID — generuj jeśli brak (ręcznie stworzony deal) ────────────
+  let bookingId = pickValue(values, 'booking_id') as string | undefined
   if (!bookingId) {
-    console.error('[attio] Deal missing booking_id field')
-    return null
+    const { getNextOrderNumber } = await import('@/sanity/queries/orderCounter')
+    bookingId = await getNextOrderNumber()
+    // Zapisz wygenerowany numer z powrotem do deala w Attio
+    await attioRequest(`/objects/deals/records/${dealId}`, 'PATCH', {
+      data: { values: { booking_id: [{ value: bookingId }] } },
+    })
+    console.log(`[attio] Auto-generated booking_id ${bookingId} for deal ${dealId}`)
   }
 
-  // Powiązana osoba (klient)
+  // ── Powiązana osoba (klient) ─────────────────────────────────────────────
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const personRef = (values.associated_people as any[])?.[0]
   const personId = personRef?.target_record_id
   if (!personId) {
-    console.error('[attio] Deal missing associated_people')
+    console.error(`[attio] Deal ${dealId} (${bookingId}) has no associated person — add a contact in Attio`)
     return null
   }
 
@@ -216,8 +223,8 @@ export async function getClientDataByDealId(dealId: string): Promise<AttioClient
   const fullName = personValues.name?.[0]?.full_name as string | undefined
   const phone = personValues.phone_numbers?.[0]?.original_phone_number as string | undefined
 
-  if (!email || !fullName) {
-    console.error('[attio] Person missing email or name')
+  if (!email) {
+    console.error(`[attio] Person on deal ${bookingId} has no email — add email to the contact in Attio`)
     return null
   }
 
@@ -225,7 +232,7 @@ export async function getClientDataByDealId(dealId: string): Promise<AttioClient
 
   return {
     email,
-    name: fullName,
+    name: fullName || email,
     phone,
     bookingId,
     projectType: (pickValue(values, 'typ_zlecenia') as string) || 'Projekt',
