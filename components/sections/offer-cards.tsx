@@ -110,7 +110,7 @@ export default function OfferCards() {
                   </h3>
                 </div>
                 <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-blue-300/70 bg-blue-500/10 px-2 py-1 rounded-full whitespace-nowrap">
-                  2-4 tyg.
+                  miesiąc
                 </span>
               </div>
               <p className="text-sm text-gray-300 leading-relaxed mb-2">
@@ -149,7 +149,7 @@ export default function OfferCards() {
                   </h3>
                 </div>
                 <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-purple-300/70 bg-purple-500/10 px-2 py-1 rounded-full whitespace-nowrap">
-                  4-6 tyg.
+                  2 miesiące
                 </span>
               </div>
               <p className="text-sm text-gray-300 leading-relaxed mb-2">
@@ -219,7 +219,7 @@ export default function OfferCards() {
                 <div className="flex items-center justify-between mb-6 pb-6 border-b border-white/10">
                   <div>
                     <div className="text-2xl font-light text-white">Od&nbsp; {formatPrice(basePrices.website)} PLN</div>
-                    <div className="text-sm text-gray-400 font-light mt-1">2-4 tygodnie</div>
+                    <div className="text-sm text-gray-400 font-light mt-1">miesiąc</div>
                   </div>
                 </div>
                 
@@ -259,7 +259,7 @@ export default function OfferCards() {
                 <div className="flex items-center justify-between mb-6 pb-6 border-b border-white/10">
                   <div>
                     <div className="text-2xl font-light text-white">Od&nbsp; {formatPrice(basePrices.ecommerce)} PLN</div>
-                    <div className="text-sm text-gray-400 font-light mt-1">4-6 tygodni</div>
+                    <div className="text-sm text-gray-400 font-light mt-1">2 miesiące</div>
                   </div>
                 </div>
                 

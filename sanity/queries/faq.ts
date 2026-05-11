@@ -56,7 +56,7 @@ export const defaultFaqItems: PricingFaqItem[] = [
     _id: 'default-5',
     category: 'time',
     question: 'Ile trwa realizacja strony?',
-    answer: 'Strona firmowa: 2-3 tygodnie. Sklep e-commerce: 4-6 tygodni. Widzisz postęp na żywo (preview link) — nie czekasz 3 miesiące na "efekt końcowy".',
+    answer: 'Strona firmowa: miesiąc. Sklep e-commerce: 2 miesiące. Widzisz postęp na żywo (preview link) — nie czekasz 3 miesiące na "efekt końcowy".',
     order: 5,
   },
   {
