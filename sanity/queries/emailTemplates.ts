@@ -68,6 +68,7 @@ export interface EmailTemplateRejection {
   footerNote?: string
   footerNoteColor: string
   referenceLineMutedColor: string
+  referenceLineAccentColor: string
 }
 
 export interface EmailTemplateQuoteRequestClient {
@@ -88,6 +89,7 @@ export interface EmailTemplateQuoteRequestClient {
   footerNote?: string
   footerNoteColor: string
   referenceLineMutedColor: string
+  referenceLineAccentColor: string
   summarySectionHeadingColor: string
   tableLabelColor: string
   tableValueColor: string
@@ -105,6 +107,11 @@ export interface EmailTemplateQuoteRequestOwner {
   sectionPanelBackgroundColor: string
   headerTitle: string
   headerTitleColor: string
+  /** Kolor „ID: ” (jak etykieta „Nr referencyjny”). */
+  referenceLineMutedColor: string
+  /** Kolor numeru zapytania w nagłówku (jak wartość referencyjna). */
+  referenceLineAccentColor: string
+  /** Kolor daty po „•” w linii meta. */
   headerMetaColor: string
   sectionHeadingColor: string
   clientFieldLabelColor: string
@@ -239,6 +246,12 @@ const C = {
   copyright: '#555555',
 } as const
 
+/** Para kolorów dla linii „Nr referencyjny:” / „ID:” — szara etykieta, lawendowy kod (design system maili). */
+const REF_LINE = {
+  muted: '#9e9e9e',
+  accent: '#a29bfe',
+} as const
+
 export const DEFAULT_EMAIL_TEMPLATES: EmailTemplates = {
   contracts: {
     subjectTemplate: 'Syntance - Umowy do zlecenia {bookingId}',
@@ -254,8 +267,8 @@ export const DEFAULT_EMAIL_TEMPLATES: EmailTemplates = {
     introColor: C.body,
     footerNote: 'Pytania? Napisz na kontakt@syntance.com.',
     footerNoteColor: C.muted,
-    referenceLineMutedColor: C.muted,
-    referenceLineAccentColor: C.accent,
+    referenceLineMutedColor: REF_LINE.muted,
+    referenceLineAccentColor: REF_LINE.accent,
     summarySectionHeadingColor: C.white,
     tableLabelColor: C.muted,
     tableValueColor: C.white,
@@ -278,8 +291,8 @@ export const DEFAULT_EMAIL_TEMPLATES: EmailTemplates = {
     footerNote:
       'Po zaksięgowaniu wpłaty skontaktujemy się w sprawie startu projektu. Pytania? kontakt@syntance.com.',
     footerNoteColor: C.muted,
-    referenceLineMutedColor: C.muted,
-    referenceLineAccentColor: C.accent,
+    referenceLineMutedColor: REF_LINE.muted,
+    referenceLineAccentColor: REF_LINE.accent,
     summarySectionHeadingColor: C.white,
     tableLabelColor: C.muted,
     tableValueColor: C.white,
@@ -303,7 +316,8 @@ export const DEFAULT_EMAIL_TEMPLATES: EmailTemplates = {
     body2Color: C.body,
     footerNote: 'Pytania? kontakt@syntance.com · +48 537 110 170',
     footerNoteColor: C.muted,
-    referenceLineMutedColor: C.muted,
+    referenceLineMutedColor: REF_LINE.muted,
+    referenceLineAccentColor: REF_LINE.accent,
   },
   quoteRequestClient: {
     subjectTemplate: 'Syntance - Zapytanie o wycenę {projectTypeGenitive} - {titleDate}',
@@ -325,7 +339,8 @@ export const DEFAULT_EMAIL_TEMPLATES: EmailTemplates = {
     footerNote:
       'Jeśli masz pytania, odpowiedz na ten email lub napisz na kontakt@syntance.com.',
     footerNoteColor: C.muted,
-    referenceLineMutedColor: C.muted,
+    referenceLineMutedColor: REF_LINE.muted,
+    referenceLineAccentColor: REF_LINE.accent,
     summarySectionHeadingColor: C.white,
     tableLabelColor: C.muted,
     tableValueColor: C.white,
@@ -342,6 +357,8 @@ export const DEFAULT_EMAIL_TEMPLATES: EmailTemplates = {
     sectionPanelBackgroundColor: C.section,
     headerTitle: 'Nowe zapytanie o wycenę',
     headerTitleColor: C.white,
+    referenceLineMutedColor: REF_LINE.muted,
+    referenceLineAccentColor: REF_LINE.accent,
     headerMetaColor: C.muted,
     sectionHeadingColor: C.white,
     clientFieldLabelColor: C.muted,
@@ -473,20 +490,20 @@ export const emailTemplatesQuery = `*[_type == "emailTemplates" && _id == "email
     subjectTemplate, headerEmoji,
     mailBackgroundColor,
     heading, headingColor, greetingTemplate, greetingColor, body, bodyColor, body2, body2Color, footerNote, footerNoteColor,
-    referenceLineMutedColor
+    referenceLineMutedColor, referenceLineAccentColor
   },
   quoteRequestClient{
     subjectTemplate, headerEmoji,
     mailBackgroundColor, sectionPanelBackgroundColor,
     heading, headingColor, greetingTemplate, greetingColor, intro, introColor,
     nextStepsTitle, nextStepsTitleColor, nextStepsBody, nextStepsBodyColor, footerNote, footerNoteColor,
-    referenceLineMutedColor, summarySectionHeadingColor, tableLabelColor, tableValueColor, tableAccentColor,
+    referenceLineMutedColor, referenceLineAccentColor, summarySectionHeadingColor, tableLabelColor, tableValueColor, tableAccentColor,
     itemListTextColor, listBulletColor, calloutBackgroundColor, calloutBorderColor
   },
   quoteRequestOwner{
     subjectTemplate, headerEmoji,
     mailBackgroundColor, sectionPanelBackgroundColor,
-    headerTitle, headerTitleColor, headerMetaColor, sectionHeadingColor,
+    headerTitle, headerTitleColor, referenceLineMutedColor, referenceLineAccentColor, headerMetaColor, sectionHeadingColor,
     clientFieldLabelColor, clientFieldValueColor, descriptionTextColor, linkAccentColor,
     pricingLabelColor, pricingValueNettoColor, pricingValueBruttoColor, pricingDepositColor, pricingTimeColor,
     dividerRowColor, itemsListTextColor, listBulletColor,

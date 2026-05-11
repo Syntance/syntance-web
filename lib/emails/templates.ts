@@ -13,6 +13,7 @@ import {
   type EmailTemplateContract,
   type EmailTemplatePayment,
   type EmailTemplateQuoteRequestClient,
+  type EmailTemplateQuoteRequestOwner,
   type EmailTemplates,
 } from '../../sanity/queries/emailTemplates'
 import {
@@ -56,6 +57,20 @@ function headerHeroEmojiHtml(emoji: string | undefined, fontSizePx: number): str
   const trimmed = emoji?.trim() ?? ''
   if (!trimmed) return ''
   return `<div style="font-size:${fontSizePx}px;margin-bottom:16px;line-height:1;">${escapeHtml(trimmed)}</div>`
+}
+
+/** Linia pod h1: szara etykieta „Nr referencyjny:”, lawendowy numer — jednolitie we wszystkich mailach z numerem zlecenia. */
+function referenceNumberHeaderLineHtml(bookingId: string, mutedColor: string, accentColor: string): string {
+  return `<p style="margin:8px 0 0;color:${mutedColor};font-size:14px;line-height:1.5;">Nr referencyjny: <strong style="color:${accentColor};font-weight:600;">${escapeHtml(bookingId)}</strong></p>`
+}
+
+/** Mail wewnętrzny: „ID: ” + numer (jak referencyjny) + stonowana data po „•”. */
+function quoteOwnerHeaderMetaLineHtml(
+  bookingId: string,
+  dateLabel: string,
+  t: EmailTemplateQuoteRequestOwner,
+): string {
+  return `<p style="margin:8px 0 0;font-size:14px;line-height:1.5;"><span style="color:${t.referenceLineMutedColor}">ID: </span><strong style="color:${t.referenceLineAccentColor};font-weight:600;">${escapeHtml(bookingId)}</strong><span style="color:${t.headerMetaColor}"> • ${escapeHtml(dateLabel)}</span></p>`
 }
 
 function paragraphsHtml(text: string | undefined, color: string, size = 15): string {
@@ -125,7 +140,7 @@ export function renderContractsEmail(
   const header = `<td style="padding:32px;text-align:center;border-bottom:1px solid ${SHELL_CARD_BORDER};">
     ${headerHeroEmojiHtml(t.headerEmoji, 56)}
     <h1 style="margin:0;color:${t.headingColor};font-size:26px;">${escapeHtml(t.heading)}</h1>
-    <p style="margin:8px 0 0;color:${t.referenceLineMutedColor};">Nr referencyjny: <strong style="color:${t.referenceLineAccentColor};">${escapeHtml(data.bookingId)}</strong></p>
+    ${referenceNumberHeaderLineHtml(data.bookingId, t.referenceLineMutedColor, t.referenceLineAccentColor)}
   </td>`
 
   const body = `
@@ -194,7 +209,7 @@ export function renderPaymentEmail(
   const header = `<td style="padding:32px;text-align:center;border-bottom:1px solid ${SHELL_CARD_BORDER};">
     ${headerHeroEmojiHtml(t.headerEmoji, 56)}
     <h1 style="margin:0;color:${t.headingColor};font-size:26px;">${escapeHtml(t.heading)}</h1>
-    <p style="margin:8px 0 0;color:${t.referenceLineMutedColor};">Nr referencyjny: <strong style="color:${t.referenceLineAccentColor};">${escapeHtml(data.bookingId)}</strong></p>
+    ${referenceNumberHeaderLineHtml(data.bookingId, t.referenceLineMutedColor, t.referenceLineAccentColor)}
   </td>`
 
   const body = `
@@ -228,7 +243,7 @@ export function renderRejectionEmail(
   const header = `<td style="padding:32px;text-align:center;border-bottom:1px solid ${SHELL_CARD_BORDER};">
     ${headerHeroEmojiHtml(t.headerEmoji, 48)}
     <h1 style="margin:0;color:${t.headingColor};font-size:24px;">${escapeHtml(t.heading)}</h1>
-    <p style="margin:8px 0 0;color:${t.referenceLineMutedColor};">Nr referencyjny: ${escapeHtml(data.bookingId)}</p>
+    ${referenceNumberHeaderLineHtml(data.bookingId, t.referenceLineMutedColor, t.referenceLineAccentColor)}
   </td>`
 
   const bodyHtml = `
@@ -369,7 +384,7 @@ export function renderQuoteRequestClientEmail(
   const header = `<td style="padding:32px;text-align:center;border-bottom:1px solid ${SHELL_CARD_BORDER};">
     ${headerHeroEmojiHtml(t.headerEmoji, 48)}
     <h1 style="margin:0;color:${t.headingColor};font-size:24px;">${escapeHtml(t.heading)}</h1>
-    <p style="margin:8px 0 0;color:${t.referenceLineMutedColor};">Numer referencyjny: ${escapeHtml(data.bookingId)}</p>
+    ${referenceNumberHeaderLineHtml(data.bookingId, t.referenceLineMutedColor, t.referenceLineAccentColor)}
   </td>`
 
   const itemsHtml = data.items
@@ -434,20 +449,18 @@ export function renderQuoteRequestOwnerEmail(
     )
     .join('')
 
+  const ownerMetaDate = new Date().toLocaleDateString('pl-PL', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+
   const headerHtml = `<td style="padding:32px;border-bottom:1px solid ${SHELL_CARD_BORDER};">
     ${headerHeroEmojiHtml(t.headerEmoji, 44)}
     <h1 style="margin:0;color:${t.headerTitleColor};font-size:24px;font-weight:600;">${escapeHtml(t.headerTitle)}</h1>
-    <p style="margin:8px 0 0;color:${t.headerMetaColor};font-size:14px;">
-      ID: ${escapeHtml(payload.bookingId)} • ${escapeHtml(
-    new Date().toLocaleDateString('pl-PL', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    }),
-  )}
-    </p>
+    ${quoteOwnerHeaderMetaLineHtml(payload.bookingId, ownerMetaDate, t)}
   </td>`
 
   const innerBody = `
