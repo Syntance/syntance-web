@@ -150,6 +150,13 @@
     position: fixed;
     width: 100%;
   }
+
+  /* Floating „Sprawdź cenę” (StickyCtaFloat dokleja <a> do body) — nie nad drawerem menu mobilnego */
+  html[data-mobile-nav-open='true'] a[data-syntance-sticky-cta] {
+    visibility: hidden !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────────

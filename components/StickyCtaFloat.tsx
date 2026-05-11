@@ -35,6 +35,7 @@ function StickyCtaFloatInner({
     const el = document.createElement('a')
     el.href = href
     el.textContent = label
+    el.setAttribute('data-syntance-sticky-cta', 'true')
     el.className =
       'px-8 py-3 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 glow-box cursor-pointer inline-flex items-center justify-center text-center whitespace-nowrap shadow-lg shadow-white/10'
     el.style.transition = 'opacity 0.3s ease-out'
@@ -226,6 +227,34 @@ function StickyCtaFloatInner({
     observer.observe(section)
     return () => observer.disconnect()
   }, [hideSectionId])
+
+  // Ukryj czy pokaż przycisk gdy menu mobilne się otwiera/zamyka
+  useEffect(() => {
+    const checkMenuState = () => {
+      const el = elRef.current
+      if (!el) return
+      
+      const isMenuOpen = document.documentElement.getAttribute('data-mobile-nav-open') === 'true'
+      if (isMenuOpen) {
+        el.style.display = 'none'
+      } else {
+        el.style.display = ''
+      }
+    }
+
+    // Sprawdź natychmiast przy montowaniu
+    checkMenuState()
+
+    // Obserwuj zmiany atrybutu na HTML
+    const observer = new MutationObserver(checkMenuState)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-mobile-nav-open'],
+      attributeOldValue: false,
+    })
+
+    return () => observer.disconnect()
+  }, [])
 
   useEffect(() => {
     const hide = () => {

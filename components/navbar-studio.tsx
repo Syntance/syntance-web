@@ -46,6 +46,18 @@ export default function NavbarStudio() {
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement | HTMLButtonElement | null>(null);
 
+  // Ukryj floating CTA (StickyCtaFloat → body) gdy drawer jest otwarty — ten sam z-index co nav.
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.documentElement.setAttribute("data-mobile-nav-open", "true");
+    } else {
+      document.documentElement.removeAttribute("data-mobile-nav-open");
+    }
+    return () => {
+      document.documentElement.removeAttribute("data-mobile-nav-open");
+    };
+  }, [mobileMenuOpen]);
+
   // Body scroll lock (rules: 60-quality "Memory leaks") + Escape close + focus management
   useEffect(() => {
     if (!mobileMenuOpen) return;
