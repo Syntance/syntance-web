@@ -15,14 +15,18 @@ import { getEmailTemplates } from '@/sanity/queries/emailTemplates'
 import {
   renderContractsEmail,
   renderPaymentEmail,
+  renderProjectKickoffEmail,
   renderRejectionEmail,
 } from '@/lib/emails/templates'
 
 // ─── Mapowanie natywnego Status (stage) → akcja emailowa ──────────────────
 // Pole: stage (system status) na obiekcie deals — to co widzisz w Attio UI
-const STATUS_ACTIONS: Record<string, 'contracts' | 'payment' | 'reject'> = {
+const STATUS_ACTIONS: Record<string, 'contracts' | 'payment' | 'kickoff' | 'reject'> = {
   'Umowa':     'contracts',  // → wyślij umowy PDF
   'Zaliczka':  'payment',    // → wyślij dane bankowe (IBAN)
+  /** Po wpłacie zaliczki — deal przesuń na ten etap, żeby wysłać potwierdzenie startu (nazwa jak w Attio). */
+  'Realizacja': 'kickoff',
+  'W realizacji': 'kickoff',
   'Anulowany': 'reject',     // → wyślij email o odrzuceniu
   // Oczekujący / Aktywny / Zakończony — bez emaila
 }
@@ -117,7 +121,9 @@ export async function POST(req: NextRequest) {
   return processLegacyAttioPayload(payload)
 }
 
-function actionForStageTitle(title: string | undefined): 'contracts' | 'payment' | 'reject' | undefined {
+function actionForStageTitle(
+  title: string | undefined,
+): 'contracts' | 'payment' | 'kickoff' | 'reject' | undefined {
   if (!title) return undefined
   const k = title.normalize('NFC').trim().replace(/\u00a0/g, ' ')
   return STATUS_ACTIONS[k]
@@ -231,6 +237,8 @@ async function handleDealStageChange(dealRecordId: string): Promise<Record<strin
       await sendContractsEmail(forEmail)
     } else if (action === 'payment') {
       await sendPaymentEmail(forEmail)
+    } else if (action === 'kickoff') {
+      await sendProjectKickoffEmail(forEmail)
     } else if (action === 'reject') {
       await sendRejectionEmail(forEmail)
     }
@@ -295,6 +303,8 @@ async function processLegacyAttioPayload(payload: Record<string, unknown>): Prom
       await sendContractsEmail(forEmail)
     } else if (action === 'payment') {
       await sendPaymentEmail(forEmail)
+    } else if (action === 'kickoff') {
+      await sendProjectKickoffEmail(forEmail)
     } else if (action === 'reject') {
       await sendRejectionEmail(forEmail)
     }
@@ -354,6 +364,20 @@ async function sendPaymentEmail(data: AttioClientData) {
     getEmailTemplates(),
   ])
   const { subject, html } = renderPaymentEmail(data, templates, payment)
+
+  await requireResend().emails.send({
+    from: 'Syntance <kontakt@syntance.com>',
+    to: [data.email],
+    subject,
+    html,
+  })
+}
+
+// ─── EMAIL: Start realizacji (zaliczka) ────────────────────────────────────
+
+async function sendProjectKickoffEmail(data: AttioClientData) {
+  const templates = await getEmailTemplates()
+  const { subject, html } = renderProjectKickoffEmail(data, templates)
 
   await requireResend().emails.send({
     from: 'Syntance <kontakt@syntance.com>',

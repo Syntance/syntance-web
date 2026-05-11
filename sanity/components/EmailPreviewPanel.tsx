@@ -13,6 +13,7 @@ import {
   renderContractsEmail,
   renderMeetingBookingClientEmail,
   renderPaymentEmail,
+  renderProjectKickoffEmail,
   renderQuoteRequestClientEmail,
   renderRejectionEmail,
   DEFAULT_PREVIEW_DATA,
@@ -23,6 +24,7 @@ import type { PaymentSettings } from '../queries/paymentSettings'
 type TemplateKey =
   | 'contracts'
   | 'payment'
+  | 'projectKickoff'
   | 'rejection'
   | 'quoteRequestClient'
   | 'contactFormClient'
@@ -31,6 +33,7 @@ type TemplateKey =
 const TEMPLATE_LABELS: Record<TemplateKey, string> = {
   contracts: '📄 Umowy',
   payment: '💳 Dane do przelewu',
+  projectKickoff: '🎊 Start realizacji',
   rejection: '❌ Odrzucenie',
   quoteRequestClient: '📨 Konfigurator → klient',
   contactFormClient: '✉️ Formularz → klient',
@@ -102,6 +105,7 @@ export default function EmailPreviewPanel() {
 
   const rendered = useMemo(() => {
     if (templateKey === 'payment') return renderPaymentEmail(data, templates, payment)
+    if (templateKey === 'projectKickoff') return renderProjectKickoffEmail(data, templates)
     if (templateKey === 'rejection') return renderRejectionEmail(data, templates)
     if (templateKey === 'quoteRequestClient') {
       const items = quoteItemsRaw
@@ -154,6 +158,7 @@ export default function EmailPreviewPanel() {
   const showBookingMocks =
     templateKey === 'contracts' ||
     templateKey === 'payment' ||
+    templateKey === 'projectKickoff' ||
     templateKey === 'rejection' ||
     templateKey === 'quoteRequestClient'
   const showQuoteExtras = templateKey === 'quoteRequestClient'

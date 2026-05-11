@@ -53,6 +53,23 @@ export interface EmailTemplatePayment {
   transferAmountColor: string
 }
 
+/** Po zaksięgowaniu zaliczki — potwierdzenie startu realizacji (pipeline CRM). */
+export interface EmailTemplateProjectKickoff {
+  subjectTemplate: string
+  headerEmoji?: string
+  mailBackgroundColor: string
+  heading: string
+  headingColor: string
+  greetingTemplate?: string
+  greetingColor: string
+  intro?: string
+  introColor: string
+  footerNote?: string
+  footerNoteColor: string
+  referenceLineMutedColor: string
+  referenceLineAccentColor: string
+}
+
 export interface EmailTemplateRejection {
   subjectTemplate: string
   headerEmoji?: string
@@ -214,6 +231,7 @@ export interface EmailTemplateMeetingBookingOwner {
 export interface EmailTemplates {
   contracts: EmailTemplateContract
   payment: EmailTemplatePayment
+  projectKickoff: EmailTemplateProjectKickoff
   rejection: EmailTemplateRejection
   quoteRequestClient: EmailTemplateQuoteRequestClient
   quoteRequestOwner: EmailTemplateQuoteRequestOwner
@@ -300,6 +318,22 @@ export const DEFAULT_EMAIL_TEMPLATES: EmailTemplates = {
     paymentDetailsHeadingColor: C.white,
     transferTitleColor: C.accent,
     transferAmountColor: C.positive,
+  },
+  projectKickoff: {
+    subjectTemplate: 'Syntance - Zaczynamy realizację — {bookingId}',
+    headerEmoji: '🥳',
+    mailBackgroundColor: C.card,
+    heading: 'Zaliczka u nas — zaczynamy realizację!',
+    headingColor: C.positive,
+    greetingTemplate: 'Cześć {name},',
+    greetingColor: C.positiveSoft,
+    intro:
+      'Dziękujemy za wpłatę zaliczki — mamy ją zaksięgowaną i uruchamiamy Twój projekt.\n\nW kolejnych dniach skontaktujemy się w sprawie pierwszych kroków i harmonogramu. Pytania? kontakt@syntance.com.',
+    introColor: C.body,
+    footerNote: 'Do zobaczenia po drugiej stronie kodu — zespół Syntance',
+    footerNoteColor: C.muted,
+    referenceLineMutedColor: REF_LINE.muted,
+    referenceLineAccentColor: REF_LINE.accent,
   },
   rejection: {
     subjectTemplate: 'Syntance - Informacja o zleceniu',
@@ -486,6 +520,11 @@ export const emailTemplatesQuery = `*[_type == "emailTemplates" && _id == "email
     tableLabelColor, tableValueColor, tableAccentColor,
     paymentDetailsHeadingColor, transferTitleColor, transferAmountColor
   },
+  projectKickoff{
+    subjectTemplate, headerEmoji, mailBackgroundColor,
+    heading, headingColor, greetingTemplate, greetingColor, intro, introColor, footerNote, footerNoteColor,
+    referenceLineMutedColor, referenceLineAccentColor
+  },
   rejection{
     subjectTemplate, headerEmoji,
     mailBackgroundColor,
@@ -542,6 +581,10 @@ export function mergeEmailTemplatesWithDefaults(
   return {
     contracts: { ...DEFAULT_EMAIL_TEMPLATES.contracts, ...(raw?.contracts ?? {}) },
     payment: { ...DEFAULT_EMAIL_TEMPLATES.payment, ...(raw?.payment ?? {}) },
+    projectKickoff: {
+      ...DEFAULT_EMAIL_TEMPLATES.projectKickoff,
+      ...(raw?.projectKickoff ?? {}),
+    },
     rejection: { ...DEFAULT_EMAIL_TEMPLATES.rejection, ...(raw?.rejection ?? {}) },
     quoteRequestClient: {
       ...DEFAULT_EMAIL_TEMPLATES.quoteRequestClient,

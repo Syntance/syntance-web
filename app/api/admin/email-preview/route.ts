@@ -4,6 +4,7 @@ import {
   renderContractsEmail,
   renderMeetingBookingClientEmail,
   renderPaymentEmail,
+  renderProjectKickoffEmail,
   renderQuoteRequestClientEmail,
   renderRejectionEmail,
   DEFAULT_PREVIEW_DATA,
@@ -23,7 +24,7 @@ import { getPaymentSettings } from '@/sanity/queries/paymentSettings'
  * Zwraca HTML maila z mockowymi danymi klienta i aktualnymi tekstami z Sanity.
  *
  * Query params:
- *   - template = contracts | payment | rejection | quoteRequestClient | contactFormClient | meetingBookingClient (default: contracts)
+ *   - template = contracts | payment | projectKickoff | rejection | quoteRequestClient | contactFormClient | meetingBookingClient (default: contracts)
  *   - useDefaults = 1 — pomija fetch z Sanity i używa wbudowanych defaultów
  *   - bookingId / name — nadpisanie danych mock
  */
@@ -52,6 +53,8 @@ export async function GET(req: NextRequest) {
     html = renderPaymentEmail(data, templates, payment).html
   } else if (template === 'rejection') {
     html = renderRejectionEmail(data, templates).html
+  } else if (template === 'projectkickoff') {
+    html = renderProjectKickoffEmail(data, templates).html
   } else if (template === 'quoterequestclient') {
     html = renderQuoteRequestClientEmail(
       {

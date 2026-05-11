@@ -35,6 +35,7 @@ export async function seedEmailTemplateAppearance(client: SanityClient): Promise
   const sections: SectionKey[] = [
     'contracts',
     'payment',
+    'projectKickoff',
     'rejection',
     'quoteRequestClient',
     'quoteRequestOwner',
