@@ -27,13 +27,37 @@ const schema = z.object({
   booking: bookingSchema,
 });
 
-// Lazy initialization to avoid build-time errors
+// Lazy initialization. Returns null gdy klucz pusty — graceful degradation
+// (rules 60-quality: 3rd party pada → feature się wyłącza, nie cały flow).
 let resend: Resend | null = null;
-function getResend() {
+function getResend(): Resend | null {
   if (!resend) {
-    resend = new Resend(process.env.RESEND_API_KEY || "");
+    const key = process.env.RESEND_API_KEY;
+    if (!key) return null;
+    resend = new Resend(key);
   }
   return resend;
+}
+
+type ResendSendArgs = Parameters<Resend["emails"]["send"]>[0];
+
+/**
+ * Bezpieczna wysyłka maila — gdy brak klucza lub błąd, loguje i kontynuuje.
+ * Dzięki temu awaria Resend nie blokuje stworzenia leada w Attio.
+ */
+async function safeSendEmail(payload: ResendSendArgs): Promise<boolean> {
+  const client = getResend();
+  if (!client) {
+    console.warn("[booking] RESEND_API_KEY missing — skipping email send");
+    return false;
+  }
+  try {
+    await client.emails.send(payload);
+    return true;
+  } catch (err) {
+    console.error("[booking] Failed to send email:", err);
+    return false;
+  }
 }
 
 // Rate limiting
@@ -413,8 +437,8 @@ AKCJE:
     };
     const projectTypeGenitive = getProjectTypeGenitive(booking.projectType);
 
-    // Send email to owner
-    await getResend().emails.send({
+    // Send email to owner (graceful: nie blokuje Attio gdy Resend pada)
+    await safeSendEmail({
       from: "Syntance Konfigurator <konfigurator@syntance.com>",
       to: ["kontakt@syntance.com"],
       replyTo: email,
@@ -515,7 +539,7 @@ AKCJE:
 </html>
 `;
 
-    await getResend().emails.send({
+    await safeSendEmail({
       from: "Syntance <kontakt@syntance.com>",
       to: [email],
       subject: `Syntance - Zapytanie o wycenę ${projectTypeGenitive} - ${titleDate}`,

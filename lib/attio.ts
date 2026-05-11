@@ -121,8 +121,10 @@ async function attioRequest(
 }
 
 async function createOrUpdateContact(contact: AttioContact): Promise<string | null> {
+  // Attio API v2: email filter accepts plain string match on email_addresses slug.
+  // Old `{ any: { email_address: ... } }` shape returns 400 "Failed to transform constraints".
   const existing = await attioRequest('/objects/people/records/query', 'POST', {
-    filter: { email_addresses: { any: { email_address: contact.email } } },
+    filter: { email_addresses: contact.email },
     limit: 1,
   })
 
@@ -165,7 +167,7 @@ async function createOrUpdateContact(contact: AttioContact): Promise<string | nu
 export async function createProject(project: AttioProject): Promise<AttioRecordResponse | null> {
   const contactId = await createOrUpdateContact(project.contact)
   if (!contactId) {
-    console.error('Failed to create/get contact for project')
+    console.error(`[attio] Failed to create/get contact for ${project.contact.email} (booking ${project.bookingId})`)
     return null
   }
 
@@ -304,7 +306,7 @@ export async function updateProjectStatus(
   status: 'pending' | 'confirmed' | 'rejected' | 'in_progress' | 'completed'
 ): Promise<boolean> {
   const projects = await attioRequest('/objects/deals/records/query', 'POST', {
-    filter: { booking_id: { equals: bookingId } },
+    filter: { booking_id: bookingId },
     limit: 1,
   })
 
@@ -340,7 +342,7 @@ export async function addProjectNote(
   content: string
 ): Promise<boolean> {
   const projects = await attioRequest('/objects/deals/records/query', 'POST', {
-    filter: { booking_id: { equals: bookingId } },
+    filter: { booking_id: bookingId },
     limit: 1,
   })
 
