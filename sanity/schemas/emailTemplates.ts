@@ -43,7 +43,11 @@ export default defineType({
     { name: 'quote', title: 'Konfigurator wyceny', default: true },
     { name: 'contact', title: 'Formularz kontaktowy' },
     { name: 'meeting', title: 'Rezerwacja rozmowy' },
-    { name: 'pipeline', title: 'Zlecenie (umowa · przelew · start · koniec · odrzucenie)' },
+    { name: 'orderContracts', title: '📄 Umowy' },
+    { name: 'orderPayment', title: '💳 Przelew' },
+    { name: 'orderKickoff', title: '🎊 Start realizacji' },
+    { name: 'orderComplete', title: '✨ Koniec realizacji' },
+    { name: 'orderReject', title: '❌ Odrzucenie' },
   ],
   fields: [
     defineField({
@@ -493,7 +497,7 @@ Email: {email}
     defineField({
       name: 'contracts',
       title: '📄 Email z umowami',
-      group: 'pipeline',
+      group: 'orderContracts',
       type: 'object',
       fields: [
         defineField({
@@ -559,7 +563,7 @@ Email: {email}
     defineField({
       name: 'payment',
       title: '💳 Email z danymi do przelewu',
-      group: 'pipeline',
+      group: 'orderPayment',
       type: 'object',
       fields: [
         defineField({
@@ -633,7 +637,7 @@ Email: {email}
       title: '🎊 Start realizacji (po zaksięgowaniu zaliczki)',
       description:
         'Wysyłany z webhooka Attio, gdy deal trafi na etap „Aktywny”, „Realizacja” lub „W realizacji” (tytuł musi być identyczny jak status w CRM).',
-      group: 'pipeline',
+      group: 'orderKickoff',
       type: 'object',
       fields: [
         defineField({
@@ -696,7 +700,7 @@ Email: {email}
       title: '✨ Koniec realizacji (status Zakończony)',
       description:
         'Wysyłany z webhooka Attio, gdy deal trafi na etap „Zakończony” (tytuł musi być identyczny jak status w CRM).',
-      group: 'pipeline',
+      group: 'orderComplete',
       type: 'object',
       fields: [
         defineField({
@@ -757,7 +761,7 @@ Email: {email}
     defineField({
       name: 'rejection',
       title: '❌ Email o odrzuceniu',
-      group: 'pipeline',
+      group: 'orderReject',
       type: 'object',
       fields: [
         defineField({
@@ -828,7 +832,7 @@ Email: {email}
       return {
         title: '📧 Treści emaili',
         subtitle:
-          'Konfigurator · Kontakt · Rozmowa · Umowa · Przelew · Start · Koniec · Odrzucenie',
+          'Konfigurator · Kontakt · Rozmowa · Umowy · Przelew · Start · Koniec · Odrzucenie',
       }
     },
   },
