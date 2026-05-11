@@ -277,7 +277,7 @@ export const defaultPricingData: PricingData = {
     depositFixed: 500,
     calendlyUrl: 'https://calendly.com/syntance/discovery',
     ctaTexts: {
-      reserve: 'Wyślij zapytanie',
+      reserve: 'Wyślij formularz',
       workshop: 'Zamów Strategię marketingu i sprzedaży',
       pdf: 'Pobierz wycenę PDF',
     },

@@ -207,7 +207,7 @@ export function BookingModal({
             </div>
             <div className="flex-1">
               <h3 id="inquiry-modal-title" className="text-lg font-medium text-white">
-                {step === 'form' && 'Wyślij zapytanie o wycenę'}
+                {step === 'form' && 'Wyślij formularz o wycenę'}
                 {step === 'success' && 'Zapytanie wysłane!'}
               </h3>
               <p className="text-sm text-gray-400">
@@ -420,7 +420,7 @@ export function BookingModal({
                     ) : (
                       <>
                         <Send size={18} aria-hidden="true" />
-                        <span>Wyślij zapytanie</span>
+                        <span>Wyślij formularz</span>
                       </>
                     )}
                   </button>

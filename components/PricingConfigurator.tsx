@@ -883,7 +883,7 @@ export function PricingConfigurator({ data }: Props) {
                   className="flex items-center justify-center gap-2 w-full py-3 sm:py-4 px-4 sm:px-6 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white text-sm sm:text-base font-medium rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40"
                 >
                   <Send size={16} className="flex-shrink-0" />
-                  <span className="truncate">{config?.ctaTexts?.reserve || 'Wyślij zapytanie'}</span>
+                  <span className="truncate">{config?.ctaTexts?.reserve || 'Wyślij formularz'}</span>
                   <ChevronRight size={14} className="flex-shrink-0" />
                 </button>
 

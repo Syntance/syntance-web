@@ -124,9 +124,9 @@ export default defineType({
         defineField({ 
           name: 'reserve', 
           title: 'Przycisk zapytania o wycenę', 
-          description: 'Główny CTA przy podsumowaniu konfiguratora (np. „Wyślij zapytanie").', 
+          description: 'Główny CTA przy podsumowaniu konfiguratora (np. „Wyślij formularz").',
           type: 'string', 
-          initialValue: 'Wyślij zapytanie' 
+          initialValue: 'Wyślij formularz'
         }),
         defineField({ 
           name: 'workshop', 
