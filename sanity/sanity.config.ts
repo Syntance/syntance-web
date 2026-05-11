@@ -25,6 +25,17 @@ const structure = (S: any) =>
             .title('SEO Podstron')
         ),
       S.divider(),
+      // === PŁATNOŚCI ===
+      S.listItem()
+        .title('🏦 Dane do przelewu')
+        .id('paymentSettings')
+        .child(
+          S.document()
+            .schemaType('paymentSettings')
+            .documentId('paymentSettings')
+            .title('Dane do przelewu')
+        ),
+      S.divider(),
       // === CENNIK ===
       S.listItem()
         .title('💰 Ustawienia cennika')
@@ -77,7 +88,7 @@ const structure = (S: any) =>
       // Pozostałe dokumenty
       ...S.documentTypeListItems().filter(
         (listItem: any) =>
-          !['pricingConfig', 'seoSettings', 'pageSeo', 'pricingFaq', 'bookingRules', 'bookingTimeBlock', 'meetingBooking', 'portfolioItem'].includes(
+          !['pricingConfig', 'seoSettings', 'pageSeo', 'pricingFaq', 'bookingRules', 'bookingTimeBlock', 'meetingBooking', 'portfolioItem', 'paymentSettings'].includes(
             listItem.getId()
           )
       ),

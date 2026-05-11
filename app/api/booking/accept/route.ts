@@ -2,6 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { google } from "googleapis";
 import { updateProjectStatus, addProjectNote } from "@/lib/attio";
+import { getPaymentSettings, resolveTransferTitle, type PaymentSettings } from "@/sanity/queries/paymentSettings";
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
 
 let resend: Resend | null = null;
 function getResend() {
@@ -116,11 +126,9 @@ export async function GET(req: NextRequest) {
       if (isAccepted) {
         // Block Google Calendar with confirmed event
         calendarEventId = await blockGoogleCalendar(clientData);
-        
-        // Format daty dla tytułu
-        const titleDate = clientData.startDate 
-          ? new Date(clientData.startDate).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' })
-          : new Date().toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+        // Fetch payment settings from Sanity
+        const paymentSettings = await getPaymentSettings();
         
         const projectTypeGenitive = getProjectTypeGenitive(clientData.projectType);
         
@@ -128,8 +136,8 @@ export async function GET(req: NextRequest) {
         await getResend().emails.send({
           from: "Syntance <kontakt@syntance.com>",
           to: [clientData.email],
-          subject: `Syntance Studio - Rezerwacja realizacji ${projectTypeGenitive} - ${titleDate} potwierdzona!`,
-          html: getClientAcceptedEmailHtml(clientData),
+          subject: `Syntance Studio - Zlecenie ${projectTypeGenitive} potwierdzone!`,
+          html: getClientAcceptedEmailHtml(clientData, paymentSettings),
         });
 
         // Update Attio CRM status to confirmed
@@ -189,7 +197,63 @@ export async function GET(req: NextRequest) {
   }
 }
 
-function getClientAcceptedEmailHtml(data: ClientData): string {
+function getClientAcceptedEmailHtml(data: ClientData, payment: PaymentSettings | null): string {
+  const transferTitle = payment
+    ? resolveTransferTitle(payment.transferTitleTemplate, data.bookingId)
+    : `Zaliczka ${data.bookingId} — Syntance`
+
+  const paymentBlock = payment
+    ? `
+      <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #0d0d0d; border-radius: 12px; border: 1px solid #333; margin: 24px 0;">
+        <tr>
+          <td style="padding: 20px;">
+            <h4 style="margin: 0 0 16px; color: #fff; font-size: 14px; letter-spacing: 0.5px;">🏦 Dane do przelewu</h4>
+            <table width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="padding: 6px 0; color: #888; font-size: 14px; width: 160px; vertical-align: top;">Właściciel konta:</td>
+                <td style="padding: 6px 0; color: #fff; font-size: 14px; font-weight: 600;">${escapeHtml(payment.accountHolder)}</td>
+              </tr>
+              ${payment.bankName ? `
+              <tr>
+                <td style="padding: 6px 0; color: #888; font-size: 14px; vertical-align: top;">Bank:</td>
+                <td style="padding: 6px 0; color: #fff; font-size: 14px;">${escapeHtml(payment.bankName)}</td>
+              </tr>` : ''}
+              <tr>
+                <td style="padding: 6px 0; color: #888; font-size: 14px; vertical-align: top;">Numer konta:</td>
+                <td style="padding: 6px 0; color: #fff; font-size: 14px; font-weight: 600; font-family: monospace, monospace; letter-spacing: 0.5px;">${escapeHtml(payment.accountNumber)}</td>
+              </tr>
+              ${payment.swiftBic ? `
+              <tr>
+                <td style="padding: 6px 0; color: #888; font-size: 14px; vertical-align: top;">SWIFT / BIC:</td>
+                <td style="padding: 6px 0; color: #fff; font-size: 14px; font-family: monospace, monospace;">${escapeHtml(payment.swiftBic)}</td>
+              </tr>` : ''}
+              <tr>
+                <td style="padding: 6px 0; color: #888; font-size: 14px; vertical-align: top;">Tytuł przelewu:</td>
+                <td style="padding: 6px 0; color: #a78bfa; font-size: 14px; font-weight: 600;">${escapeHtml(transferTitle)}</td>
+              </tr>
+              <tr>
+                <td style="padding: 6px 0; color: #888; font-size: 14px; vertical-align: top;">Kwota zaliczki:</td>
+                <td style="padding: 6px 0; color: #22c55e; font-size: 16px; font-weight: 700;">${data.deposit.toLocaleString('pl-PL')} PLN</td>
+              </tr>
+            </table>
+            ${payment.additionalInfo ? `
+            <p style="margin: 16px 0 0; color: #888; font-size: 13px; line-height: 1.6; border-top: 1px solid #222; padding-top: 12px;">${escapeHtml(payment.additionalInfo).replace(/\n/g, '<br>')}</p>
+            ` : ''}
+          </td>
+        </tr>
+      </table>`
+    : `
+      <div style="background-color: #0d0d0d; border-radius: 12px; padding: 20px; margin: 24px 0; border: 1px solid #333;">
+        <h4 style="margin: 0 0 12px; color: #fff; font-size: 14px;">🏦 Dane do przelewu</h4>
+        <p style="margin: 0; color: #ccc; font-size: 14px; line-height: 1.8;">
+          <strong>Tytuł:</strong> ${escapeHtml(transferTitle)}<br>
+          <strong>Kwota:</strong> ${data.deposit.toLocaleString('pl-PL')} PLN
+        </p>
+        <p style="margin: 12px 0 0; color: #888; font-size: 12px;">
+          Szczegółowe dane do przelewu wyślemy w odpowiedzi na ten email.
+        </p>
+      </div>`
+
   return `
 <!DOCTYPE html>
 <html>
@@ -247,17 +311,7 @@ function getClientAcceptedEmailHtml(data: ClientData): string {
                 </div>
               </div>
               
-              <div style="background-color: #0d0d0d; border-radius: 12px; padding: 20px; margin: 24px 0; border: 1px solid #333;">
-                <h4 style="margin: 0 0 12px; color: #fff; font-size: 14px;">🏦 Dane do przelewu:</h4>
-                <p style="margin: 0; color: #ccc; font-size: 14px; line-height: 1.8;">
-                  <strong>Nazwa:</strong> Syntance<br>
-                  <strong>Tytuł:</strong> Zaliczka ${data.bookingId}<br>
-                  <strong>Kwota:</strong> ${data.deposit.toLocaleString('pl-PL')} PLN
-                </p>
-                <p style="margin: 12px 0 0; color: #888; font-size: 12px;">
-                  Szczegółowe dane do przelewu wyślemy w odpowiedzi na ten email.
-                </p>
-              </div>
+              ${paymentBlock}
               
               <p style="color: #888; font-size: 14px; line-height: 1.6;">
                 Po zaksięgowaniu wpłaty otrzymasz potwierdzenie i skontaktujemy się w sprawie szczegółów projektu.
