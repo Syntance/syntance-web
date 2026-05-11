@@ -70,7 +70,7 @@ RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxx
 CONTACT_TO_EMAIL=kontakt@syntance.com
 
 # WhatsApp
-NEXT_PUBLIC_WHATSAPP_PHONE=+48662519544
+NEXT_PUBLIC_WHATSAPP_PHONE=+48537110170
 ```
 
 **Uwaga:** Aby formularz kontaktowy działał, musisz skonfigurować konto Resend i zweryfikować domenę. Zobacz sekcję "Contact Pipeline" poniżej.
@@ -200,7 +200,7 @@ W panelu Vercel ustaw (Settings → Environment Variables):
 NEXT_PUBLIC_SITE_URL=https://syntance.com
 RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxx
 CONTACT_TO_EMAIL=kontakt@syntance.com
-NEXT_PUBLIC_WHATSAPP_PHONE=+48662519544
+NEXT_PUBLIC_WHATSAPP_PHONE=+48537110170
 ```
 
 Zobacz DEPLOYMENT.md dla szczegółowych instrukcji konfiguracji Resend.
@@ -261,5 +261,5 @@ Projekt wykorzystuje Vercel Analytics do śledzenia:
 
 - Website: https://syntance.com
 - Email: kontakt@syntance.com
-- Telefon: +48 662 519 544
+- Telefon: +48 537 110 170
 

@@ -26,10 +26,10 @@ function formatPrice(price: number): string {
 
 export const metadata: Metadata = {
   title: 'Kontakt — Syntance | Strony i sklepy Next.js',
-  description: 'Skontaktuj się z Syntance. Email: kontakt@syntance.com, tel: +48 662 519 544. Bezpłatna rozmowa o Twoim projekcie.',
+  description: 'Skontaktuj się z Syntance. Email: kontakt@syntance.com, tel: +48 537 110 170. Bezpłatna rozmowa o Twoim projekcie.',
   openGraph: {
     title: 'Kontakt | Syntance',
-    description: 'Skontaktuj się z Syntance. Email: kontakt@syntance.com, tel: +48 662 519 544. Bezpłatna rozmowa o Twoim projekcie.',
+    description: 'Skontaktuj się z Syntance. Email: kontakt@syntance.com, tel: +48 537 110 170. Bezpłatna rozmowa o Twoim projekcie.',
     url: 'https://syntance.com/kontakt',
   },
 }
@@ -71,7 +71,7 @@ export default async function KontaktPage() {
               "description": "Studio tworzące strony i sklepy internetowe w Next.js",
               "url": "https://syntance.com",
               "email": "kontakt@syntance.com",
-              "telephone": "+48662519544",
+              "telephone": "+48537110170",
               "address": {
                 "@type": "PostalAddress",
                 "streetAddress": "Czerniec 72",
@@ -134,7 +134,7 @@ export default async function KontaktPage() {
                     
                     {/* Phone */}
                     <a 
-                      href="tel:+48662519544" 
+                      href="tel:+48537110170" 
                       className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-xl hover:border-purple-500/30 transition-colors group"
                     >
                       <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center flex-shrink-0">
@@ -142,7 +142,7 @@ export default async function KontaktPage() {
                       </div>
                       <div>
                         <div className="text-sm text-gray-400">Telefon</div>
-                        <div className="text-white group-hover:text-purple-400 transition-colors">+48 662 519 544</div>
+                        <div className="text-white group-hover:text-purple-400 transition-colors">+48 537 110 170</div>
                         <div className="text-xs text-gray-500 flex items-center gap-1 mt-1">
                           <Clock className="w-3 h-3" />
                           pon-pt, 9:00-17:00

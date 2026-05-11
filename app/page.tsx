@@ -73,11 +73,11 @@ export default function HomePage() {
                   <span className="text-sm text-white font-light text-center leading-tight">kontakt@syntance.com</span>
                 </a>
                 <a
-                  href="tel:+48662519544"
+                  href="tel:+48537110170"
                   className="flex flex-col items-center gap-1.5 p-4 min-h-[80px] rounded-2xl bg-white/[0.03] border border-white/10 active:bg-white/[0.06] transition-colors"
                 >
                   <span className="text-[10px] font-medium uppercase tracking-wider text-gray-500">Telefon</span>
-                  <span className="text-sm text-white font-light">+48 662 519 544</span>
+                  <span className="text-sm text-white font-light">+48 537 110 170</span>
                 </a>
               </div>
             </AnimatedSection>
@@ -95,9 +95,9 @@ export default function HomePage() {
 
                   <div>
                     <h3 className="text-xl font-medium tracking-wider mb-4">Telefon</h3>
-                    <a href="tel:+48662519544" className="text-gray-400 hover:text-white transition-colors text-lg">
-                      +48 662 519 544
-                    </a>
+                  <a href="tel:+48537110170" className="text-gray-400 hover:text-white transition-colors text-lg">
+                    +48 537 110 170
+                  </a>
                   </div>
 
                   <div>

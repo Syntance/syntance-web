@@ -77,7 +77,7 @@ const defaultPages: any[] = [
     isActive: true,
     focusKeyword: 'kontakt Syntance',
     metaTitle: 'Kontakt — Syntance | Strony i sklepy Next.js',
-    metaDescription: 'Skontaktuj się z Syntance. Email: kontakt@syntance.com, tel: +48 662 519 544. Bezpłatna rozmowa o Twoim projekcie.',
+    metaDescription: 'Skontaktuj się z Syntance. Email: kontakt@syntance.com, tel: +48 537 110 170. Bezpłatna rozmowa o Twoim projekcie.',
     keywords: [
       'kontakt Syntance',
       'wycena strony internetowej',

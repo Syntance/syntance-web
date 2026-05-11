@@ -132,7 +132,7 @@ export default async function ONasPage() {
             "knowsAbout": ["Next.js", "React", "TypeScript", "Sanity CMS", "MedusaJS", "E-commerce", "Web Development"],
             "slogan": "Strategia marketingu i sprzedaży",
             "email": "kontakt@syntance.com",
-            "telephone": "+48662519544"
+            "telephone": "+48537110170"
           })
         }}
       />

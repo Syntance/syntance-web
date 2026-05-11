@@ -104,7 +104,7 @@ Vercel Dashboard → Project → Settings → Environment Variables:
 NEXT_PUBLIC_SITE_URL=https://syntance.com
 RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxx
 CONTACT_TO_EMAIL=hello@syntance.com
-NEXT_PUBLIC_WHATSAPP_PHONE=+48662519544
+NEXT_PUBLIC_WHATSAPP_PHONE=+48537110170
 ```
 
 **Zastosuj dla:** Production, Preview, Development (wszystkie)

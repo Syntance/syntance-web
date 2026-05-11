@@ -162,8 +162,8 @@ export function PricingFAQ({ items }: PricingFAQProps = {}) {
               
               <div>
                 <h3 className="text-xl font-medium tracking-wider mb-4">Telefon</h3>
-                <a href="tel:+48662519544" className="text-gray-400 hover:text-white transition-colors text-lg">
-                  +48 662 519 544
+                <a href="tel:+48537110170" className="text-gray-400 hover:text-white transition-colors text-lg">
+                  +48 537 110 170
                 </a>
               </div>
               

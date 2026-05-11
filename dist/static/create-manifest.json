@@ -1,20 +1,21 @@
 {
+  "createdAt": "2026-05-10T20:33:56.445Z",
+  "studioVersion": "5.20.0",
   "version": 3,
-  "createdAt": "2026-02-08T11:36:32.646Z",
   "workspaces": [
     {
-      "name": "syntance-studio",
-      "title": "Syntance Studio CMS",
       "basePath": "/",
-      "projectId": "sqgw0wlq",
       "dataset": "production",
       "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect width=\"32\" height=\"32\" rx=\"2\" fill=\"#18e2e2\"></rect><text x=\"50%\" y=\"50%\" text-anchor=\"middle\" alignment-baseline=\"middle\" fill=\"hsla(180, 81%, 9%, 1)\" style=\"font-family:Inter, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, &quot;Liberation Sans&quot;, Helvetica, Arial, system-ui, sans-serif;font-weight:500;font-size:13px;transform:translateY(1px)\">SS</text></svg>",
       "mediaLibrary": {
-        "enabled": false
+        "enabled": false,
+        "__internal": {}
       },
-      "schema": "10c619e8.create-schema.json",
-      "tools": "d57bf8ec.create-tools.json"
+      "name": "syntance-studio",
+      "projectId": "sqgw0wlq",
+      "schema": "bcf54acd.create-schema.json",
+      "title": "Syntance Studio CMS",
+      "tools": "a1fd46b5.create-tools.json"
     }
-  ],
-  "studioVersion": "5.5.0"
+  ]
 }

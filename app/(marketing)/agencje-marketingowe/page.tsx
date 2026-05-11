@@ -13,7 +13,7 @@ const jsonLd = {
       description:
         'Studio dostarczające strony i sklepy internetowe. Model partnerski white-label dla agencji marketingowych.',
       email: 'kontakt@syntance.com',
-      telephone: '+48662519544',
+      telephone: '+48537110170',
       address: {
         '@type': 'PostalAddress',
         streetAddress: 'Czerniec 72',

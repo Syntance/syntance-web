@@ -58,7 +58,7 @@ const defaultSeoSettings = {
   foundingDate: '2024',
   founderName: 'Kamil Podobiński',
   contactEmail: 'kontakt@syntance.com',
-  contactPhone: '+48662519544',
+  contactPhone: '+48537110170',
   
   address: {
     street: 'Czerniec 72',

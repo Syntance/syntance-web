@@ -62,7 +62,7 @@ export default function TermsOfServicePage() {
                     <br />
                     E-mail: <a href="mailto:biuro@syntance.com" className="text-brand hover:underline">biuro@syntance.com</a>
                     <br />
-                    Telefon: <a href="tel:+48662519544" className="text-brand hover:underline">+48 662 519 544</a>
+                    Telefon: <a href="tel:+48537110170" className="text-brand hover:underline">+48 537 110 170</a>
                     <br />
                     Strona: <a href="https://syntance.com" className="text-brand hover:underline">syntance.com</a>
                   </p>
@@ -289,7 +289,7 @@ export default function TermsOfServicePage() {
                     <br />
                     E-mail: <a href="mailto:biuro@syntance.com" className="text-brand hover:underline">biuro@syntance.com</a>
                     <br />
-                    Telefon: <a href="tel:+48662519544" className="text-brand hover:underline">+48 662 519 544</a>
+                    Telefon: <a href="tel:+48537110170" className="text-brand hover:underline">+48 537 110 170</a>
                     <br />
                     Strona: <a href="https://syntance.com" className="text-brand hover:underline">syntance.com</a>
                   </p>
@@ -328,7 +328,7 @@ export default function TermsOfServicePage() {
                 "addressCountry": "PL"
               },
               "email": "biuro@syntance.com",
-              "telephone": "+48662519544"
+              "telephone": "+48537110170"
             },
             "dateModified": new Date().toISOString(),
             "mainEntity": {

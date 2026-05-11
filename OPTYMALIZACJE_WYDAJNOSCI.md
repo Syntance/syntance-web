@@ -227,7 +227,7 @@ Vercel zrobi auto-deploy.
 
 Jeśli masz pytania dotyczące optymalizacji:
 - **Email**: kontakt@syntance.com
-- **Phone**: +48 662 519 544
+- **Phone**: +48 537 110 170
 
 ---
 
