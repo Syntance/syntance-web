@@ -19,6 +19,7 @@ const bookingSchema = z.object({
 const schema = z.object({
   name: z.string().min(2).max(120),
   email: z.string().email(),
+  companyName: z.string().max(120).optional(),
   phone: z.string().max(40).optional(),
   description: z.string().max(2000).optional(),
   hasExistingSite: z.boolean().optional().default(false),
@@ -96,7 +97,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: 'Invalid data' }, { status: 400 });
     }
 
-    const { name, email, phone, description, hasExistingSite, existingSiteUrl, booking } = parsed.data;
+    const { name, email, companyName, phone, description, hasExistingSite, existingSiteUrl, booking } = parsed.data;
 
     // Generate sequential inquiry ID (SYN-0001, SYN-0002, …)
     const bookingId = await getNextOrderNumber();
@@ -123,6 +124,7 @@ export async function POST(req: Request) {
     // Pre-escape user inputs (rules: 55-security).
     const safeName = escapeHtml(name);
     const safeEmail = escapeHtml(email);
+    const safeCompanyName = companyName ? escapeHtml(companyName) : '';
     const safePhone = phone ? escapeHtml(phone) : '';
     const safeDescription = description ? escapeHtml(description).replace(/\n/g, '<br>') : '';
     const safeExistingUrlRaw = existingSiteUrl ? safeUrl(existingSiteUrl) : '';
@@ -178,6 +180,14 @@ export async function POST(req: Request) {
                     <p style="margin: 4px 0 0; color: #fff; font-size: 16px; font-weight: 500;">${safeName}</p>
                   </td>
                 </tr>
+                ${safeCompanyName ? `
+                <tr>
+                  <td style="padding: 12px 16px;">
+                    <p style="margin: 0; color: #888; font-size: 13px;">Firma</p>
+                    <p style="margin: 4px 0 0; color: #fff; font-size: 16px; font-weight: 500;">${safeCompanyName}</p>
+                  </td>
+                </tr>
+                ` : ''}
                 <tr>
                   <td style="padding: 12px 16px;">
                     <p style="margin: 0; color: #888; font-size: 13px;">Email</p>
@@ -525,6 +535,7 @@ AKCJE:
           name,
           email,
           phone,
+          companyName,
         },
         value: booking.priceNetto,
         status: 'pending',

@@ -37,6 +37,7 @@ export function BookingModal({
   const [step, setStep] = useState<'form' | 'success'>('form')
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
+  const [companyName, setCompanyName] = useState('')
   const [phone, setPhone] = useState('')
   const [description, setDescription] = useState('')
   const [hasExistingSite, setHasExistingSite] = useState(false)
@@ -120,6 +121,7 @@ export function BookingModal({
         body: JSON.stringify({
           name,
           email,
+          companyName: companyName.trim() || undefined,
           phone,
           description: description.trim() || undefined,
           hasExistingSite,
@@ -324,10 +326,26 @@ export function BookingModal({
                     </div>
                   </div>
 
-                  <div>
-                    <label htmlFor="inquiry-phone" className="block text-sm text-gray-400 mb-1">
-                      Telefon (opcjonalnie)
-                    </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="inquiry-company" className="block text-sm text-gray-400 mb-1">
+                        Nazwa firmy (opcjonalnie)
+                      </label>
+                      <input
+                        id="inquiry-company"
+                        type="text"
+                        value={companyName}
+                        onChange={(e) => setCompanyName(e.target.value)}
+                        autoComplete="organization"
+                        placeholder="Firma sp. z o.o."
+                        maxLength={120}
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white text-base placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="inquiry-phone" className="block text-sm text-gray-400 mb-1">
+                        Telefon (opcjonalnie)
+                      </label>
                     <input
                       id="inquiry-phone"
                       type="tel"
@@ -338,6 +356,7 @@ export function BookingModal({
                       placeholder="+48 123 456 789"
                       className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white text-base placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors"
                     />
+                    </div>
                   </div>
 
                   <div>

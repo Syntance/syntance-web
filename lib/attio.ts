@@ -60,6 +60,7 @@ interface AttioContact {
   name: string
   email: string
   phone?: string
+  companyName?: string
 }
 
 interface AttioProject {
@@ -188,6 +189,7 @@ export async function createProject(project: AttioProject): Promise<AttioRecordR
         // typ_zlecenia: multiselect — use array of option_id strings
         ...(typOptionId && { typ_zlecenia: [typOptionId] }),
         data_zapytania: [{ value: today }],
+        ...(project.contact.companyName && { nazwa_firmy: [{ value: project.contact.companyName }] }),
         ...(project.description && { opis_potrzeb: [{ value: project.description }] }),
         ...(cleanUrl && { istniejaca_strona_url: [{ value: cleanUrl }] }),
       },
