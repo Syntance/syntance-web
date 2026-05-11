@@ -1,6 +1,7 @@
 import { defineConfig } from 'sanity'
 import { deskTool } from 'sanity/desk'
 import { schemaTypes } from './schemas'
+import EmailPreviewPanel from './components/EmailPreviewPanel'
 
 // Konfiguracja struktury dla singletonów
 const structure = (S: any) =>
@@ -45,13 +46,23 @@ const structure = (S: any) =>
             .title('Dane do przelewu')
         ),
       S.listItem()
-        .title('🔢 Licznik zleceń')
-        .id('orderCounter')
+        .title('📧 Treści emaili')
+        .id('emailTemplates')
         .child(
           S.document()
-            .schemaType('orderCounter')
-            .documentId('orderCounter')
-            .title('Licznik zleceń')
+            .schemaType('emailTemplates')
+            .documentId('emailTemplates')
+            .title('Treści emaili')
+            .views([
+              S.view.form().title('Edytuj'),
+              S.view.component(EmailPreviewPanel).title('Podgląd'),
+            ])
+        ),
+      S.listItem()
+        .title('🖼️ Podgląd emaili')
+        .id('emailPreview')
+        .child(
+          S.component(EmailPreviewPanel).title('Podgląd emaili')
         ),
       S.divider(),
       // === CENNIK ===
@@ -106,7 +117,7 @@ const structure = (S: any) =>
       // Pozostałe dokumenty
       ...S.documentTypeListItems().filter(
         (listItem: any) =>
-          !['pricingConfig', 'seoSettings', 'pageSeo', 'pricingFaq', 'bookingRules', 'bookingTimeBlock', 'meetingBooking', 'portfolioItem', 'paymentSettings', 'orderCounter', 'contractFiles'].includes(
+          !['pricingConfig', 'seoSettings', 'pageSeo', 'pricingFaq', 'bookingRules', 'bookingTimeBlock', 'meetingBooking', 'portfolioItem', 'paymentSettings', 'contractFiles', 'emailTemplates'].includes(
             listItem.getId()
           )
       ),

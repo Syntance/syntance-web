@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { google } from "googleapis";
-import { updateProjectStatus, addProjectNote } from "@/lib/attio";
-import { getPaymentSettings, resolveTransferTitle, type PaymentSettings } from "@/sanity/queries/paymentSettings";
+import { updateProjectStatus, addProjectNote, resolveBookingIdFromAttioLink } from "@/lib/attio";
+import { getPaymentSettings } from "@/sanity/queries/paymentSettings";
 import { getContractFiles } from "@/sanity/queries/contractFiles";
+import { getEmailTemplates } from "@/sanity/queries/emailTemplates";
+import {
+  renderContractsEmail,
+  renderPaymentEmail,
+  renderRejectionEmail,
+  type EmailRenderData,
+} from "@/lib/emails/templates";
 
 function escapeHtml(str: string): string {
   return str
@@ -20,15 +27,6 @@ function getResend() {
   return resend;
 }
 
-function getProjectTypeGenitive(type: string) {
-  const map: Record<string, string> = {
-    'Strona internetowa': 'strony WWW',
-    'Strona WWW': 'strony WWW',
-    'Sklep e-commerce': 'sklepu e-commerce',
-    'Aplikacja webowa': 'aplikacji webowej',
-  };
-  return map[type] || type.toLowerCase();
-}
 
 async function blockGoogleCalendar(data: ClientData): Promise<string | null> {
   if (!process.env.GOOGLE_CLIENT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY || !data.startDate) return null;
@@ -93,20 +91,41 @@ export async function GET(req: NextRequest) {
     }
   }
 
+  const liveBookingId = await resolveBookingIdFromAttioLink(bookingId);
+  const clientForMail: ClientData | null = clientData
+    ? { ...clientData, bookingId: liveBookingId }
+    : null;
+
+  // Mapowanie ClientData → EmailRenderData (wymagane przez wspólny moduł)
+  const renderData: EmailRenderData | null = clientForMail
+    ? {
+        bookingId: liveBookingId,
+        name: clientForMail.name,
+        email: clientForMail.email,
+        projectType: clientForMail.projectType,
+        priceNetto: clientForMail.priceNetto,
+        priceBrutto: clientForMail.priceBrutto,
+        deposit: clientForMail.deposit,
+      }
+    : null;
+
   try {
     // ── AKCEPTACJA → wysyłka umów ──────────────────────────────────────────
     if (action === 'accept') {
       await getResend().emails.send({
         from: "Syntance System <system@syntance.com>",
         to: [process.env.CONTACT_TO_EMAIL!],
-        subject: `✅ Zaakceptowano zlecenie ${bookingId}`,
-        text: `Zlecenie ${bookingId} zaakceptowane ${new Date().toLocaleString('pl-PL')}. Umowy wysyłane do klienta.`,
+        subject: `✅ Zaakceptowano zlecenie ${liveBookingId}`,
+        text: `Zlecenie ${liveBookingId} zaakceptowane ${new Date().toLocaleString('pl-PL')}. Umowy wysyłane do klienta.`,
       });
 
-      if (clientData?.email) {
-        await blockGoogleCalendar(clientData);
+      if (clientForMail?.email && renderData) {
+        await blockGoogleCalendar(clientForMail);
 
-        const contracts = await getContractFiles();
+        const [contracts, templates] = await Promise.all([
+          getContractFiles(),
+          getEmailTemplates(),
+        ]);
         const attachments: { filename: string; content: Buffer }[] = [];
 
         for (const f of contracts.files) {
@@ -121,42 +140,56 @@ export async function GET(req: NextRequest) {
           }
         }
 
+        const merged = {
+          ...templates,
+          contracts: {
+            ...templates.contracts,
+            intro: contracts.introText?.trim() ? contracts.introText : templates.contracts.intro,
+          },
+        };
+
+        const { subject, html } = renderContractsEmail(renderData, merged);
+
         await getResend().emails.send({
           from: "Syntance <kontakt@syntance.com>",
-          to: [clientData.email],
-          subject: `Syntance - Umowy do zlecenia ${bookingId}`,
-          html: getContractsEmailHtml(clientData, contracts.introText),
+          to: [clientForMail.email],
+          subject,
+          html,
           attachments: attachments.length > 0 ? attachments : undefined,
         });
 
         try {
-          await updateProjectStatus(bookingId, 'confirmed');
-          await addProjectNote(bookingId, 'Zaakceptowano — umowy wysłane', `${new Date().toLocaleString('pl-PL')}`);
+          await updateProjectStatus(liveBookingId, 'confirmed');
+          await addProjectNote(liveBookingId, 'Zaakceptowano — umowy wysłane', `${new Date().toLocaleString('pl-PL')}`);
         } catch (err) {
           console.error('Attio error:', err);
         }
       }
 
-      const payUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://syntance.com'}/api/booking/accept?id=${bookingId}&action=pay&data=${encodedData}`;
-      return new NextResponse(renderPage('accepted', bookingId, clientData, null, payUrl), {
+      const payUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://syntance.com'}/api/booking/accept?id=${encodeURIComponent(liveBookingId)}&action=pay&data=${encodedData}`;
+      return new NextResponse(renderPage('accepted', liveBookingId, clientForMail, null, payUrl), {
         status: 200, headers: { 'Content-Type': 'text/html' },
       });
     }
 
     // ── PŁATNOŚĆ → wysyłka danych do przelewu ─────────────────────────────
     if (action === 'pay') {
-      const payment = await getPaymentSettings();
+      if (clientForMail?.email && renderData) {
+        const [payment, templates] = await Promise.all([
+          getPaymentSettings(),
+          getEmailTemplates(),
+        ]);
+        const { subject, html } = renderPaymentEmail(renderData, templates, payment);
 
-      if (clientData?.email) {
         await getResend().emails.send({
           from: "Syntance <kontakt@syntance.com>",
-          to: [clientData.email],
-          subject: `Syntance - Dane do płatności - ${bookingId}`,
-          html: getPaymentEmailHtml(clientData, payment),
+          to: [clientForMail.email],
+          subject,
+          html,
         });
 
         try {
-          await addProjectNote(bookingId, 'Dane do przelewu wysłane', `${new Date().toLocaleString('pl-PL')}`);
+          await addProjectNote(liveBookingId, 'Dane do przelewu wysłane', `${new Date().toLocaleString('pl-PL')}`);
         } catch (err) {
           console.error('Attio error:', err);
         }
@@ -165,11 +198,11 @@ export async function GET(req: NextRequest) {
       await getResend().emails.send({
         from: "Syntance System <system@syntance.com>",
         to: [process.env.CONTACT_TO_EMAIL!],
-        subject: `💳 Dane do przelewu wysłane — ${bookingId}`,
-        text: `Dane do przelewu zostały wysłane do ${clientData?.email ?? 'klienta'} o ${new Date().toLocaleString('pl-PL')}.`,
+        subject: `💳 Dane do przelewu wysłane — ${liveBookingId}`,
+        text: `Dane do przelewu zostały wysłane do ${clientForMail?.email ?? 'klienta'} o ${new Date().toLocaleString('pl-PL')}.`,
       });
 
-      return new NextResponse(renderPage('paid', bookingId, clientData), {
+      return new NextResponse(renderPage('paid', liveBookingId, clientForMail), {
         status: 200, headers: { 'Content-Type': 'text/html' },
       });
     }
@@ -179,28 +212,30 @@ export async function GET(req: NextRequest) {
       await getResend().emails.send({
         from: "Syntance System <system@syntance.com>",
         to: [process.env.CONTACT_TO_EMAIL!],
-        subject: `❌ Odrzucono zlecenie ${bookingId}`,
-        text: `Zlecenie ${bookingId} odrzucone ${new Date().toLocaleString('pl-PL')}.`,
+        subject: `❌ Odrzucono zlecenie ${liveBookingId}`,
+        text: `Zlecenie ${liveBookingId} odrzucone ${new Date().toLocaleString('pl-PL')}.`,
       });
 
-      if (clientData?.email) {
-        const projectTypeGenitive = getProjectTypeGenitive(clientData.projectType);
+      if (clientForMail?.email && renderData) {
+        const templates = await getEmailTemplates();
+        const { subject, html } = renderRejectionEmail(renderData, templates);
+
         await getResend().emails.send({
           from: "Syntance <kontakt@syntance.com>",
-          to: [clientData.email],
-          subject: `Syntance - Informacja o zleceniu ${projectTypeGenitive}`,
-          html: getRejectedEmailHtml(clientData),
+          to: [clientForMail.email],
+          subject,
+          html,
         });
 
         try {
-          await updateProjectStatus(bookingId, 'rejected');
-          await addProjectNote(bookingId, 'Odrzucono', `${new Date().toLocaleString('pl-PL')}`);
+          await updateProjectStatus(liveBookingId, 'rejected');
+          await addProjectNote(liveBookingId, 'Odrzucono', `${new Date().toLocaleString('pl-PL')}`);
         } catch (err) {
           console.error('Attio error:', err);
         }
       }
 
-      return new NextResponse(renderPage('rejected', bookingId, clientData), {
+      return new NextResponse(renderPage('rejected', liveBookingId, clientForMail), {
         status: 200, headers: { 'Content-Type': 'text/html' },
       });
     }
@@ -214,238 +249,6 @@ export async function GET(req: NextRequest) {
       status: 500, headers: { 'Content-Type': 'text/html' },
     });
   }
-}
-
-// ─── EMAIL: Umowy ──────────────────────────────────────────────────────────────
-
-function getContractsEmailHtml(data: ClientData, introText?: string): string {
-  const intro = introText
-    ? escapeHtml(introText).replace(/\n/g, '<br>')
-    : `W załączeniu przesyłamy umowy dotyczące realizacji Twojego zlecenia (<strong>${escapeHtml(data.bookingId)}</strong>).<br><br>Prosimy o zapoznanie się z dokumentami, podpisanie ich i odesłanie skanów na <a href="mailto:kontakt@syntance.com" style="color:#a78bfa;">kontakt@syntance.com</a>. Po otrzymaniu podpisanych umów wyślemy dane do płatności zaliczki.`
-
-  return `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="margin:0;padding:0;background-color:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0a0a0a;padding:40px 20px;">
-    <tr><td align="center">
-      <table width="600" cellpadding="0" cellspacing="0" style="background-color:#111;border-radius:16px;border:1px solid #222;">
-        <tr>
-          <td style="padding:32px;text-align:center;border-bottom:1px solid #222;">
-            <div style="font-size:56px;margin-bottom:16px;">📄</div>
-            <h1 style="margin:0;color:#fff;font-size:26px;">Umowy do Twojego zlecenia</h1>
-            <p style="margin:8px 0 0;color:#888;">Nr referencyjny: <strong style="color:#a78bfa;">${escapeHtml(data.bookingId)}</strong></p>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:32px;">
-            <p style="color:#ccc;font-size:16px;line-height:1.6;">
-              Cześć <strong style="color:#fff;">${escapeHtml(data.name)}</strong>,
-            </p>
-            <p style="color:#ccc;font-size:15px;line-height:1.7;">
-              ${intro}
-            </p>
-
-            <div style="background-color:#1a1a1a;border-radius:12px;padding:24px;margin:24px 0;">
-              <h3 style="margin:0 0 16px;color:#fff;font-size:15px;">📋 Szczegóły zlecenia</h3>
-              <table width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td style="padding:5px 0;color:#888;font-size:14px;width:160px;">Typ projektu:</td>
-                  <td style="padding:5px 0;color:#fff;font-size:14px;">${escapeHtml(data.projectType)}</td>
-                </tr>
-                <tr>
-                  <td style="padding:5px 0;color:#888;font-size:14px;">Wartość:</td>
-                  <td style="padding:5px 0;color:#fff;font-size:14px;">${data.priceNetto.toLocaleString('pl-PL')} PLN netto / ${data.priceBrutto.toLocaleString('pl-PL')} PLN brutto</td>
-                </tr>
-                <tr>
-                  <td style="padding:5px 0;color:#888;font-size:14px;">Zaliczka:</td>
-                  <td style="padding:5px 0;color:#a78bfa;font-size:14px;font-weight:600;">${data.deposit.toLocaleString('pl-PL')} PLN</td>
-                </tr>
-              </table>
-            </div>
-
-            <p style="color:#888;font-size:13px;line-height:1.6;margin-top:24px;">
-              Masz pytania? Odpowiedz na ten email lub napisz na <a href="mailto:kontakt@syntance.com" style="color:#a78bfa;">kontakt@syntance.com</a>.
-            </p>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:20px 32px;text-align:center;background-color:#0d0d0d;border-top:1px solid #222;">
-            <p style="margin:0;color:#555;font-size:12px;">© ${new Date().getFullYear()} Syntance. Wszystkie prawa zastrzeżone.</p>
-          </td>
-        </tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`
-}
-
-// ─── EMAIL: Dane do przelewu ───────────────────────────────────────────────────
-
-function getPaymentEmailHtml(data: ClientData, payment: PaymentSettings | null): string {
-  const transferTitle = payment
-    ? resolveTransferTitle(payment.transferTitleTemplate, data.bookingId)
-    : `Zaliczka ${data.bookingId} — Syntance`
-
-  const paymentBlock = payment
-    ? `<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0d0d0d;border-radius:12px;border:1px solid #333;margin:24px 0;">
-        <tr><td style="padding:20px;">
-          <h4 style="margin:0 0 16px;color:#fff;font-size:14px;">🏦 Dane do przelewu</h4>
-          <table width="100%" cellpadding="0" cellspacing="0">
-            <tr>
-              <td style="padding:6px 0;color:#888;font-size:14px;width:160px;vertical-align:top;">Właściciel konta:</td>
-              <td style="padding:6px 0;color:#fff;font-size:14px;font-weight:600;">${escapeHtml(payment.accountHolder)}</td>
-            </tr>
-            ${payment.bankName ? `<tr>
-              <td style="padding:6px 0;color:#888;font-size:14px;vertical-align:top;">Bank:</td>
-              <td style="padding:6px 0;color:#fff;font-size:14px;">${escapeHtml(payment.bankName)}</td>
-            </tr>` : ''}
-            <tr>
-              <td style="padding:6px 0;color:#888;font-size:14px;vertical-align:top;">Numer konta:</td>
-              <td style="padding:6px 0;color:#fff;font-size:14px;font-weight:600;font-family:monospace,monospace;letter-spacing:0.5px;">${escapeHtml(payment.accountNumber)}</td>
-            </tr>
-            ${payment.swiftBic ? `<tr>
-              <td style="padding:6px 0;color:#888;font-size:14px;vertical-align:top;">SWIFT / BIC:</td>
-              <td style="padding:6px 0;color:#fff;font-size:14px;font-family:monospace,monospace;">${escapeHtml(payment.swiftBic)}</td>
-            </tr>` : ''}
-            <tr>
-              <td style="padding:6px 0;color:#888;font-size:14px;vertical-align:top;">Tytuł przelewu:</td>
-              <td style="padding:6px 0;color:#a78bfa;font-size:14px;font-weight:600;">${escapeHtml(transferTitle)}</td>
-            </tr>
-            <tr>
-              <td style="padding:6px 0;color:#888;font-size:14px;vertical-align:top;">Kwota zaliczki:</td>
-              <td style="padding:6px 0;color:#22c55e;font-size:16px;font-weight:700;">${data.deposit.toLocaleString('pl-PL')} PLN</td>
-            </tr>
-          </table>
-          ${payment.additionalInfo ? `<p style="margin:16px 0 0;color:#888;font-size:13px;line-height:1.6;border-top:1px solid #222;padding-top:12px;">${escapeHtml(payment.additionalInfo).replace(/\n/g, '<br>')}</p>` : ''}
-        </td></tr>
-      </table>`
-    : `<div style="background-color:#0d0d0d;border-radius:12px;padding:20px;margin:24px 0;border:1px solid #333;">
-        <h4 style="margin:0 0 12px;color:#fff;font-size:14px;">🏦 Dane do przelewu</h4>
-        <p style="margin:0;color:#ccc;font-size:14px;line-height:1.8;">
-          <strong>Tytuł:</strong> ${escapeHtml(transferTitle)}<br>
-          <strong>Kwota:</strong> ${data.deposit.toLocaleString('pl-PL')} PLN
-        </p>
-        <p style="margin:12px 0 0;color:#888;font-size:12px;">Szczegółowe dane do przelewu zostaną wysłane w osobnej wiadomości.</p>
-      </div>`
-
-  return `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="margin:0;padding:0;background-color:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0a0a0a;padding:40px 20px;">
-    <tr><td align="center">
-      <table width="600" cellpadding="0" cellspacing="0" style="background-color:#111;border-radius:16px;border:1px solid #222;">
-        <tr>
-          <td style="padding:32px;text-align:center;border-bottom:1px solid #222;">
-            <div style="font-size:56px;margin-bottom:16px;">🎉</div>
-            <h1 style="margin:0;color:#22c55e;font-size:26px;">Zlecenie potwierdzone!</h1>
-            <p style="margin:8px 0 0;color:#888;">Nr referencyjny: <strong style="color:#a78bfa;">${escapeHtml(data.bookingId)}</strong></p>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:32px;">
-            <p style="color:#ccc;font-size:16px;line-height:1.6;">
-              Cześć <strong style="color:#fff;">${escapeHtml(data.name)}</strong>,
-            </p>
-            <p style="color:#ccc;font-size:15px;line-height:1.7;">
-              Dziękujemy za podpisanie umów! Poniżej znajdziesz dane do wpłaty zaliczki, po której <strong style="color:#fff;">rozpoczynamy realizację projektu</strong>.
-            </p>
-
-            <div style="background-color:#1a1a1a;border-radius:12px;padding:24px;margin:24px 0;">
-              <h3 style="margin:0 0 16px;color:#fff;font-size:15px;">💰 Podsumowanie zlecenia</h3>
-              <table width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td style="padding:5px 0;color:#888;font-size:14px;width:160px;">Typ projektu:</td>
-                  <td style="padding:5px 0;color:#fff;font-size:14px;">${escapeHtml(data.projectType)}</td>
-                </tr>
-                <tr>
-                  <td style="padding:5px 0;color:#888;font-size:14px;">Wartość netto:</td>
-                  <td style="padding:5px 0;color:#fff;font-size:14px;">${data.priceNetto.toLocaleString('pl-PL')} PLN</td>
-                </tr>
-                <tr>
-                  <td style="padding:5px 0;color:#888;font-size:14px;">Wartość brutto:</td>
-                  <td style="padding:5px 0;color:#fff;font-size:14px;">${data.priceBrutto.toLocaleString('pl-PL')} PLN</td>
-                </tr>
-                <tr>
-                  <td style="padding:5px 0;color:#888;font-size:14px;">Zaliczka:</td>
-                  <td style="padding:5px 0;color:#22c55e;font-size:15px;font-weight:700;">${data.deposit.toLocaleString('pl-PL')} PLN</td>
-                </tr>
-              </table>
-            </div>
-
-            ${paymentBlock}
-
-            <p style="color:#888;font-size:13px;line-height:1.6;">
-              Po zaksięgowaniu wpłaty skontaktujemy się w sprawie startu projektu.
-              Pytania? <a href="mailto:kontakt@syntance.com" style="color:#a78bfa;">kontakt@syntance.com</a>.
-            </p>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:20px 32px;text-align:center;background-color:#0d0d0d;border-top:1px solid #222;">
-            <p style="margin:0;color:#555;font-size:12px;">© ${new Date().getFullYear()} Syntance. Wszystkie prawa zastrzeżone.</p>
-          </td>
-        </tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`
-}
-
-// ─── EMAIL: Odrzucenie ─────────────────────────────────────────────────────────
-
-function getRejectedEmailHtml(data: ClientData): string {
-  return `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="margin:0;padding:0;background-color:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0a0a0a;padding:40px 20px;">
-    <tr><td align="center">
-      <table width="600" cellpadding="0" cellspacing="0" style="background-color:#111;border-radius:16px;border:1px solid #222;">
-        <tr>
-          <td style="padding:32px;text-align:center;border-bottom:1px solid #222;">
-            <h1 style="margin:0;color:#fff;font-size:24px;">Informacja o zapytaniu</h1>
-            <p style="margin:8px 0 0;color:#888;">Nr referencyjny: ${escapeHtml(data.bookingId)}</p>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:32px;">
-            <p style="color:#ccc;font-size:16px;line-height:1.6;">
-              Cześć <strong style="color:#fff;">${escapeHtml(data.name)}</strong>,
-            </p>
-            <p style="color:#ccc;font-size:15px;line-height:1.7;">
-              Dziękujemy za zainteresowanie współpracą z Syntance. Niestety, <strong style="color:#f87171;">w tym momencie nie możemy przyjąć Twojego zlecenia</strong>.
-            </p>
-            <p style="color:#ccc;font-size:15px;line-height:1.7;">
-              Skontaktujemy się z Tobą wkrótce, aby omówić możliwe alternatywy.
-            </p>
-            <p style="color:#888;font-size:13px;margin-top:24px;">
-              Pytania? <a href="mailto:kontakt@syntance.com" style="color:#a78bfa;">kontakt@syntance.com</a> · <a href="tel:+48537110170" style="color:#a78bfa;">+48 537 110 170</a>
-            </p>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:20px 32px;text-align:center;background-color:#0d0d0d;border-top:1px solid #222;">
-            <p style="margin:0;color:#555;font-size:12px;">© ${new Date().getFullYear()} Syntance. Wszystkie prawa zastrzeżone.</p>
-          </td>
-        </tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`
 }
 
 // ─── Strona potwierdzenia dla admina ──────────────────────────────────────────

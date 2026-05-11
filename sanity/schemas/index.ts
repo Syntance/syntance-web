@@ -10,8 +10,8 @@ import bookingTimeBlock from './bookingTimeBlock'
 import meetingBooking from './meetingBooking'
 import portfolioItem from './portfolioItem'
 import paymentSettings from './paymentSettings'
-import orderCounter from './orderCounter'
 import contractFiles from './contractFiles'
+import emailTemplates from './emailTemplates'
 
 export const schemaTypes = [
   pricingCategory,
@@ -26,6 +26,6 @@ export const schemaTypes = [
   meetingBooking,
   portfolioItem,
   paymentSettings,
-  orderCounter,
   contractFiles,
+  emailTemplates,
 ]

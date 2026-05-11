@@ -6,4 +6,7 @@ export default defineCliConfig({
     dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
   },
   studioHost: 'syntance',
+  deployment: {
+    appId: 'soxvlns27i2p8x382l5jlza2',
+  },
 })

@@ -4,6 +4,11 @@ import { Resend } from 'resend'
 import { getAvailableSlotsForDate, warsawSlotToIso } from '@/lib/booking-slots'
 import { createMeetingEvent } from '@/lib/google-calendar'
 import { createBooking, getBookingRules } from '@/lib/sanity/booking'
+import { getEmailTemplates } from '@/sanity/queries/emailTemplates'
+import {
+  renderMeetingBookingClientEmail,
+  renderMeetingBookingOwnerPlain,
+} from '@/lib/emails/templates'
 
 const schema = z.object({
   name: z.string().min(2).max(120),
@@ -190,43 +195,34 @@ export async function POST(req: Request) {
     })
     const icsBase64 = Buffer.from(ics, 'utf8').toString('base64')
 
-    const ownerText =
-      `Nowa rezerwacja ${rules.slotMinutes}-min rozmowy\n\n` +
-      `Data: ${dateLabel}\n` +
-      `Godzina: ${data.time} (${rules.slotMinutes} min)\n\n` +
-      `Imię: ${data.name}\nEmail: ${data.email}\n` +
-      (data.company ? `Firma: ${data.company}\n` : '') +
-      (data.topic ? `Temat: ${data.topic}\n` : '') +
-      (data.source ? `Źródło: ${data.source}\n` : '') +
-      (googleEvent ? `\nGoogle Calendar: ${googleEvent.htmlLink ?? '(bez linku)'}` : '\n(⚠ event nie został dodany do kalendarza — sprawdź credentiale)') +
-      (googleEvent?.meetLink ? `\nMeet: ${googleEvent.meetLink}` : '') +
-      (sanityId ? `\nSanity ID: ${sanityId}` : '')
-
-    const clientHtml = `<!DOCTYPE html>
-<html><body style="margin:0;padding:0;background:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0a0a;padding:40px 20px;">
-<tr><td align="center">
-<table width="600" cellpadding="0" cellspacing="0" style="background:#111;border-radius:16px;border:1px solid #222;">
-  <tr><td style="padding:32px;border-bottom:1px solid #222;">
-    <h1 style="margin:0;color:#fff;font-size:22px;">Dzięki, ${data.name} — mamy termin</h1>
-    <p style="margin:8px 0 0;color:#aaa;">Potwierdzenie rezerwacji ${rules.slotMinutes}-min rozmowy z Kamilem.</p>
-  </td></tr>
-  <tr><td style="padding:24px 32px;color:#ccc;font-size:15px;line-height:1.6;">
-    <p><strong style="color:#fff;">${dateLabel}</strong><br/>
-    godz. <strong style="color:#fff;">${data.time}</strong> (${rules.slotMinutes} min, Europe/Warsaw)</p>
-    ${
-      googleEvent?.meetLink
-        ? `<p>Link do Google Meet: <a href="${googleEvent.meetLink}" style="color:#a78bfa;">${googleEvent.meetLink}</a><br/>
-           (otrzymasz też zaproszenie w kalendarzu)</p>`
-        : `<p>W załączniku znajdziesz plik <code>.ics</code> — kliknij, żeby dodać spotkanie do kalendarza.</p>`
+    const emailTemplates = await getEmailTemplates()
+    const ownerPayload = {
+      name: data.name,
+      email: data.email,
+      meetingDateLabel: dateLabel,
+      meetingTime: data.time,
+      slotMinutes: rules.slotMinutes,
+      company: data.company,
+      topic: data.topic,
+      source: data.source,
+      calendarLine: googleEvent
+        ? `\nGoogle Calendar: ${googleEvent.htmlLink ?? '(bez linku)'}`
+        : '\n(⚠ event nie został dodany do kalendarza — sprawdź credentiale)',
+      meetLine: googleEvent?.meetLink ? `\nMeet: ${googleEvent.meetLink}` : '',
+      sanityLine: sanityId ? `\nSanity ID: ${sanityId}` : '',
     }
-    <p>Chcesz przesunąć / odwołać? Wystarczy odpowiedzieć na tego maila.</p>
-  </td></tr>
-  <tr><td style="padding:24px 32px;background:#0d0d0d;border-top:1px solid #222;color:#666;font-size:12px;">
-    Syntance • kamil@syntance.com
-  </td></tr>
-</table>
-</td></tr></table></body></html>`
+    const ownerRendered = renderMeetingBookingOwnerPlain(ownerPayload, emailTemplates)
+
+    const clientRendered = renderMeetingBookingClientEmail(
+      {
+        name: data.name,
+        meetingDateLabel: dateLabel,
+        meetingTime: data.time,
+        slotMinutes: rules.slotMinutes,
+        meetLink: googleEvent?.meetLink,
+      },
+      emailTemplates,
+    )
 
     const ownerEmail = 'kamil@syntance.com'
 
@@ -235,8 +231,8 @@ export async function POST(req: Request) {
       from: 'Syntance <kontakt@syntance.com>',
       to: [ownerEmail],
       replyTo: data.email,
-      subject: `Nowa rozmowa: ${dateLabel}, ${data.time} — ${data.name}`,
-      text: ownerText,
+      subject: ownerRendered.subject,
+      text: ownerRendered.text,
     })
 
     // Potwierdzenie klienta — z ICS fallbackiem. Jeśli Google wysłał zaproszenie
@@ -245,8 +241,8 @@ export async function POST(req: Request) {
       from: 'Syntance <kontakt@syntance.com>',
       to: [data.email],
       replyTo: ownerEmail,
-      subject: `Potwierdzenie rozmowy — ${dateLabel}, ${data.time}`,
-      html: clientHtml,
+      subject: clientRendered.subject,
+      html: clientRendered.html,
       attachments: [
         {
           filename: 'rozmowa-syntance.ics',

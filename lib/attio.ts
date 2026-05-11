@@ -317,6 +317,159 @@ function pickSelectFirstTitle(values: Record<string, any[]> | undefined, slug: s
   return undefined
 }
 
+/** Dopasowanie numeracji zlecenia w polach deala (booking_id i często name = ten sam SYN-…). */
+const SYN_ORDER_NUM_RE = /^SYN-(\d+)$/i
+
+/** Numer zlecenia z rekordu deala: najpierw `booking_id`, inaczej `name` jeśli ma format SYN-…. */
+function resolveBookingIdFromDealValues(values: Record<string, any[]> | undefined): string | undefined {
+  const bid = (pickValue(values, 'booking_id') as string | undefined)?.trim()
+  if (bid) return bid
+  const name = (pickValue(values, 'name') as string | undefined)?.trim()
+  if (name && SYN_ORDER_NUM_RE.test(name)) return name
+  return undefined
+}
+
+/**
+ * Aktualny numer zlecenia z Attio (świeży GET) — używaj przed mailami (umowa / przelew),
+ * żeby treść zgadzała się z CRM po ręcznej edycji pola.
+ */
+export async function fetchCurrentDealBookingId(dealId: string): Promise<string | null> {
+  const deal = await attioRequest(`/objects/deals/records/${dealId}`, 'GET')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const values = deal?.data?.values as Record<string, any[]> | undefined
+  const id = resolveBookingIdFromDealValues(values)
+  return id ?? null
+}
+
+/**
+ * Numer zlecenia z Attio, gdy w linku masz wcześniejszy SYN- (lookup po polu `booking_id`).
+ * Gdy rekord nie istnieje pod starym numerem — zwraca `bookingIdFromUrl`.
+ */
+export async function resolveBookingIdFromAttioLink(bookingIdFromUrl: string): Promise<string> {
+  const res = await attioRequest('/objects/deals/records/query', 'POST', {
+    filter: { booking_id: bookingIdFromUrl },
+    limit: 1,
+  })
+  const recordId = res?.data?.[0]?.id?.record_id as string | undefined
+  if (!recordId) return bookingIdFromUrl
+  const live = await fetchCurrentDealBookingId(recordId)
+  return live ?? bookingIdFromUrl
+}
+
+function maxSynSequenceFromDealValues(values: Record<string, any[]> | undefined): number {
+  let max = 0
+  if (!values) return max
+  for (const slug of ['booking_id', 'name'] as const) {
+    const raw = pickValue(values, slug)
+    if (typeof raw !== 'string') continue
+    const m = raw.trim().match(SYN_ORDER_NUM_RE)
+    if (!m) continue
+    const n = Number.parseInt(m[1], 10)
+    if (!Number.isNaN(n) && n > max) max = n
+  }
+  return max
+}
+
+async function getMaxSynSequenceAmongDeals(): Promise<number> {
+  const pageSize = 100
+  let offset = 0
+  let max = 0
+  for (;;) {
+    const res = await attioRequest('/objects/deals/records/query', 'POST', {
+      limit: pageSize,
+      offset,
+    })
+    const rows = res?.data as Array<{ values?: Record<string, any[]> }> | undefined
+    if (!rows?.length) break
+    for (const row of rows) {
+      const m = maxSynSequenceFromDealValues(row.values)
+      if (m > max) max = m
+    }
+    if (rows.length < pageSize) break
+    offset += pageSize
+  }
+  return max
+}
+
+/**
+ * Kolejny numer zlecenia SYN-NNNN — wyłącznie z istniejących deali w Attio (CRM jako źródło prawdy).
+ * Sanity nie jest tu używane. Przy równoległych żądaniach stosujemy sprawdzanie kolizji po `booking_id`.
+ */
+export async function getNextOrderNumberFromAttio(): Promise<string> {
+  let seq = await getMaxSynSequenceAmongDeals()
+  for (let attempt = 0; attempt < 24; attempt++) {
+    seq += 1
+    const candidate = `SYN-${String(seq).padStart(4, '0')}`
+    const clash = await attioRequest('/objects/deals/records/query', 'POST', {
+      filter: { booking_id: candidate },
+      limit: 1,
+    })
+    if (!clash?.data?.[0]?.id?.record_id) {
+      return candidate
+    }
+  }
+  console.error('[attio] getNextOrderNumberFromAttio: kolizje — fallback czasowy')
+  const now = new Date()
+  const yy = now.getFullYear().toString().slice(2)
+  const mm = String(now.getMonth() + 1).padStart(2, '0')
+  const ms = String(now.getTime()).slice(-4)
+  return `SYN-${yy}${mm}-${ms}`
+}
+
+/**
+ * Gdy deal nie ma `booking_id` (np. utworzony ręcznie w Attio), nadaje kolejny SYN-…
+ * z istniejących deali i zapisuje `booking_id` + `name` (spójnie z formularzem).
+ */
+export async function ensureDealHasBookingNumber(
+  dealId: string
+): Promise<{ bookingId: string; values: Record<string, any[]>; wasNew: boolean } | null> {
+  const deal = await attioRequest(`/objects/deals/records/${dealId}`, 'GET')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const values = (deal?.data?.values as Record<string, any[]>) ?? null
+  if (!values) {
+    console.error(`[attio] ensureDealHasBookingNumber: brak deala ${dealId}`)
+    return null
+  }
+
+  const resolved = resolveBookingIdFromDealValues(values)
+  if (resolved) {
+    const bidOnly = (pickValue(values, 'booking_id') as string | undefined)?.trim()
+    if (!bidOnly) {
+      const sync = await attioRequest(`/objects/deals/records/${dealId}`, 'PATCH', {
+        data: { values: { booking_id: [{ value: resolved }] } },
+      })
+      if (!sync?.data?.id?.record_id) {
+        console.warn(`[attio] ensureDealHasBookingNumber: sync booking_id z name nieudany ${dealId}`)
+      }
+      const nextValues: Record<string, any[]> = { ...values, booking_id: [{ value: resolved }] }
+      return { bookingId: resolved, values: nextValues, wasNew: false }
+    }
+    return { bookingId: resolved, values, wasNew: false }
+  }
+
+  const bookingId = await getNextOrderNumberFromAttio()
+  const updated = await attioRequest(`/objects/deals/records/${dealId}`, 'PATCH', {
+    data: {
+      values: {
+        booking_id: [{ value: bookingId }],
+        name: [{ value: bookingId }],
+      },
+    },
+  })
+  if (!updated?.data?.id?.record_id) {
+    console.error(`[attio] ensureDealHasBookingNumber: PATCH nieudany dla ${dealId}`)
+    return null
+  }
+
+  const nextValues: Record<string, any[]> = {
+    ...values,
+    booking_id: [{ value: bookingId }],
+    name: [{ value: bookingId }],
+  }
+  console.log(`[attio] Auto-generated booking_id ${bookingId} for deal ${dealId}`)
+  return { bookingId, values: nextValues, wasNew: true }
+}
+
 /**
  * Tytuł natywnego etapu deala (Deal stage) — używane przez webhook po record.updated.
  */
@@ -335,21 +488,9 @@ export async function getDealNativeStageTitle(dealId: string): Promise<string | 
  * generuje nowy numer i zapisuje go w Attio automatycznie.
  */
 export async function getClientDataByDealId(dealId: string): Promise<AttioClientData | null> {
-  const deal = await attioRequest(`/objects/deals/records/${dealId}`, 'GET')
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const values = (deal?.data?.values as Record<string, any[]>) ?? {}
-
-  // ── Booking ID — generuj jeśli brak (ręcznie stworzony deal) ────────────
-  let bookingId = pickValue(values, 'booking_id') as string | undefined
-  if (!bookingId) {
-    const { getNextOrderNumber } = await import('@/sanity/queries/orderCounter')
-    bookingId = await getNextOrderNumber()
-    // Zapisz wygenerowany numer z powrotem do deala w Attio
-    await attioRequest(`/objects/deals/records/${dealId}`, 'PATCH', {
-      data: { values: { booking_id: [{ value: bookingId }] } },
-    })
-    console.log(`[attio] Auto-generated booking_id ${bookingId} for deal ${dealId}`)
-  }
+  const ensured = await ensureDealHasBookingNumber(dealId)
+  if (!ensured) return null
+  const { bookingId, values } = ensured
 
   // ── Powiązana osoba (klient) ─────────────────────────────────────────────
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
