@@ -150,6 +150,7 @@ const structure = (S: any) =>
             'seoSettings',
             'pageSeo',
             'faqSettings',
+            'pricingFaq', // wyłączone ze struktury — treści w singletonie faqSettings (zakładki)
             'faqSimpleEntry',
             'faqPricingEntry',
             'bookingRules',
