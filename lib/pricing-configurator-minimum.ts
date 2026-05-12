@@ -2,6 +2,30 @@ import type { PricingData } from '@/sanity/queries/pricing'
 import { defaultStartingPrices } from '@/sanity/queries/pricing'
 import { computeConfiguratorPricing } from '@/lib/pricing-calculator'
 
+/** Ostatnia deska ratunku, gdy brak typu w CMS albo zero z konfiguratora i z basePrice typu. */
+function configOrDefaultFallbackNet(projectTypeId: string, data: PricingData): number {
+  const cfg = data.config
+  switch (projectTypeId) {
+    case 'website': {
+      const n = cfg.websiteStartPrice
+      if (typeof n === 'number' && Number.isFinite(n) && n > 0) return n
+      return defaultStartingPrices.websiteStartPrice
+    }
+    case 'ecommerce': {
+      const n = cfg.ecommerceStandardStartPrice
+      if (typeof n === 'number' && Number.isFinite(n) && n > 0) return n
+      return defaultStartingPrices.ecommerceStandardStartPrice
+    }
+    case 'webapp': {
+      const n = cfg.webappStartPrice
+      if (typeof n === 'number' && Number.isFinite(n) && n > 0) return n
+      return defaultStartingPrices.webappStartPrice
+    }
+    default:
+      return 0
+  }
+}
+
 /**
  * Minimalny zestaw pozycji jak „pusty” konfigurator: tylko `required` dla danego typu projektu,
  * bez niczego z `defaultSelected`, plus domknięcie `bundledWith`.
@@ -54,25 +78,36 @@ export interface ConfiguratorMinimumPricesNet {
   webappNet: number
 }
 
-function netForEnabledType(
-  projectTypeId: string,
-  data: PricingData,
-  fallback: number,
-): number {
+function minimumNetForProjectType(projectTypeId: string, data: PricingData): number {
   const pt = data.projectTypes.find((p) => p.id === projectTypeId && !p.disabled)
-  if (!pt) return fallback
-  const raw = computeConfiguratorMinimumPriceNet(projectTypeId, data)
-  return raw > 0 ? raw : fallback
+  if (!pt) {
+    return configOrDefaultFallbackNet(projectTypeId, data)
+  }
+
+  const fromConfigurator = computeConfiguratorMinimumPriceNet(projectTypeId, data)
+  if (fromConfigurator > 0) {
+    return fromConfigurator
+  }
+
+  const baseFromType =
+    typeof pt.basePrice === 'number' && Number.isFinite(pt.basePrice) && pt.basePrice > 0
+      ? pt.basePrice
+      : 0
+  if (baseFromType > 0) {
+    return baseFromType
+  }
+
+  return configOrDefaultFallbackNet(projectTypeId, data)
 }
 
+/**
+ * Minimalne kwoty netto używane w meta, FAQ i treściach (strony, sklep, kontakt itd.).
+ * Kolejność: ta sama logika co pusty konfigurator → potem `basePrice` dokumentu typu → pola fallback w cenniku → stałe w kodzie.
+ */
 export function getConfiguratorMinimumPricesNet(data: PricingData): ConfiguratorMinimumPricesNet {
   return {
-    websiteNet: netForEnabledType('website', data, defaultStartingPrices.websiteStartPrice),
-    ecommerceNet: netForEnabledType(
-      'ecommerce',
-      data,
-      defaultStartingPrices.ecommerceStandardStartPrice,
-    ),
-    webappNet: netForEnabledType('webapp', data, defaultStartingPrices.webappStartPrice),
+    websiteNet: minimumNetForProjectType('website', data),
+    ecommerceNet: minimumNetForProjectType('ecommerce', data),
+    webappNet: minimumNetForProjectType('webapp', data),
   }
 }

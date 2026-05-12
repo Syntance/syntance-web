@@ -7,7 +7,7 @@ export default defineType({
   groups: [
     { name: 'general', title: 'Ogólne', default: true },
     { name: 'bundle', title: 'Gotowe pakiety — cena bazowa' },
-    { name: 'startingPrices', title: 'Wartości pomocnicze (SEO, fallback)' },
+    { name: 'startingPrices', title: 'Zapasowe ceny (tylko gdy konfigurator i typ dają 0)' },
     { name: 'rates', title: 'Stawki' },
     { name: 'complexity', title: 'Złożoność' },
   ],
@@ -126,47 +126,48 @@ export default defineType({
         'Gdy w wierszu powyżej nie wpiszesz „Slug kategorii bazy”, używana jest ta wartość (np. „base”).',
     }),
 
-    // === WARTOŚCI POMOCNICZE ===
+    // === ZAPASOWE CENY (kolejność na stronie: konfigurator → basePrice typu → poniżej → defaulty w kodzie) ===
     defineField({
       name: 'websiteStartPrice',
-      title: 'Strona firmowa — cena do SEO / fallback (PLN)',
+      title: 'Fallback: strona WWW (PLN netto)',
       type: 'number',
       group: 'startingPrices',
       initialValue: 5400,
       description:
-        'Gdy konfigurator liczy po pozycjach (pakiet WWW = 0), może służyć jako tekst w meta. Główna wycena strony: zakładka Gotowe pakiety lub suma z konfiguratora.',
+        'Używane tylko gdy minimalna cena z konfiguratora jest 0 i w „Pakiet gotowy — typ” nie ma sensownej ceny bazowej. Meta, FAQ i podstrony biorą najpierw ten sam rachunek co /cennik.',
     }),
     defineField({
       name: 'websiteAdvancedStartPrice',
-      title: 'Strona rozbudowana — SEO / fallback (PLN)',
+      title: 'Strona rozbudowana (PLN) — zarezerwowane',
       type: 'number',
       group: 'startingPrices',
       initialValue: 12000,
-      description: 'Wartość pomocnicza (teksty, porównania). Wycena z konfiguratora / pakietów ma pierwszeństwo.',
+      description:
+        'Nie jest podpinane w kodzie. Możesz trzymać wartość na przyszłe teksty albo usunąć w następnej migracji schematu.',
     }),
     defineField({
       name: 'ecommerceStandardStartPrice',
-      title: 'Sklep standard — SEO / fallback (PLN)',
+      title: 'Fallback: sklep e-commerce (PLN netto)',
       type: 'number',
       group: 'startingPrices',
       initialValue: 12000,
-      description: 'Jak wyżej — pomocniczo dla meta i starych treści.',
+      description: 'Jak „Fallback WWW” — dla typu sklep, gdy konfigurator i basePrice typu dają 0.',
     }),
     defineField({
       name: 'ecommerceProStartPrice',
-      title: 'Sklep Pro — SEO / fallback (PLN)',
+      title: 'Sklep Pro (PLN) — zarezerwowane',
       type: 'number',
       group: 'startingPrices',
       initialValue: 25000,
-      description: 'Jak wyżej.',
+      description: 'Nie jest używane na stronie — podobnie jak strona rozbudowana.',
     }),
     defineField({
       name: 'webappStartPrice',
-      title: 'Aplikacja webowa — SEO / fallback (PLN)',
+      title: 'Fallback: aplikacja webowa (PLN netto)',
       type: 'number',
       group: 'startingPrices',
       initialValue: 30000,
-      description: 'Jak wyżej.',
+      description: 'Jak „Fallback WWW” — dla typu aplikacja webowa.',
     }),
 
     // === STAWKI ===
