@@ -125,7 +125,7 @@ export default defineType({
         'Gdy w wierszu powyżej nie wpiszesz „Slug kategorii bazy”, używana jest ta wartość (np. „base”).',
     }),
 
-    // === ZAPASOWE CENY (kolejność na stronie: konfigurator → basePrice typu → poniżej → defaulty w kodzie) ===
+    // === ZAPASOWE CENY (gdy **cena pakietu gotowego** = 0 lub brak wiersza: konfigurator → basePrice typu → poniżej → defaulty w kodzie) ===
     defineField({
       name: 'websiteStartPrice',
       title: 'Fallback: strona WWW (PLN netto)',
@@ -133,7 +133,7 @@ export default defineType({
       group: 'startingPrices',
       initialValue: 5400,
       description:
-        'Używane tylko gdy minimalna cena z konfiguratora jest 0 i w „Pakiet gotowy — typ” nie ma sensownej ceny bazowej. Meta, FAQ i podstrony biorą najpierw ten sam rachunek co /cennik.',
+        'Główna „cena od której zaczyna się projekt” na całej stronie: ustaw tutaj **Cena pakietu gotowego** w wierszu typu (powyżej). To pole tylko gdy pakiet = 0 i reszta łańcucha daje 0.',
     }),
     defineField({
       name: 'websiteAdvancedStartPrice',

@@ -40,7 +40,7 @@ export default async function KontaktPage() {
     },
     {
       question: "Jaki jest minimalny budżet na projekt?",
-      answer: `Strony od ${formatPrice(websiteNet)} PLN netto (baza konfiguratora), sklepy od ${formatPrice(ecommerceNet)} PLN netto. Dokładna wycena po rozmowie o zakresie.`
+      answer: `Strony od ${formatPrice(websiteNet)} PLN netto (pakiet startowy), sklepy od ${formatPrice(ecommerceNet)} PLN netto. Dokładna wycena po rozmowie o zakresie.`
     }
   ]
   

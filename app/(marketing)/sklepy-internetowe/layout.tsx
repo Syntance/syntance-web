@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const priceStr = formatP(ecommerceNet)
   return {
     title: 'Sklepy internetowe headless | MedusaJS & Next.js | Syntance',
-    description: `Budujemy sklepy internetowe w architekturze headless. MedusaJS, Next.js, zero prowizji. Sklepy od ${priceStr} PLN netto (baza konfiguratora). Wycena w 24h →`,
+    description: `Budujemy sklepy internetowe w architekturze headless. MedusaJS, Next.js, zero prowizji. Sklepy od ${priceStr} PLN netto (pakiet startowy). Wycena w 24h →`,
     keywords: [
       'ile kosztuje sklep internetowy',
       'sklep internetowy dla firmy',

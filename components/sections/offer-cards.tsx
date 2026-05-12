@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import TiltCard from "@/components/tilt-card";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import type { ConfiguratorMinimumPricesNet } from "@/lib/pricing-configurator-minimum";
 
 function formatPrice(price: number): string {
   return price.toLocaleString('pl-PL');
@@ -17,36 +18,29 @@ export default function OfferCards() {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
-    const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production';
-    if (!projectId) return;
-
-    const query = encodeURIComponent(
-      `*[_type == "projectType" && !disabled]{ "id": id.current, basePrice }`
-    );
-
-    // AbortController + 5s timeout (rules: 60-quality "Timeouty / Zombie state").
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-    fetch(
-      `https://${projectId}.api.sanity.io/v2024-01-01/data/query/${dataset}?query=${query}`,
-      { signal: controller.signal }
-    )
-      .then(res => res.json())
-      .then(data => {
-        const types = data.result as { id: string; basePrice?: number }[];
-        if (!types?.length) return;
-        const website = types.find(t => t.id === 'website');
-        const ecommerce = types.find(t => t.id === 'ecommerce');
+    fetch("/api/pricing/start-prices", { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) throw new Error("start-prices failed");
+        return res.json() as Promise<ConfiguratorMinimumPricesNet>;
+      })
+      .then((mins) => {
         setBasePrices({
-          website: website?.basePrice ?? defaultBasePrices.website,
-          ecommerce: ecommerce?.basePrice ?? defaultBasePrices.ecommerce,
+          website:
+            typeof mins.websiteNet === "number" && mins.websiteNet > 0
+              ? mins.websiteNet
+              : defaultBasePrices.website,
+          ecommerce:
+            typeof mins.ecommerceNet === "number" && mins.ecommerceNet > 0
+              ? mins.ecommerceNet
+              : defaultBasePrices.ecommerce,
         });
       })
       .catch((err) => {
-        if (err?.name !== 'AbortError') {
-          // Silently fall back to defaultBasePrices.
+        if (err?.name !== "AbortError") {
+          // Cicho zostaw defaultBasePrices (zgodne z regułą degradacji).
         }
       })
       .finally(() => clearTimeout(timeoutId));

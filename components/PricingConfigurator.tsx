@@ -17,6 +17,7 @@ import {
   getBaseBundlePriceNet,
   getBaseProjectCategoryId,
 } from '@/lib/pricing-calculator'
+import { getProjectStartPriceNet } from '@/lib/pricing-configurator-minimum'
 import {
   isConfiguratorProjectTypeId,
   projectTypesForConfigurator,
@@ -523,9 +524,8 @@ export function PricingConfigurator({ data }: Props) {
                   </div>
                   
                   {(() => {
-                    const fromBundle = getBaseBundlePriceNet(type.id, config)
-                    const displayOd = fromBundle > 0 ? fromBundle : type.basePrice
-                    return displayOd != null && displayOd > 0 ? (
+                    const displayOd = getProjectStartPriceNet(type.id, data)
+                    return displayOd > 0 ? (
                     <span className={`text-sm ${isDisabledType ? 'text-gray-700' : 'text-gray-400'}`}>
                       od {displayOd.toLocaleString('pl-PL')} PLN netto
                     </span>

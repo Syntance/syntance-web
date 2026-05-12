@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const priceStr = formatP(websiteNet)
   return {
     title: 'Strony internetowe dla firm | Profesjonalne strony www Next.js | Syntance',
-    description: `Tworzymy profesjonalne strony internetowe dla firm B2B. Next.js, PageSpeed 90+, strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od ${priceStr} PLN netto (baza konfiguratora). Bezpłatna wycena →`,
+    description: `Tworzymy profesjonalne strony internetowe dla firm B2B. Next.js, PageSpeed 90+, strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od ${priceStr} PLN netto (pakiet startowy). Bezpłatna wycena →`,
     keywords: [
       'tworzenie stron internetowych',
       'strona internetowa dla firmy',
