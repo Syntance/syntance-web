@@ -153,6 +153,7 @@ const config = {
       projectType: { _type: 'reference', _ref: 'projectType-website' },
       baseCategorySlug: 'base',
       bundlePriceNet: 0,
+      bundleBaseHours: 0,
     },
     {
       _type: 'projectTypeBundleRow',
@@ -160,6 +161,7 @@ const config = {
       projectType: { _type: 'reference', _ref: 'projectType-ecommerce' },
       baseCategorySlug: 'base',
       bundlePriceNet: 0,
+      bundleBaseHours: 0,
     },
     {
       _type: 'projectTypeBundleRow',
@@ -167,6 +169,7 @@ const config = {
       projectType: { _type: 'reference', _ref: 'projectType-webapp' },
       baseCategorySlug: 'base',
       bundlePriceNet: 0,
+      bundleBaseHours: 0,
     },
   ],
 }

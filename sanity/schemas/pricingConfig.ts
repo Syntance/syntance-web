@@ -96,19 +96,30 @@ export default defineType({
               description:
                 'Jedna kwota pakietu zamiast sumy pozycji bazy w konfiguratorze. Zero = licz po pozycjach z CMS.',
             }),
+            defineField({
+              name: 'bundleBaseHours',
+              title: 'Czas realizacji bazy (roboczogodziny, cały pakiet)',
+              type: 'number',
+              initialValue: 0,
+              validation: (Rule) => Rule.min(0),
+              description:
+                'Gdy > 0: do szacunku terminu **nie** sumujemy godzin pojedynczych pozycji objętych pakietem / ceną bazową — liczy się tylko ta wartość + godziny dodatków. Zero = jak dotąd: suma godzin z pozycji „w bazie”.',
+            }),
           ],
           preview: {
             select: {
               name: 'projectType.name',
               pid: 'projectType.id.current',
               price: 'bundlePriceNet',
+              hours: 'bundleBaseHours',
               slug: 'baseCategorySlug',
             },
-            prepare({ name, pid, price, slug }) {
+            prepare({ name, pid, price, hours, slug }) {
               const slugLabel = slug?.trim() ? slug : 'zapas'
+              const h = typeof hours === 'number' && hours > 0 ? ` · ${hours} h baza` : ''
               return {
                 title: name ?? pid ?? 'Typ projektu',
-                subtitle: `${price ?? 0} PLN netto · baza: ${slugLabel}`,
+                subtitle: `${price ?? 0} PLN netto${h} · ${slugLabel}`,
               }
             },
           },

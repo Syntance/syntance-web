@@ -69,6 +69,18 @@ export function getBaseBundlePriceNet(projectTypeId: string, config: PricingConf
   return typeof raw === 'number' && Number.isFinite(raw) && raw > 0 ? raw : 0
 }
 
+/**
+ * Łączne roboczogodziny bazy z wiersza `projectTypeBundles` (nie suma godzin pozycji katalogu).
+ * Zero = konfigurator sumuje godziny pozycji objętych pakietem / „w bazie” (wcześniejsze zachowanie).
+ */
+export function getBundleBaseWorkHours(projectTypeId: string, config: PricingConfig | undefined): number {
+  if (!config) return 0
+  const row = getProjectTypeBundleRow(config, projectTypeId)
+  if (row === undefined) return 0
+  const n = row.bundleBaseHours
+  return typeof n === 'number' && Number.isFinite(n) && n > 0 ? n : 0
+}
+
 /** Cena katalogowa pozycji nie wchodzi do sumy, gdy jest gratis lub pokryta pakietem / ceną bazową typu projektu. */
 function isGratisCatalogLine(
   item: PricingItem,
@@ -118,6 +130,7 @@ export function computeConfiguratorPricing(
 ): ConfiguratorPricingResult {
   const baseCat = getBaseProjectCategoryId(config, projectTypeId)
   const bundleNet = getBaseBundlePriceNet(projectTypeId, config)
+  const cmsBaseHours = getBundleBaseWorkHours(projectTypeId, config)
 
   const typeFloorNet =
     typeof projectTypeBasePrice === 'number' && Number.isFinite(projectTypeBasePrice) && projectTypeBasePrice > 0
@@ -125,7 +138,9 @@ export function computeConfiguratorPricing(
       : 0
 
   let totalPrice = 0
-  let totalHours = 0
+  let extrasHours = 0
+  /** Suma godzin pozycji „w bazie” — używana tylko gdy w CMS `bundleBaseHours` = 0. */
+  let gratisNonPercentHours = 0
   let percentageAdd = 0
   let totalItemsCount = 0
 
@@ -145,10 +160,15 @@ export function computeConfiguratorPricing(
     } else {
       if (!gratis) {
         totalPrice += item.price * qty
+        extrasHours += item.hours * qty
+      } else {
+        gratisNonPercentHours += item.hours * qty
       }
-      totalHours += item.hours * qty
     }
   })
+
+  const baseHoursChunk = cmsBaseHours > 0 ? cmsBaseHours : gratisNonPercentHours
+  let totalHours = baseHoursChunk + extrasHours
 
   const hasRequiredForTypeSelected = selectedItemIds.some((id) => {
     const item = items.find((i) => i.id === id)
