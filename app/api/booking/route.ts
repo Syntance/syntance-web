@@ -16,7 +16,6 @@ const bookingSchema = z.object({
   deposit: z.number(),
   days: z.number(),
   hours: z.number(),
-  complexity: z.enum(['low', 'medium', 'high', 'very-high']),
   itemsCount: z.number(),
   items: z.array(z.string()),
 });
@@ -128,15 +127,6 @@ export async function POST(req: Request) {
     };
     const projectTypeGenitive = getProjectTypeGenitive(booking.projectType);
 
-    const complexityLabel =
-      booking.complexity === 'very-high'
-        ? 'Bardzo wysoka'
-        : booking.complexity === 'high'
-          ? 'Wysoka'
-          : booking.complexity === 'medium'
-            ? 'Średnia'
-            : 'Niska';
-
     const emailTemplates = await getEmailTemplates();
 
     const quoteMeta = { titleDate, projectTypeGenitive };
@@ -173,8 +163,6 @@ export async function POST(req: Request) {
         priceBrutto: booking.priceBrutto,
         deposit: booking.deposit,
         days: booking.days,
-        complexity: booking.complexity,
-        complexityLabel,
         items: booking.items,
         itemsCount: booking.itemsCount,
       },
@@ -224,7 +212,6 @@ export async function POST(req: Request) {
         deposit: booking.deposit,
         bookingId,
         items: booking.items,
-        complexity: complexityLabel,
         description,
         hasExistingSite,
         existingSiteUrl,

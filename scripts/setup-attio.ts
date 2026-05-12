@@ -103,20 +103,6 @@ async function setupDeals() {
       description: 'Liczba dni roboczych realizacji'
     },
     {
-      title: 'Złożoność',
-      api_slug: 'complexity',
-      type: 'select',
-      is_multiselect: false,
-      config: {
-        options: [
-          { title: 'Niska', color: 'green' },
-          { title: 'Średnia', color: 'yellow' },
-          { title: 'Wysoka', color: 'orange' },
-          { title: 'Bardzo wysoka', color: 'red' }
-        ]
-      }
-    },
-    {
       title: 'Typ projektu',
       api_slug: 'project_type',
       type: 'select',

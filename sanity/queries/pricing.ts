@@ -41,7 +41,6 @@ export const pricingDataQuery = groq`{
     new,
     disabled,
     hidePrice,
-    complexityWeight,
     // Notyfikacje
     notificationOnAdd,
     notificationAddTitle,
@@ -60,7 +59,6 @@ export const pricingDataQuery = groq`{
     depositFixed,
     calendlyUrl,
     ctaTexts,
-    complexitySettings,
     baseProjectCategoryId,
     "projectTypeBundles": projectTypeBundles[] {
       "projectTypeId": projectType->id.current,
@@ -130,7 +128,6 @@ export interface PricingItem {
   new?: boolean
   disabled?: boolean
   hidePrice?: boolean
-  complexityWeight?: number
   // Notyfikacje
   notificationOnAdd?: boolean
   notificationAddTitle?: string
@@ -142,21 +139,6 @@ export interface PricingItem {
   notificationRemoveText?: string
   notificationRemoveConfirmText?: string
   notificationRemoveCancelText?: string
-}
-
-export interface ComplexitySettings {
-  mediumThreshold: number
-  highThreshold: number
-  veryHighThreshold: number
-  lowDays: number
-  showLowDaysLabel?: boolean
-  mediumDays: number
-  showMediumDaysLabel?: boolean
-  highDays: number
-  showHighDaysLabel?: boolean
-  veryHighDays: number
-  showVeryHighDaysLabel?: boolean
-  dayPrice: number
 }
 
 export type ProjectTypeBundleRow = {
@@ -175,7 +157,6 @@ export interface PricingConfig {
     workshop: string
     pdf: string
   }
-  complexitySettings?: ComplexitySettings
   /** Gdy w `projectTypeBundles` brak sluga dla wiersza — ten slug (np. „base”). */
   baseProjectCategoryId?: string
   /** Ustawienia pakietu netto + kategorii bazy per typ projektu (referencje → id slug). */
@@ -300,20 +281,6 @@ export const defaultPricingData: PricingData = {
       reserve: 'Wyślij formularz',
       workshop: 'Zamów Strategię marketingu i sprzedaży',
       pdf: 'Pobierz wycenę PDF',
-    },
-    complexitySettings: {
-      mediumThreshold: 5,
-      highThreshold: 10,
-      veryHighThreshold: 15,
-      lowDays: 0,
-      showLowDaysLabel: false,
-      mediumDays: 2,
-      showMediumDaysLabel: true,
-      highDays: 4,
-      showHighDaysLabel: true,
-      veryHighDays: 7,
-      showVeryHighDaysLabel: true,
-      dayPrice: 1200,
     },
     baseProjectCategoryId: 'base',
     projectTypeBundles: [

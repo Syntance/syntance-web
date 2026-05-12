@@ -14,7 +14,6 @@ interface BookingDetails {
   deposit: number
   days: number
   hours: number
-  complexity: 'low' | 'medium' | 'high' | 'very-high'
   itemsCount: number
   selectedItems: string[]
   itemNames: string[]
@@ -133,7 +132,6 @@ export function BookingModal({
             deposit: booking.deposit,
             days: booking.days,
             hours: booking.hours,
-            complexity: booking.complexity,
             itemsCount: booking.itemsCount,
             items: booking.itemNames,
           },
@@ -154,24 +152,6 @@ export function BookingModal({
       }
     } finally {
       setIsSubmitting(false)
-    }
-  }
-
-  const getComplexityLabel = (complexity: string) => {
-    switch (complexity) {
-      case 'very-high': return 'Bardzo wysoka'
-      case 'high': return 'Wysoka'
-      case 'medium': return 'Średnia'
-      default: return 'Niska'
-    }
-  }
-
-  const getComplexityColor = (complexity: string) => {
-    switch (complexity) {
-      case 'very-high': return 'text-purple-400'
-      case 'high': return 'text-red-400'
-      case 'medium': return 'text-amber-400'
-      default: return 'text-green-400'
     }
   }
 
@@ -253,8 +233,8 @@ export function BookingModal({
                     <div className="text-2xl font-bold text-white">
                       {booking.days} <span className="text-sm font-normal text-gray-400">dni roboczych</span>
                     </div>
-                    <div className={`text-sm mt-1 ${getComplexityColor(booking.complexity)}`}>
-                      Złożoność: {getComplexityLabel(booking.complexity)}
+                    <div className="text-sm mt-1 text-gray-400">
+                      Szac.: {booking.hours} roboczogodzin
                     </div>
                   </div>
                 </div>

@@ -29,9 +29,6 @@ export interface PDFData {
   vatRate: number
   days: number
   hours: number
-  complexity: 'low' | 'medium' | 'high' | 'very-high'
-  complexityDays: number
-  complexityPrice: number
   date?: string
   clientName?: string
   clientEmail?: string

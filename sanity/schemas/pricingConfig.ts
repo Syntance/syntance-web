@@ -9,7 +9,6 @@ export default defineType({
     { name: 'bundle', title: 'Gotowe pakiety — cena bazowa' },
     { name: 'startingPrices', title: 'Zapasowe ceny (tylko gdy konfigurator i typ dają 0)' },
     { name: 'rates', title: 'Stawki' },
-    { name: 'complexity', title: 'Złożoność' },
   ],
   fields: [
     // === OGÓLNE ===
@@ -217,109 +216,6 @@ export default defineType({
           title: 'Przycisk PDF', 
           type: 'string', 
           initialValue: 'Pobierz wycenę PDF' 
-        }),
-      ],
-    }),
-    defineField({
-      name: 'complexitySettings',
-      title: 'Ustawienia złożoności',
-      type: 'object',
-      group: 'complexity',
-      fields: [
-        // === PROGI ZŁOŻONOŚCI ===
-        defineField({
-          name: 'mediumThreshold',
-          title: 'Próg średniej złożoności',
-          type: 'number',
-          initialValue: 5,
-          description: 'Suma wag złożoności od której projekt jest "średnio złożony"',
-        }),
-        defineField({
-          name: 'highThreshold',
-          title: 'Próg wysokiej złożoności',
-          type: 'number',
-          initialValue: 10,
-          description: 'Suma wag złożoności od której projekt jest "wysoko złożony"',
-        }),
-        defineField({
-          name: 'veryHighThreshold',
-          title: 'Próg bardzo wysokiej złożoności',
-          type: 'number',
-          initialValue: 15,
-          description: 'Suma wag złożoności od której projekt jest "bardzo wysoko złożony"',
-        }),
-        
-        // === NISKA ZŁOŻONOŚĆ ===
-        defineField({
-          name: 'lowDays',
-          title: '1. Niska złożoność - dodatkowe dni',
-          type: 'number',
-          initialValue: 0,
-          description: 'Ile dni dodać dla niskiej złożoności',
-        }),
-        defineField({
-          name: 'showLowDaysLabel',
-          title: '1. Niska złożoność - pokaż napis o dodatkowych dniach',
-          type: 'boolean',
-          initialValue: false,
-          description: 'Czy pokazywać napis "(+X dni za złożoność)" dla niskiej złożoności',
-        }),
-        
-        // === ŚREDNIA ZŁOŻONOŚĆ ===
-        defineField({
-          name: 'mediumDays',
-          title: '2. Średnia złożoność - dodatkowe dni',
-          type: 'number',
-          initialValue: 2,
-          description: 'Ile dni dodać dla średniej złożoności',
-        }),
-        defineField({
-          name: 'showMediumDaysLabel',
-          title: '2. Średnia złożoność - pokaż napis o dodatkowych dniach',
-          type: 'boolean',
-          initialValue: true,
-          description: 'Czy pokazywać napis "(+X dni za złożoność)" dla średniej złożoności',
-        }),
-        
-        // === WYSOKA ZŁOŻONOŚĆ ===
-        defineField({
-          name: 'highDays',
-          title: '3. Wysoka złożoność - dodatkowe dni',
-          type: 'number',
-          initialValue: 4,
-          description: 'Ile dni dodać dla wysokiej złożoności',
-        }),
-        defineField({
-          name: 'showHighDaysLabel',
-          title: '3. Wysoka złożoność - pokaż napis o dodatkowych dniach',
-          type: 'boolean',
-          initialValue: true,
-          description: 'Czy pokazywać napis "(+X dni za złożoność)" dla wysokiej złożoności',
-        }),
-        
-        // === BARDZO WYSOKA ZŁOŻONOŚĆ ===
-        defineField({
-          name: 'veryHighDays',
-          title: '4. Bardzo wysoka złożoność - dodatkowe dni',
-          type: 'number',
-          initialValue: 7,
-          description: 'Ile dni dodać dla bardzo wysokiej złożoności',
-        }),
-        defineField({
-          name: 'showVeryHighDaysLabel',
-          title: '4. Bardzo wysoka złożoność - pokaż napis o dodatkowych dniach',
-          type: 'boolean',
-          initialValue: true,
-          description: 'Czy pokazywać napis "(+X dni za złożoność)" dla bardzo wysokiej złożoności',
-        }),
-        
-        // === CENA ===
-        defineField({
-          name: 'dayPrice',
-          title: 'Cena za dzień złożoności (PLN)',
-          type: 'number',
-          initialValue: 1200,
-          description: 'Cena dodawana za każdy dodatkowy dzień wynikający ze złożoności',
         }),
       ],
     }),

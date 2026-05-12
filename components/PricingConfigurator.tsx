@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 import { 
   Layout, FileText, Layers, Zap, Plug, CreditCard, Truck, 
   Globe, ShoppingCart, Smartphone, Check, Sparkles, Clock,
-  Send, Download, ChevronRight, Link2, Gift, Star, Target, Lightbulb, Activity
+  Send, Download, ChevronRight, Link2, Gift, Star, Target, Lightbulb, Timer
 } from 'lucide-react'
 import { PricingData, PricingItem } from '@/sanity/queries/pricing'
 import { ConfirmDialog } from './ConfirmDialog'
@@ -393,7 +393,6 @@ export function PricingConfigurator({ data }: Props) {
       deposit: calculation.deposit,
       days: calculation.days,
       hours: calculation.hours,
-      complexity: calculation.complexity,
       itemsCount: calculation.itemsCount,
       selectedItems: [...requiredItems.map(i => i.id), ...state.selectedItems],
       itemNames: getSelectedItemNames(),
@@ -449,9 +448,6 @@ export function PricingConfigurator({ data }: Props) {
       vatRate: config?.vatRate || 23,
       days: calculation.days,
       hours: calculation.hours,
-      complexity: calculation.complexity,
-      complexityDays: calculation.complexityDays,
-      complexityPrice: calculation.complexityPrice,
       baseProjectBundlePriceNet: bundlePdfNet > 0 ? bundlePdfNet : undefined,
       date: new Date().toLocaleDateString('pl-PL', {
         year: 'numeric',
@@ -792,52 +788,18 @@ export function PricingConfigurator({ data }: Props) {
               </div>
 
               <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-
+    
               {/* Time estimates */}
               <div className="grid grid-cols-2 gap-2 sm:gap-4">
                 <div className="text-center p-2 sm:p-3 rounded-lg bg-white/5">
-                  <Clock size={16} className="mx-auto mb-1 text-blue-400" />
+                  <Clock size={16} className="mx-auto mb-1 text-blue-400" aria-hidden />
                   <div className="text-base sm:text-lg font-semibold text-white">{calculation.days}</div>
-                  <div className="text-xs text-gray-400">
-                    dni roboczych
-                    {calculation.complexityDays > 0 && (() => {
-                      const cs = config?.complexitySettings
-                      const shouldShow = 
-                        (calculation.complexity === 'low' && cs?.showLowDaysLabel) ||
-                        (calculation.complexity === 'medium' && (cs?.showMediumDaysLabel ?? true)) ||
-                        (calculation.complexity === 'high' && (cs?.showHighDaysLabel ?? true)) ||
-                        (calculation.complexity === 'very-high' && (cs?.showVeryHighDaysLabel ?? true))
-                      
-                      return shouldShow ? (
-                        <span className="block text-amber-400/80">
-                          (+{calculation.complexityDays} za złożoność)
-                        </span>
-                      ) : null
-                    })()}
-                  </div>
+                  <div className="text-xs text-gray-400">dni roboczych</div>
                 </div>
                 <div className="text-center p-2 sm:p-3 rounded-lg bg-white/5">
-                  <Activity 
-                    size={16} 
-                    className={`mx-auto mb-1 ${
-                      calculation.complexity === 'very-high' ? 'text-purple-400' :
-                      calculation.complexity === 'high' ? 'text-red-400' :
-                      calculation.complexity === 'medium' ? 'text-amber-400' :
-                      'text-green-400'
-                    }`} 
-                  />
-                  <div className={`text-base sm:text-lg font-semibold ${
-                    calculation.complexity === 'very-high' ? 'text-purple-400' :
-                    calculation.complexity === 'high' ? 'text-red-400' :
-                    calculation.complexity === 'medium' ? 'text-amber-400' :
-                    'text-green-400'
-                  }`}>
-                    {calculation.complexity === 'very-high' ? 'Bardzo wysoka' :
-                     calculation.complexity === 'high' ? 'Wysoka' :
-                     calculation.complexity === 'medium' ? 'Średnia' :
-                     'Niska'}
-                  </div>
-                  <div className="text-xs text-gray-400">złożoność</div>
+                  <Timer size={16} className="mx-auto mb-1 text-emerald-400/90" aria-hidden />
+                  <div className="text-base sm:text-lg font-semibold text-white">{calculation.hours}</div>
+                  <div className="text-xs text-gray-400">roboczogodzin (szac.)</div>
                 </div>
               </div>
 

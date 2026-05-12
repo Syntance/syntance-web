@@ -72,7 +72,6 @@ interface AttioProject {
   deposit: number
   bookingId: string
   items: string[]
-  complexity: string
   description?: string
   hasExistingSite?: boolean
   existingSiteUrl?: string
@@ -278,7 +277,6 @@ export async function createProject(project: AttioProject): Promise<AttioRecordR
     `Typ projektu: ${project.name}`,
     `Wartość: ${project.value.toLocaleString('pl-PL')} PLN netto`,
     `Zaliczka: ${project.deposit.toLocaleString('pl-PL')} PLN`,
-    `Złożoność: ${project.complexity}`,
     `Czas realizacji: ${project.days} dni roboczych`,
     '',
     ...(project.description ? [`Opis potrzeb:\n${project.description}`, ''] : []),

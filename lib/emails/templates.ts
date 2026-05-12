@@ -406,8 +406,6 @@ export interface QuoteRequestOwnerPayload {
     priceBrutto: number
     deposit: number
     days: number
-    complexity: string
-    complexityLabel: string
     items: string[]
     itemsCount: number
   }
@@ -436,13 +434,6 @@ function quoteSummaryRowsHtml(data: QuoteRequestClientData, t: EmailTemplateQuot
       <td align="right" style="color:${t.tableAccentColor};font-weight:600;font-size:14px;">${data.deposit.toLocaleString('pl-PL')} PLN</td>
     </tr>
   `
-}
-
-function complexityColor(complexity: string): string {
-  if (complexity === 'very-high') return '#c084fc'
-  if (complexity === 'high') return '#f87171'
-  if (complexity === 'medium') return '#fbbf24'
-  return '#4ade80'
 }
 
 export function renderQuoteRequestClientEmail(
@@ -582,7 +573,7 @@ export function renderQuoteRequestOwnerEmail(
     <div style="background-color:${t.sectionPanelBackgroundColor};border-radius:12px;padding:16px;color:${t.descriptionTextColor};font-size:14px;">
       ${safeExistingText
         ? `<a href="${existingHref}" target="_blank" rel="noopener noreferrer" style="color:${t.linkAccentColor};text-decoration:none;word-break:break-all;">${safeExistingText}</a>`
-        : `<span style=\"color:${t.descriptionTextColor}\">Klient zaznaczył, że ma już stronę, ale nie podał linku.</span>`}
+        : `<span style="color:${t.descriptionTextColor}">Klient zaznaczył, że ma już stronę, ale nie podał linku.</span>`}
     </div>
   </td></tr>` : ''}
 
@@ -613,16 +604,10 @@ export function renderQuoteRequestOwnerEmail(
           <td align="right" style="color:${t.pricingDepositColor};font-size:16px;font-weight:600;">${booking.deposit.toLocaleString('pl-PL')} PLN</td>
         </tr></table>
       </td></tr>
-      <tr><td style="padding:16px;border-bottom:1px solid ${t.dividerRowColor};">
+      <tr><td style="padding:16px;">
         <table width="100%"><tr>
           <td style="color:${t.pricingLabelColor};font-size:14px;">Czas realizacji</td>
           <td align="right" style="color:${t.pricingTimeColor};font-size:16px;font-weight:600;">${booking.days} dni roboczych</td>
-        </tr></table>
-      </td></tr>
-      <tr><td style="padding:16px;">
-        <table width="100%"><tr>
-          <td style="color:${t.pricingLabelColor};font-size:14px;">Złożoność</td>
-          <td align="right" style="color:${complexityColor(booking.complexity)};font-size:14px;font-weight:500;">${escapeHtml(booking.complexityLabel)}</td>
         </tr></table>
       </td></tr>
     </table>
@@ -696,7 +681,6 @@ WYCENA:
 - Cena brutto: ${booking.priceBrutto.toLocaleString('pl-PL')} PLN
 - Zaliczka: ${booking.deposit.toLocaleString('pl-PL')} PLN
 - Czas realizacji: ${booking.days} dni roboczych
-- Złożoność: ${booking.complexityLabel}
 
 WYBRANE ELEMENTY (${booking.itemsCount}):
 ${itemsList}
