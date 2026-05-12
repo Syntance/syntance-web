@@ -62,9 +62,17 @@ export const pricingDataQuery = groq`{
     ctaTexts,
     complexitySettings,
     baseProjectCategoryId,
+    "projectTypeBundles": projectTypeBundles[] {
+      "projectTypeId": projectType->id.current,
+      baseCategorySlug,
+      bundlePriceNet
+    },
     baseProjectBundlePriceWebsite,
     baseProjectBundlePriceEcommerce,
     baseProjectBundlePriceWebapp,
+    baseProjectCategoryIdWebsite,
+    baseProjectCategoryIdEcommerce,
+    baseProjectCategoryIdWebapp,
     // Ceny startowe
     discoveryWorkshopPrice,
     websiteStartPrice,
@@ -151,6 +159,12 @@ export interface ComplexitySettings {
   dayPrice: number
 }
 
+export type ProjectTypeBundleRow = {
+  projectTypeId: string
+  baseCategorySlug?: string
+  bundlePriceNet?: number
+}
+
 export interface PricingConfig {
   vatRate: number
   depositPercent: number
@@ -162,9 +176,15 @@ export interface PricingConfig {
     pdf: string
   }
   complexitySettings?: ComplexitySettings
-  /** Slug kategorii używany jako „baza projektu” (pozycje z tej kategorii = pakiet). */
+  /** Gdy w `projectTypeBundles` brak sluga dla wiersza — ten slug (np. „base”). */
   baseProjectCategoryId?: string
-  /** PLN netto — gdy > 0, zastępuje sumę cen pozycji bazy dla danego typu. */
+  /** Ustawienia pakietu netto + kategorii bazy per typ projektu (referencje → id slug). */
+  projectTypeBundles?: ProjectTypeBundleRow[]
+  /** @deprecated Stare pole — używane gdy brak wiersza w `projectTypeBundles`. */
+  baseProjectCategoryIdWebsite?: string
+  baseProjectCategoryIdEcommerce?: string
+  baseProjectCategoryIdWebapp?: string
+  /** @deprecated Stare pole — używane gdy brak wiersza w `projectTypeBundles`. */
   baseProjectBundlePriceWebsite?: number
   baseProjectBundlePriceEcommerce?: number
   baseProjectBundlePriceWebapp?: number
@@ -296,9 +316,11 @@ export const defaultPricingData: PricingData = {
       dayPrice: 1200,
     },
     baseProjectCategoryId: 'base',
-    baseProjectBundlePriceWebsite: 0,
-    baseProjectBundlePriceEcommerce: 0,
-    baseProjectBundlePriceWebapp: 0,
+    projectTypeBundles: [
+      { projectTypeId: 'website', baseCategorySlug: 'base', bundlePriceNet: 0 },
+      { projectTypeId: 'ecommerce', baseCategorySlug: 'base', bundlePriceNet: 0 },
+      { projectTypeId: 'webapp', baseCategorySlug: 'base', bundlePriceNet: 0 },
+    ],
     // Ceny startowe
     discoveryWorkshopPrice: 4500,
     websiteStartPrice: 5400,

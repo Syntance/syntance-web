@@ -146,9 +146,29 @@ const config = {
     pdf: 'Pobierz wycenę PDF',
   },
   baseProjectCategoryId: 'base',
-  baseProjectBundlePriceWebsite: 0,
-  baseProjectBundlePriceEcommerce: 0,
-  baseProjectBundlePriceWebapp: 0,
+  projectTypeBundles: [
+    {
+      _type: 'projectTypeBundleRow',
+      _key: 'bundle-website',
+      projectType: { _type: 'reference', _ref: 'projectType-website' },
+      baseCategorySlug: 'base',
+      bundlePriceNet: 0,
+    },
+    {
+      _type: 'projectTypeBundleRow',
+      _key: 'bundle-ecommerce',
+      projectType: { _type: 'reference', _ref: 'projectType-ecommerce' },
+      baseCategorySlug: 'base',
+      bundlePriceNet: 0,
+    },
+    {
+      _type: 'projectTypeBundleRow',
+      _key: 'bundle-webapp',
+      projectType: { _type: 'reference', _ref: 'projectType-webapp' },
+      baseCategorySlug: 'base',
+      bundlePriceNet: 0,
+    },
+  ],
 }
 
 async function seed() {

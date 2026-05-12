@@ -1,16 +1,18 @@
 import { defineField, defineType } from 'sanity'
 
-// Typy projektów: website, ecommerce, webapp
+// Typy produktów: dokumenty w CMS. Konfigurator na /cennik pokazuje tylko website | ecommerce | webapp (lib/configurator-project-types).
 export default defineType({
   name: 'projectType',
-  title: 'Pakiet gotowy — typ (strona WWW / sklep / aplikacja)',
+  title: 'Pakiet gotowy — typ projektu',
   type: 'document',
   fields: [
     defineField({
       name: 'id',
-      title: 'ID',
+      title: 'ID (slug)',
       type: 'slug',
       validation: (Rule) => Rule.required(),
+      description:
+        'Własny slug (np. website, landing-x). Na /cennik w konfiguratorze są zawsze tylko: website, ecommerce, webapp — inne typy użyj na landingach i podstronach.',
     }),
     defineField({
       name: 'name',
@@ -25,9 +27,10 @@ export default defineType({
     }),
     defineField({
       name: 'basePrice',
-      title: 'Cena bazowa (PLN netto)',
+      title: 'Cena bazowa / „od X” (PLN netto)',
       type: 'number',
-      description: 'Minimalna cena projektu tego typu',
+      description:
+        'Kwota na karcie typu („od X PLN”) i podłoga kalkulacji gdy pakiet gotowy = 0. Ustalenie jednej kwoty pakietu zastępczej: dokument „Cennik — pakiety i zasady”, lista „Pakiety gotowe — cena i kategoria bazy”.',
     }),
     defineField({
       name: 'icon',

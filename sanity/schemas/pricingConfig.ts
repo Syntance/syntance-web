@@ -1,4 +1,4 @@
-import { defineField, defineType } from 'sanity'
+import { defineArrayMember, defineField, defineType } from 'sanity'
 
 export default defineType({
   name: 'pricingConfig',
@@ -52,44 +52,78 @@ export default defineType({
       group: 'general',
     }),
 
-    // === GOTOWE PAKIETY (cena bazowa konfiguratora) ===
+    // === GOTOWE PAKIETY (cena bazowa konfiguratora, per typ dokumentu projectType) ===
+    defineField({
+      name: 'projectTypeBundles',
+      title: 'Pakiety gotowe — cena i kategoria bazy per typ projektu',
+      type: 'array',
+      group: 'bundle',
+      description:
+        'Dla każdego typu z „Pakiet gotowy — typ” dodaj jeden wiersz: wybierz ten sam dokument typu, opcjonalnie slug kategorii bazy, cenę pakietu netto. Nowy typ projektu: najpierw utwórz go w menu Pakiety gotowe → Typ pakietu, potem dodaj wiersz tutaj.',
+      validation: (Rule) =>
+        Rule.custom((rows: { projectType?: { _ref?: string } }[] | undefined) => {
+          if (!rows?.length) return true
+          const refs = rows.map((r) => r?.projectType?._ref).filter(Boolean)
+          if (refs.length !== new Set(refs).size) {
+            return 'Każdy typ projektu może wystąpić tylko raz (usuń duplikat referencji).'
+          }
+          return true
+        }),
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'projectTypeBundleRow',
+          fields: [
+            defineField({
+              name: 'projectType',
+              title: 'Typ projektu',
+              type: 'reference',
+              to: [{ type: 'projectType' }],
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'baseCategorySlug',
+              title: 'Slug kategorii bazy (rdzeń pakietu)',
+              type: 'string',
+              description:
+                'Jak ID (slug) dokumentu „Kategoria w pakietach” używanego przez pozycje rdzenia tego typu. Puste: pole „Zapasowy slug kategorii bazy” niżej.',
+            }),
+            defineField({
+              name: 'bundlePriceNet',
+              title: 'Cena pakietu gotowego (PLN netto)',
+              type: 'number',
+              initialValue: 0,
+              validation: (Rule) => Rule.min(0),
+              description:
+                'Jedna kwota pakietu zamiast sumy pozycji bazy w konfiguratorze. Zero = licz po pozycjach z CMS.',
+            }),
+          ],
+          preview: {
+            select: {
+              name: 'projectType.name',
+              pid: 'projectType.id.current',
+              price: 'bundlePriceNet',
+              slug: 'baseCategorySlug',
+            },
+            prepare({ name, pid, price, slug }) {
+              const slugLabel = slug?.trim() ? slug : 'zapas'
+              return {
+                title: name ?? pid ?? 'Typ projektu',
+                subtitle: `${price ?? 0} PLN netto · baza: ${slugLabel}`,
+              }
+            },
+          },
+        }),
+      ],
+    }),
     defineField({
       name: 'baseProjectCategoryId',
-      title: 'Slug kategorii „baza pakietu”',
+      title: 'Zapasowy slug kategorii bazy',
       type: 'string',
       group: 'bundle',
       initialValue: 'base',
       description:
-        'ID dokumentu kategorii (slug), która grupuje stały skład gotowego pakietu (np. setup, strona główna). Gdy poniżej wpiszesz kwoty większe od 0, skład tej kategorii nie sumuje się z cen katalogowych — liczy się jedna cena pakietu.',
-    }),
-    defineField({
-      name: 'baseProjectBundlePriceWebsite',
-      title: 'Pakiet gotowy: strona WWW (PLN netto)',
-      type: 'number',
-      group: 'bundle',
-      initialValue: 0,
-      validation: (Rule) => Rule.min(0),
-      description:
-        'Cena gotowego pakietu strony w konfiguratorze. Gdy większe od 0: pozycje z kategorii „baza” dla WWW nie dodają cen z katalogu — tylko ta kwota plus dodatki z innych kategorii. Zero = sumuj każdą pozycję z CMS.',
-    }),
-    defineField({
-      name: 'baseProjectBundlePriceEcommerce',
-      title: 'Pakiet gotowy: sklep e-commerce (PLN netto)',
-      type: 'number',
-      group: 'bundle',
-      initialValue: 0,
-      validation: (Rule) => Rule.min(0),
-      description:
-        'Jak wyżej — pakiet sklepu (baza katalogu, checkout itd.).',
-    }),
-    defineField({
-      name: 'baseProjectBundlePriceWebapp',
-      title: 'Pakiet gotowy: aplikacja webowa (PLN netto)',
-      type: 'number',
-      group: 'bundle',
-      initialValue: 0,
-      validation: (Rule) => Rule.min(0),
-      description: 'Jak wyżej — pakiet aplikacji webowej.',
+        'Gdy w wierszu powyżej nie wpiszesz „Slug kategorii bazy”, używana jest ta wartość (np. „base”).',
     }),
 
     // === WARTOŚCI POMOCNICZE ===

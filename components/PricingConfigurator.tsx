@@ -17,6 +17,10 @@ import {
   getBaseBundlePriceNet,
   getBaseProjectCategoryId,
 } from '@/lib/pricing-calculator'
+import {
+  isConfiguratorProjectTypeId,
+  projectTypesForConfigurator,
+} from '@/lib/configurator-project-types'
 
 // Mapa ikon - używamy typu LucideIcon
 const iconMap: Record<string, typeof Layout> = {
@@ -41,6 +45,11 @@ function ItemDescriptionText({ className, children }: { className?: string; chil
 
 export function PricingConfigurator({ data }: Props) {
   const { categories, projectTypes, items, config } = data
+
+  const configuratorProjectTypes = useMemo(
+    () => projectTypesForConfigurator(projectTypes),
+    [projectTypes],
+  )
   
   // Ref do głównego podsumowania
   const summaryRef = useRef<HTMLDivElement>(null)
@@ -89,7 +98,8 @@ export function PricingConfigurator({ data }: Props) {
   }, [items])
 
   const [state, setState] = useState<ConfiguratorState>(() => {
-    const initialProjectType = projectTypes[0]?.id || 'website'
+    const initialProjectType =
+      projectTypesForConfigurator(projectTypes)[0]?.id || 'website'
     return {
       projectType: initialProjectType,
       selectedItems: getDefaultSelectedItems(initialProjectType),
@@ -117,7 +127,16 @@ export function PricingConfigurator({ data }: Props) {
 
   const [isInquiryModalOpen, setIsInquiryModalOpen] = useState(false)
 
-  // Filtruj elementy dla wybranego typu projektu
+  useEffect(() => {
+    if (isConfiguratorProjectTypeId(state.projectType)) return
+    const next = configuratorProjectTypes[0]?.id ?? 'website'
+    setState((prev) => ({
+      ...prev,
+      projectType: next,
+      selectedItems: getDefaultSelectedItems(next),
+      quantities: {},
+    }))
+  }, [state.projectType, configuratorProjectTypes, getDefaultSelectedItems])
   const availableItems = useMemo(() => {
     return items.filter(item => 
       item.projectTypes?.includes(state.projectType)
@@ -148,7 +167,8 @@ export function PricingConfigurator({ data }: Props) {
   // Kalkulacja ceny (wspólna z minimumami / FAQ — uwzględnia pakiet bazy z CMS)
   const calculation = useMemo(() => {
     const selectedIds = [...requiredItems.map((i) => i.id), ...state.selectedItems]
-    const typeBasePrice = projectTypes.find((pt) => pt.id === state.projectType)?.basePrice ?? 0
+    const typeBasePrice =
+      configuratorProjectTypes.find((pt) => pt.id === state.projectType)?.basePrice ?? 0
     return computeConfiguratorPricing(
       selectedIds,
       state.quantities,
@@ -157,9 +177,17 @@ export function PricingConfigurator({ data }: Props) {
       config,
       typeBasePrice,
     )
-  }, [requiredItems, state.selectedItems, state.quantities, items, config, state.projectType, projectTypes])
+  }, [
+    requiredItems,
+    state.selectedItems,
+    state.quantities,
+    items,
+    config,
+    state.projectType,
+    configuratorProjectTypes,
+  ])
 
-  const baseCategoryId = getBaseProjectCategoryId(config)
+  const baseCategoryId = getBaseProjectCategoryId(config, state.projectType)
   const baseBundleNet = getBaseBundlePriceNet(state.projectType, config)
 
   // Znajdź wszystkie produkty, które mają ten element w bundledWith
@@ -340,7 +368,7 @@ export function PricingConfigurator({ data }: Props) {
   }, [state.selectedItems, requiredItems, categories])
 
   // Aktualny typ projektu
-  const currentProjectType = projectTypes.find(pt => pt.id === state.projectType)
+  const currentProjectType = configuratorProjectTypes.find((pt) => pt.id === state.projectType)
 
   // Pobierz nazwy wszystkich wybranych elementów
   const getSelectedItemNames = useCallback(() => {
@@ -380,7 +408,8 @@ export function PricingConfigurator({ data }: Props) {
     ]
 
     const bundlePdfNet = getBaseBundlePriceNet(state.projectType, config)
-    const baseCatPdf = getBaseProjectCategoryId(config)
+    const baseCatPdf = getBaseProjectCategoryId(config, state.projectType)
+    const typeFloorPdf = currentProjectType?.basePrice ?? 0
 
     // Przygotuj listę itemów dla PDF
     const pdfItems: PDFItem[] = allSelectedIds.map(id => {
@@ -392,8 +421,10 @@ export function PricingConfigurator({ data }: Props) {
       const isBaseCat = item.category === baseCatPdf
       const inBasePackage =
         item.includedInBase ||
-        (bundlePdfNet > 0 && isBaseCat) ||
-        (bundlePdfNet === 0 && isBaseCat && item.required === true)
+        (bundlePdfNet > 0 && (isBaseCat || item.required === true)) ||
+        (bundlePdfNet === 0 &&
+          item.required === true &&
+          (typeFloorPdf > 0 || isBaseCat))
       const total = inBasePackage ? 0 : price * quantity
 
       return {
@@ -458,7 +489,7 @@ export function PricingConfigurator({ data }: Props) {
             Wybierz typ projektu
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {projectTypes.map(type => {
+            {configuratorProjectTypes.map(type => {
               const isSelected = state.projectType === type.id
               const isDisabledType = type.disabled
               return (
@@ -562,12 +593,14 @@ export function PricingConfigurator({ data }: Props) {
                   </div>
                   {!item.hidePrice && (
                     <span className="text-gray-400 text-sm flex-shrink-0">
-                      {item.category === baseCategoryId &&
-                      (baseBundleNet > 0 || item.includedInBase || item.required)
-                        ? baseBundleNet > 0
-                          ? 'w pakiecie'
-                          : 'w cenie pakietu'
-                        : `${item.price.toLocaleString('pl-PL')} PLN netto`}
+                      {baseBundleNet > 0 && (item.category === baseCategoryId || item.required)
+                        ? 'w pakiecie'
+                        : baseBundleNet === 0 &&
+                            (((currentProjectType?.basePrice ?? 0) > 0 && item.required) ||
+                              (item.category === baseCategoryId &&
+                                (item.includedInBase || item.required)))
+                          ? 'w cenie pakietu'
+                          : `${item.price.toLocaleString('pl-PL')} PLN netto`}
                     </span>
                   )}
                 </div>

@@ -1,22 +1,62 @@
-import type { ComplexitySettings, PricingConfig, PricingItem } from '@/sanity/queries/pricing'
+import type {
+  ComplexitySettings,
+  PricingConfig,
+  PricingItem,
+  ProjectTypeBundleRow,
+} from '@/sanity/queries/pricing'
 import { defaultPricingData, defaultStartingPrices } from '@/sanity/queries/pricing'
 
 /** Domyślny `id` kategorii „Baza projektu” (musi zgadzać się z `pricingCategory.id`). */
 export const DEFAULT_BASE_PROJECT_CATEGORY_ID = 'base'
 
-export function getBaseProjectCategoryId(config: PricingConfig | undefined): string {
-  const raw = config?.baseProjectCategoryId?.trim()
-  if (raw) return raw
+function getProjectTypeBundleRow(
+  config: PricingConfig | undefined,
+  projectTypeId: string,
+): ProjectTypeBundleRow | undefined {
+  return config?.projectTypeBundles?.find((r) => r.projectTypeId === projectTypeId)
+}
+
+/**
+ * Slug kategorii „rdzenia” pakietu dla wybranego typu: wiersz w `projectTypeBundles`, potem zapas / legacy.
+ */
+export function getBaseProjectCategoryId(config: PricingConfig | undefined, projectTypeId: string): string {
+  const row = getProjectTypeBundleRow(config, projectTypeId)
+  const fromRow = row?.baseCategorySlug?.trim()
+  if (fromRow) return fromRow
+
+  let legacySpecific: string | undefined
+  switch (projectTypeId) {
+    case 'website':
+      legacySpecific = config?.baseProjectCategoryIdWebsite?.trim()
+      break
+    case 'ecommerce':
+      legacySpecific = config?.baseProjectCategoryIdEcommerce?.trim()
+      break
+    case 'webapp':
+      legacySpecific = config?.baseProjectCategoryIdWebapp?.trim()
+      break
+    default:
+      legacySpecific = undefined
+  }
+
+  const legacy = config?.baseProjectCategoryId?.trim()
+  const resolved = legacySpecific || legacy
+  if (resolved) return resolved
   return DEFAULT_BASE_PROJECT_CATEGORY_ID
 }
 
 /**
- * Cena pakietu bazy (PLN netto) z ustawień cennika.
- * Gdy > 0: pozycje z kategorii bazy nie sumują się liniowo — liczy się tylko ta kwota (plus reszta konfiguratora).
- * Gdy 0 / brak: stary model — każda pozycja z własną ceną z CMS.
+ * Cena pakietu bazy (PLN netto) z wiersza `projectTypeBundles` lub ze starych pól CMS.
+ * Gdy istnieje wiersz dla typu i `bundlePriceNet` = 0, nie wracamy do starych pól (świadome „licz z CMS”).
  */
 export function getBaseBundlePriceNet(projectTypeId: string, config: PricingConfig | undefined): number {
   if (!config) return 0
+  const row = getProjectTypeBundleRow(config, projectTypeId)
+  if (row !== undefined) {
+    const n = row.bundlePriceNet
+    if (typeof n === 'number' && Number.isFinite(n) && n > 0) return n
+    return 0
+  }
   let raw = 0
   switch (projectTypeId) {
     case 'website':
@@ -34,18 +74,23 @@ export function getBaseBundlePriceNet(projectTypeId: string, config: PricingConf
   return typeof raw === 'number' && Number.isFinite(raw) && raw > 0 ? raw : 0
 }
 
-/** Cena katalogowa pozycji nie wchodzi do sumy, gdy jest gratis lub pokryta pakietem bazy. */
+/** Cena katalogowa pozycji nie wchodzi do sumy, gdy jest gratis lub pokryta pakietem / ceną bazową typu projektu. */
 function isGratisCatalogLine(
   item: PricingItem,
   baseCat: string,
   projectTypeId: string,
   bundleNet: number,
+  typeFloorNet: number,
 ): boolean {
   const forType = item.projectTypes?.includes(projectTypeId) ?? false
   if (!forType) return false
   const isBase = item.category === baseCat
-  const coveredByBundle = isBase && bundleNet > 0
+  /** Pakiet z CMS: bez sumy katalogu dla pozycji z kategorii bazy (slug per typ) i dla obowiązkowych (ochrona przy rozjechanym slug). */
+  const coveredByBundle = bundleNet > 0 && (isBase || item.required === true)
   if (coveredByBundle) return true
+  /** `basePrice` typu projektu (bez pola pakietu): obowiązkowe pozycje wchodzą w skład tej kwoty, nie do sumy katalogowej. */
+  const coveredByTypeFloor = bundleNet === 0 && typeFloorNet > 0 && item.required === true
+  if (coveredByTypeFloor) return true
   if (item.includedInBase === true) return true
   if (item.required === true && isBase) return true
   return false
@@ -99,8 +144,13 @@ export function computeConfiguratorPricing(
   config: PricingConfig,
   projectTypeBasePrice = 0,
 ): ConfiguratorPricingResult {
-  const baseCat = getBaseProjectCategoryId(config)
+  const baseCat = getBaseProjectCategoryId(config, projectTypeId)
   const bundleNet = getBaseBundlePriceNet(projectTypeId, config)
+
+  const typeFloorNet =
+    typeof projectTypeBasePrice === 'number' && Number.isFinite(projectTypeBasePrice) && projectTypeBasePrice > 0
+      ? projectTypeBasePrice
+      : 0
 
   let totalPrice = 0
   let totalHours = 0
@@ -114,7 +164,7 @@ export function computeConfiguratorPricing(
     const qty = quantities[id] ?? 1
     totalItemsCount += qty
 
-    const gratis = isGratisCatalogLine(item, baseCat, projectTypeId, bundleNet)
+    const gratis = isGratisCatalogLine(item, baseCat, projectTypeId, bundleNet, typeFloorNet)
 
     if (item.percentageAdd) {
       if (!gratis) {
@@ -128,24 +178,18 @@ export function computeConfiguratorPricing(
     }
   })
 
-  const hasRequiredBaseSelected = selectedItemIds.some((id) => {
+  const hasRequiredForTypeSelected = selectedItemIds.some((id) => {
     const item = items.find((i) => i.id === id)
     return (
       item &&
       !item.disabled &&
       item.required === true &&
-      item.category === baseCat &&
       (item.projectTypes?.includes(projectTypeId) ?? false)
     )
   })
 
-  const safeBasePrice =
-    typeof projectTypeBasePrice === 'number' && Number.isFinite(projectTypeBasePrice) && projectTypeBasePrice > 0
-      ? projectTypeBasePrice
-      : 0
-
-  if (bundleNet === 0 && safeBasePrice > 0 && hasRequiredBaseSelected) {
-    totalPrice += safeBasePrice
+  if (bundleNet === 0 && typeFloorNet > 0 && hasRequiredForTypeSelected) {
+    totalPrice += typeFloorNet
   }
 
   if (bundleNet > 0) {
