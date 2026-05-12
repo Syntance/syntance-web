@@ -103,10 +103,13 @@ const structure = (S: any) =>
             ])
         ),
       S.listItem()
-        .title('❓ FAQ — wszystkie podstrony')
+        .title('❓ FAQ — wszystkie podstrony (zakładki)')
         .id('faqSettings')
         .child(
-          S.document().schemaType('faqSettings').documentId('faqSettings').title('FAQ — podstrony')
+          S.document()
+            .schemaType('faqSettings')
+            .documentId('faqSettings')
+            .title('FAQ — edytuj zakładkami (/cennik, WWW, sklep…)')
         ),
       S.divider(),
       // === PORTFOLIO ===

@@ -4,8 +4,10 @@ export default defineType({
   name: 'faqSettings',
   title: 'FAQ — wszystkie podstrony',
   type: 'document',
+  description:
+    'Jeden dokument dla całego serwisu. Po otwarciu użyj zakładek pod tytułem (nad polami): /cennik, Strony WWW, Sklepy, Strategia, O nas, Kontakt, Agencje.',
   groups: [
-    { name: 'cennik', title: '/cennik' },
+    { name: 'cennik', title: '/cennik', default: true },
     { name: 'stronyWww', title: 'Strony WWW' },
     { name: 'sklepy', title: 'Sklepy internetowe' },
     { name: 'strategia', title: 'Strategia marketingu' },
