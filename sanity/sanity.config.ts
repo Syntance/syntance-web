@@ -103,12 +103,15 @@ const structure = (S: any) =>
             ])
         ),
       S.listItem()
-        .title('❓ FAQ Cennika')
-        .id('pricingFaq')
+        .title('❓ FAQ — wszystkie podstrony')
+        .id('faqSettings')
         .child(
-          S.documentTypeList('pricingFaq')
-            .title('FAQ Cennika')
+          S.document().schemaType('faqSettings').documentId('faqSettings').title('FAQ — podstrony')
         ),
+      S.listItem()
+        .title('📦 FAQ cennika — stare dokumenty (migracja)')
+        .id('pricingFaqLegacy')
+        .child(S.documentTypeList('pricingFaq').title('FAQ Cennika — archiwum (_type: pricingFaq)')),
       S.divider(),
       // === PORTFOLIO ===
       S.listItem()
@@ -147,7 +150,10 @@ const structure = (S: any) =>
             'pricingConfig',
             'seoSettings',
             'pageSeo',
+            'faqSettings',
             'pricingFaq',
+            'faqSimpleEntry',
+            'faqPricingEntry',
             'bookingRules',
             'bookingTimeBlock',
             'meetingBooking',

@@ -5,6 +5,9 @@ import pricingConfig from './pricingConfig'
 import seoSettings from './seoSettings'
 import pageSeo from './pageSeo'
 import pricingFaq from './pricingFaq'
+import faqSimpleEntry from './faqSimpleEntry'
+import faqPricingEntry from './faqPricingEntry'
+import faqSettings from './faqSettings'
 import bookingRules from './bookingRules'
 import bookingTimeBlock from './bookingTimeBlock'
 import meetingBooking from './meetingBooking'
@@ -21,6 +24,9 @@ export const schemaTypes = [
   seoSettings,
   pageSeo,
   pricingFaq,
+  faqSimpleEntry,
+  faqPricingEntry,
+  faqSettings,
   bookingRules,
   bookingTimeBlock,
   meetingBooking,

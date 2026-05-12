@@ -1,8 +1,13 @@
 import { defineField, defineType } from 'sanity'
 
+/**
+ * Legacy: dokumenty w datasetcie mogą nadal mieć `_type: "pricingFaq"`.
+ * Nowe edycje FAQ cennika: singleton `faqSettings` → pole `faqCennik` (obiekty `faqPricingEntry`).
+ * Nie usuwaj tego typu, dopóki migracja GROQ nie usunie / nie przeniesie starych wpisów.
+ */
 export default defineType({
   name: 'pricingFaq',
-  title: 'FAQ Cennika',
+  title: 'FAQ Cennika (archiwum)',
   type: 'document',
   fields: [
     defineField({
@@ -61,17 +66,17 @@ export default defineType({
     },
     prepare(selection: { title?: string; category?: string; isActive?: boolean }) {
       const { title = '', category = '', isActive = true } = selection
-      
+
       const categoryEmoji: Record<string, string> = {
         pricing: '💰',
         time: '⏱️',
         trust: '🔒',
         comparison: '⚖️',
       }
-      
+
       return {
         title: `${isActive ? '✅' : '⚠️'} ${title}`,
-        subtitle: `${categoryEmoji[category] || '❓'} ${category}`,
+        subtitle: `${categoryEmoji[category] ?? '❓'} ${category}`,
       }
     },
   },
