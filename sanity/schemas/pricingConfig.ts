@@ -2,12 +2,12 @@ import { defineField, defineType } from 'sanity'
 
 export default defineType({
   name: 'pricingConfig',
-  title: 'Ustawienia cennika',
+  title: 'Cennik — pakiety i zasady',
   type: 'document',
   groups: [
     { name: 'general', title: 'Ogólne', default: true },
-    { name: 'bundle', title: 'Pakiet bazy projektu' },
-    { name: 'startingPrices', title: 'Ceny startowe' },
+    { name: 'bundle', title: 'Gotowe pakiety — cena bazowa' },
+    { name: 'startingPrices', title: 'Wartości pomocnicze (SEO, fallback)' },
     { name: 'rates', title: 'Stawki' },
     { name: 'complexity', title: 'Złożoność' },
   ],
@@ -36,100 +36,103 @@ export default defineType({
       initialValue: 500,
     }),
     defineField({
+      name: 'discoveryWorkshopPrice',
+      title: 'Strategia marketingu i sprzedaży — cena netto (PLN)',
+      type: 'number',
+      group: 'general',
+      initialValue: 4500,
+      validation: (Rule) => Rule.min(0),
+      description:
+        'Ta sama wartość co „cennik”: używana na stronie strategii, w FAQ (token {{DISCOVERY_NET}}), JSON-LD i wszędzie indziej — jedno pole, bez osobnego „ustawienia wyświetlania”.',
+    }),
+    defineField({
       name: 'calendlyUrl',
       title: 'URL Calendly',
       type: 'url',
       group: 'general',
     }),
 
-    // === PAKIET BAZY (konfigurator) ===
+    // === GOTOWE PAKIETY (cena bazowa konfiguratora) ===
     defineField({
       name: 'baseProjectCategoryId',
-      title: 'Slug kategorii „Baza projektu”',
+      title: 'Slug kategorii „baza pakietu”',
       type: 'string',
       group: 'bundle',
       initialValue: 'base',
       description:
-        'Musi zgadzać się z polem `id` (slug) dokumentu kategorii cennika dla bazy. Pozycje przypisane do tej kategorii traktujemy jak pakiet.',
+        'ID dokumentu kategorii (slug), która grupuje stały skład gotowego pakietu (np. setup, strona główna). Gdy poniżej wpiszesz kwoty większe od 0, skład tej kategorii nie sumuje się z cen katalogowych — liczy się jedna cena pakietu.',
     }),
     defineField({
       name: 'baseProjectBundlePriceWebsite',
-      title: 'Pakiet bazy — Strona WWW (PLN netto)',
+      title: 'Pakiet gotowy: strona WWW (PLN netto)',
       type: 'number',
       group: 'bundle',
       initialValue: 0,
       validation: (Rule) => Rule.min(0),
       description:
-        'Gdy wartość > 0: ceny pozycji z kategorii bazy (WWW) nie wliczają się do sumy — jest tylko ta kwota (+ pozostałe kategorie). Wpisz 0, żeby wrócić do sumowania każdej pozycji z CMS.',
+        'Cena gotowego pakietu strony w konfiguratorze. Gdy większe od 0: pozycje z kategorii „baza” dla WWW nie dodają cen z katalogu — tylko ta kwota plus dodatki z innych kategorii. Zero = sumuj każdą pozycję z CMS.',
     }),
     defineField({
       name: 'baseProjectBundlePriceEcommerce',
-      title: 'Pakiet bazy — Sklep e-commerce (PLN netto)',
+      title: 'Pakiet gotowy: sklep e-commerce (PLN netto)',
       type: 'number',
       group: 'bundle',
       initialValue: 0,
       validation: (Rule) => Rule.min(0),
-      description: 'Jak wyżej — dla typu projektu Sklep.',
+      description:
+        'Jak wyżej — pakiet sklepu (baza katalogu, checkout itd.).',
     }),
     defineField({
       name: 'baseProjectBundlePriceWebapp',
-      title: 'Pakiet bazy — Aplikacja webowa (PLN netto)',
+      title: 'Pakiet gotowy: aplikacja webowa (PLN netto)',
       type: 'number',
       group: 'bundle',
       initialValue: 0,
       validation: (Rule) => Rule.min(0),
-      description: 'Jak wyżej — dla typu aplikacji webowej.',
+      description: 'Jak wyżej — pakiet aplikacji webowej.',
     }),
 
-    // === CENY STARTOWE ===
-    defineField({
-      name: 'discoveryWorkshopPrice',
-      title: 'Cena Strategii marketingu i sprzedaży (PLN)',
-      type: 'number',
-      group: 'startingPrices',
-      initialValue: 4500,
-      description:
-        'Ustawienia cennika → ta sama wartość na stronie /strategia-marketingu-i-sprzedazy (karta ceny, FAQ, JSON-LD) oraz w meta opisie.',
-    }),
+    // === WARTOŚCI POMOCNICZE ===
     defineField({
       name: 'websiteStartPrice',
-      title: 'Strona firmowa - cena startowa (PLN)',
+      title: 'Strona firmowa — cena do SEO / fallback (PLN)',
       type: 'number',
       group: 'startingPrices',
       initialValue: 5400,
-      description: 'Minimalna cena strony firmowej (landing page, wizytówka)',
+      description:
+        'Gdy konfigurator liczy po pozycjach (pakiet WWW = 0), może służyć jako tekst w meta. Główna wycena strony: zakładka Gotowe pakiety lub suma z konfiguratora.',
     }),
     defineField({
       name: 'websiteAdvancedStartPrice',
-      title: 'Strona rozbudowana - cena startowa (PLN)',
+      title: 'Strona rozbudowana — SEO / fallback (PLN)',
       type: 'number',
       group: 'startingPrices',
       initialValue: 12000,
-      description: 'Cena rozbudowanej strony (katalog, portal, integracje)',
+      description: 'Wartość pomocnicza (teksty, porównania). Wycena z konfiguratora / pakietów ma pierwszeństwo.',
     }),
     defineField({
       name: 'ecommerceStandardStartPrice',
-      title: 'Sklep Standard - cena startowa (PLN)',
+      title: 'Sklep standard — SEO / fallback (PLN)',
       type: 'number',
       group: 'startingPrices',
       initialValue: 12000,
-      description: 'Minimalna cena standardowego sklepu e-commerce',
+      description: 'Jak wyżej — pomocniczo dla meta i starych treści.',
     }),
     defineField({
       name: 'ecommerceProStartPrice',
-      title: 'Sklep Pro - cena startowa (PLN)',
+      title: 'Sklep Pro — SEO / fallback (PLN)',
       type: 'number',
       group: 'startingPrices',
       initialValue: 25000,
-      description: 'Cena rozbudowanego sklepu e-commerce (Pro)',
+      description: 'Jak wyżej.',
     }),
     defineField({
       name: 'webappStartPrice',
-      title: 'Aplikacja webowa - cena startowa (PLN)',
+      title: 'Aplikacja webowa — SEO / fallback (PLN)',
       type: 'number',
       group: 'startingPrices',
       initialValue: 30000,
-      description: 'Minimalna cena aplikacji webowej',
+      description: 'Jak wyżej.',
     }),
 
     // === STAWKI ===
@@ -289,8 +292,8 @@ export default defineType({
   preview: {
     prepare() {
       return {
-        title: 'Ustawienia cennika',
-        subtitle: 'Konfiguracja globalna',
+        title: 'Cennik — pakiety i zasady',
+        subtitle: 'Gotowe pakiety WWW / sklep + strategia + VAT',
       }
     },
   },

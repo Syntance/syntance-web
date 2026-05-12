@@ -37,7 +37,15 @@ export function collectMinimumItemIds(projectTypeId: string, items: PricingData[
 
 export function computeConfiguratorMinimumPriceNet(projectTypeId: string, data: PricingData): number {
   const selectedIds = collectMinimumItemIds(projectTypeId, data.items)
-  return computeConfiguratorPricing(selectedIds, {}, data.items, projectTypeId, data.config).priceNetto
+  const basePrice = data.projectTypes.find((p) => p.id === projectTypeId)?.basePrice ?? 0
+  return computeConfiguratorPricing(
+    selectedIds,
+    {},
+    data.items,
+    projectTypeId,
+    data.config,
+    basePrice,
+  ).priceNetto
 }
 
 export interface ConfiguratorMinimumPricesNet {

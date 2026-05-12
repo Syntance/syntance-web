@@ -2,7 +2,7 @@ import { defineField, defineType } from 'sanity'
 
 export default defineType({
   name: 'pricingItem',
-  title: 'Element cennika',
+  title: 'Składnik pakietu lub dodatek (konfigurator)',
   type: 'document',
   groups: [
     { name: 'basic', title: 'Podstawowe', default: true },

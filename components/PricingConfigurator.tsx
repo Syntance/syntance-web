@@ -148,14 +148,16 @@ export function PricingConfigurator({ data }: Props) {
   // Kalkulacja ceny (wspólna z minimumami / FAQ — uwzględnia pakiet bazy z CMS)
   const calculation = useMemo(() => {
     const selectedIds = [...requiredItems.map((i) => i.id), ...state.selectedItems]
+    const typeBasePrice = projectTypes.find((pt) => pt.id === state.projectType)?.basePrice ?? 0
     return computeConfiguratorPricing(
       selectedIds,
       state.quantities,
       items,
       state.projectType,
       config,
+      typeBasePrice,
     )
-  }, [requiredItems, state.selectedItems, state.quantities, items, config, state.projectType])
+  }, [requiredItems, state.selectedItems, state.quantities, items, config, state.projectType, projectTypes])
 
   const baseCategoryId = getBaseProjectCategoryId(config)
   const baseBundleNet = getBaseBundlePriceNet(state.projectType, config)
@@ -387,8 +389,12 @@ export function PricingConfigurator({ data }: Props) {
       
       const quantity = state.quantities[id] || 1
       const price = item.price
-      const isBasePakiet = item.category === baseCatPdf && bundlePdfNet > 0
-      const total = item.includedInBase || isBasePakiet ? 0 : price * quantity
+      const isBaseCat = item.category === baseCatPdf
+      const inBasePackage =
+        item.includedInBase ||
+        (bundlePdfNet > 0 && isBaseCat) ||
+        (bundlePdfNet === 0 && isBaseCat && item.required === true)
+      const total = inBasePackage ? 0 : price * quantity
 
       return {
         name: item.name,
@@ -556,8 +562,11 @@ export function PricingConfigurator({ data }: Props) {
                   </div>
                   {!item.hidePrice && (
                     <span className="text-gray-400 text-sm flex-shrink-0">
-                      {item.category === baseCategoryId && baseBundleNet > 0
-                        ? 'w pakiecie'
+                      {item.category === baseCategoryId &&
+                      (baseBundleNet > 0 || item.includedInBase || item.required)
+                        ? baseBundleNet > 0
+                          ? 'w pakiecie'
+                          : 'w cenie pakietu'
                         : `${item.price.toLocaleString('pl-PL')} PLN netto`}
                     </span>
                   )}

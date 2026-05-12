@@ -3,7 +3,7 @@ import { defineField, defineType } from 'sanity'
 // Kategorie: base, pages, sections, features, integrations, payments, shipping
 export default defineType({
   name: 'pricingCategory',
-  title: 'Kategoria cennika',
+  title: 'Kategoria w pakietach (np. baza projektu, dodatki)',
   type: 'document',
   fields: [
     defineField({

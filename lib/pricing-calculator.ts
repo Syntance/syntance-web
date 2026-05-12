@@ -34,6 +34,23 @@ export function getBaseBundlePriceNet(projectTypeId: string, config: PricingConf
   return typeof raw === 'number' && Number.isFinite(raw) && raw > 0 ? raw : 0
 }
 
+/** Cena katalogowa pozycji nie wchodzi do sumy, gdy jest gratis lub pokryta pakietem bazy. */
+function isGratisCatalogLine(
+  item: PricingItem,
+  baseCat: string,
+  projectTypeId: string,
+  bundleNet: number,
+): boolean {
+  const forType = item.projectTypes?.includes(projectTypeId) ?? false
+  if (!forType) return false
+  const isBase = item.category === baseCat
+  const coveredByBundle = isBase && bundleNet > 0
+  if (coveredByBundle) return true
+  if (item.includedInBase === true) return true
+  if (item.required === true && isBase) return true
+  return false
+}
+
 function fallbackComplexity(): ComplexitySettings {
   const c = defaultPricingData.config.complexitySettings
   if (c) return c
@@ -70,6 +87,9 @@ export type ConfiguratorPricingResult = {
 
 /**
  * Jedna kalkulacja jak w `PricingConfigurator` (netto przed VAT w `priceNetto`; złożoność wliczona).
+ *
+ * @param projectTypeBasePrice — „od X” z dokumentu typu projektu; gdy brak pakietu `bundleNet`,
+ * wchodzi do sumy zamiast sumowania cen katalogowych obowiązkowych pozycji bazy (spójnie z UI „W cenie bazowej”).
  */
 export function computeConfiguratorPricing(
   selectedItemIds: string[],
@@ -77,6 +97,7 @@ export function computeConfiguratorPricing(
   items: PricingItem[],
   projectTypeId: string,
   config: PricingConfig,
+  projectTypeBasePrice = 0,
 ): ConfiguratorPricingResult {
   const baseCat = getBaseProjectCategoryId(config)
   const bundleNet = getBaseBundlePriceNet(projectTypeId, config)
@@ -93,21 +114,39 @@ export function computeConfiguratorPricing(
     const qty = quantities[id] ?? 1
     totalItemsCount += qty
 
-    const isBaseCategory = item.category === baseCat
+    const gratis = isGratisCatalogLine(item, baseCat, projectTypeId, bundleNet)
 
     if (item.percentageAdd) {
-      if (!(isBaseCategory && bundleNet > 0)) {
+      if (!gratis) {
         percentageAdd += item.percentageAdd
       }
     } else {
-      if (!item.includedInBase) {
-        if (!(isBaseCategory && bundleNet > 0)) {
-          totalPrice += item.price * qty
-        }
+      if (!gratis) {
+        totalPrice += item.price * qty
       }
       totalHours += item.hours * qty
     }
   })
+
+  const hasRequiredBaseSelected = selectedItemIds.some((id) => {
+    const item = items.find((i) => i.id === id)
+    return (
+      item &&
+      !item.disabled &&
+      item.required === true &&
+      item.category === baseCat &&
+      (item.projectTypes?.includes(projectTypeId) ?? false)
+    )
+  })
+
+  const safeBasePrice =
+    typeof projectTypeBasePrice === 'number' && Number.isFinite(projectTypeBasePrice) && projectTypeBasePrice > 0
+      ? projectTypeBasePrice
+      : 0
+
+  if (bundleNet === 0 && safeBasePrice > 0 && hasRequiredBaseSelected) {
+    totalPrice += safeBasePrice
+  }
 
   if (bundleNet > 0) {
     totalPrice += bundleNet

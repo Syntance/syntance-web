@@ -181,7 +181,7 @@ export interface PricingConfig {
   workHoursPerDay: number
 }
 
-// Ceny startowe do użycia na stronach
+// Wartości pomocnicze / fallback (np. SEO) — pełny config w `pricingDataQuery`
 export interface StartingPrices {
   discoveryWorkshopPrice: number
   websiteStartPrice: number
@@ -190,16 +190,6 @@ export interface StartingPrices {
   ecommerceProStartPrice: number
   webappStartPrice: number
 }
-
-// Query do pobierania tylko cen startowych (lżejsze)
-export const startingPricesQuery = groq`*[_type == "pricingConfig"][0] {
-  discoveryWorkshopPrice,
-  websiteStartPrice,
-  websiteAdvancedStartPrice,
-  ecommerceStandardStartPrice,
-  ecommerceProStartPrice,
-  webappStartPrice
-}`
 
 // Domyślne ceny startowe (fallback)
 export const defaultStartingPrices: StartingPrices = {

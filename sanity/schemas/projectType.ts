@@ -3,7 +3,7 @@ import { defineField, defineType } from 'sanity'
 // Typy projektów: website, ecommerce, webapp
 export default defineType({
   name: 'projectType',
-  title: 'Typ projektu',
+  title: 'Pakiet gotowy — typ (strona WWW / sklep / aplikacja)',
   type: 'document',
   fields: [
     defineField({

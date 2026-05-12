@@ -67,13 +67,40 @@ const structure = (S: any) =>
       S.divider(),
       // === CENNIK ===
       S.listItem()
-        .title('💰 Ustawienia cennika')
+        .title('💰 Cennik — pakiety i zasady')
         .id('pricingConfig')
         .child(
           S.document()
             .schemaType('pricingConfig')
             .documentId('pricingConfig')
-            .title('Ustawienia cennika')
+            .title('Cennik — pakiety i zasady')
+        ),
+      S.listItem()
+        .title('📦 Pakiety gotowe (konfigurator)')
+        .id('pricingConfigurator')
+        .child(
+          S.list()
+            .title('Pakiety gotowe — edycja')
+            .items([
+              S.listItem()
+                .title('🏷️ Typ pakietu (WWW / sklep / app)')
+                .id('projectType')
+                .child(
+                  S.documentTypeList('projectType').title('Typ pakietu (gotowe pakiety)')
+                ),
+              S.listItem()
+                .title('📂 Kategorie w pakietach')
+                .id('pricingCategory')
+                .child(
+                  S.documentTypeList('pricingCategory').title('Kategorie w pakietach')
+                ),
+              S.listItem()
+                .title('🧩 Pozycje cennika i dodatki')
+                .id('pricingItem')
+                .child(
+                  S.documentTypeList('pricingItem').title('Pozycje cennika i dodatki')
+                ),
+            ])
         ),
       S.listItem()
         .title('❓ FAQ Cennika')
@@ -113,13 +140,25 @@ const structure = (S: any) =>
         .child(
           S.documentTypeList('meetingBooking').title('Rezerwacje spotkań')
         ),
-      S.divider(),
-      // Pozostałe dokumenty
+      /* Te trzy typy są w sekcji „Pakiety gotowe (konfigurator)” — nie duplikuj na dole listy. */
       ...S.documentTypeListItems().filter(
         (listItem: any) =>
-          !['pricingConfig', 'seoSettings', 'pageSeo', 'pricingFaq', 'bookingRules', 'bookingTimeBlock', 'meetingBooking', 'portfolioItem', 'paymentSettings', 'contractFiles', 'emailTemplates'].includes(
-            listItem.getId()
-          )
+          ![
+            'pricingConfig',
+            'seoSettings',
+            'pageSeo',
+            'pricingFaq',
+            'bookingRules',
+            'bookingTimeBlock',
+            'meetingBooking',
+            'portfolioItem',
+            'paymentSettings',
+            'contractFiles',
+            'emailTemplates',
+            'pricingCategory',
+            'projectType',
+            'pricingItem',
+          ].includes(listItem.getId())
       ),
     ])
 
