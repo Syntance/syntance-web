@@ -13,6 +13,7 @@
     "seed:seo": "tsx sanity/seed-seo.ts",
     "seed:pages": "tsx sanity/seed-page-seo.ts",
     "seed:faq": "tsx sanity/seed-faq.ts",
+    "seed:faq:cli": "sanity exec sanity/exec-seed-faq.ts --with-user-token",
     "seed:email-templates": "tsx sanity/seed-email-templates.ts",
     "seed:email-templates:cli": "sanity exec sanity/exec-seed-email-templates.ts --with-user-token",
     "sanity:deploy": "sanity deploy"
