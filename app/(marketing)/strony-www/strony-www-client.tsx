@@ -17,6 +17,7 @@ import GradientText from '@/components/GradientText'
 import TiltCard from '@/components/tilt-card'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
 import StickyCtaFloat from '@/components/StickyCtaFloat'
+import type { SimpleFaqQA } from '@/sanity/queries/faq'
 
 // Sekcje dla scrollbar
 const scrollbarSections = [
@@ -123,37 +124,17 @@ const stats = [
   { value: "0", label: "Wtyczek", desc: "zero dziur bezpieczeństwa" },
 ]
 
-function getFaqItems(formattedPrice: string) {
-  return [
-    {
-      question: "Ile kosztuje profesjonalna strona internetowa?",
-      answer: `Strony zaczynają się od ${formattedPrice} PLN netto. Cena zależy od zakresu — liczby podstron, integracji, funkcjonalności. Użyj naszego konfiguratora cennika, aby poznać orientacyjną wycenę.`,
-    },
-    {
-      question: "Jak długo trwa tworzenie strony internetowej?",
-      answer:
-        "Standardowa strona firmowa to 2-4 tygodnie. Projekty enterprise z rozbudowaną funkcjonalnością — 4-8 tygodni. Dokładny timeline ustalamy po fazie strategicznej.",
-    },
-    {
-      question: "Czy mogę sam edytować stronę?",
-      answer: "Tak! Każda strona ma panel Sanity CMS — intuicyjny edytor, w którym samodzielnie zmieniasz teksty, zdjęcia i dodajesz podstrony. Bez programisty, bez dodatkowych kosztów.",
-    },
-    {
-      question: "Dlaczego Next.js zamiast WordPress?",
-      answer: "Next.js = szybkość (PageSpeed 90+ vs 30-50 na WP), bezpieczeństwo (zero wtyczek = zero dziur), lepsze SEO. WordPress to 60% zhakowanych stron w sieci.",
-    },
-    {
-      question: "Czy oferujecie strony internetowe w Krakowie?",
-      answer: "Tak! Obsługujemy klientów z całej Polski, ze szczególnym uwzględnieniem Krakowa i Małopolski. Pracujemy zdalnie lub spotkajmy się na żywo.",
-    },
-  ]
-}
-
 function formatPrice(price: number): string {
   return new Intl.NumberFormat('pl-PL').format(price)
 }
 
-export default function StronyWWWContent({ startPrice }: { startPrice: number }) {
+export default function StronyWWWContent({
+  startPrice,
+  faqItems,
+}: {
+  startPrice: number
+  faqItems: SimpleFaqQA[]
+}) {
   const formattedPrice = formatPrice(startPrice)
   const [heroVisible, setHeroVisible] = useState(false)
 
@@ -411,7 +392,7 @@ export default function StronyWWWContent({ startPrice }: { startPrice: number })
           </AnimatedSection>
           
           <div className="space-y-4">
-            {getFaqItems(formattedPrice).map((item, index) => (
+            {faqItems.map((item, index) => (
               <AnimatedSection key={index} delay={index * 50}>
                 <details className="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-colors">
                   <summary className="flex items-center justify-between p-6 cursor-pointer list-none">

@@ -1,16 +1,12 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { sanityFetch } from '@/sanity/lib/fetch'
-import { pricingFaqQuery, PricingFaqItem, defaultFaqItems } from '@/sanity/queries/faq'
 import { PricingConfigurator } from '@/components/PricingConfigurator'
 import PricingFAQ from '@/components/sections/pricing-faq'
 import { Twitter, Linkedin, Github } from '@/components/icons/social'
 import { fetchPricingData } from '@/lib/pricing-data'
-import {
-  discoveryPriceNetFromConfig,
-} from '@/lib/pricing-calculator'
+import { discoveryPriceNetFromConfig } from '@/lib/pricing-calculator'
 import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
-import { interpolatePricingFaqItems } from '@/lib/interpolate-pricing-faq'
+import { fetchFaqSettings, resolveCennikFaqItems } from '@/lib/faq-data'
 
 // Wymusza dynamiczne renderowanie - dane zawsze świeże z Sanity
 export const dynamic = 'force-dynamic'
@@ -24,43 +20,24 @@ function formatPrice(price: number): string {
 export async function generateMetadata(): Promise<Metadata> {
   const data = await fetchPricingData()
   const mins = getConfiguratorMinimumPricesNet(data)
-  
+
   return {
     title: 'Ile kosztuje strona internetowa? Cennik 2026 | Syntance',
     description: `Strona firmowa od ${formatPrice(mins.websiteNet)} PLN netto (baza w konfiguratorze), sklep e-commerce od ${formatPrice(mins.ecommerceNet)} PLN netto. Sprawdź cenę w konfiguratorze — wycena w kilka minut, bez zobowiązań.`,
     openGraph: {
       title: 'Ile kosztuje strona internetowa? | Syntance',
-      description: 'Cena strony internetowej zależy od funkcjonalności. Sprawdź ile kosztuje zrobienie strony internetowej lub sklepu e-commerce.',
+      description:
+        'Cena strony internetowej zależy od funkcjonalności. Sprawdź ile kosztuje zrobienie strony internetowej lub sklepu e-commerce.',
       url: 'https://syntance.com/cennik',
     },
   }
 }
 
-async function getFaqRaw(): Promise<PricingFaqItem[]> {
-  try {
-    const data = await sanityFetch<PricingFaqItem[]>({
-      query: pricingFaqQuery,
-      tags: ['faq'],
-    })
-    
-    // Jeśli brak danych z Sanity, użyj domyślnych
-    if (!data?.length) {
-      console.log('Using default FAQ data (Sanity not configured)')
-      return defaultFaqItems
-    }
-    
-    return data
-  } catch (error) {
-    console.error('Error fetching FAQ data:', error)
-    return defaultFaqItems
-  }
-}
-
 export default async function CennikPage() {
-  const [data, faqRaw] = await Promise.all([fetchPricingData(), getFaqRaw()])
+  const [data, faqDoc] = await Promise.all([fetchPricingData(), fetchFaqSettings()])
   const mins = getConfiguratorMinimumPricesNet(data)
   const discoveryNet = discoveryPriceNetFromConfig(data.config)
-  const faqData = interpolatePricingFaqItems(faqRaw, mins, discoveryNet)
+  const faqData = resolveCennikFaqItems(faqDoc, mins, discoveryNet)
 
   return (
     <div className="min-h-screen bg-gray-950 w-full" style={{ overflowX: 'clip' }}>

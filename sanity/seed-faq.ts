@@ -1,9 +1,21 @@
 /**
- * Skrypt do inicjalizacji domyślnych FAQ w Sanity
+ * Skrypt inicjalizuje singleton `faqSettings` (zakładki po podstronach w Studio).
  * Uruchom: pnpm seed:faq
+ * Nadpisanie: SEED_FAQ_FORCE=1 pnpm seed:faq
  */
 
 import { createClient } from '@sanity/client'
+import {
+  defaultFaqItems,
+  defaultFaqStronyWww,
+  defaultFaqSklepy,
+  defaultFaqStrategia,
+  defaultFaqONas,
+  defaultFaqKontakt,
+  defaultFaqAgencje,
+  type PricingFaqItem,
+  type SimpleFaqQA,
+} from './queries/faq'
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'sqgw0wlq',
@@ -13,148 +25,62 @@ const client = createClient({
   token: process.env.SANITY_API_WRITE_TOKEN,
 })
 
-const defaultFaqItems = [
-  // Pytania cenowe
-  {
-    _id: 'faq-1',
-    _type: 'pricingFaq',
-    question: 'Ile kosztuje strona internetowa?',
-    answer:
-      'Strona firmowa zaczyna się od {{WEBSITE_NET}} PLN netto (baza projektu w konfiguratorze — bez dodatkowych elementów). Cena zależy od liczby podstron, funkcjonalności i integracji. Skorzystaj z konfiguratora powyżej, żeby poznać dokładną wycenę dla Twojego projektu.',
-    category: 'pricing',
-    order: 1,
-    isActive: true,
-  },
-  {
-    _id: 'faq-2',
-    _type: 'pricingFaq',
-    question: 'Ile kosztuje sklep internetowy?',
-    answer:
-      'Sklep e-commerce zaczyna się od {{ECOMMERCE_NET}} PLN netto (baza w konfiguratorze — sama baza produktu). Pełnofunkcyjny sklep z płatnościami, filtrowaniem i kontami użytkowników to wyższy zakres — dopasuj elementy w konfiguratorze. Aplikacje typu marketplace — zwykle od około 50 000 PLN w górę.',
-    category: 'pricing',
-    order: 2,
-    isActive: true,
-  },
-  {
-    _id: 'faq-3',
-    _type: 'pricingFaq',
-    question: 'Dlaczego ceny zaczynają się od {{WEBSITE_NET}} PLN, a nie 500 zł?',
-    answer: 'Buduję strony w technologii Next.js — tej samej, której używają Nike, Netflix czy Notion. To nie jest szablon z WordPress. Dostajesz kod pisany pod Ciebie, błyskawiczną szybkość (Core Web Vitals 95+) i stronę, która będzie działać latami bez "aktualizacji wtyczek".',
-    category: 'pricing',
-    order: 3,
-    isActive: true,
-  },
-  {
-    _id: 'faq-4',
-    _type: 'pricingFaq',
-    question: 'Od czego zależy cena strony?',
-    answer: 'Główne czynniki: liczba podstron, rodzaj funkcjonalności (formularz, blog, galeria), integracje (CMS, płatności, newsletter) oraz poziom animacji. Konfigurator powyżej pokaże Ci dokładny rozkład kosztów.',
-    category: 'pricing',
-    order: 4,
-    isActive: true,
-  },
-  // Pytania o czas i proces
-  {
-    _id: 'faq-5',
-    _type: 'pricingFaq',
-    question: 'Ile trwa realizacja strony?',
-    answer: 'Strona firmowa: miesiąc. Sklep e-commerce: 2 miesiące. Widzisz postęp na żywo (preview link) — nie czekasz 3 miesiące na "efekt końcowy".',
-    category: 'time',
-    order: 5,
-    isActive: true,
-  },
-  {
-    _id: 'faq-6',
-    _type: 'pricingFaq',
-    question: 'Co to jest Strategia marketingu i sprzedaży?',
-    answer:
-      '2–3 godzinne spotkanie strategiczne (faza przedwdrożeniowa), na którym ustalamy m.in. segmentację, pozycjonowanie, UVP, buyer persony, lejek marketingowy, user flows, plan SEO i analityki. Wynikiem jest gotowy dokument strategiczny. Pełna usługa kosztuje {{DISCOVERY_NET}} PLN i jest zaliczana na poczet projektu.',
-    category: 'time',
-    order: 6,
-    isActive: true,
-  },
-  // Pytania o ryzyko/zaufanie
-  {
-    _id: 'faq-7',
-    _type: 'pricingFaq',
-    question: 'A co jeśli efekt mi się nie spodoba?',
-    answer: 'Widzisz postęp co tydzień na podglądzie (preview link). Poprawki wdrażamy na bieżąco — nie po 3 miesiącach. Jeśli coś nie pasuje, zmieniamy od razu.',
-    category: 'trust',
-    order: 7,
-    isActive: true,
-  },
-  {
-    _id: 'faq-8',
-    _type: 'pricingFaq',
-    question: 'Czy mogę rozłożyć płatność?',
-    answer: 'Tak. Standardowy model: 50% na start, 50% przy odbiorze. Przy większych projektach możliwe płatności w 3 ratach.',
-    category: 'trust',
-    order: 8,
-    isActive: true,
-  },
-  {
-    _id: 'faq-9',
-    _type: 'pricingFaq',
-    question: 'Co jeśli potrzebuję zmian po wdrożeniu?',
-    answer: 'Oferuję pakiety opieki od 500 PLN/msc — poprawki, aktualizacje, wsparcie. Możesz też zlecać zmiany jednorazowo.',
-    category: 'trust',
-    order: 9,
-    isActive: true,
-  },
-  // Porównania
-  {
-    _id: 'faq-10',
-    _type: 'pricingFaq',
-    question: 'Dlaczego Ty, a nie tańszy freelancer?',
-    answer: 'Freelancer za 2k PLN da Ci szablon WordPress, który za rok będzie wymagał aktualizacji 47 wtyczek. Ja daję Ci kod, który jest Twój, szybki i bezpieczny. To inwestycja, nie koszt.',
-    category: 'comparison',
-    order: 10,
-    isActive: true,
-  },
-]
+const FAQ_SETTINGS_ID = 'faqSettings'
 
-async function seedFaq() {
-  console.log('❓ Inicjalizacja FAQ w Sanity...\n')
-  
-  let created = 0
-  let skipped = 0
-  
-  for (const item of defaultFaqItems) {
-    try {
-      // Sprawdź czy dokument już istnieje
-      const existing = await client.getDocument(item._id)
-      
-      if (existing) {
-        console.log(`⚠️  "${item.question.substring(0, 40)}..." już istnieje - pomijam`)
-        skipped++
-        continue
-      }
-      
-      // Utwórz dokument
-      await client.createOrReplace(item)
-      console.log(`✅ "${item.question.substring(0, 40)}..." - utworzono`)
-      created++
-      
-    } catch (error: any) {
-      if (error.statusCode === 404) {
-        try {
-          await client.createOrReplace(item)
-          console.log(`✅ "${item.question.substring(0, 40)}..." - utworzono`)
-          created++
-        } catch (createError) {
-          console.error(`❌ Błąd podczas tworzenia:`, createError)
-        }
-      } else {
-        console.error(`❌ Błąd:`, error)
-      }
-    }
-  }
-  
-  console.log(`\n📊 Podsumowanie:`)
-  console.log(`   ✅ Utworzono: ${created}`)
-  console.log(`   ⚠️  Pominięto (już istnieją): ${skipped}`)
-  console.log(`\n📝 Możesz teraz edytować FAQ w Sanity Studio:`)
-  console.log(`   https://syntance.sanity.studio/`)
+function mapPricing(entries: PricingFaqItem[]) {
+  return entries.map((e, index) => ({
+    _type: 'faqPricingEntry' as const,
+    _key: e._id ?? `cennik-${index}`,
+    question: e.question,
+    answer: e.answer,
+    category: e.category,
+    order: e.order ?? index + 1,
+    isActive: true,
+  }))
 }
 
-seedFaq()
+function mapSimple(entries: SimpleFaqQA[], keyPrefix: string) {
+  return entries.map((e, index) => ({
+    _type: 'faqSimpleEntry' as const,
+    _key: `${keyPrefix}-${index}`,
+    question: e.question,
+    answer: e.answer,
+    order: index + 1,
+    isActive: true,
+  }))
+}
+
+async function seedFaqSettings() {
+  const force = process.env.SEED_FAQ_FORCE === '1'
+  console.log('\n❓ Singleton FAQ (`faqSettings`)…\n')
+
+  const existing = await client.fetch(`*[_id == $id][0]._id`, { id: FAQ_SETTINGS_ID })
+  if (existing && !force) {
+    console.log(`⚠️  Dokument ${FAQ_SETTINGS_ID} już istnieje — pomijam.`)
+    console.log('   Aby nadpisać domyślne treściami z kodu: SEED_FAQ_FORCE=1 pnpm seed:faq\n')
+    return
+  }
+
+  const doc = {
+    _id: FAQ_SETTINGS_ID,
+    _type: 'faqSettings' as const,
+    faqCennik: mapPricing(defaultFaqItems),
+    faqStronyWww: mapSimple(defaultFaqStronyWww, 'www'),
+    faqSklepy: mapSimple(defaultFaqSklepy, 'sklep'),
+    faqStrategia: mapSimple(defaultFaqStrategia, 'strategia'),
+    faqONas: mapSimple(defaultFaqONas, 'onas'),
+    faqKontakt: mapSimple(defaultFaqKontakt, 'kontakt'),
+    faqAgencje: mapSimple(defaultFaqAgencje, 'agencje'),
+  }
+
+  await client.createOrReplace(doc)
+  console.log(`✅ Zapisano ${FAQ_SETTINGS_ID} — zakładki: cennik, strony WWW, sklepy, strategia, o nas, kontakt, agencje.`)
+  console.log('\n📝 Sanity Studio → „FAQ — wszystkie podstrony"\n')
+
+  console.log('\n📌 Dokument `pricingFaq` nie jest już używany. Usuń ręcznie stare wpisy, jeśli zostały.')
+}
+
+seedFaqSettings().catch((err) => {
+  console.error(err)
+  process.exit(1)
+})

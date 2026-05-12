@@ -28,6 +28,7 @@ import GradientText from '@/components/GradientText'
 import TiltCard from '@/components/tilt-card'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
 import StickyCtaFloat from '@/components/StickyCtaFloat'
+import type { SimpleFaqQA } from '@/sanity/queries/faq'
 
 // Sekcje dla scrollbar
 const scrollbarSections = [
@@ -231,36 +232,17 @@ const comparisonData = [
   { feature: "Skalowalność", saas: "Problemy przy wzroście", headless: "Nieograniczona" },
 ]
 
-function getFaqItems(formattedPrice: string) {
-  return [
-    {
-      question: "Ile kosztuje sklep internetowy headless?",
-      answer: `Sklepy zaczynają się od ${formattedPrice} PLN netto. Cena zależy od liczby funkcji, integracji i stopnia customizacji. Skorzystaj z konfiguratora cennika, żeby poznać orientacyjną wycenę.`,
-    },
-    {
-      question: "Czym różni się headless od Shopify?",
-      answer: "Headless = pełna własność kodu, zero prowizji od sprzedaży, nieograniczona customizacja. Shopify = wynajem platformy, prowizje 0.5-2%, ograniczenia szablonu.",
-    },
-    {
-      question: "Jak długo trwa budowa sklepu?",
-      answer: "Sklep standard (katalog, koszyk, płatności): 4-6 tygodni. Sklep pro z integracjami: 6-10 tygodni.",
-    },
-    {
-      question: "Czy MedusaJS to sprawdzona technologia?",
-      answer: "Tak! MedusaJS to open-source backed by $9M VC funding. Używany przez firmy jak Tekla, Summer Health i setki innych.",
-    },
-    {
-      question: "Czy mogę migrować z WooCommerce/Shopify?",
-      answer: "Tak, przeprowadzamy pełną migrację — produkty, warianty, klienci, historia zamówień.",
-    },
-  ]
-}
-
 function formatPrice(price: number): string {
   return new Intl.NumberFormat('pl-PL').format(price)
 }
 
-export default function SklepyInternetoweContent({ startPrice }: { startPrice: number }) {
+export default function SklepyInternetoweContent({
+  startPrice,
+  faqItems,
+}: {
+  startPrice: number
+  faqItems: SimpleFaqQA[]
+}) {
   const formattedPrice = formatPrice(startPrice)
   const [heroVisible, setHeroVisible] = useState(false)
 
@@ -565,7 +547,7 @@ export default function SklepyInternetoweContent({ startPrice }: { startPrice: n
           </AnimatedSection>
           
           <div className="space-y-4">
-            {getFaqItems(formattedPrice).map((item, index) => (
+            {faqItems.map((item, index) => (
               <AnimatedSection key={index} delay={index * 50}>
                 <details className="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-colors">
                   <summary className="flex items-center justify-between p-6 cursor-pointer list-none">

@@ -4,12 +4,9 @@ import Link from 'next/link'
 import { HeroTransition } from '@/components/page-transition'
 import GradientText from '@/components/GradientText'
 import { fetchPricingData } from '@/lib/pricing-data'
+import { discoveryPriceNetFromConfig } from '@/lib/pricing-calculator'
 import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
-
-// Funkcja do formatowania ceny
-function formatPrice(price: number): string {
-  return price.toLocaleString('pl-PL')
-}
+import { fetchFaqSettings, resolveONasFaq } from '@/lib/faq-data'
 
 export const metadata: Metadata = {
   title: 'O nas — Syntance | Agencja interaktywna i software house Next.js',
@@ -68,39 +65,10 @@ const stats = [
 ]
 
 export default async function ONasPage() {
-  const pricingData = await fetchPricingData()
-  const { websiteNet, ecommerceNet } = getConfiguratorMinimumPricesNet(pricingData)
-
-  const faqs = [
-    {
-      question: "Czym jest Syntance — agencja interaktywna czy software house?",
-      answer: "Syntance to połączenie obu. Jesteśmy agencją interaktywną specjalizującą się w tworzeniu stron i sklepów, ale działamy jak software house — z naciskiem na technologię i jakość kodu."
-    },
-    {
-      question: "Czym różni się Syntance od innych agencji webowych?",
-      answer: "Jako agencja webowa stawiamy na strategię przed designem. Nie zaczynamy od grafiki — zaczynamy od pytania \"co ta strona ma osiągnąć?\". Używamy nowoczesnych technologii (Next.js, headless CMS) zamiast przestarzałych rozwiązań."
-    },
-    {
-      question: "Szukam firmy od stron internetowych — czy Syntance to dobry wybór?",
-      answer: "Jeśli szukasz firmy od stron internetowych, która stawia na jakość, wydajność i strategiczne podejście — tak. Specjalizujemy się w stronach dla firm B2B, e-commerce i usług profesjonalnych."
-    },
-    {
-      question: "Ile kosztuje tworzenie stron internetowych w firmie Syntance?",
-      answer: `Tworzenie stron internetowych w naszej firmie zaczyna się od ${formatPrice(websiteNet)} PLN netto przy samej bazie w konfiguratorze (bez dodatków). Sklepy e-commerce od ${formatPrice(ecommerceNet)} PLN netto w tej samej logice. Dokładna wycena zależy od zakresu projektu.`
-    },
-    {
-      question: "Gdzie znajduje się Syntance?",
-      answer: "Syntance to software house z Polski działający zdalnie. Współpracujemy z klientami z całej Polski i Europy."
-    },
-    {
-      question: "Jak długo trwa realizacja projektu?",
-      answer: "Strona internetowa: 2-4 tygodnie. Sklep e-commerce: 4-8 tygodni."
-    },
-    {
-      question: "Czy oferujecie wsparcie po wdrożeniu?",
-      answer: "Tak. Każdy projekt objęty jest 30-dniową gwarancją. Oferujemy również pakiety opieki technicznej."
-    }
-  ]
+  const [pricingData, faqDoc] = await Promise.all([fetchPricingData(), fetchFaqSettings()])
+  const mins = getConfiguratorMinimumPricesNet(pricingData)
+  const discoveryNet = discoveryPriceNetFromConfig(pricingData.config)
+  const faqs = resolveONasFaq(faqDoc, mins, discoveryNet)
   
   return (
     <>

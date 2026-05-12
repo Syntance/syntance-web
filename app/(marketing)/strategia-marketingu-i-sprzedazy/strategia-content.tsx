@@ -19,6 +19,7 @@ import {
 import Link from 'next/link'
 import TiltCard from '@/components/tilt-card'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
+import type { SimpleFaqQA } from '@/sanity/queries/faq'
 
 const scrollbarSections = [
   { id: "hero-strategia", label: "Start" },
@@ -125,39 +126,13 @@ interface StrategiaContentProps {
   discoveryPrice: number
   /** Baza strony w konfiguratorze (wymagane pozycje, bez dodatków) — spójnie z /cennik. */
   websiteMinNet: number
+  faqItems: SimpleFaqQA[]
 }
 
-export default function StrategiaContent({ discoveryPrice, websiteMinNet }: StrategiaContentProps) {
+export default function StrategiaContent({ discoveryPrice, websiteMinNet, faqItems }: StrategiaContentProps) {
   const [heroVisible, setHeroVisible] = useState(false)
   const priceFormatted = formatPrice(discoveryPrice)
   const websiteMinFormatted = formatPrice(websiteMinNet)
-
-  const faqItems = [
-    {
-      question: "Czy mogę pominąć strategię i od razu zacząć od projektu?",
-      answer:
-        'Możesz, ale ryzykujesz, że strona będzie ładna, ale nieskuteczna. 80% naszych klientów, którzy przyszli "tylko po stronę", po strategii marketingu i sprzedaży zmienili całą koncepcję.',
-    },
-    {
-      question: "Ile trwa Strategia marketingu i sprzedaży?",
-      answer:
-        "Spotkanie to 2-3 godziny. Dokument strategiczny otrzymujesz w ciągu 3-5 dni roboczych.",
-    },
-    {
-      question: "Co jeśli już mam strategię?",
-      answer:
-        "Świetnie! Wtedy możemy od razu przejść do projektu. Podczas briefu zweryfikujemy, czy masz wszystkie elementy.",
-    },
-    {
-      question: "Czy strategia jest wliczona w cenę strony?",
-      answer: `Tak. Każdy projekt strony lub sklepu zawiera uproszczoną wersję strategii w cenie. Pełna Strategia marketingu i sprzedaży (${priceFormatted} PLN) to opcja dla firm, które chcą głębszej analizy.`,
-    },
-    {
-      question: "Dla jakiej wielkości firm jest Strategia marketingu i sprzedaży?",
-      answer:
-        "Dla firm, które traktują stronę jako narzędzie biznesowe, nie wizytówkę. Typowo: 1-50 pracowników, B2B lub usługi premium B2C.",
-    },
-  ]
 
   useEffect(() => {
     setHeroVisible(true)

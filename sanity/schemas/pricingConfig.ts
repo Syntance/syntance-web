@@ -58,7 +58,7 @@ export default defineType({
       type: 'array',
       group: 'bundle',
       description:
-        'Dla każdego typu z „Pakiet gotowy — typ” dodaj jeden wiersz: wybierz ten sam dokument typu, opcjonalnie slug kategorii bazy, cenę pakietu netto. Nowy typ projektu: najpierw utwórz go w menu Pakiety gotowe → Typ pakietu, potem dodaj wiersz tutaj.',
+        'Dla każdego typu z „Pakiet gotowy — typ” dodaj jeden wiersz: wybierz ten sam dokument typu, opcjonalnie slug kategorii bazy, cenę pakietu netto. Nowy typ projektu: najpierw utwórz go w menu Pakiety gotowe → Typ pakietu, potem dodaj wiersz tutaj. **Te wartości ustawiają też „cenę od której…” w tekstach witryny** (FAQ, meta) przez tokeny {{WEBSITE_NET}}, {{ECOMMERCE_NET}} itd. — ta sama kolejka co konfigurator (pakiet bazowy → min. zestaw pozycji → fallback).',
       validation: (Rule) =>
         Rule.custom((rows: { projectType?: { _ref?: string } }[] | undefined) => {
           if (!rows?.length) return true

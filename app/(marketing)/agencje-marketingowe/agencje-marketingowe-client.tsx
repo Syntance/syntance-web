@@ -17,6 +17,7 @@ import {
 import GradientText from '@/components/GradientText'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
 import { ContactForm } from '@/components/contact-form'
+import type { SimpleFaqQA } from '@/sanity/queries/faq'
 
 const LINKEDIN_COMPANY = 'https://www.linkedin.com/company/syntance'
 
@@ -278,40 +279,7 @@ const guarantees = [
   },
 ]
 
-const faqItems = [
-  {
-    q: 'Mam freelancera na WP, po co mi to?',
-    a:
-      'Twój freelancer często kończy na niskim wyniku w PageSpeed. Z nami w modelu WL: kupujesz np. od 2,9 tys., sprzedajesz np. za 8 tys. — zostaje Ci marża w tysiącach złotych przy wyższej jakości dostarczenia.',
-  },
-  {
-    q: 'Za drogo — freelancer WP bierze 3 tys.',
-    a:
-      'Freelancer za 3 tys. to często słaba wydajność, bez porządnego CMS i bez gwarancji. W pakiecie partnerskim od 2 900 PLN masz m.in. PageSpeed 96+, CMS pod treści, SLA i NDA.',
-  },
-  {
-    q: 'Klient nie zna headless, chce WP.',
-    a:
-      'Klient nie kupuje technologii — kupuje wynik. Panel treści jest prosty w obsłudze; dla klienta wygląda jak „normalna” strona do edycji.',
-  },
-  {
-    q: 'A co jeśli klient chce zmiany?',
-    a:
-      'Treści edytuje sam w CMS. Zmiany w zakresie rozwoju obsługujemy w kanale partnerskim — SLA odpowiedzi poniżej 4 godzin.',
-  },
-  {
-    q: 'Nie chcę NDA.',
-    a:
-      'NDA chroni Ciebie: gwarantuje, że nigdy nie skontaktujemy się z Twoim klientem i nie ujawnimy współpracy.',
-  },
-  {
-    q: 'Jak wygląda komunikacja?',
-    a:
-      'Jeden kanał Slack lub Teams. Brief od Ciebie → my realizujemy → Ty akceptujesz.',
-  },
-]
-
-export default function AgencjeMarketingoweClient() {
+export default function AgencjeMarketingoweClient({ faqItems }: { faqItems: SimpleFaqQA[] }) {
   const [heroVisible, setHeroVisible] = useState(false)
 
   useEffect(() => {
@@ -606,13 +574,13 @@ export default function AgencjeMarketingoweClient() {
           </AnimatedSection>
           <div className="space-y-4">
             {faqItems.map((item, i) => (
-              <AnimatedSection key={item.q} delay={i * 60}>
+              <AnimatedSection key={`${item.question}-${i}`} delay={i * 60}>
                 <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
                   <h3 className="text-white font-medium mb-2 flex gap-2">
                     <MessageSquare className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" aria-hidden />
-                    {item.q}
+                    {item.question}
                   </h3>
-                  <p className="text-gray-400 text-sm leading-relaxed pl-7">{item.a}</p>
+                  <p className="text-gray-400 text-sm leading-relaxed pl-7">{item.answer}</p>
                 </div>
               </AnimatedSection>
             ))}

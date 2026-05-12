@@ -4,12 +4,9 @@ import Link from 'next/link'
 import { ContactForm } from '@/components/contact-form'
 import { HeroTransition } from '@/components/page-transition'
 import { fetchPricingData } from '@/lib/pricing-data'
+import { discoveryPriceNetFromConfig } from '@/lib/pricing-calculator'
 import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
-
-// Funkcja do formatowania ceny
-function formatPrice(price: number): string {
-  return price.toLocaleString('pl-PL')
-}
+import { fetchFaqSettings, resolveKontaktFaq } from '@/lib/faq-data'
 
 export const metadata: Metadata = {
   title: 'Kontakt — Syntance | Strony i sklepy Next.js',
@@ -22,27 +19,10 @@ export const metadata: Metadata = {
 }
 
 export default async function KontaktPage() {
-  const pricingData = await fetchPricingData()
-  const { websiteNet, ecommerceNet } = getConfiguratorMinimumPricesNet(pricingData)
-
-  const faqs = [
-    {
-      question: "Jak szybko odpowiadamy?",
-      answer: "Staram się odpowiedzieć w ciągu 24 godzin roboczych. Na pilne sprawy — zadzwoń."
-    },
-    {
-      question: "Czy pierwsza rozmowa jest płatna?",
-      answer: "Nie. 30-minutowa rozmowa wstępna jest bezpłatna i bez zobowiązań."
-    },
-    {
-      question: "Czy pracujemy z klientami spoza Polski?",
-      answer: "Tak. Pracuję zdalnie z klientami z całej Europy. Komunikacja po polsku lub angielsku."
-    },
-    {
-      question: "Jaki jest minimalny budżet na projekt?",
-      answer: `Strony od ${formatPrice(websiteNet)} PLN netto (pakiet startowy), sklepy od ${formatPrice(ecommerceNet)} PLN netto. Dokładna wycena po rozmowie o zakresie.`
-    }
-  ]
+  const [pricingData, faqDoc] = await Promise.all([fetchPricingData(), fetchFaqSettings()])
+  const mins = getConfiguratorMinimumPricesNet(pricingData)
+  const discoveryNet = discoveryPriceNetFromConfig(pricingData.config)
+  const faqs = resolveKontaktFaq(faqDoc, mins, discoveryNet)
   
   return (
     <>

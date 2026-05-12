@@ -108,10 +108,6 @@ const structure = (S: any) =>
         .child(
           S.document().schemaType('faqSettings').documentId('faqSettings').title('FAQ — podstrony')
         ),
-      S.listItem()
-        .title('📦 FAQ cennika — stare dokumenty (migracja)')
-        .id('pricingFaqLegacy')
-        .child(S.documentTypeList('pricingFaq').title('FAQ Cennika — archiwum (_type: pricingFaq)')),
       S.divider(),
       // === PORTFOLIO ===
       S.listItem()
@@ -151,7 +147,6 @@ const structure = (S: any) =>
             'seoSettings',
             'pageSeo',
             'faqSettings',
-            'pricingFaq',
             'faqSimpleEntry',
             'faqPricingEntry',
             'bookingRules',

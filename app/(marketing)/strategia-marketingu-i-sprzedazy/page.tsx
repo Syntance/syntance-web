@@ -1,14 +1,16 @@
 import { fetchPricingData } from '@/lib/pricing-data'
 import { discoveryPriceNetFromConfig } from '@/lib/pricing-calculator'
 import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
+import { fetchFaqSettings, resolveStrategiaFaq } from '@/lib/faq-data'
 import StrategiaContent from './strategia-content'
 
 const PAGE_URL = 'https://syntance.com/strategia-marketingu-i-sprzedazy'
 
 export default async function StrategiaMarketinguPage() {
-  const data = await fetchPricingData()
+  const [data, faqDoc] = await Promise.all([fetchPricingData(), fetchFaqSettings()])
   const workshopPrice = discoveryPriceNetFromConfig(data.config)
-  const { websiteNet } = getConfiguratorMinimumPricesNet(data)
+  const mins = getConfiguratorMinimumPricesNet(data)
+  const faqItems = resolveStrategiaFaq(faqDoc, mins, workshopPrice)
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -40,7 +42,7 @@ export default async function StrategiaMarketinguPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <StrategiaContent discoveryPrice={workshopPrice} websiteMinNet={websiteNet} />
+      <StrategiaContent discoveryPrice={workshopPrice} websiteMinNet={mins.websiteNet} faqItems={faqItems} />
     </>
   )
 }

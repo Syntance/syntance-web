@@ -4,7 +4,6 @@ import pricingItem from './pricingItem'
 import pricingConfig from './pricingConfig'
 import seoSettings from './seoSettings'
 import pageSeo from './pageSeo'
-import pricingFaq from './pricingFaq'
 import faqSimpleEntry from './faqSimpleEntry'
 import faqPricingEntry from './faqPricingEntry'
 import faqSettings from './faqSettings'
@@ -23,7 +22,6 @@ export const schemaTypes = [
   pricingConfig,
   seoSettings,
   pageSeo,
-  pricingFaq,
   faqSimpleEntry,
   faqPricingEntry,
   faqSettings,
