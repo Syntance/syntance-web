@@ -23,6 +23,17 @@ import {
   projectTypesForConfigurator,
 } from '@/lib/configurator-project-types'
 
+/** Kolejność w konfiguratorze: `projectTypeOrder` dla aktywnego typu, inaczej globalne `order` z CMS. */
+function sortOrderForProjectType(item: PricingItem, projectTypeId: string): number {
+  const row = item.projectTypeOrder?.find(
+    (pto) => pto.projectType != null && pto.projectType === projectTypeId,
+  )
+  if (row !== undefined && typeof row.order === 'number' && Number.isFinite(row.order)) {
+    return row.order
+  }
+  return item.order ?? 0
+}
+
 // Mapa ikon - używamy typu LucideIcon
 const iconMap: Record<string, typeof Layout> = {
   Layout, FileText, Layers, Zap, Plug, CreditCard, Truck,
@@ -144,10 +155,15 @@ export function PricingConfigurator({ data }: Props) {
     )
   }, [items, state.projectType])
 
-  // Elementy wymagane (zawsze zaznaczone)
+  // Elementy wymagane (zawsze zaznaczone) — ta sama kolejność co dla opcji (per `projectTypeOrder`)
   const requiredItems = useMemo(() => {
-    return availableItems.filter(item => item.required)
-  }, [availableItems])
+    const list = availableItems.filter((item) => item.required)
+    return [...list].sort((a, b) => {
+      const ao = sortOrderForProjectType(a, state.projectType)
+      const bo = sortOrderForProjectType(b, state.projectType)
+      return ao - bo
+    })
+  }, [availableItems, state.projectType])
 
   // Elementy opcjonalne pogrupowane według kategorii
   const optionalItemsByCategory = useMemo(() => {
@@ -157,9 +173,8 @@ export function PricingConfigurator({ data }: Props) {
       items: optional
         .filter(item => item.category === cat.id)
         .sort((a, b) => {
-          // Szukaj pozycji dla aktualnego typu projektu
-          const aOrder = a.projectTypeOrder?.find(pto => pto.projectType === state.projectType)?.order ?? a.order ?? 0
-          const bOrder = b.projectTypeOrder?.find(pto => pto.projectType === state.projectType)?.order ?? b.order ?? 0
+          const aOrder = sortOrderForProjectType(a, state.projectType)
+          const bOrder = sortOrderForProjectType(b, state.projectType)
           return aOrder - bOrder
         })
     })).filter(cat => cat.items.length > 0)
