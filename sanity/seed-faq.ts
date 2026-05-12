@@ -19,7 +19,8 @@ const defaultFaqItems = [
     _id: 'faq-1',
     _type: 'pricingFaq',
     question: 'Ile kosztuje strona internetowa?',
-    answer: 'Strona firmowa zaczyna się od 5 400 PLN netto. Cena zależy od liczby podstron, funkcjonalności i integracji. Skorzystaj z konfiguratora powyżej, żeby poznać dokładną wycenę dla Twojego projektu.',
+    answer:
+      'Strona firmowa zaczyna się od {{WEBSITE_NET}} PLN netto (baza projektu w konfiguratorze — bez dodatkowych elementów). Cena zależy od liczby podstron, funkcjonalności i integracji. Skorzystaj z konfiguratora powyżej, żeby poznać dokładną wycenę dla Twojego projektu.',
     category: 'pricing',
     order: 1,
     isActive: true,
@@ -28,7 +29,8 @@ const defaultFaqItems = [
     _id: 'faq-2',
     _type: 'pricingFaq',
     question: 'Ile kosztuje sklep internetowy?',
-    answer: 'Sklep e-commerce zaczyna się od 12 000 PLN netto (baza). Pełnofunkcyjny sklep z płatnościami, filtrowaniem i kontami użytkowników to zazwyczaj 18-25k PLN. Aplikacje typu marketplace — od 50k PLN.',
+    answer:
+      'Sklep e-commerce zaczyna się od {{ECOMMERCE_NET}} PLN netto (baza w konfiguratorze — sama baza produktu). Pełnofunkcyjny sklep z płatnościami, filtrowaniem i kontami użytkowników to wyższy zakres — dopasuj elementy w konfiguratorze. Aplikacje typu marketplace — zwykle od około 50 000 PLN w górę.',
     category: 'pricing',
     order: 2,
     isActive: true,
@@ -36,7 +38,7 @@ const defaultFaqItems = [
   {
     _id: 'faq-3',
     _type: 'pricingFaq',
-    question: 'Dlaczego ceny zaczynają się od 5k, a nie 500 zł?',
+    question: 'Dlaczego ceny zaczynają się od {{WEBSITE_NET}} PLN, a nie 500 zł?',
     answer: 'Buduję strony w technologii Next.js — tej samej, której używają Nike, Netflix czy Notion. To nie jest szablon z WordPress. Dostajesz kod pisany pod Ciebie, błyskawiczną szybkość (Core Web Vitals 95+) i stronę, która będzie działać latami bez "aktualizacji wtyczek".',
     category: 'pricing',
     order: 3,
@@ -66,7 +68,7 @@ const defaultFaqItems = [
     _type: 'pricingFaq',
     question: 'Co to jest Strategia marketingu i sprzedaży?',
     answer:
-      '2–3 godzinne spotkanie strategiczne (faza przedwdrożeniowa), na którym ustalamy m.in. segmentację, pozycjonowanie, UVP, buyer persony, lejek marketingowy, user flows, plan SEO i analityki. Wynikiem jest gotowy dokument strategiczny. Pełna usługa kosztuje 4 500 PLN i jest zaliczana na poczet projektu.',
+      '2–3 godzinne spotkanie strategiczne (faza przedwdrożeniowa), na którym ustalamy m.in. segmentację, pozycjonowanie, UVP, buyer persony, lejek marketingowy, user flows, plan SEO i analityki. Wynikiem jest gotowy dokument strategiczny. Pełna usługa kosztuje {{DISCOVERY_NET}} PLN i jest zaliczana na poczet projektu.',
     category: 'time',
     order: 6,
     isActive: true,

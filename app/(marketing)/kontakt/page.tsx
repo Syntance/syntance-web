@@ -3,21 +3,8 @@ import { Mail, Phone, Calendar, MapPin, Clock, ArrowRight, MessageSquare } from 
 import Link from 'next/link'
 import { ContactForm } from '@/components/contact-form'
 import { HeroTransition } from '@/components/page-transition'
-import { sanityFetch } from '@/sanity/lib/fetch'
-import { startingPricesQuery, defaultStartingPrices, type StartingPrices } from '@/sanity/queries/pricing'
-
-// Pobierz ceny startowe z Sanity
-async function getStartingPrices(): Promise<StartingPrices> {
-  try {
-    const prices = await sanityFetch<StartingPrices>({ query: startingPricesQuery })
-    if (!prices?.websiteStartPrice) {
-      return defaultStartingPrices
-    }
-    return prices
-  } catch {
-    return defaultStartingPrices
-  }
-}
+import { fetchPricingData } from '@/lib/pricing-data'
+import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
 
 // Funkcja do formatowania ceny
 function formatPrice(price: number): string {
@@ -35,8 +22,9 @@ export const metadata: Metadata = {
 }
 
 export default async function KontaktPage() {
-  const prices = await getStartingPrices()
-  
+  const pricingData = await fetchPricingData()
+  const { websiteNet, ecommerceNet } = getConfiguratorMinimumPricesNet(pricingData)
+
   const faqs = [
     {
       question: "Jak szybko odpowiadamy?",
@@ -52,7 +40,7 @@ export default async function KontaktPage() {
     },
     {
       question: "Jaki jest minimalny budżet na projekt?",
-      answer: `Strony od ${formatPrice(prices.websiteStartPrice)} PLN, sklepy od ${formatPrice(prices.ecommerceStandardStartPrice)} PLN. Dokładna wycena po rozmowie o zakresie.`
+      answer: `Strony od ${formatPrice(websiteNet)} PLN netto (baza konfiguratora), sklepy od ${formatPrice(ecommerceNet)} PLN netto. Dokładna wycena po rozmowie o zakresie.`
     }
   ]
   

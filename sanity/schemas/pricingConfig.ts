@@ -6,6 +6,7 @@ export default defineType({
   type: 'document',
   groups: [
     { name: 'general', title: 'Ogólne', default: true },
+    { name: 'bundle', title: 'Pakiet bazy projektu' },
     { name: 'startingPrices', title: 'Ceny startowe' },
     { name: 'rates', title: 'Stawki' },
     { name: 'complexity', title: 'Złożoność' },
@@ -39,6 +40,45 @@ export default defineType({
       title: 'URL Calendly',
       type: 'url',
       group: 'general',
+    }),
+
+    // === PAKIET BAZY (konfigurator) ===
+    defineField({
+      name: 'baseProjectCategoryId',
+      title: 'Slug kategorii „Baza projektu”',
+      type: 'string',
+      group: 'bundle',
+      initialValue: 'base',
+      description:
+        'Musi zgadzać się z polem `id` (slug) dokumentu kategorii cennika dla bazy. Pozycje przypisane do tej kategorii traktujemy jak pakiet.',
+    }),
+    defineField({
+      name: 'baseProjectBundlePriceWebsite',
+      title: 'Pakiet bazy — Strona WWW (PLN netto)',
+      type: 'number',
+      group: 'bundle',
+      initialValue: 0,
+      validation: (Rule) => Rule.min(0),
+      description:
+        'Gdy wartość > 0: ceny pozycji z kategorii bazy (WWW) nie wliczają się do sumy — jest tylko ta kwota (+ pozostałe kategorie). Wpisz 0, żeby wrócić do sumowania każdej pozycji z CMS.',
+    }),
+    defineField({
+      name: 'baseProjectBundlePriceEcommerce',
+      title: 'Pakiet bazy — Sklep e-commerce (PLN netto)',
+      type: 'number',
+      group: 'bundle',
+      initialValue: 0,
+      validation: (Rule) => Rule.min(0),
+      description: 'Jak wyżej — dla typu projektu Sklep.',
+    }),
+    defineField({
+      name: 'baseProjectBundlePriceWebapp',
+      title: 'Pakiet bazy — Aplikacja webowa (PLN netto)',
+      type: 'number',
+      group: 'bundle',
+      initialValue: 0,
+      validation: (Rule) => Rule.min(0),
+      description: 'Jak wyżej — dla typu aplikacji webowej.',
     }),
 
     // === CENY STARTOWE ===

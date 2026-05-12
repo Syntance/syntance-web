@@ -61,6 +61,10 @@ export const pricingDataQuery = groq`{
     calendlyUrl,
     ctaTexts,
     complexitySettings,
+    baseProjectCategoryId,
+    baseProjectBundlePriceWebsite,
+    baseProjectBundlePriceEcommerce,
+    baseProjectBundlePriceWebapp,
     // Ceny startowe
     discoveryWorkshopPrice,
     websiteStartPrice,
@@ -158,6 +162,12 @@ export interface PricingConfig {
     pdf: string
   }
   complexitySettings?: ComplexitySettings
+  /** Slug kategorii używany jako „baza projektu” (pozycje z tej kategorii = pakiet). */
+  baseProjectCategoryId?: string
+  /** PLN netto — gdy > 0, zastępuje sumę cen pozycji bazy dla danego typu. */
+  baseProjectBundlePriceWebsite?: number
+  baseProjectBundlePriceEcommerce?: number
+  baseProjectBundlePriceWebapp?: number
   // Ceny startowe
   discoveryWorkshopPrice: number
   websiteStartPrice: number
@@ -295,6 +305,10 @@ export const defaultPricingData: PricingData = {
       showVeryHighDaysLabel: true,
       dayPrice: 1200,
     },
+    baseProjectCategoryId: 'base',
+    baseProjectBundlePriceWebsite: 0,
+    baseProjectBundlePriceEcommerce: 0,
+    baseProjectBundlePriceWebapp: 0,
     // Ceny startowe
     discoveryWorkshopPrice: 4500,
     websiteStartPrice: 5400,

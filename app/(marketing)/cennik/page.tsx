@@ -1,10 +1,16 @@
 import { Metadata } from 'next'
+import Link from 'next/link'
 import { sanityFetch } from '@/sanity/lib/fetch'
-import { pricingDataQuery, PricingData, defaultPricingData, startingPricesQuery, defaultStartingPrices, type StartingPrices } from '@/sanity/queries/pricing'
 import { pricingFaqQuery, PricingFaqItem, defaultFaqItems } from '@/sanity/queries/faq'
 import { PricingConfigurator } from '@/components/PricingConfigurator'
 import PricingFAQ from '@/components/sections/pricing-faq'
 import { Twitter, Linkedin, Github } from '@/components/icons/social'
+import { fetchPricingData } from '@/lib/pricing-data'
+import {
+  discoveryPriceNetFromConfig,
+} from '@/lib/pricing-calculator'
+import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
+import { interpolatePricingFaqItems } from '@/lib/interpolate-pricing-faq'
 
 // Wymusza dynamiczne renderowanie - dane zawsze świeże z Sanity
 export const dynamic = 'force-dynamic'
@@ -14,26 +20,14 @@ function formatPrice(price: number): string {
   return price.toLocaleString('pl-PL')
 }
 
-// Pobierz ceny startowe dla metadata
-async function getStartingPricesForMetadata(): Promise<StartingPrices> {
-  try {
-    const prices = await sanityFetch<StartingPrices>({ query: startingPricesQuery })
-    if (!prices?.websiteStartPrice) {
-      return defaultStartingPrices
-    }
-    return prices
-  } catch {
-    return defaultStartingPrices
-  }
-}
-
-// Dynamiczne metadata z cenami z Sanity
+// Dynamiczne metadata — te same minima co w konfiguratorze (baza, bez dodatków)
 export async function generateMetadata(): Promise<Metadata> {
-  const prices = await getStartingPricesForMetadata()
+  const data = await fetchPricingData()
+  const mins = getConfiguratorMinimumPricesNet(data)
   
   return {
     title: 'Ile kosztuje strona internetowa? Cennik 2026 | Syntance',
-    description: `Strona firmowa od ${formatPrice(prices.websiteStartPrice)} PLN, sklep e-commerce od ${formatPrice(prices.ecommerceStandardStartPrice)} PLN. Sprawdź cenę swojego projektu w konfiguratorze — wycena w 2 minuty, bez zobowiązań.`,
+    description: `Strona firmowa od ${formatPrice(mins.websiteNet)} PLN netto (baza w konfiguratorze), sklep e-commerce od ${formatPrice(mins.ecommerceNet)} PLN netto. Sprawdź cenę w konfiguratorze — wycena w kilka minut, bez zobowiązań.`,
     openGraph: {
       title: 'Ile kosztuje strona internetowa? | Syntance',
       description: 'Cena strony internetowej zależy od funkcjonalności. Sprawdź ile kosztuje zrobienie strony internetowej lub sklepu e-commerce.',
@@ -42,27 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-async function getPricingData(): Promise<PricingData> {
-  try {
-    const data = await sanityFetch<PricingData>({
-      query: pricingDataQuery,
-      tags: ['pricing'],
-    })
-    
-    // Jeśli brak danych z Sanity, użyj domyślnych
-    if (!data?.categories?.length || !data?.projectTypes?.length) {
-      console.log('Using default pricing data (Sanity not configured)')
-      return defaultPricingData
-    }
-    
-    return data
-  } catch (error) {
-    console.error('Error fetching pricing data:', error)
-    return defaultPricingData
-  }
-}
-
-async function getFaqData(): Promise<PricingFaqItem[]> {
+async function getFaqRaw(): Promise<PricingFaqItem[]> {
   try {
     const data = await sanityFetch<PricingFaqItem[]>({
       query: pricingFaqQuery,
@@ -83,10 +57,10 @@ async function getFaqData(): Promise<PricingFaqItem[]> {
 }
 
 export default async function CennikPage() {
-  const [data, faqData] = await Promise.all([
-    getPricingData(),
-    getFaqData(),
-  ])
+  const [data, faqRaw] = await Promise.all([fetchPricingData(), getFaqRaw()])
+  const mins = getConfiguratorMinimumPricesNet(data)
+  const discoveryNet = discoveryPriceNetFromConfig(data.config)
+  const faqData = interpolatePricingFaqItems(faqRaw, mins, discoveryNet)
 
   return (
     <div className="min-h-screen bg-gray-950 w-full" style={{ overflowX: 'clip' }}>
@@ -150,9 +124,9 @@ export default async function CennikPage() {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-6 md:mb-0">
-              <a href="/" className="text-gray-400 hover:text-white transition-colors font-medium">
+              <Link href="/" className="text-gray-400 hover:text-white transition-colors font-medium">
                 ← Powrót do strony głównej
-              </a>
+              </Link>
             </div>
             <div className="flex space-x-6">
               <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Twitter/X">

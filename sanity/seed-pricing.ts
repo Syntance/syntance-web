@@ -145,6 +145,10 @@ const config = {
     workshop: 'Zamów Strategię marketingu i sprzedaży',
     pdf: 'Pobierz wycenę PDF',
   },
+  baseProjectCategoryId: 'base',
+  baseProjectBundlePriceWebsite: 0,
+  baseProjectBundlePriceEcommerce: 0,
+  baseProjectBundlePriceWebapp: 0,
 }
 
 async function seed() {

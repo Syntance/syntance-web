@@ -3,21 +3,8 @@ import { Target, Zap, Code, Users, ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import { HeroTransition } from '@/components/page-transition'
 import GradientText from '@/components/GradientText'
-import { sanityFetch } from '@/sanity/lib/fetch'
-import { startingPricesQuery, defaultStartingPrices, type StartingPrices } from '@/sanity/queries/pricing'
-
-// Pobierz ceny startowe z Sanity
-async function getStartingPrices(): Promise<StartingPrices> {
-  try {
-    const prices = await sanityFetch<StartingPrices>({ query: startingPricesQuery })
-    if (!prices?.websiteStartPrice) {
-      return defaultStartingPrices
-    }
-    return prices
-  } catch {
-    return defaultStartingPrices
-  }
-}
+import { fetchPricingData } from '@/lib/pricing-data'
+import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
 
 // Funkcja do formatowania ceny
 function formatPrice(price: number): string {
@@ -81,8 +68,9 @@ const stats = [
 ]
 
 export default async function ONasPage() {
-  const prices = await getStartingPrices()
-  
+  const pricingData = await fetchPricingData()
+  const { websiteNet, ecommerceNet } = getConfiguratorMinimumPricesNet(pricingData)
+
   const faqs = [
     {
       question: "Czym jest Syntance — agencja interaktywna czy software house?",
@@ -98,7 +86,7 @@ export default async function ONasPage() {
     },
     {
       question: "Ile kosztuje tworzenie stron internetowych w firmie Syntance?",
-      answer: `Tworzenie stron internetowych w naszej firmie zaczyna się od ${formatPrice(prices.websiteStartPrice)} PLN za prostą stronę. Sklepy e-commerce od ${formatPrice(prices.ecommerceStandardStartPrice)} PLN. Dokładna wycena zależy od zakresu projektu.`
+      answer: `Tworzenie stron internetowych w naszej firmie zaczyna się od ${formatPrice(websiteNet)} PLN netto przy samej bazie w konfiguratorze (bez dodatków). Sklepy e-commerce od ${formatPrice(ecommerceNet)} PLN netto w tej samej logice. Dokładna wycena zależy od zakresu projektu.`
     },
     {
       question: "Gdzie znajduje się Syntance?",

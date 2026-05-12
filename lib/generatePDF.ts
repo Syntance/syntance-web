@@ -36,6 +36,8 @@ export interface PDFData {
   clientName?: string
   clientEmail?: string
   clientPhone?: string
+  /** Gdy ustawione: w sekcji bazy po składowych pokazywana jest jedna kwota pakietu (netto). */
+  baseProjectBundlePriceNet?: number
 }
 
 function hexToRgb(hex: string): [number, number, number] {
@@ -236,6 +238,29 @@ export async function generatePricingPDF(data: PDFData) {
     drawTableHeaders()
     
     baseItems.forEach(item => drawItem(item, true))
+    
+    if (data.baseProjectBundlePriceNet && data.baseProjectBundlePriceNet > 0) {
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(10)
+      doc.setTextColor(...hexToRgb(COLORS.black))
+      doc.text(removePolishChars('Razem pakiet bazy (netto)'), col1, y)
+      doc.setTextColor(...hexToRgb(COLORS.gray))
+      doc.text('1', col2, y)
+      doc.setTextColor(...hexToRgb(COLORS.black))
+      doc.text(
+        `${data.baseProjectBundlePriceNet.toLocaleString('pl-PL')} zl netto`,
+        col3,
+        y,
+      )
+      doc.text(
+        `${data.baseProjectBundlePriceNet.toLocaleString('pl-PL')} zl netto`,
+        col4,
+        y,
+        { align: 'right' },
+      )
+      doc.setFont('helvetica', 'normal')
+      y += 7
+    }
     
     y += 8
   }

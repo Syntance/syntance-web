@@ -123,11 +123,14 @@ function formatPrice(price: number): string {
 
 interface StrategiaContentProps {
   discoveryPrice: number
+  /** Baza strony w konfiguratorze (wymagane pozycje, bez dodatków) — spójnie z /cennik. */
+  websiteMinNet: number
 }
 
-export default function StrategiaContent({ discoveryPrice }: StrategiaContentProps) {
+export default function StrategiaContent({ discoveryPrice, websiteMinNet }: StrategiaContentProps) {
   const [heroVisible, setHeroVisible] = useState(false)
   const priceFormatted = formatPrice(discoveryPrice)
+  const websiteMinFormatted = formatPrice(websiteMinNet)
 
   const faqItems = [
     {
@@ -581,7 +584,7 @@ export default function StrategiaContent({ discoveryPrice }: StrategiaContentPro
                         "Potrzebujesz \"prostej wizytówki za 2000 zł\"",
                         "Masz już strategię i szukasz tylko wykonawcy",
                         "Nie masz czasu na 2-3h spotkanie",
-                        "Twój budżet na stronę to poniżej 5000 PLN"
+                        `Twój budżet na stronę to poniżej ${websiteMinFormatted} PLN`,
                       ].map((item, i) => (
                         <li key={i} className="flex items-start gap-3 text-gray-400">
                           <span className="text-red-400 mt-1">•</span>

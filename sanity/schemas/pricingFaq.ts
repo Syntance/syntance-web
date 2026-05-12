@@ -9,6 +9,8 @@ export default defineType({
       name: 'question',
       title: 'Pytanie',
       type: 'string',
+      description:
+        'Opcjonalnie w treści: {{WEBSITE_NET}}, {{ECOMMERCE_NET}}, {{DISCOVERY_NET}} (podmiana na stronie /cennik).',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -16,6 +18,8 @@ export default defineType({
       title: 'Odpowiedź',
       type: 'text',
       rows: 4,
+      description:
+        'Opcjonalnie: {{WEBSITE_NET}}, {{ECOMMERCE_NET}}, {{WEBAPP_NET}}, {{DISCOVERY_NET}} — podmieniane na ceny z konfiguratora / cennika.',
       validation: (Rule) => Rule.required(),
     }),
     defineField({

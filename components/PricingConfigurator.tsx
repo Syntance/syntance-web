@@ -12,6 +12,11 @@ import { MiniSummaryBar } from './MiniSummaryBar'
 import { BookingModal } from './BookingModal'
 import { useHideStickyOnVisible } from '@/hooks/useHideStickyOnVisible'
 import { generatePricingPDF, PDFData, PDFItem } from '@/lib/generatePDF'
+import {
+  computeConfiguratorPricing,
+  getBaseBundlePriceNet,
+  getBaseProjectCategoryId,
+} from '@/lib/pricing-calculator'
 
 // Mapa ikon - używamy typu LucideIcon
 const iconMap: Record<string, typeof Layout> = {
@@ -140,121 +145,20 @@ export function PricingConfigurator({ data }: Props) {
     })).filter(cat => cat.items.length > 0)
   }, [availableItems, categories, state.projectType])
 
-  // Kalkulacja ceny
+  // Kalkulacja ceny (wspólna z minimumami / FAQ — uwzględnia pakiet bazy z CMS)
   const calculation = useMemo(() => {
-    const allSelected = [
-      ...requiredItems.map(i => i.id),
-      ...state.selectedItems
-    ]
-
-    let totalPrice = 0
-    let totalHours = 0
-    let percentageAdd = 0
-    let totalItemsCount = 0
-
-    allSelected.forEach(id => {
-      const item = items.find(i => i.id === id)
-      if (!item) return
-
-      const qty = state.quantities[id] || 1
-      
-      // Licz ilość elementów (każdą podstronę osobno)
-      totalItemsCount += qty
-
-      if (item.percentageAdd) {
-        percentageAdd += item.percentageAdd
-      } else {
-        // Nie licz ceny dla elementów wliczonych w bazę (gratis)
-        if (!item.includedInBase) {
-          totalPrice += item.price * qty
-        }
-        totalHours += item.hours * qty
-      }
-    })
-
-    // Dodaj procentowe dodatki
-    if (percentageAdd > 0) {
-      totalPrice *= (1 + percentageAdd / 100)
-      totalHours *= (1 + percentageAdd / 100)
-    }
-
-    // Pobierz ustawienia złożoności z config
-    const complexitySettings = config?.complexitySettings || {
-      mediumThreshold: 5,
-      highThreshold: 10,
-      veryHighThreshold: 15,
-      lowDays: 0,
-      showLowDaysLabel: false,
-      mediumDays: 2,
-      showMediumDaysLabel: true,
-      highDays: 4,
-      showHighDaysLabel: true,
-      veryHighDays: 7,
-      showVeryHighDaysLabel: true,
-      dayPrice: 1200,
-    }
-
-    // Oblicz sumę wag złożoności
-    let totalComplexityWeight = 0
-    allSelected.forEach(id => {
-      const item = items.find(i => i.id === id)
-      if (!item) return
-      const qty = state.quantities[id] || 1
-      // Domyślna waga = 1 (standardowa)
-      const weight = item.complexityWeight ?? 1
-      totalComplexityWeight += weight * qty
-    })
-
-    // Określ poziom złożoności na podstawie sumy wag
-    let complexity: 'low' | 'medium' | 'high' | 'very-high' = 'low'
-    let complexityDays = 0
-    let complexityPrice = 0
-
-    if (totalComplexityWeight >= complexitySettings.veryHighThreshold) {
-      complexity = 'very-high'
-      complexityDays = complexitySettings.veryHighDays
-    } else if (totalComplexityWeight >= complexitySettings.highThreshold) {
-      complexity = 'high'
-      complexityDays = complexitySettings.highDays
-    } else if (totalComplexityWeight >= complexitySettings.mediumThreshold) {
-      complexity = 'medium'
-      complexityDays = complexitySettings.mediumDays
-    } else {
-      complexity = 'low'
-      complexityDays = complexitySettings.lowDays ?? 0
-    }
-
-    // Dodaj cenę za dni złożoności
-    complexityPrice = complexityDays * complexitySettings.dayPrice
-
-    // Oblicz finalną cenę (z dodatkiem za złożoność)
-    const basePriceNetto = Math.round(totalPrice)
-    const priceNetto = basePriceNetto + complexityPrice
-    const priceBrutto = Math.round(priceNetto * (1 + (config?.vatRate || 23) / 100))
-    const deposit = Math.max(
-      config?.depositFixed || 500,
-      Math.round(priceNetto * (config?.depositPercent || 20) / 100)
+    const selectedIds = [...requiredItems.map((i) => i.id), ...state.selectedItems]
+    return computeConfiguratorPricing(
+      selectedIds,
+      state.quantities,
+      items,
+      state.projectType,
+      config,
     )
-    
-    // Oblicz dni (bazowe + za złożoność)
-    const baseDays = Math.ceil(totalHours / (config?.workHoursPerDay || 6))
-    const days = baseDays + complexityDays
+  }, [requiredItems, state.selectedItems, state.quantities, items, config, state.projectType])
 
-    return {
-      priceNetto,
-      priceBrutto,
-      deposit,
-      hours: Math.round(totalHours),
-      days,
-      baseDays,
-      complexityDays,
-      complexityPrice,
-      complexityWeight: totalComplexityWeight,
-      percentageAdd,
-      itemsCount: totalItemsCount,
-      complexity,
-    }
-  }, [requiredItems, state.selectedItems, state.quantities, items, config])
+  const baseCategoryId = getBaseProjectCategoryId(config)
+  const baseBundleNet = getBaseBundlePriceNet(state.projectType, config)
 
   // Znajdź wszystkie produkty, które mają ten element w bundledWith
   const getParentBundles = useCallback((itemId: string) => {
@@ -276,7 +180,7 @@ export function PricingConfigurator({ data }: Props) {
     const item = items.find(i => i.id === id)
     if (!item) return currentSelectedItems
     
-    let itemsToRemove = [id]
+    const itemsToRemove: string[] = [id]
     
     if (item.bundledWith?.length) {
       const remainingSelected = currentSelectedItems.filter(i => i !== id)
@@ -404,7 +308,6 @@ export function PricingConfigurator({ data }: Props) {
         }
       }
     })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items, getParentBundles, performRemoveItem, performAddItem])
 
   // Zmiana ilości
@@ -474,6 +377,9 @@ export function PricingConfigurator({ data }: Props) {
       ...state.selectedItems
     ]
 
+    const bundlePdfNet = getBaseBundlePriceNet(state.projectType, config)
+    const baseCatPdf = getBaseProjectCategoryId(config)
+
     // Przygotuj listę itemów dla PDF
     const pdfItems: PDFItem[] = allSelectedIds.map(id => {
       const item = items.find(i => i.id === id)
@@ -481,7 +387,8 @@ export function PricingConfigurator({ data }: Props) {
       
       const quantity = state.quantities[id] || 1
       const price = item.price
-      const total = item.includedInBase ? 0 : price * quantity
+      const isBasePakiet = item.category === baseCatPdf && bundlePdfNet > 0
+      const total = item.includedInBase || isBasePakiet ? 0 : price * quantity
 
       return {
         name: item.name,
@@ -508,6 +415,7 @@ export function PricingConfigurator({ data }: Props) {
       complexity: calculation.complexity,
       complexityDays: calculation.complexityDays,
       complexityPrice: calculation.complexityPrice,
+      baseProjectBundlePriceNet: bundlePdfNet > 0 ? bundlePdfNet : undefined,
       date: new Date().toLocaleDateString('pl-PL', {
         year: 'numeric',
         month: 'long',
@@ -517,7 +425,7 @@ export function PricingConfigurator({ data }: Props) {
 
     // Generuj i pobierz PDF
     await generatePricingPDF(pdfData)
-  }, [requiredItems, state.selectedItems, state.quantities, items, calculation, currentProjectType, config])
+  }, [requiredItems, state.selectedItems, state.quantities, items, calculation, currentProjectType, config, state.projectType])
 
   // Pobierz ikonę
   const getIcon = (iconName?: string) => {
@@ -581,11 +489,15 @@ export function PricingConfigurator({ data }: Props) {
                     </span>
                   </div>
                   
-                  {type.basePrice && (
+                  {(() => {
+                    const fromBundle = getBaseBundlePriceNet(type.id, config)
+                    const displayOd = fromBundle > 0 ? fromBundle : type.basePrice
+                    return displayOd != null && displayOd > 0 ? (
                     <span className={`text-sm ${isDisabledType ? 'text-gray-700' : 'text-gray-400'}`}>
-                      od {type.basePrice.toLocaleString('pl-PL')} PLN netto
+                      od {displayOd.toLocaleString('pl-PL')} PLN netto
                     </span>
-                  )}
+                    ) : null
+                  })()}
                   
                   {isDisabledType && (
                     <div className="mt-2">
@@ -616,6 +528,15 @@ export function PricingConfigurator({ data }: Props) {
               <Layout size={18} className="text-purple-400" />
               W cenie bazowej
             </h3>
+            {baseBundleNet > 0 && (
+              <p className="text-sm text-purple-300/90 mb-3">
+                Pakiet bazy:{' '}
+                <span className="font-medium tabular-nums">
+                  {baseBundleNet.toLocaleString('pl-PL')} PLN netto
+                </span>{' '}
+                — pozycje poniżej opisują zakres, bez sumowania pojedynczych cen.
+              </p>
+            )}
             <div className="space-y-2">
               {requiredItems.map(item => (
                   <div 
@@ -635,7 +556,9 @@ export function PricingConfigurator({ data }: Props) {
                   </div>
                   {!item.hidePrice && (
                     <span className="text-gray-400 text-sm flex-shrink-0">
-                      {item.price.toLocaleString('pl-PL')} PLN netto
+                      {item.category === baseCategoryId && baseBundleNet > 0
+                        ? 'w pakiecie'
+                        : `${item.price.toLocaleString('pl-PL')} PLN netto`}
                     </span>
                   )}
                 </div>
