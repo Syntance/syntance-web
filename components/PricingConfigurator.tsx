@@ -561,15 +561,6 @@ export function PricingConfigurator({ data }: Props) {
               <Layout size={18} className="text-purple-400" />
               W cenie bazowej
             </h3>
-            {baseBundleNet > 0 && (
-              <p className="text-sm text-purple-300/90 mb-3">
-                Pakiet bazy:{' '}
-                <span className="font-medium tabular-nums">
-                  {baseBundleNet.toLocaleString('pl-PL')} PLN netto
-                </span>{' '}
-                — pozycje poniżej opisują zakres, bez sumowania pojedynczych cen.
-              </p>
-            )}
             <div className="space-y-2">
               {requiredItems.map(item => (
                   <div 
