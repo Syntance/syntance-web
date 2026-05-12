@@ -6,7 +6,7 @@ const PAGE_URL = `${SITE_URL}/porozmawiajmy`
 export const metadata: Metadata = {
   title: 'Umów rozmowę — Syntance',
   description:
-    'Zarezerwuj 30-min rozmowę z Kamilem o Twoim projekcie. Strategia, strony, analityka.',
+    'Software house Next.js — 30 min konsultacji o Twojej witrynie, konwersji i stosie.',
   alternates: { canonical: PAGE_URL },
   robots: {
     index: false,
@@ -14,9 +14,9 @@ export const metadata: Metadata = {
     googleBot: { index: false, follow: true },
   },
   openGraph: {
-    title: 'Umów rozmowę z Kamilem — Syntance',
+    title: 'Umów rozmowę z zespołem Syntance',
     description:
-      '30 minut. Konkretny plan na Twoją stronę. Bez presji sprzedażowej.',
+      '30 minut. Konkretny plan dla Twojej witryny. Bez presji sprzedażowej.',
     url: PAGE_URL,
     type: 'website',
     siteName: 'Syntance',
@@ -24,9 +24,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Umów rozmowę z Kamilem — Syntance',
+    title: 'Umów rozmowę — Syntance',
     description:
-      '30 minut. Konkretny plan na Twoją stronę. Bez presji sprzedażowej.',
+      '30 minut. Konkretny plan dla Twojej witryny. Bez presji sprzedażowej.',
   },
 }
 

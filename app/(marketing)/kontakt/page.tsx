@@ -10,10 +10,12 @@ import { fetchFaqSettings, resolveKontaktFaq } from '@/lib/faq-data'
 
 export const metadata: Metadata = {
   title: 'Kontakt — Syntance | Strony i sklepy Next.js',
-  description: 'Skontaktuj się z Syntance. Email: kontakt@syntance.com, tel: +48 537 110 170. Bezpłatna rozmowa o Twoim projekcie.',
+  description:
+    'Skontaktuj się z software house Next.js — Syntance. Email: kontakt@syntance.com, tel +48 537 110 170. Bezpłatna konsultacja o projekcie.',
   openGraph: {
     title: 'Kontakt | Syntance',
-    description: 'Skontaktuj się z Syntance. Email: kontakt@syntance.com, tel: +48 537 110 170. Bezpłatna rozmowa o Twoim projekcie.',
+    description:
+      'Skontaktuj się z software house Next.js — Syntance. Email: kontakt@syntance.com, tel +48 537 110 170.',
     url: 'https://syntance.com/kontakt',
   },
 }
@@ -36,7 +38,7 @@ export default async function KontaktPage() {
             "mainEntity": {
               "@type": "LocalBusiness",
               "name": "Syntance P.S.A.",
-              "description": "Studio tworzące strony i sklepy internetowe w Next.js",
+              "description": "software house realizujący strony internetowe i sklepy Next.js oraz headless commerce",
               "url": "https://syntance.com",
               "email": "kontakt@syntance.com",
               "telephone": "+48537110170",
@@ -69,7 +71,7 @@ export default async function KontaktPage() {
               Skontaktuj się
             </h1>
             <p className="text-xl md:text-2xl text-gray-400 max-w-2xl mx-auto">
-              Masz pytanie o projekt? Chcesz poznać wycenę? Napisz lub zadzwoń — odpowiadam osobiście.
+              Masz pytanie o projekt lub wycenę? Napisz lub zadzwoń — odpowiadamy z zespołu Syntance.
             </p>
           </div>
         </section>
@@ -183,7 +185,7 @@ export default async function KontaktPage() {
                     <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
                       <MessageSquare className="w-5 h-5 text-white" />
                     </div>
-                    <h2 className="text-xl font-medium text-white">Napisz do mnie</h2>
+                    <h2 className="text-xl font-medium text-white">Napisz do nas</h2>
                   </div>
                   
                   <ContactForm 

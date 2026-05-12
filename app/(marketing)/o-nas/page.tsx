@@ -110,7 +110,7 @@ export default async function ONasPage() {
               </GradientText>
             </h2>
             <p className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
-              Jesteśmy agencją webową, która tworzy nowoczesne strony internetowe i sklepy e-commerce. Każdy projekt zaczynamy od strategii — nie od kodu.
+              Jesteśmy software house: budujemy szybkie witryny i sklepy w Next.js na cele biznesowe. Każdy projekt zaczynamy od strategii wdrożeniowej — nie od szablonu.
             </p>
           </div>
         </section>
@@ -125,7 +125,7 @@ export default async function ONasPage() {
             
             <div className="space-y-6 text-lg text-gray-300 leading-relaxed">
               <p>
-                <strong className="text-white">Syntance</strong> to butikowe studio webowe — <strong className="text-white">agencja interaktywna</strong> nowej generacji. Nie jesteśmy dużą korporacją z dziesiątkami pracowników. Jesteśmy zespołem seniorów, który pracuje bezpośrednio z klientem.
+                <strong className="text-white">Syntance</strong> to <strong className="text-white">software house i agencja interaktywna</strong>: projektujemy i wdrażamy strony oraz headless commerce w Next.js — z naciskiem na architekturę, wydajność i cele biznesowe. Nie jesteśmy korporacją ze stałą rotacją zespołów: zatrudniamy doświadczonych specjalistów, którzy od briefu po release prowadzą projekt przy Tobie jak jeden warsztat.
               </p>
               <p>
                 Jako <strong className="text-white">software house z Polski</strong> specjalizujemy się w technologiach Next.js, React i headless CMS. <strong className="text-white">Tworzenie stron internetowych</strong> to nasza główna działalność, ale podchodzimy do tego inaczej niż większość.

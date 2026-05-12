@@ -103,7 +103,7 @@ export default function MeetingBookingWidget({ source }: MeetingBookingWidgetPro
       } catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') return
         console.error('Range fetch error:', err)
-        setError('Nie udało się załadować kalendarza. Napisz do mnie bezpośrednio: kamil@syntance.com.')
+        setError('Nie udało się załadować kalendarza. Napisz na kontakt@syntance.com — odpiszemy z zespołu.')
       } finally {
         clearTimeout(timeoutId)
         setLoading(false)

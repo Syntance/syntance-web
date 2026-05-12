@@ -46,7 +46,7 @@ export default function HeroStudio() {
           </GradientText>
         </h1>
         <p className="text-lg md:text-xl font-light tracking-wider text-gray-400 mb-12 max-w-3xl mx-auto">
-          Mamy jeden cel — Twój wynik biznesowy.
+          Software house Next.js — jeden cel: Twój wynik biznesowy.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <div className="relative group w-fit max-w-full shrink-0">

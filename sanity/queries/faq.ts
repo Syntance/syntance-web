@@ -117,7 +117,7 @@ export const defaultFaqItems: PricingFaqItem[] = [
     category: 'pricing',
     question: 'Dlaczego ceny zaczynają się od {{WEBSITE_NET}} PLN, a nie 500 zł?',
     answer:
-      'Buduję strony w technologii Next.js — tej samej, której używają Nike, Netflix czy Notion. To nie jest szablon z WordPress. Dostajesz kod pisany pod Ciebie, błyskawiczną szybkość (Core Web Vitals 95+) i stronę, która będzie działać latami bez "aktualizacji wtyczek".',
+      'Jako software house budujemy w Next.js — tej samej technologii, z której korzystają m.in. Nike, Netflix i Notion. To nie jest szablon WordPressa. Dostajesz kod pisany pod Twój projekt, bardzo krótki czas ładowania (Core Web Vitals ok. 95+) i witrynę, która przetrwa lata bez „aktualizacji wtyczek”.',
     order: 3,
   },
   {
@@ -165,15 +165,15 @@ export const defaultFaqItems: PricingFaqItem[] = [
     category: 'trust',
     question: 'Co jeśli potrzebuję zmian po wdrożeniu?',
     answer:
-      'Oferuję pakiety opieki od 500 PLN/msc — poprawki, aktualizacje, wsparcie. Możesz też zlecać zmiany jednorazowo.',
+      'Oferujemy pakiety opieki od 500 PLN/msc — poprawki, aktualizacje, wsparcie. Możesz też zlecać zmiany jednorazowo.',
     order: 9,
   },
   {
     _id: 'default-10',
     category: 'comparison',
-    question: 'Dlaczego Ty, a nie tańszy freelancer?',
+    question: 'Dlaczego Syntance, a nie tańszy freelancer?',
     answer:
-      'Freelancer za 2k PLN da Ci szablon WordPress, który za rok będzie wymagał aktualizacji 47 wtyczek. Ja daję Ci kod, który jest Twój, szybki i bezpieczny. To inwestycja, nie koszt.',
+      'Freelancer za 2k PLN często oddaje szablon WordPress, który po roku wymaga lawinowych aktualizacji wtyczek. My, jako software house, dostarczamy kod pod Twój projekt — Twój, szybki i pod kontrolą. To inwestycja w jakość wdrożenia, nie koszt jednorazowy.',
     order: 10,
   },
 ]
@@ -202,7 +202,7 @@ export const defaultFaqStronyWww: SimpleFaqQA[] = [
   {
     question: 'Czy oferujecie strony internetowe w Krakowie?',
     answer:
-      'Tak! Obsługujemy klientów z całej Polski, ze szczególnym uwzględnieniem Krakowa i Małopolski. Pracujemy zdalnie lub spotkajmy się na żywo.',
+      'Tak — obsługujemy klientów z całej Polski, ze szczególnym uwzględnieniem Krakowa i Małopolski. Spotkanie możemy prowadzić zdalnie albo ustalić termin na miejscu.',
   },
 ]
 
@@ -263,7 +263,7 @@ export const defaultFaqONas: SimpleFaqQA[] = [
   {
     question: 'Czym jest Syntance — agencja interaktywna czy software house?',
     answer:
-      'Syntance to połączenie obu. Jesteśmy agencją interaktywną specjalizującą się w tworzeniu stron i sklepów, ale działamy jak software house — z naciskiem na technologię i jakość kodu.',
+      'Syntance łączy rolę software house z agencją interaktywną: dostarczamy architekturę, kod Next.js oraz headless commerce, a przy tym dopasowujemy UX, komunikację i cele biznesowe.',
   },
   {
     question: 'Czym różni się Syntance od innych agencji webowych?',
@@ -298,7 +298,8 @@ export const defaultFaqONas: SimpleFaqQA[] = [
 export const defaultFaqKontakt: SimpleFaqQA[] = [
   {
     question: 'Jak szybko odpowiadamy?',
-    answer: 'Staram się odpowiedzieć w ciągu 24 godzin roboczych. Na pilne sprawy — zadzwoń.',
+    answer:
+      'Zwykle odpowiadamy w ciągu 24 godzin roboczych. Na pilne sprawy — zadzwoń bezpośrednio pod numer kontaktowy Syntance.',
   },
   {
     question: 'Czy pierwsza rozmowa jest płatna?',
@@ -306,7 +307,8 @@ export const defaultFaqKontakt: SimpleFaqQA[] = [
   },
   {
     question: 'Czy pracujemy z klientami spoza Polski?',
-    answer: 'Tak. Pracuję zdalnie z klientami z całej Europy. Komunikacja po polsku lub angielsku.',
+    answer:
+      'Tak. Pracujemy zdalnie z klientami z całej Europy. Komunikacja po polsku lub angielsku.',
   },
   {
     question: 'Jaki jest minimalny budżet na projekt?',

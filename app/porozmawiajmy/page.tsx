@@ -8,10 +8,17 @@ export default function PorozmawiajmyPage() {
     name: 'Umów rozmowę — Syntance',
     url: 'https://syntance.com/porozmawiajmy',
     mainEntity: {
-      '@type': 'Person',
-      name: 'Kamil Podobiński',
-      jobTitle: 'Founder, Syntance',
-      email: 'kamil@syntance.com',
+      '@type': 'Organization',
+      name: 'Syntance',
+      url: 'https://syntance.com',
+      email: 'kontakt@syntance.com',
+      contactPoint: {
+        '@type': 'ContactPoint',
+        telephone: '+48537110170',
+        email: 'kontakt@syntance.com',
+        contactType: 'customer support',
+        availableLanguage: ['pl', 'en'],
+      },
     },
   }
 

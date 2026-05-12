@@ -113,7 +113,7 @@ const fundamenty = [
     textColor: "text-cyan-400",
     description: "UVP to odpowiedź na pytanie: \"Dlaczego klient ma wybrać Ciebie?\"",
     template: "Dla [segment], którzy [problem], [firma] to [kategoria], która [wyróżnik], ponieważ [dowód].",
-    example: "Dla właścicieli firm usługowych, którzy chcą więcej klientów z internetu, Syntance to studio webowe, które buduje strony generujące leady, ponieważ każdy projekt zaczyna od strategii marketingu i sprzedaży.",
+    example: "Dla właścicieli firm usługowych, które chcą pozyskiwać więcej klientów z internetu: Syntance to software house, który łączy strategię wdrożeniową z inżynierią Next.js — budujemy witryny na mierzalne leady.",
     kontrolne: "Czy potrafisz powiedzieć to w jednym zdaniu?"
   }
 ]

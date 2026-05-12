@@ -259,7 +259,7 @@ export async function POST(req: Request) {
   } catch (err) {
     console.error('Meeting booking failed:', err)
     return NextResponse.json(
-      { ok: false, error: 'Coś poszło nie tak. Napisz bezpośrednio: kamil@syntance.com.' },
+      { ok: false, error: 'Coś poszło nie tak. Napisz na kontakt@syntance.com lub zadzwoń — odpiszemy z zespołu.' },
       { status: 500 }
     )
   }
