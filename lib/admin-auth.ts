@@ -79,9 +79,13 @@ export interface VerifiedSession {
 
 export async function verifySession(token: string | undefined | null): Promise<VerifiedSession | null> {
   if (!token) return null
+  // Token: `${email}.${exp}.${sig}` — email może zawierać kropki (domena), więc nie wolno robić split('.') na 3 części.
   const parts = token.split('.')
-  if (parts.length !== 3) return null
-  const [email, expStr, sig] = parts
+  if (parts.length < 3) return null
+  const sig = parts.pop()
+  const expStr = parts.pop()
+  const email = parts.join('.')
+  if (!sig || !expStr || !email) return null
   const exp = Number(expStr)
   if (!Number.isFinite(exp) || exp * 1000 < Date.now()) return null
   const expected = await hmac(`${email}.${exp}`)
