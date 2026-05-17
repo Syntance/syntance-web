@@ -5,12 +5,12 @@ export default function PorozmawiajmyPage() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ContactPage',
-    name: 'Co odróżnia strony, które sprzedają — Syntance',
+    name: 'Dlaczego strategia decyduje, czy strona sprzedaje — Syntance',
     url: 'https://syntance.com/porozmawiajmy',
     mainEntity: {
-      '@type': 'Person',
-      name: 'Kamil Podobiński',
-      jobTitle: 'Founder, Syntance',
+      '@type': 'Organization',
+      name: 'Syntance',
+      url: 'https://syntance.com',
       email: 'kamil@syntance.com',
     },
   }

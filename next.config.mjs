@@ -68,6 +68,7 @@ const nextConfig = {
       { source: '/umow-spotkanie', destination: porozmawiajmy, permanent: true },
       { source: '/booking', destination: porozmawiajmy, permanent: true },
       { source: '/meeting', destination: porozmawiajmy, permanent: true },
+      { source: '/sklepy', destination: '/sklepy-internetowe', permanent: true },
     ]
   },
 };

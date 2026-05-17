@@ -4,9 +4,9 @@ const SITE_URL = 'https://syntance.com'
 const PAGE_URL = `${SITE_URL}/porozmawiajmy`
 
 export const metadata: Metadata = {
-  title: 'Co odróżnia strony, które sprzedają — Syntance',
+  title: 'Dlaczego strategia decyduje, czy strona sprzedaje — Syntance',
   description:
-    'Darmowy raport: porównanie Twojej strony z 5 obszarami, które decydują o sprzedaży. PDF + Loom w 3 dni robocze.',
+    'Strategia to różnica między stroną, która sprzedaje, a tą, która tylko ładnie wygląda. Zobacz gdzie działa i zamów darmowy audyt.',
   alternates: { canonical: PAGE_URL },
   robots: {
     index: false,
@@ -15,9 +15,9 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title:
-      '5 różnic między stroną, która sprzedaje, a tą, która tylko ładnie wygląda',
+      'Strategia = różnica między stroną, która sprzedaje, a tą, która tylko ładnie wygląda',
     description:
-      'Darmowy raport: w których obszarach Twoja strona jest po lewej, w których po prawej. PDF + Loom w 3 dni.',
+      'Strategia to różnica między stroną, która sprzedaje, a tą, która tylko ładnie wygląda. Zobacz gdzie działa i zamów darmowy audyt.',
     url: PAGE_URL,
     type: 'website',
     siteName: 'Syntance',
@@ -26,9 +26,9 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title:
-      '5 różnic między stroną, która sprzedaje, a tą, która tylko ładnie wygląda',
+      'Strategia = różnica między stroną, która sprzedaje, a tą, która tylko ładnie wygląda',
     description:
-      'Darmowy raport: w których obszarach Twoja strona jest po lewej, w których po prawej. PDF + Loom w 3 dni.',
+      'Strategia to różnica między stroną, która sprzedaje, a tą, która tylko ładnie wygląda. Zobacz gdzie działa i zamów darmowy audyt.',
   },
 }
 

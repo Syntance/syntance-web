@@ -11,56 +11,35 @@ import {
 } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { ArrowRight, ArrowLeft, Check, Mail, Loader2 } from 'lucide-react'
+import { ArrowRight, ArrowLeft, Loader2 } from 'lucide-react'
 import { trackEvent } from '@/lib/tracking'
 
-/* ----------------------------------------------------------------------
- * Treść 1:1 z Notion /porozmawiajmy (BOFU, lead form, audyt offline).
- * --------------------------------------------------------------------*/
+/* Treść zsynchronizowana z Notion /porozmawiajmy (aktualna struktura: strategia + 3 obszary + FAQ + form osobno). */
 
-type Differ = {
-  number: number
-  title: string
-  bad: string
-  good: string
-  why: string
-}
+const BEZ_STRATEGII_LINES = [
+  'Nagłówek o sobie zamiast o kliencie.',
+  'Pięć równorzędnych CTA zamiast jednej oczywistej akcji.',
+  'Blog jako kolekcja artykułów, nie lejek do oferty.',
+  'Stack dobrany „bo każdy ma WordPress”.',
+  'Brak liczb, opinii, case studies.',
+] as const
 
-const DIFFERENCES: ReadonlyArray<Differ> = [
+const FAQ: { q: string; a: string }[] = [
   {
-    number: 1,
-    title: 'Nagłówek',
-    bad: '„Jesteśmy zespołem profesjonalistów z 10-letnim doświadczeniem…”',
-    good: '„Klinika stomatologiczna w Warszawie. Rezerwacja online w 30 sekund.” (nazywa problem konkretnego klienta)',
-    why: 'Klient szuka swojego problemu, nie Twoich kompetencji. Nagłówek o sobie = strona dla nikogo.',
+    q: 'Czy muszę wiedzieć, czego potrzebuję?',
+    a: 'Nie. Audyt służy temu, żeby to zdefiniować.',
   },
   {
-    number: 2,
-    title: 'CTA',
-    bad: '5 równorzędnych przycisków na ekranie + „Kontakt” gdzieś w prawym górnym rogu',
-    good: 'Jeden dominujący CTA z konkretem: „Wyceń projekt w 24h” lub „Umów bezpłatną konsultację”',
-    why: 'Wybór = paraliż = exit. Klient potrzebuje jednej oczywistej następnej akcji, nie menu opcji.',
+    q: 'Czy raport mnie do czegoś zobowiązuje?',
+    a: 'Nie. Raport jest Twój — możesz pokazać go dowolnemu wykonawcy.',
   },
   {
-    number: 3,
-    title: 'Prędkość',
-    bad: 'WordPress + Elementor + 15 wtyczek → 3–5 s ładowania na mobile, PageSpeed 31/100',
-    good: 'Next.js + SSG/SSR + zero śmieciowych scriptów → < 1 s ładowania na mobile, PageSpeed 96/100',
-    why: 'Każda sekunda powyżej 1 s = –17% konwersji. Reklamy w Google płacisz drożej (niski Quality Score). Klient wychodzi zanim zobaczy ofertę.',
+    q: 'Ile zajmuje mojego czasu?',
+    a: 'Formularz: 3 minuty. Raport: 15 min PDF + 10 min Loom.',
   },
   {
-    number: 4,
-    title: 'Dowody',
-    bad: '„Jesteśmy najlepsi”, „Nasz zespół to pasjonaci”, zero liczb, zero opinii, zero case study',
-    good: 'Case study z konkretem: „80 → 240 leadów/mc w 3 miesiące”. Opinie z imieniem i firmą. Loga klientów. Zrzuty dashboardów.',
-    why: 'Klient nie zaryzykuje 50k PLN dla firmy, która mówi tylko o sobie. Trust to pierwsza bariera — żadne „jesteśmy najlepsi” jej nie pokona.',
-  },
-  {
-    number: 5,
-    title: 'Lejek',
-    bad: 'Blog → czytelnik → wyjście. Strona = kolekcja sekcji bez ścieżki.',
-    good: 'Blog → kontekstowy CTA do oferty → CTA do formularza. Każda podstrona ma jasny następny krok. Strona = lejek.',
-    why: 'Jeśli ruch jest, a sprzedaży nie ma — problem jest w lejku, nie w ruchu. Marketing wydaje budżet, sprzedaż pyta „gdzie leady?”.',
+    q: 'Mam stronę na WordPressie. Polecicie ją wyrzucić?',
+    a: 'Niekoniecznie. Czasem 3 quick-winy poprawiają konwersję bardziej niż pełny redesign.',
   },
 ]
 
@@ -144,66 +123,6 @@ const GENERIC_EMAIL_DOMAINS = [
   'hotmail.com',
 ]
 
-const FAQ: { q: string; a: string }[] = [
-  {
-    q: 'Czy moje dane są bezpieczne?',
-    a: 'Tak. URL strony i odpowiedzi formularza widzi tylko Kamil. Nie przekazujemy ich nikomu, nie ma retargetingu, nie ma „marketingu przyzwyczajającego do reklam”. RODO + polityka prywatności linkowane w formularzu.',
-  },
-  {
-    q: 'Co jeśli raport mi się nie spodoba?',
-    a: 'Trudno. To darmowy raport. Powiedz mi czemu (jedno zdanie maila wystarczy) — przyda się jako feedback. Zero roszczeń, zero zobowiązań.',
-  },
-  {
-    q: 'Ile to zajmuje mojego czasu?',
-    a: 'Formularz: 3 minuty. Raport: 15 minut na PDF + 10 minut na Loom = łącznie do 30 minut, rozłożone na 3 dni.',
-  },
-  {
-    q: 'Czy muszę kupić Wasz projekt po raporcie?',
-    a: 'Nie. Raport jest Twój, możesz go pokazać dowolnemu wykonawcy. Połowa klientów wraca po 2–6 miesiącach, część idzie własną drogą — obie opcje są OK.',
-  },
-  {
-    q: 'Mam stronę na WordPressie. Polecicie ją wyrzucić?',
-    a: 'Niekoniecznie. Czasem 3 quick-winy poprawiają konwersję bardziej niż pełny redesign. Audyt mówi co najpierw, nie „kupcie nową stronę”.',
-  },
-  {
-    q: 'Robię reklamy Google / Meta — pomoże to performance?',
-    a: 'Tak. Quality Score w Google zależy m.in. od PageSpeed i UX landing page. Optymalizacja często obniża CPL o 20–40% bez zmiany budżetu reklamowego.',
-  },
-]
-
-const TIMELINE_STEPS = [
-  {
-    when: '0 min',
-    title: 'Email potwierdzający',
-    desc: 'Info, że zgłoszenie dotarło + data raportu.',
-  },
-  {
-    when: '1–3 dni robocze',
-    title: 'Audyt offline (Tier 1) lub automat (Tier 2)',
-    desc: 'Analizuję Twoją stronę w układzie 5 różnic, branżę, konkurencję.',
-  },
-  {
-    when: 'Dzień 3 max',
-    title: 'Raport w skrzynce',
-    desc: 'PDF + Loom (Tier 1) lub PDF (Tier 2). Bez logowania, bez kalendarza.',
-  },
-  {
-    when: 'Dzień 5',
-    title: 'Follow-up #1 (tylko Tier 1)',
-    desc: 'Krótki mail: „Co o tym myślisz?” Jedno zdanie, opt-out wyraźny.',
-  },
-  {
-    when: 'Dzień 14',
-    title: 'Follow-up #2 (tylko Tier 1)',
-    desc: 'Ostatni: „Nadal chcesz pogadać? Jeśli nie — koniec ciszy.” Po tym mailu brak dalszego kontaktu.',
-  },
-  {
-    when: 'Twoja decyzja',
-    title: '30 min rozmowy z konkretnym scope i ceną',
-    desc: 'Ty inicjujesz.',
-  },
-]
-
 function isValidUrl(value: string): boolean {
   if (!value) return false
   try {
@@ -232,8 +151,6 @@ export default function PorozmawiajmyContent() {
     }
   }, [searchParams])
 
-  /* --------------------- PostHog: view + section observer ---------------- */
-
   const viewTrackedRef = useRef(false)
   useEffect(() => {
     if (viewTrackedRef.current) return
@@ -244,7 +161,6 @@ export default function PorozmawiajmyContent() {
         typeof navigator !== 'undefined' && /Mobi|Android/i.test(navigator.userAgent)
           ? 'mobile'
           : 'desktop',
-      referrer: typeof document !== 'undefined' ? document.referrer : undefined,
     })
   }, [utm])
 
@@ -272,16 +188,22 @@ export default function PorozmawiajmyContent() {
     return () => io.disconnect()
   }, [])
 
+  const scrollToForm = () => {
+    const el = document.getElementById('formularz')
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   const handleCtaClick = useCallback(
-    (position: 'hero' | 'post-5-roznic' | 'post-jak' | 'post-raport') => {
+    (position: 'hero' | 'post-3-obszary' | 'post-audyt') => {
       trackEvent('lead_cta_clicked', { position })
-      const el = document.getElementById('formularz')
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      scrollToForm()
     },
     [],
   )
 
-  /* --------------------- Form state -------------------------------------- */
+  const handleSubpageClick = (target: 'strony' | 'sklepy' | 'realizacje') => {
+    trackEvent('lead_subpage_clicked', { target })
+  }
 
   const [step, setStep] = useState<1 | 2 | 3>(1)
   const [form, setForm] = useState<FormState>({
@@ -302,19 +224,11 @@ export default function PorozmawiajmyContent() {
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
-  const formStartedRef = useRef(false)
 
-  const update = useCallback(
-    <K extends keyof FormState>(key: K, value: FormState[K]) => {
-      setForm((s) => ({ ...s, [key]: value }))
-      setErrors((e) => ({ ...e, [key]: undefined }))
-      if (!formStartedRef.current) {
-        formStartedRef.current = true
-        trackEvent('lead_form_started')
-      }
-    },
-    [],
-  )
+  const update = <K extends keyof FormState>(key: K, value: FormState[K]) => {
+    setForm((s) => ({ ...s, [key]: value }))
+    setErrors((e) => ({ ...e, [key]: undefined }))
+  }
 
   const validateStep1 = (): boolean => {
     const e: Partial<Record<keyof FormState, string>> = {}
@@ -336,7 +250,7 @@ export default function PorozmawiajmyContent() {
   const validateStep3 = (): boolean => {
     const e: Partial<Record<keyof FormState, string>> = {}
     if (form.fullName.trim().length < 2) e.fullName = 'Podaj imię i nazwisko.'
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email))
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
       e.email = 'Podaj poprawny email.'
     if (!form.budget) e.budget = 'Wybierz przedział budżetu.'
     if (!form.timeline) e.timeline = 'Wybierz horyzont czasowy.'
@@ -348,17 +262,12 @@ export default function PorozmawiajmyContent() {
   const goNext = () => {
     if (step === 1) {
       if (!validateStep1()) return
-      trackEvent('lead_form_step_completed', { step: 1 })
       setStep(2)
     } else if (step === 2) {
       if (!validateStep2()) return
-      trackEvent('lead_form_step_completed', { step: 2 })
       setStep(3)
     }
-    if (typeof window !== 'undefined') {
-      const el = document.getElementById('formularz')
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
+    scrollToForm()
   }
 
   const goBack = () => {
@@ -384,13 +293,10 @@ export default function PorozmawiajmyContent() {
         const body = (await res.json().catch(() => null)) as { error?: string } | null
         throw new Error(body?.error ?? 'Coś poszło nie tak. Spróbuj ponownie.')
       }
-      trackEvent('lead_form_step_completed', { step: 3 })
       trackEvent('lead_form_submitted', {
         budget_range: form.budget,
         timeline: form.timeline,
         industry: form.industry,
-        has_website: form.hasWebsite,
-        goal: form.goal,
       })
       setSubmitted(true)
     } catch (err) {
@@ -400,321 +306,204 @@ export default function PorozmawiajmyContent() {
     }
   }
 
-  /* --------------------- Render ------------------------------------------ */
+  const ctaClass =
+    'inline-flex min-h-[48px] items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 px-8 py-4 font-medium tracking-wider text-white shadow-lg transition-all hover:shadow-purple-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 focus-visible:ring-offset-2 focus-visible:ring-offset-black'
 
   return (
     <div className="min-h-screen w-full bg-black text-[#F5F3FF]" style={{ overflowX: 'clip' }}>
-      <header className="px-6 pt-10 md:px-10">
-        <div className="mx-auto max-w-[880px]">
-          <Link
-            href="/"
-            className="text-sm font-medium tracking-wider text-gray-400 transition-colors hover:text-white"
-          >
-            Syntance
-          </Link>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-[720px] px-6 pt-10 pb-24 md:px-10 md:pt-16">
-        {/* 1. HERO */}
-        <section data-section="hero" className="mb-20">
-          <h1 className="mb-6 text-[clamp(2rem,5vw,3rem)] font-light leading-[1.1] tracking-tight text-white">
-            5 różnic między stroną, która{' '}
-            <span className="font-medium text-white">sprzedaje</span>, a tą,
-            która tylko <span className="text-purple-400">ładnie wygląda</span>.
+      <main
+        id="main-content"
+        className="mx-auto max-w-[720px] px-6 pb-16 pt-10 md:px-10 md:pt-16"
+      >
+        {/* 1. Hero */}
+        <section data-section="hero" className="mb-16 md:mb-20">
+          <h1 className="mb-6 text-[clamp(2rem,5vw,3rem)] font-light leading-[1.15] tracking-tight text-white">
+            Strategia to różnica między stroną, która sprzedaje, a tą, która
+            tylko ładnie wygląda.
           </h1>
-          <p className="mb-6 text-[17px] leading-relaxed text-gray-300 md:text-lg">
-            <strong className="font-medium text-white">
-              Dla firm, które już mają stronę i nie wiedzą, czemu nie sprzedaje.
-            </strong>{' '}
-            Wypełnij formularz — w 3 dni dostaniesz raport, w którym obszarze
-            Twoja strona jest po lewej, a w którym po prawej, plus co
-            konkretnie zmienić. PDF + 10-min Loom (Tier 1) lub PDF (Tier 2).
-            Zero sales calli na zimno.
+          <p className="mb-8 text-[17px] leading-relaxed text-gray-300 md:text-lg">
+            90% stron w polskim internecie wygląda dobrze i nie sprzedaje. Powód
+            jest jeden: powstały bez strategii.
           </p>
-          <p className="mb-8 text-sm italic text-gray-400">
-            „Średni PageSpeed naszych stron: 96/100. Case study Syntance:
-            RetroHouse — 80 → 240 leadów/mc.”
-          </p>
-          <button
-            type="button"
-            onClick={() => handleCtaClick('hero')}
-            className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 px-8 py-4 font-medium tracking-wider text-white shadow-lg transition-all hover:shadow-purple-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-          >
+          <button type="button" onClick={() => handleCtaClick('hero')} className={ctaClass}>
             Zamów darmowy audyt swojej strony <ArrowRight className="h-4 w-4" />
           </button>
-          <p className="mt-4 text-xs text-gray-500">
-            3 min wypełniania. Raport mailem w 3 dni. Zero zobowiązań.
+          <p className="mt-4 text-sm text-gray-500">
+            <em className="not-italic">3 minuty wypełniania. Raport w 3 dni. Zero sales calli.</em>
+          </p>
+        </section>
+
+        {/* 2. Bez strategii */}
+        <section data-section="bez-strategii" className="mb-16 md:mb-20">
+          <h2 className="mb-6 text-[clamp(1.5rem,4vw,2rem)] font-light leading-tight text-white md:text-[2rem]">
+            Strona bez strategii wygląda tak:
+          </h2>
+          <ul className="mb-8 list-none space-y-3 text-[17px] leading-relaxed text-gray-200 md:text-lg">
+            {BEZ_STRATEGII_LINES.map((line, i) => (
+              <li key={i} className="flex gap-3">
+                <span className="flex-none select-none text-gray-500">—</span>
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="text-[15px] leading-relaxed text-gray-400 md:text-[17px]">
+            <strong className="font-medium text-gray-300">Efekt:</strong> ruch
+            jest, leadów nie ma. Marketing pyta sprzedaży gdzie konwersje,
+            sprzedaż pyta marketingu gdzie ruch.
           </p>
         </section>
       </main>
 
-      {/* 2. 5 RÓŻNIC — szersza sekcja (880 px) */}
-      <section data-section="5-roznic" className="px-6 md:px-10">
+      {/* 3. Trzy obszary + repeat CTA (grid do 880px) */}
+      <section data-section="3-obszary" className="border-y border-white/5 bg-white/[0.02] px-6 py-16 md:px-10 md:py-24">
         <div className="mx-auto max-w-[880px]">
-          <header className="mb-10">
-            <h2 className="mb-4 text-[clamp(1.6rem,4vw,2rem)] font-light leading-tight text-white">
-              5 różnic, które decydują o sprzedaży
-            </h2>
-            <p className="text-[17px] leading-relaxed text-gray-300 md:text-lg">
-              Przeprowadziłem dziesiątki audytów. 90% różnic w skuteczności
-              sprowadza się do pięciu obszarów. W każdym z nich strona jest
-              albo po lewej, albo po prawej.
-            </p>
-          </header>
-
-          <div className="space-y-12">
-            {DIFFERENCES.map((d) => (
-              <DifferenceBlock key={d.number} d={d} />
-            ))}
+          <h2 className="mb-10 text-[clamp(1.5rem,4vw,2rem)] font-light leading-tight text-white md:text-[2rem]">
+            Trzy miejsca, w których strategia decyduje o wyniku
+          </h2>
+          <div className="mb-14 grid gap-6 md:grid-cols-3 md:gap-5">
+            <article className="flex flex-col rounded-2xl border border-white/10 bg-black/35 p-6">
+              <h3 className="mb-3 text-lg font-medium text-white">Strona internetowa</h3>
+              <p className="mb-6 flex-grow text-[15px] leading-relaxed text-gray-300">
+                Buyer persona, lejek, hierarchia treści, performance. Każda sekcja
+                ma rolę w drodze klienta do zakupu — albo jej tam nie ma.
+              </p>
+              <Link
+                href="/strony-www"
+                onClick={() => handleSubpageClick('strony')}
+                className="mt-auto inline-flex min-h-[44px] items-center gap-2 text-[15px] font-medium tracking-wide text-purple-300 underline decoration-purple-400/60 underline-offset-4 transition-colors hover:text-white hover:decoration-white"
+              >
+                Jak budujemy strony <ArrowRight className="h-4 w-4" />
+              </Link>
+            </article>
+            <article className="flex flex-col rounded-2xl border border-white/10 bg-black/35 p-6">
+              <h3 className="mb-3 text-lg font-medium text-white">Sklep online</h3>
+              <p className="mb-6 flex-grow text-[15px] leading-relaxed text-gray-300">
+                Kategorie zbudowane wokół intencji zakupowej klienta, nie wokół
+                katalogu producenta. Checkout zoptymalizowany pod konkretną
+                branżę.
+              </p>
+              <Link
+                href="/sklepy"
+                onClick={() => handleSubpageClick('sklepy')}
+                className="mt-auto inline-flex min-h-[44px] items-center gap-2 text-[15px] font-medium tracking-wide text-purple-300 underline decoration-purple-400/60 underline-offset-4 transition-colors hover:text-white hover:decoration-white"
+              >
+                Jak budujemy sklepy <ArrowRight className="h-4 w-4" />
+              </Link>
+            </article>
+            <article className="flex flex-col rounded-2xl border border-white/10 bg-black/35 p-6">
+              <h3 className="mb-3 text-lg font-medium text-white">
+                Komunikacja i wiarygodność
+              </h3>
+              <p className="mb-6 flex-grow text-[15px] leading-relaxed text-gray-300">
+                Tone of voice, UVP, dowody. Strona, oferty i LinkedIn mówią
+                jednym głosem — albo klient czuje rozjazd i wychodzi.
+              </p>
+              <Link
+                href="/realizacje"
+                onClick={() => handleSubpageClick('realizacje')}
+                className="mt-auto inline-flex min-h-[44px] items-center gap-2 text-[15px] font-medium tracking-wide text-purple-300 underline decoration-purple-400/60 underline-offset-4 transition-colors hover:text-white hover:decoration-white"
+              >
+                Realizacje i case studies <ArrowRight className="h-4 w-4" />
+              </Link>
+            </article>
           </div>
 
-          <div className="mt-12 rounded-2xl border border-yellow-400/20 bg-yellow-400/[0.04] p-6 text-center">
-            <p className="mb-4 text-[17px] italic text-yellow-100/90 md:text-lg">
-              W których z tych 5 obszarów Twoja strona jest po lewej?
-              Sprawdźmy konkretnie.
+          <div className="rounded-2xl border border-yellow-400/20 bg-yellow-400/[0.06] p-8 text-center">
+            <p className="mb-6 text-[17px] leading-relaxed italic text-yellow-50/95 md:text-lg">
+              Nie wiesz, w którym obszarze tkwi problem Twojej strony? Sprawdźmy
+              konkretnie.
             </p>
-            <button
-              type="button"
-              onClick={() => handleCtaClick('post-5-roznic')}
-              className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 px-8 py-4 font-medium tracking-wider text-white shadow-lg transition-all hover:shadow-purple-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-            >
+            <button type="button" onClick={() => handleCtaClick('post-3-obszary')} className={ctaClass}>
               Zamów darmowy audyt swojej strony <ArrowRight className="h-4 w-4" />
             </button>
           </div>
         </div>
       </section>
 
-      <div className="mx-auto max-w-[720px] px-6 md:px-10">
-        {/* 3. JAK TO ROBIMY W SYNTANCE */}
-        <section data-section="jak" className="mt-24 mb-20">
-          <h2 className="mb-8 text-[clamp(1.6rem,4vw,2rem)] font-light leading-tight text-white">
-            Jak to robimy w Syntance
+      {/* 4–6: tiery audytu, CTA, FAQ, formularz */}
+      <div className="mx-auto max-w-[720px] px-6 py-16 md:px-10 md:py-24">
+        <section data-section="audyt" className="mb-14">
+          <h2 className="mb-8 text-[clamp(1.5rem,4vw,2rem)] font-light leading-tight text-white md:text-[2rem]">
+            Co dostajesz w audycie
           </h2>
-          <ol className="space-y-6">
-            <li className="rounded-2xl border border-white/5 bg-white/[0.02] p-6">
-              <h3 className="mb-2 text-base font-medium text-white">
-                <span className="mr-2 text-purple-400">1.</span> Strategia
-                przed kodem.
-              </h3>
-              <p className="text-[15px] leading-relaxed text-gray-300">
-                Buyer persona, buyer journey, lejek. Wiemy{' '}
-                <em className="text-white">kto</em> kupuje,{' '}
-                <em className="text-white">kiedy</em> i{' '}
-                <em className="text-white">dlaczego</em>. Nagłówek (Różnica 1) i
-                lejek (Różnica 5) wychodzą ze strategii, nie z „ładnie było”.
-              </p>
-            </li>
-            <li className="rounded-2xl border border-white/5 bg-white/[0.02] p-6">
-              <h3 className="mb-2 text-base font-medium text-white">
-                <span className="mr-2 text-purple-400">2.</span> Next.js +
-                MedusaJS.
-              </h3>
-              <p className="text-[15px] leading-relaxed text-gray-300">
-                Nasz domyślny stack. PageSpeed 96/100 (Różnica 3). Zero wtyczek
-                = zero podatności. Twój kod w Twoim repo — zero vendor lock-in.
-              </p>
-            </li>
-            <li className="rounded-2xl border border-white/5 bg-white/[0.02] p-6">
-              <h3 className="mb-2 text-base font-medium text-white">
-                <span className="mr-2 text-purple-400">3.</span> Tempo AI,
-                jakość seniora.
-              </h3>
-              <p className="text-[15px] leading-relaxed text-gray-300">
-                Strona w <strong className="text-white">4 tygodnie</strong>,
-                sklep w <strong className="text-white">8 tygodni</strong> od
-                strategii do launch. Software house robi to w 3–6 miesięcy za
-                3× więcej. AI pisze kod według naszej architektury, ja
-                kontroluję jakość.
-              </p>
-            </li>
-          </ol>
-        </section>
-
-        {/* 4. CO DOSTANIESZ */}
-        <section data-section="raport" className="mb-20">
-          <h2 className="mb-8 text-[clamp(1.6rem,4vw,2rem)] font-light leading-tight text-white">
-            Co dostajesz w 3 dni robocze{' '}
-            <span className="text-gray-400">(tier zależy od profilu)</span>
-          </h2>
-
           <div className="space-y-6">
-            <article className="rounded-2xl border border-emerald-400/20 bg-emerald-400/[0.04] p-6">
-              <header className="mb-4">
-                <h3 className="text-lg font-medium text-white">
-                  Tier 1 — Pełny audyt
-                </h3>
-                <p className="text-sm italic text-gray-400">
-                  (budżet projektu 30k+ PLN, fit z profilem klienta)
-                </p>
-              </header>
-              <ul className="space-y-2">
-                <Bullet>
-                  <strong className="text-white">
-                    Twoja strona w układzie 5 różnic
-                  </strong>{' '}
-                  — gdzie jesteś po lewej, gdzie po prawej, ze screenshotami i
-                  konkretnymi przykładami
-                </Bullet>
-                <Bullet>
-                  <strong className="text-white">Twarde liczby</strong> —
-                  PageSpeed Mobile/Desktop, Core Web Vitals, błędy techniczne SEO
-                </Bullet>
-                <Bullet>
-                  <strong className="text-white">
-                    5–10 konkretnych rekomendacji
-                  </strong>{' '}
-                  — od quick-wins (zrobisz dzisiaj) do większych projektów
-                </Bullet>
-                <Bullet>
-                  <strong className="text-white">
-                    Wstępna wycena projektu
-                  </strong>{' '}
-                  — orientacyjne widełki cen i czas realizacji
-                </Bullet>
-                <Bullet>
-                  <strong className="text-white">Loom video 10 min</strong> —
-                  osobiście przejdę przez raport głosowo
-                </Bullet>
-              </ul>
-            </article>
-
-            <article className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
-              <header className="mb-4">
-                <h3 className="text-lg font-medium text-white">
-                  Tier 2 — Mini-audyt automatyczny
-                </h3>
-                <p className="text-sm italic text-gray-400">
-                  (budżet &lt; 30k PLN lub spoza profilu)
-                </p>
-              </header>
-              <ul className="space-y-2">
-                <Bullet>
-                  <strong className="text-white">
-                    PageSpeed + Core Web Vitals snapshot
-                  </strong>{' '}
-                  — wygenerowane automatycznie
-                </Bullet>
-                <Bullet>
-                  <strong className="text-white">
-                    3 quick-winy z szablonu
-                  </strong>{' '}
-                  — typowe błędy w Twojej branży
-                </Bullet>
-                <Bullet>
-                  <strong className="text-white">
-                    Rekomendacja kierunku
-                  </strong>{' '}
-                  — czy potrzebujesz redesignu, optymalizacji, czy wystarczy
-                  no-code / freelancer (polecimy zaufanych)
-                </Bullet>
-              </ul>
-            </article>
+            <div className="rounded-2xl border border-emerald-400/25 bg-emerald-400/[0.06] p-6">
+              <h3 className="mb-4 text-lg font-medium text-white">
+                Tier 1 — pełny audyt{' '}
+                <span className="text-sm font-normal text-gray-400">
+                  (budżet projektu 30k+ PLN)
+                </span>
+              </h3>
+              <p className="text-[15px] leading-relaxed text-gray-200">
+                PDF z analizą Twojej strony w 5 obszarach + twarde liczby
+                (PageSpeed, Core Web Vitals, SEO) + 5–10 rekomendacji + wstępna
+                wycena + 10-min Loom.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+              <h3 className="mb-4 text-lg font-medium text-white">
+                Tier 2 — mini-audyt automatyczny{' '}
+                <span className="text-sm font-normal text-gray-400">
+                  (mniejsze projekty)
+                </span>
+              </h3>
+              <p className="text-[15px] leading-relaxed text-gray-200">
+                PageSpeed snapshot + 3 quick-winy z szablonu + rekomendacja
+                kierunku (redesign / optymalizacja / no-code).
+              </p>
+            </div>
           </div>
-
-          <p className="mt-6 text-[15px] leading-relaxed text-gray-300">
-            <strong className="text-white">Co dalej:</strong> Po raporcie
-            Tier 1 — możemy umówić 30 min na rozmowę z konkretną wyceną.{' '}
-            <strong className="text-white">
-              Ty inicjujesz; my wysyłamy maks 2 krótkie follow-upy (dzień 5 i
-              dzień 14), potem cisza.
-            </strong>{' '}
-            Po raporcie Tier 2 — zostajesz z gotowym planem i zero zobowiązań.
+          <p className="mt-8 text-[15px] leading-relaxed text-gray-300">
+            <strong className="text-white">Czas:</strong> 3 dni robocze.{' '}
+            <strong className="text-white">Zobowiązania:</strong> zero.
           </p>
-
-          <div className="mt-8">
-            <button
-              type="button"
-              onClick={() => handleCtaClick('post-raport')}
-              className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 px-8 py-4 font-medium tracking-wider text-white shadow-lg transition-all hover:shadow-purple-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-            >
-              Zamów darmowy audyt swojej strony{' '}
-              <ArrowRight className="h-4 w-4" />
+          <div className="mt-10">
+            <button type="button" onClick={() => handleCtaClick('post-audyt')} className={ctaClass}>
+              Zamów darmowy audyt swojej strony <ArrowRight className="h-4 w-4" />
             </button>
           </div>
         </section>
 
-        {/* 5. DLA KOGO / DLA KOGO NIE */}
-        <section data-section="dla-kogo" className="mb-20">
-          <h2 className="mb-8 text-[clamp(1.6rem,4vw,2rem)] font-light leading-tight text-white">
-            Dla kogo ten audyt (i dla kogo nie)
+        <section data-section="faq" className="mb-20">
+          <h2 className="mb-8 text-[clamp(1.5rem,4vw,2rem)] font-light leading-tight text-white md:text-[2rem]">
+            FAQ — częste pytania
           </h2>
-
-          <article className="mb-6 rounded-2xl border border-white/5 bg-white/[0.02] p-6">
-            <h3 className="mb-3 text-base font-medium text-white">
-              Pełny audyt (Tier 1) ma sens, jeśli:
-            </h3>
-            <ul className="space-y-2">
-              <Bullet>
-                Masz istniejącą stronę B2B / D2C i widzisz, że ruch jest, a
-                konwersji nie ma
-              </Bullet>
-              <Bullet>
-                Budżet projektu od <strong className="text-white">30k PLN</strong>{' '}
-                w górę (mniejsze = Tier 2 mini-audyt)
-              </Bullet>
-              <Bullet>
-                Decyzja o przebudowie / nowej stronie w horyzoncie{' '}
-                <strong className="text-white">1–6 miesięcy</strong>
-              </Bullet>
-              <Bullet>
-                Branża: kliniki, producenci D2C, deweloperzy, B2B usługi,
-                fashion, SaaS, subskrypcje
-              </Bullet>
-            </ul>
-          </article>
-
-          <article className="mb-6 rounded-2xl border border-white/5 bg-white/[0.02] p-6">
-            <h3 className="mb-3 text-base font-medium text-white">
-              To nie jest dla Ciebie, jeśli:
-            </h3>
-            <ul className="space-y-2">
-              <Bullet variant="muted">
-                Szukasz strony za &lt; 10k PLN — polecimy sprawdzonego
-                freelancera lub no-code (Webflow, Framer)
-              </Bullet>
-              <Bullet variant="muted">
-                Potrzebujesz tylko poprawić jeden bug techniczny — wystarczy
-                konsultacja godzinowa, nie audyt
-              </Bullet>
-              <Bullet variant="muted">
-                Robisz hobby / projekt poboczny bez P&amp;L
-              </Bullet>
-              <Bullet variant="muted">
-                Twoja branża to gambling, crypto bez fundamentów, MLM lub
-                szeroko pojęte „get rich quick” — nie pracujemy z tymi
-                segmentami
-              </Bullet>
-            </ul>
-          </article>
-
-          <p className="text-[15px] leading-relaxed text-gray-400">
-            <strong className="text-white">Dlaczego mówimy „nie”:</strong>{' '}
-            raport Tier 1 to 2–4h Kamila. Lepiej zrobić 5 raportów rocznie,
-            które kończą się projektem, niż 50 raportów, które rozmywają czas.
-            Jasna dyskwalifikacja na wejściu = oszczędność po obu stronach.
-          </p>
+          <div className="divide-y divide-white/5 rounded-2xl border border-white/5 bg-white/[0.02]">
+            {FAQ.map((item, i) => (
+              <details key={i} className="group p-5 open:bg-white/[0.02]">
+                <summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-[15px] font-medium text-white">
+                  <span>{item.q}</span>
+                  <span className="mt-1 shrink-0 select-none text-gray-500 transition-transform group-open:rotate-45">
+                    +
+                  </span>
+                </summary>
+                <p className="mt-3 text-[15px] leading-relaxed text-gray-300">{item.a}</p>
+              </details>
+            ))}
+          </div>
         </section>
 
-        {/* 6. FORMULARZ */}
+        {/* Form osobny, pod treścią (Notion: modal lub sekcja niżej) */}
         <section
           data-section="form"
           id="formularz"
-          className="mb-20 scroll-mt-24"
+          aria-labelledby="form-heading"
+          className="scroll-mt-28 pb-12"
         >
-          <h2 className="mb-2 text-[clamp(1.6rem,4vw,2rem)] font-light leading-tight text-white">
+          <h2
+            id="form-heading"
+            className="mb-2 text-[clamp(1.5rem,4vw,2rem)] font-light leading-tight text-white md:text-[2rem]"
+          >
             Zamów darmowy audyt
           </h2>
-          <p className="mb-6 text-sm text-gray-400">
-            3 kroki, ok. 3 minuty.
-          </p>
+          <p className="mb-8 text-sm text-gray-400">3 kroki, ok. 3 minuty.</p>
 
           {submitted ? (
             <SubmittedCard email={form.email} />
           ) : (
             <form
               onSubmit={handleSubmit}
-              className="rounded-2xl border border-white/5 bg-white/[0.02] p-6 md:p-8"
+              className="relative rounded-2xl border border-white/5 bg-white/[0.02] p-6 md:p-8"
               noValidate
             >
               <ProgressBar step={step} />
@@ -724,31 +513,22 @@ export default function PorozmawiajmyContent() {
                   <legend className="mb-2 text-base font-medium text-white">
                     Krok 1: Twoja sytuacja
                   </legend>
-
-                  <Field
-                    label="Masz już stronę?"
-                    error={errors.hasWebsite}
-                    htmlFor="hasWebsite"
-                  >
+                  <Field label="Masz już stronę?" error={errors.hasWebsite} htmlFor="hasWebsite">
                     <RadioGroup
                       name="hasWebsite"
                       value={form.hasWebsite}
                       onChange={(v) => update('hasWebsite', v as HasWebsite)}
                       options={[
                         { value: 'dziala', label: 'Tak, działa' },
-                        {
-                          value: 'do_wymiany',
-                          label: 'Tak, ale chcę nowej',
-                        },
+                        { value: 'do_wymiany', label: 'Tak, ale chcę nowej' },
                       ]}
                     />
                   </Field>
-
                   <Field
                     label="URL strony"
+                    required
                     error={errors.websiteUrl}
                     htmlFor="websiteUrl"
-                    required
                     hint="Ten landing jest dla firm z istniejącą stroną. Klienci „od zera” mają osobny lejek na /strony-www."
                   >
                     <input
@@ -762,13 +542,7 @@ export default function PorozmawiajmyContent() {
                       className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-[15px] text-white placeholder-gray-500 outline-none transition focus:border-purple-400/50 focus:ring-2 focus:ring-purple-400/20"
                     />
                   </Field>
-
-                  <Field
-                    label="Branża"
-                    error={errors.industry}
-                    htmlFor="industry"
-                    required
-                  >
+                  <Field label="Branża" required error={errors.industry} htmlFor="industry">
                     <select
                       id="industry"
                       value={form.industry}
@@ -793,13 +567,7 @@ export default function PorozmawiajmyContent() {
                   <legend className="mb-2 text-base font-medium text-white">
                     Krok 2: Cel biznesowy
                   </legend>
-
-                  <Field
-                    label="Co chcesz osiągnąć?"
-                    error={errors.goal}
-                    htmlFor="goal"
-                    required
-                  >
+                  <Field label="Co chcesz osiągnąć?" required error={errors.goal} htmlFor="goal">
                     <RadioGroup
                       name="goal"
                       value={form.goal}
@@ -808,7 +576,6 @@ export default function PorozmawiajmyContent() {
                       columns={1}
                     />
                   </Field>
-
                   <Field
                     label="Największy ból ze stroną dzisiaj? (opcjonalnie, max 500 znaków)"
                     error={errors.pain}
@@ -816,12 +583,12 @@ export default function PorozmawiajmyContent() {
                   >
                     <textarea
                       id="pain"
-                      maxLength={500}
                       rows={4}
+                      maxLength={500}
                       value={form.pain}
                       onChange={(e) => update('pain', e.target.value)}
+                      placeholder='np. „dużo wejść z reklam, mało telefonów”'
                       className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-[15px] text-white placeholder-gray-500 outline-none transition focus:border-purple-400/50 focus:ring-2 focus:ring-purple-400/20"
-                      placeholder="np. „dużo wejść z reklam, mało telefonów”"
                     />
                     <div className="mt-1 text-right text-xs text-gray-500">
                       {form.pain.length}/500
@@ -835,13 +602,7 @@ export default function PorozmawiajmyContent() {
                   <legend className="mb-2 text-base font-medium text-white">
                     Krok 3: Praktyczne
                   </legend>
-
-                  <Field
-                    label="Imię i nazwisko"
-                    error={errors.fullName}
-                    htmlFor="fullName"
-                    required
-                  >
+                  <Field label="Imię i nazwisko" required error={errors.fullName} htmlFor="fullName">
                     <input
                       id="fullName"
                       type="text"
@@ -851,15 +612,14 @@ export default function PorozmawiajmyContent() {
                       className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-[15px] text-white outline-none transition focus:border-purple-400/50 focus:ring-2 focus:ring-purple-400/20"
                     />
                   </Field>
-
                   <Field
                     label="Email"
+                    required
                     error={errors.email}
                     htmlFor="email"
-                    required
                     hint={
                       form.email && isGenericEmail(form.email)
-                        ? 'Używamy też emaila firmowego — jeśli go masz, daj go zamiast prywatnego (lepsze dopasowanie).'
+                        ? 'Używamy też adresu firmowego — jeśli go masz, podaj ten (lepsze dopasowanie).'
                         : undefined
                     }
                   >
@@ -872,13 +632,7 @@ export default function PorozmawiajmyContent() {
                       className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-[15px] text-white outline-none transition focus:border-purple-400/50 focus:ring-2 focus:ring-purple-400/20"
                     />
                   </Field>
-
-                  <Field
-                    label="Budżet projektu"
-                    error={errors.budget}
-                    htmlFor="budget"
-                    required
-                  >
+                  <Field label="Budżet projektu" required error={errors.budget} htmlFor="budget">
                     <RadioGroup
                       name="budget"
                       value={form.budget}
@@ -886,12 +640,11 @@ export default function PorozmawiajmyContent() {
                       options={BUDGETS}
                     />
                   </Field>
-
                   <Field
                     label="Kiedy chcesz wystartować?"
+                    required
                     error={errors.timeline}
                     htmlFor="timeline"
-                    required
                   >
                     <RadioGroup
                       name="timeline"
@@ -900,12 +653,7 @@ export default function PorozmawiajmyContent() {
                       options={TIMELINES}
                     />
                   </Field>
-
-                  <Field
-                    label="Telefon (opcjonalnie)"
-                    error={errors.phone}
-                    htmlFor="phone"
-                  >
+                  <Field label="Telefon (opcjonalnie)" htmlFor="phone">
                     <input
                       id="phone"
                       type="tel"
@@ -916,7 +664,6 @@ export default function PorozmawiajmyContent() {
                       className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-[15px] text-white outline-none transition focus:border-purple-400/50 focus:ring-2 focus:ring-purple-400/20"
                     />
                   </Field>
-
                   <label className="flex cursor-pointer items-start gap-3 text-[14px] leading-relaxed text-gray-300">
                     <input
                       type="checkbox"
@@ -933,24 +680,22 @@ export default function PorozmawiajmyContent() {
                       >
                         polityką prywatności
                       </Link>{' '}
-                      Syntance, w celu przygotowania i wysyłki raportu.{' '}
+                      Syntance (RODO — cel: przygotowanie i przesłanie raportu).{' '}
                       <span className="text-red-300">*</span>
                     </span>
                   </label>
                   {errors.rodo && (
                     <p className="text-sm text-red-300">{errors.rodo}</p>
                   )}
-
-                  {/* honeypot */}
                   <input
                     type="text"
                     name="hp"
                     value={form.hp}
-                    onChange={(e) => setForm((s) => ({ ...s, hp: e.target.value }))}
                     tabIndex={-1}
                     autoComplete="off"
-                    className="absolute left-[-9999px] h-0 w-0 opacity-0"
-                    aria-hidden="true"
+                    aria-hidden
+                    onChange={(e) => setForm((s) => ({ ...s, hp: e.target.value }))}
+                    className="pointer-events-none absolute left-[-9999px] h-0 w-0 opacity-0"
                   />
                 </fieldset>
               )}
@@ -958,257 +703,74 @@ export default function PorozmawiajmyContent() {
               {submitError && (
                 <p
                   role="alert"
-                  className="mt-6 rounded-lg border border-red-400/30 bg-red-400/[0.05] p-3 text-sm text-red-200"
+                  className="mt-6 rounded-lg border border-red-400/30 bg-red-400/[0.06] p-4 text-sm text-red-100"
                 >
                   {submitError}
                 </p>
               )}
-
               <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
                 {step > 1 ? (
                   <button
                     type="button"
                     onClick={goBack}
-                    className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm text-gray-200 transition hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300"
+                    className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm text-gray-200 transition hover:bg-white/[0.05] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300"
                   >
-                    <ArrowLeft className="h-4 w-4" /> Wstecz
+                    <ArrowLeft className="h-4 w-4" aria-hidden /> Wstecz
                   </button>
                 ) : (
-                  <span />
+                  <span aria-hidden />
                 )}
-
                 {step < 3 ? (
                   <button
                     type="button"
                     onClick={goNext}
-                    className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 px-8 py-3 font-medium tracking-wider text-white shadow-lg transition-all hover:shadow-purple-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                    className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 px-8 py-3 font-medium tracking-wider text-white shadow-lg transition hover:shadow-purple-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300"
                   >
-                    Dalej <ArrowRight className="h-4 w-4" />
+                    Dalej <ArrowRight className="h-4 w-4" aria-hidden />
                   </button>
                 ) : (
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 px-8 py-3 font-medium tracking-wider text-white shadow-lg transition-all hover:shadow-purple-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 focus-visible:ring-offset-2 focus-visible:ring-offset-black disabled:opacity-60"
+                    className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 px-8 py-3 font-medium tracking-wider text-white shadow-lg transition hover:shadow-purple-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 disabled:opacity-55"
                   >
                     {submitting ? (
                       <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        Wysyłam…
+                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                        Wysyłamy…
                       </>
                     ) : (
                       <>
-                        Wyślij i odbierz raport <ArrowRight className="h-4 w-4" />
+                        Wyślij i odbierz raport{' '}
+                        <ArrowRight className="h-4 w-4" aria-hidden />
                       </>
                     )}
                   </button>
                 )}
               </div>
-
-              <p className="mt-4 text-xs text-gray-500">
-                Bez spamu. Email tylko z raportem i ewentualną propozycją.
-              </p>
             </form>
           )}
         </section>
-
-        {/* 7. CO DALEJ - TIMELINE */}
-        <section data-section="dalej" className="mb-20">
-          <h2 className="mb-8 text-[clamp(1.6rem,4vw,2rem)] font-light leading-tight text-white">
-            Co dalej — timeline
-          </h2>
-          <ol className="space-y-4">
-            {TIMELINE_STEPS.map((s, i) => (
-              <li
-                key={i}
-                className="rounded-2xl border border-white/5 bg-white/[0.02] p-5"
-              >
-                <div className="mb-1 text-xs font-medium uppercase tracking-[0.2em] text-purple-300">
-                  {s.when}
-                </div>
-                <div className="text-base font-medium text-white">
-                  {s.title}
-                </div>
-                <p className="mt-1 text-[15px] leading-relaxed text-gray-300">
-                  {s.desc}
-                </p>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        {/* 8. SOCIAL PROOF */}
-        <section data-section="proof" className="mb-20">
-          <p className="text-sm text-gray-500">
-            Wybrane projekty Syntance:{' '}
-            <span className="text-gray-300">RetroHouse</span>,{' '}
-            <span className="text-gray-300">Lumine</span>,{' '}
-            <span className="text-gray-300">OZE Asystent</span>.
-          </p>
-        </section>
-
-        {/* 9. FAQ */}
-        <section data-section="faq" className="mb-20">
-          <h2 className="mb-8 text-[clamp(1.6rem,4vw,2rem)] font-light leading-tight text-white">
-            FAQ — częste pytania
-          </h2>
-          <div className="divide-y divide-white/5 rounded-2xl border border-white/5 bg-white/[0.02]">
-            {FAQ.map((item, i) => (
-              <details key={i} className="group p-5 open:bg-white/[0.02]">
-                <summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-[15px] font-medium text-white">
-                  <span>{item.q}</span>
-                  <span className="mt-1 select-none text-gray-500 transition-transform group-open:rotate-45">
-                    +
-                  </span>
-                </summary>
-                <p className="mt-3 text-[15px] leading-relaxed text-gray-300">
-                  {item.a}
-                </p>
-              </details>
-            ))}
-          </div>
-        </section>
-
-        {/* Email fallback */}
-        <section className="mb-16 text-center">
-          <a
-            href="mailto:kamil@syntance.com?subject=Audyt%20strony%20-%20pytanie"
-            className="inline-flex min-h-11 items-center gap-2 text-sm text-gray-400 underline underline-offset-4 transition-colors hover:text-white"
-          >
-            <Mail className="h-4 w-4" />
-            Wolisz napisać? kamil@syntance.com
-          </a>
-        </section>
       </div>
 
-      {/* 10. FOOTER (minimalny) */}
       <footer className="border-t border-white/5 px-6 py-8 md:px-10">
-        <div className="mx-auto flex max-w-[720px] flex-col items-start justify-between gap-4 text-sm text-gray-500 md:flex-row md:items-center">
+        <div className="mx-auto flex max-w-[720px] flex-col items-start justify-between gap-6 text-sm text-gray-500 md:flex-row md:items-center">
           <div>
-            <span className="font-medium text-gray-300">Syntance</span>
-            <span className="ml-2">— strategia, strony, sklepy</span>
+            <span className="font-medium text-gray-300">Syntance</span>{' '}
+            <span>— strategia, strony, sklepy</span>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <span>© {new Date().getFullYear()}</span>
-            <Link
-              href="/polityka-prywatnosci"
-              className="transition-colors hover:text-gray-300"
-            >
+            <Link href="/polityka-prywatnosci" className="underline-offset-4 hover:text-gray-300">
               Polityka prywatności
             </Link>
-            <a
-              href="mailto:kamil@syntance.com"
-              className="transition-colors hover:text-gray-300"
-            >
+            <a href="mailto:kamil@syntance.com" className="underline-offset-4 hover:text-gray-300">
               kamil@syntance.com
             </a>
           </div>
         </div>
       </footer>
     </div>
-  )
-}
-
-/* ----------------------------- Sub-components ---------------------------- */
-
-function DifferenceBlock({ d }: { d: Differ }) {
-  const dwellRef = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    const el = dwellRef.current
-    if (!el) return
-    let start: number | null = null
-    let fired = false
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            if (start === null) start = Date.now()
-          } else if (start !== null) {
-            const elapsed = Date.now() - start
-            if (!fired && elapsed > 10_000) {
-              fired = true
-              trackEvent('lead_difference_dwell', {
-                difference_number: d.number,
-                time_spent: Math.round(elapsed / 1000),
-              })
-            }
-            start = null
-          }
-        }
-      },
-      { threshold: 0.6 },
-    )
-    io.observe(el)
-    return () => io.disconnect()
-  }, [d.number])
-
-  return (
-    <div
-      ref={dwellRef}
-      className="border-b border-white/5 pb-12 last:border-b-0 last:pb-0"
-    >
-      <header className="mb-5 flex items-baseline gap-4">
-        <span className="text-4xl font-bold leading-none text-purple-400 md:text-5xl">
-          {d.number}
-        </span>
-        <h3 className="text-xl font-medium text-white md:text-2xl">
-          {d.title}
-        </h3>
-      </header>
-
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {/* MOBILE-FIRST: w mobile ✅ jest pierwsza (wg briefu),
-            na desktop ❌ z lewej, ✅ z prawej (md:order-*) */}
-        <div className="order-2 rounded-2xl border border-red-400/15 bg-red-400/[0.04] p-5 md:order-1">
-          <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs font-medium uppercase tracking-[0.18em] text-red-300/80">
-              Tylko ładnie wygląda
-            </span>
-            <span aria-hidden="true" className="text-red-300/80">
-              ❌
-            </span>
-          </div>
-          <p className="text-[15px] leading-relaxed text-gray-200">{d.bad}</p>
-        </div>
-
-        <div className="order-1 rounded-2xl border border-emerald-400/15 bg-emerald-400/[0.04] p-5 md:order-2">
-          <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs font-medium uppercase tracking-[0.18em] text-emerald-300/80">
-              Sprzedaje
-            </span>
-            <span aria-hidden="true" className="text-emerald-300/80">
-              ✅
-            </span>
-          </div>
-          <p className="text-[15px] leading-relaxed text-gray-100">{d.good}</p>
-        </div>
-      </div>
-
-      <p className="mt-4 text-[15px] italic leading-relaxed text-gray-400">
-        Dlaczego to ma znaczenie: {d.why}
-      </p>
-    </div>
-  )
-}
-
-function Bullet({
-  children,
-  variant = 'default',
-}: {
-  children: ReactNode
-  variant?: 'default' | 'muted'
-}) {
-  return (
-    <li className="flex items-start gap-3 text-[15px] leading-relaxed">
-      <Check
-        className={`mt-1 h-4 w-4 flex-none ${
-          variant === 'muted' ? 'text-gray-500' : 'text-emerald-400'
-        }`}
-      />
-      <span className={variant === 'muted' ? 'text-gray-400' : 'text-gray-200'}>
-        {children}
-      </span>
-    </li>
   )
 }
 
@@ -1221,7 +783,7 @@ function ProgressBar({ step }: { step: 1 | 2 | 3 }) {
       </div>
       <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
         <div
-          className="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all"
+          className="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-[width]"
           style={{ width: `${(step / 3) * 100}%` }}
         />
       </div>
@@ -1229,14 +791,7 @@ function ProgressBar({ step }: { step: 1 | 2 | 3 }) {
   )
 }
 
-function Field({
-  label,
-  htmlFor,
-  required,
-  error,
-  hint,
-  children,
-}: {
+function Field(props: {
   label: string
   htmlFor: string
   required?: boolean
@@ -1244,48 +799,39 @@ function Field({
   hint?: string
   children: ReactNode
 }) {
+  const { label, htmlFor, required, error, hint, children } = props
   return (
-    <div>
-      <label
-        htmlFor={htmlFor}
-        className="mb-2 block text-sm font-medium text-gray-200"
-      >
+    <div className="text-left">
+      <label htmlFor={htmlFor} className="mb-2 block text-sm font-medium text-gray-200">
         {label}
-        {required && <span className="ml-1 text-red-300">*</span>}
+        {required ? (
+          <>
+            {' '}
+            <span className="text-red-300">*</span>
+          </>
+        ) : null}
       </label>
       {children}
-      {hint && !error && (
-        <p className="mt-1.5 text-xs text-gray-500">{hint}</p>
-      )}
-      {error && (
-        <p className="mt-1.5 text-sm text-red-300" role="alert">
+      {hint && !error ? <p className="mt-2 text-xs text-gray-500">{hint}</p> : null}
+      {error ? (
+        <p className="mt-2 text-sm text-red-300" role="alert">
           {error}
         </p>
-      )}
+      ) : null}
     </div>
   )
 }
 
-function RadioGroup({
-  name,
-  value,
-  onChange,
-  options,
-  columns = 2,
-}: {
+function RadioGroup(props: {
   name: string
   value: string
-  onChange: (v: string) => void
-  options: { value: string; label: string }[]
+  onChange: (value: string) => void
+  options: readonly { value: string; label: string }[]
   columns?: 1 | 2
 }) {
+  const { name, value, onChange, options, columns = 2 } = props
   return (
-    <div
-      className={`grid gap-2 ${
-        columns === 2 ? 'sm:grid-cols-2' : 'grid-cols-1'
-      }`}
-      role="radiogroup"
-    >
+    <div className={`grid gap-3 ${columns === 2 ? 'sm:grid-cols-2' : ''}`}>
       {options.map((opt) => {
         const id = `${name}-${opt.value}`
         const selected = value === opt.value
@@ -1293,20 +839,19 @@ function RadioGroup({
           <label
             key={opt.value}
             htmlFor={id}
-            className={`flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-[15px] transition ${
+            className={`flex cursor-pointer gap-3 rounded-xl border px-4 py-3 text-[15px] transition-colors ${
               selected
-                ? 'border-purple-400/50 bg-purple-400/[0.08] text-white'
-                : 'border-white/10 bg-black/30 text-gray-200 hover:border-white/20'
+                ? 'border-purple-400/55 bg-purple-400/[0.12] text-white'
+                : 'border-white/10 bg-black/30 text-gray-200 hover:border-white/22'
             }`}
           >
             <input
               id={id}
-              type="radio"
               name={name}
-              value={opt.value}
+              type="radio"
               checked={selected}
               onChange={() => onChange(opt.value)}
-              className="h-4 w-4 border-white/20 bg-black/40 text-purple-500 focus:ring-2 focus:ring-purple-400/40"
+              className="mt-[3px] h-4 w-4 shrink-0 border-white/25 bg-transparent text-purple-500 focus-visible:ring-2 focus-visible:ring-purple-400/50"
             />
             <span>{opt.label}</span>
           </label>
@@ -1318,19 +863,20 @@ function RadioGroup({
 
 function SubmittedCard({ email }: { email: string }) {
   return (
-    <div className="rounded-2xl border border-emerald-400/30 bg-emerald-400/[0.05] p-6 md:p-8">
-      <h3 className="mb-2 text-xl font-medium text-white">
-        Dzięki — zgłoszenie dotarło.
-      </h3>
-      <p className="mb-4 text-[15px] leading-relaxed text-gray-200">
-        Email potwierdzający trafił na{' '}
-        <strong className="text-white">{email}</strong>. Sprawdzam już Twoją
-        stronę — raport (5 różnic + plan) wraca w ciągu{' '}
-        <strong className="text-white">3 dni roboczych</strong>. Bez
-        kalendarza, bez logowania.
+    <div className="rounded-2xl border border-emerald-400/35 bg-emerald-400/[0.06] p-8 md:p-10">
+      <h3 className="mb-4 text-xl font-medium text-white">Dzięki — zapisaliśmy zgłoszenie.</h3>
+      <p className="text-[15px] leading-relaxed text-gray-200">
+        Na adres <strong className="text-white">{email}</strong> pojawi się potwierdzenie. Raport
+        (analiza + rekomendacje) przygotujemy najpóźniej w&nbsp;
+        <strong className="text-white">ciągu 3 dni roboczych</strong>, tak jak zakładamy przy
+        tej kampanii.
       </p>
-      <p className="text-sm text-gray-400">
-        Gdyby coś nie dotarło — pisz wprost: kamil@syntance.com.
+      <p className="mt-6 text-sm text-gray-400">
+        Brak czegoś na skrzynce? Pisz bezpośrednio:{' '}
+        <a className="text-gray-200 underline underline-offset-4" href="mailto:kamil@syntance.com">
+          kamil@syntance.com
+        </a>
+        .
       </p>
     </div>
   )
