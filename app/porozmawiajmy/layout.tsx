@@ -4,9 +4,9 @@ const SITE_URL = 'https://syntance.com'
 const PAGE_URL = `${SITE_URL}/porozmawiajmy`
 
 export const metadata: Metadata = {
-  title: 'Umów rozmowę — Syntance',
+  title: 'Co odróżnia strony, które sprzedają — Syntance',
   description:
-    'Software house Next.js — 30 min konsultacji o Twojej witrynie, konwersji i stosie.',
+    'Darmowy raport: porównanie Twojej strony z 5 obszarami, które decydują o sprzedaży. PDF + Loom w 3 dni robocze.',
   alternates: { canonical: PAGE_URL },
   robots: {
     index: false,
@@ -14,9 +14,10 @@ export const metadata: Metadata = {
     googleBot: { index: false, follow: true },
   },
   openGraph: {
-    title: 'Umów rozmowę z zespołem Syntance',
+    title:
+      '5 różnic między stroną, która sprzedaje, a tą, która tylko ładnie wygląda',
     description:
-      '30 minut. Konkretny plan dla Twojej witryny. Bez presji sprzedażowej.',
+      'Darmowy raport: w których obszarach Twoja strona jest po lewej, w których po prawej. PDF + Loom w 3 dni.',
     url: PAGE_URL,
     type: 'website',
     siteName: 'Syntance',
@@ -24,9 +25,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Umów rozmowę — Syntance',
+    title:
+      '5 różnic między stroną, która sprzedaje, a tą, która tylko ładnie wygląda',
     description:
-      '30 minut. Konkretny plan dla Twojej witryny. Bez presji sprzedażowej.',
+      'Darmowy raport: w których obszarach Twoja strona jest po lewej, w których po prawej. PDF + Loom w 3 dni.',
   },
 }
 

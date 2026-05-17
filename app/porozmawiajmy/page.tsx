@@ -5,20 +5,13 @@ export default function PorozmawiajmyPage() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ContactPage',
-    name: 'Umów rozmowę — Syntance',
+    name: 'Co odróżnia strony, które sprzedają — Syntance',
     url: 'https://syntance.com/porozmawiajmy',
     mainEntity: {
-      '@type': 'Organization',
-      name: 'Syntance',
-      url: 'https://syntance.com',
-      email: 'kontakt@syntance.com',
-      contactPoint: {
-        '@type': 'ContactPoint',
-        telephone: '+48537110170',
-        email: 'kontakt@syntance.com',
-        contactType: 'customer support',
-        availableLanguage: ['pl', 'en'],
-      },
+      '@type': 'Person',
+      name: 'Kamil Podobiński',
+      jobTitle: 'Founder, Syntance',
+      email: 'kamil@syntance.com',
     },
   }
 

@@ -16,6 +16,10 @@ const redirects: Record<string, string> = {
   '/pricing': '/cennik',
   '/contact': '/#kontakt',
   '/about': '/',
+  // Aliasy lejka /porozmawiajmy (brief Notion)
+  '/audyt': '/porozmawiajmy',
+  '/spotkanie': '/porozmawiajmy',
+  '/rozmowa': '/porozmawiajmy',
 }
 
 export async function middleware(request: NextRequest) {
@@ -62,5 +66,8 @@ export const config = {
     '/pricing',
     '/contact',
     '/about',
+    '/audyt',
+    '/spotkanie',
+    '/rozmowa',
   ],
 }
