@@ -23,7 +23,6 @@ import {
 import GradientText from '@/components/GradientText'
 import TiltCard from '@/components/tilt-card'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
-import StickyCtaFloat from '@/components/StickyCtaFloat'
 import { trackEvent } from '@/lib/tracking'
 
 /* ─────────────────────────────────────────────────────────
@@ -396,29 +395,20 @@ export default function PorozmawiajmyContent() {
               </button>
             </div>
 
-            {/* Sticky CTA (identyczny pattern jak strony-www) */}
-            <StickyCtaFloat
-              heroId="pzm-hero"
-              hideSectionId="pzm-formularz"
-              href="/porozmawiajmy#pzm-formularz"
-              label="Zamów audyt"
-            />
+            {/* Secondary CTA */}
+            <Link
+              href="/cennik"
+              className="group inline-flex min-h-[48px] items-center gap-2 rounded-full border border-white/15 px-8 py-3 font-medium tracking-wider text-white transition-all hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+            >
+              Zobacz cennik
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Link>
           </div>
 
           <p className="mt-4 text-sm text-gray-500">
             3 minuty wypełniania. Raport w 3 dni. Zero sales calli.
           </p>
 
-          {/* Secondary link */}
-          <div className="mt-6">
-            <Link
-              href="/cennik"
-              className="group inline-flex items-center gap-1.5 text-sm text-gray-400 transition-colors hover:text-white"
-            >
-              Zobacz cennik
-              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-            </Link>
-          </div>
         </div>
 
         {/* Scroll mouse */}
