@@ -377,10 +377,10 @@ export default function PorozmawiajmyContent() {
               />
               <button
                 type="button"
-                onClick={() => handleCta('hero')}
+                onClick={() => document.getElementById('pzm-bez-strategii')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
                 className="relative z-10 inline-flex min-h-[48px] items-center gap-2 rounded-full bg-white px-8 py-3 font-medium tracking-wider text-gray-900 shadow-lg shadow-white/10 transition-all hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
-                Porozmawiajmy
+                Dowiedz się więcej
                 <ArrowDown className="h-4 w-4 transition-transform group-hover:translate-y-1" />
               </button>
             </div>
