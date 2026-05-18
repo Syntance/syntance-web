@@ -348,31 +348,19 @@ export default function PorozmawiajmyContent() {
             heroVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
         >
-          {/* Badge */}
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-gray-400">
-            <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            BOFU — ostatni krok przed decyzją
-          </div>
-
-          <h1 className="font-heading glow-text mb-6 text-5xl font-light tracking-tight md:text-6xl lg:text-7xl">
-            Strony i sklepy,{' '}
+          <h1 className="font-heading glow-text mb-8 text-4xl font-light leading-tight tracking-tight md:text-5xl lg:text-6xl">
+            Skuteczna strona musi być zbudowana{' '}
             <GradientText
               colors={['#ffaa40', '#9c40ff', '#ffaa40']}
               animationSpeed={4}
               className="font-medium"
             >
-              które sprzedają.
+              w oparciu o strategię.
             </GradientText>
           </h1>
 
-          <p className="mx-auto mb-4 max-w-2xl text-lg font-light leading-relaxed tracking-wide text-gray-300 md:text-xl">
-            Oparte o strategię, lejek i KPI — nie o szablon i 15 wtyczek
-            WordPressa. Buyer persona i hierarchia treści ustalamy przed
-            pierwszą linią kodu. Każda sekcja ma rolę, albo jej tam nie ma.
-          </p>
-
-          <p className="mb-10 text-sm italic text-gray-500">
-            Średni PageSpeed naszych stron: 96/100. RetroHouse: 80 → 240 leadów/mc.
+          <p className="mx-auto mb-12 max-w-2xl text-lg font-light leading-relaxed tracking-wide text-gray-400 md:text-xl">
+            To filozofia, na której budujemy strony i sklepy internetowe.
           </p>
 
           {/* CTA row */}
@@ -391,7 +379,7 @@ export default function PorozmawiajmyContent() {
                 onClick={() => handleCta('hero')}
                 className="relative z-10 inline-flex min-h-[48px] items-center gap-2 rounded-full bg-white px-8 py-3 font-medium tracking-wider text-gray-900 shadow-lg shadow-white/10 transition-all hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
-                Zamów darmowy audyt swojej strony
+                Porozmawiajmy
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </button>
             </div>
@@ -400,14 +388,10 @@ export default function PorozmawiajmyContent() {
             <StickyCtaFloat
               heroId="pzm-hero"
               hideSectionId="pzm-formularz"
-              href="/cennik"
-              label="Zobacz cennik"
+              href="/"
+              label="Dowiedz się więcej"
             />
           </div>
-
-          <p className="mt-4 text-sm text-gray-500">
-            3 minuty wypełniania. Raport w 3 dni. Zero sales calli.
-          </p>
 
         </div>
 
