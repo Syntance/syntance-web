@@ -101,15 +101,15 @@ export default function NavbarStudio() {
     setMobileBlogOpen(false);
   }, [pathname]);
 
-  if (HIDDEN_NAVBAR_PATHS.has(pathname) || HIDDEN_NAVBAR_PREFIXES.some((p) => pathname.startsWith(p))) {
-    return null;
-  }
-
   const activeNavIndex = useMemo(() => {
     return pathToNavIndex[pathname] ?? -1;
   }, [pathname]);
 
   const isBlogActive = pathname === '/strategia-marketingu-i-sprzedazy' || pathname === '/nextjs';
+
+  if (HIDDEN_NAVBAR_PATHS.has(pathname) || HIDDEN_NAVBAR_PREFIXES.some((p) => pathname.startsWith(p))) {
+    return null;
+  }
 
   return (
     <>
