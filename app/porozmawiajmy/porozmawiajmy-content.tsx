@@ -411,14 +411,13 @@ export default function PorozmawiajmyContent() {
 
           {/* Secondary link */}
           <div className="mt-6">
-            <button
-              type="button"
-              onClick={() => document.getElementById('pzm-obszary')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+            <Link
+              href="/cennik"
               className="group inline-flex items-center gap-1.5 text-sm text-gray-400 transition-colors hover:text-white"
             >
-              Zobacz najpierw, jak budujemy strony
+              Zobacz cennik
               <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-            </button>
+            </Link>
           </div>
         </div>
 
