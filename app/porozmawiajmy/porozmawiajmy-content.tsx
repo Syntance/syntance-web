@@ -366,14 +366,6 @@ export default function PorozmawiajmyContent() {
 
           {/* CTA row */}
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            {/* Sticky CTA — inline w hero, po scrollu przechodzi do fixed corner */}
-            <StickyCtaFloat
-              heroId="pzm-hero"
-              hideSectionId="pzm-formularz"
-              href="/"
-              label="Dowiedz się więcej"
-            />
-
             {/* Primary */}
             <div className="group relative w-fit shrink-0">
               <div
@@ -392,6 +384,14 @@ export default function PorozmawiajmyContent() {
                 <ArrowDown className="h-4 w-4 transition-transform group-hover:translate-y-1" />
               </button>
             </div>
+
+            {/* Sticky CTA — inline w hero, po scrollu przechodzi do fixed corner */}
+            <StickyCtaFloat
+              heroId="pzm-hero"
+              hideSectionId="pzm-formularz"
+              href="/cennik"
+              label="Sprawdź cenę"
+            />
           </div>
 
         </div>
