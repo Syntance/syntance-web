@@ -23,6 +23,7 @@ import {
 import GradientText from '@/components/GradientText'
 import TiltCard from '@/components/tilt-card'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
+import StickyCtaFloat from '@/components/StickyCtaFloat'
 import { trackEvent } from '@/lib/tracking'
 
 /* ─────────────────────────────────────────────────────────
@@ -395,14 +396,13 @@ export default function PorozmawiajmyContent() {
               </button>
             </div>
 
-            {/* Secondary CTA */}
-            <Link
+            {/* Sticky CTA — inline w hero, po scrollu przechodzi do fixed corner */}
+            <StickyCtaFloat
+              heroId="pzm-hero"
+              hideSectionId="pzm-formularz"
               href="/cennik"
-              className="group inline-flex min-h-[48px] items-center gap-2 rounded-full border border-white/15 px-8 py-3 font-medium tracking-wider text-white transition-all hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
-            >
-              Zobacz cennik
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Link>
+              label="Zobacz cennik"
+            />
           </div>
 
           <p className="mt-4 text-sm text-gray-500">
