@@ -355,7 +355,7 @@ export default function PorozmawiajmyContent() {
           </div>
 
           <h1 className="font-heading glow-text mb-6 text-5xl font-light tracking-tight md:text-6xl lg:text-7xl">
-            Skuteczne strony i sklepy,{' '}
+            Strony i sklepy,{' '}
             <GradientText
               colors={['#ffaa40', '#9c40ff', '#ffaa40']}
               animationSpeed={4}
