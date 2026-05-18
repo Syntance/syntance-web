@@ -36,7 +36,7 @@ const pathToNavIndex: Record<string, number> = {
   '/kontakt': 6,
 };
 
-const HIDDEN_NAVBAR_PATHS = new Set<string>(['/porozmawiajmy'])
+const HIDDEN_NAVBAR_PATHS = new Set<string>([])
 const HIDDEN_NAVBAR_PREFIXES = ['/admin']
 
 export default function NavbarStudio() {
