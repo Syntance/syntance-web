@@ -246,7 +246,19 @@ const GooeyNav = ({
     // Ignoruj zmiany podczas programowego scrollowania (po kliknięciu w navbar)
     if (isExternalScrolling) return;
     
-    if (externalActiveIndex !== undefined && externalActiveIndex >= 0) {
+    if (externalActiveIndex !== undefined && externalActiveIndex === -1) {
+      // Strona spoza navbara — wyczyść podświetlenie
+      setActiveIndex(-1);
+      if (filterRef.current) {
+        filterRef.current.style.width = '0px';
+        const particles = filterRef.current.querySelectorAll('.particle');
+        particles.forEach(p => filterRef.current!.removeChild(p));
+      }
+      if (textRef.current) {
+        textRef.current.classList.remove('active');
+        textRef.current.style.width = '0px';
+      }
+    } else if (externalActiveIndex !== undefined && externalActiveIndex >= 0) {
       const newActiveLi = navRef.current?.querySelectorAll('li')[externalActiveIndex] as HTMLElement;
       if (newActiveLi && externalActiveIndex !== activeIndex) {
         setActiveIndex(externalActiveIndex);
