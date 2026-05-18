@@ -4,9 +4,9 @@ const SITE_URL = 'https://syntance.com'
 const PAGE_URL = `${SITE_URL}/porozmawiajmy`
 
 export const metadata: Metadata = {
-  title: 'Dlaczego strategia decyduje, czy strona sprzedaje — Syntance',
+  title: 'Skuteczne strony i sklepy, które sprzedają — Syntance',
   description:
-    'Strategia to różnica między stroną, która sprzedaje, a tą, która tylko ładnie wygląda. Zobacz gdzie działa i zamów darmowy audyt.',
+    'Strony i sklepy oparte o strategię, lejek i KPI — nie o szablon. Średni PageSpeed 96/100. Zamów darmowy audyt swojej strony.',
   alternates: { canonical: PAGE_URL },
   robots: {
     index: false,
@@ -14,10 +14,9 @@ export const metadata: Metadata = {
     googleBot: { index: false, follow: true },
   },
   openGraph: {
-    title:
-      'Strategia = różnica między stroną, która sprzedaje, a tą, która tylko ładnie wygląda',
+    title: 'Skuteczne strony i sklepy, które sprzedają',
     description:
-      'Strategia to różnica między stroną, która sprzedaje, a tą, która tylko ładnie wygląda. Zobacz gdzie działa i zamów darmowy audyt.',
+      'Strony i sklepy oparte o strategię, lejek i KPI — nie o szablon. Średni PageSpeed 96/100. Zamów darmowy audyt.',
     url: PAGE_URL,
     type: 'website',
     siteName: 'Syntance',
@@ -25,10 +24,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title:
-      'Strategia = różnica między stroną, która sprzedaje, a tą, która tylko ładnie wygląda',
+    title: 'Skuteczne strony i sklepy, które sprzedają',
     description:
-      'Strategia to różnica między stroną, która sprzedaje, a tą, która tylko ładnie wygląda. Zobacz gdzie działa i zamów darmowy audyt.',
+      'Strony i sklepy oparte o strategię, lejek i KPI — nie o szablon. Średni PageSpeed 96/100. Zamów darmowy audyt.',
   },
 }
 

@@ -1,30 +1,82 @@
 'use client'
 
 import {
-  useCallback,
   useEffect,
-  useMemo,
-  useRef,
   useState,
+  useRef,
+  useMemo,
   type FormEvent,
   type ReactNode,
 } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { ArrowRight, ArrowLeft, Loader2 } from 'lucide-react'
+import {
+  ArrowRight,
+  ArrowLeft,
+  ChevronDown,
+  Loader2,
+  XCircle,
+  LayoutTemplate,
+  ShoppingCart,
+  BadgeCheck,
+} from 'lucide-react'
+import GradientText from '@/components/GradientText'
+import TiltCard from '@/components/tilt-card'
+import SubpageScrollbar from '@/components/SubpageScrollbar'
+import StickyCtaFloat from '@/components/StickyCtaFloat'
 import { trackEvent } from '@/lib/tracking'
 
-/* Treść zsynchronizowana z Notion /porozmawiajmy (aktualna struktura: strategia + 3 obszary + FAQ + form osobno). */
+/* ─────────────────────────────────────────────────────────
+   DANE STATYCZNE
+───────────────────────────────────────────────────────── */
 
-const BEZ_STRATEGII_LINES = [
+const scrollbarSections = [
+  { id: 'pzm-hero', label: 'Start' },
+  { id: 'pzm-bez-strategii', label: 'Problem' },
+  { id: 'pzm-obszary', label: '3 obszary' },
+  { id: 'pzm-audyt', label: 'Audyt' },
+  { id: 'pzm-faq', label: 'FAQ' },
+]
+
+const BEZ_STRATEGII = [
   'Nagłówek o sobie zamiast o kliencie.',
   'Pięć równorzędnych CTA zamiast jednej oczywistej akcji.',
   'Blog jako kolekcja artykułów, nie lejek do oferty.',
-  'Stack dobrany „bo każdy ma WordPress”.',
+  'Stack dobrany „bo każdy ma WordPress".',
   'Brak liczb, opinii, case studies.',
 ] as const
 
-const FAQ: { q: string; a: string }[] = [
+const OBSZARY = [
+  {
+    icon: LayoutTemplate,
+    title: 'Strona internetowa',
+    body: 'Buyer persona, lejek, hierarchia treści, performance. Każda sekcja ma rolę w drodze klienta do zakupu — albo jej tam nie ma.',
+    cta: 'Jak budujemy strony',
+    href: '/strony-www',
+    gradient: 'from-blue-500 to-cyan-500',
+    trackTarget: 'strony' as const,
+  },
+  {
+    icon: ShoppingCart,
+    title: 'Sklep online',
+    body: 'Kategorie zbudowane wokół intencji zakupowej klienta, nie wokół katalogu producenta. Checkout zoptymalizowany pod konkretną branżę.',
+    cta: 'Jak budujemy sklepy',
+    href: '/sklepy',
+    gradient: 'from-purple-500 to-pink-500',
+    trackTarget: 'sklepy' as const,
+  },
+  {
+    icon: BadgeCheck,
+    title: 'Komunikacja i wiarygodność',
+    body: 'Tone of voice, UVP, dowody. Strona, oferty i LinkedIn mówią jednym głosem — albo klient czuje rozjazd i wychodzi.',
+    cta: 'Realizacje i case studies',
+    href: '/realizacje',
+    gradient: 'from-amber-500 to-orange-500',
+    trackTarget: 'realizacje' as const,
+  },
+]
+
+const FAQ_ITEMS = [
   {
     q: 'Czy muszę wiedzieć, czego potrzebuję?',
     a: 'Nie. Audyt służy temu, żeby to zdefiniować.',
@@ -43,22 +95,12 @@ const FAQ: { q: string; a: string }[] = [
   },
 ]
 
-type Industry =
-  | 'klinika'
-  | 'd2c_meble'
-  | 'deweloper'
-  | 'fashion_beauty'
-  | 'subskrypcje_saas'
-  | 'b2b'
-  | 'inne'
+/* ─────────────────────────────────────────────────────────
+   FORM TYPES / HELPERS
+───────────────────────────────────────────────────────── */
 
-type Goal =
-  | 'leady_b2b'
-  | 'ecommerce'
-  | 'wizerunek'
-  | 'redesign'
-  | 'porozmawiac'
-
+type Industry = 'klinika' | 'd2c_meble' | 'deweloper' | 'fashion_beauty' | 'subskrypcje_saas' | 'b2b' | 'inne'
+type Goal = 'leady_b2b' | 'ecommerce' | 'wizerunek' | 'redesign' | 'porozmawiac'
 type Budget = '<10' | '10-30' | '30-60' | '60+' | 'niewiem'
 type Timeline = '1m' | '1-3m' | '3-6m' | 'bez'
 type HasWebsite = 'dziala' | 'do_wymiany'
@@ -111,193 +153,177 @@ const TIMELINES: { value: Timeline; label: string }[] = [
   { value: 'bez', label: 'Bez deadline' },
 ]
 
-const GENERIC_EMAIL_DOMAINS = [
-  'gmail.com',
-  'wp.pl',
-  'onet.pl',
-  'interia.pl',
-  'o2.pl',
-  'icloud.com',
-  'yahoo.com',
-  'outlook.com',
-  'hotmail.com',
-]
+const GENERIC_DOMAINS = ['gmail.com', 'wp.pl', 'onet.pl', 'interia.pl', 'o2.pl', 'icloud.com', 'yahoo.com', 'outlook.com', 'hotmail.com']
 
-function isValidUrl(value: string): boolean {
-  if (!value) return false
+function isValidUrl(v: string) {
+  if (!v) return false
   try {
-    const normalized = value.startsWith('http') ? value : `https://${value}`
-    const u = new URL(normalized)
-    return Boolean(u.hostname && u.hostname.includes('.'))
-  } catch {
-    return false
-  }
+    const u = new URL(v.startsWith('http') ? v : `https://${v}`)
+    return u.hostname.includes('.')
+  } catch { return false }
 }
 
-function isGenericEmail(email: string): boolean {
+function isGenericEmail(email: string) {
   const at = email.indexOf('@')
-  if (at === -1) return false
-  return GENERIC_EMAIL_DOMAINS.includes(email.slice(at + 1).toLowerCase())
+  return at !== -1 && GENERIC_DOMAINS.includes(email.slice(at + 1).toLowerCase())
 }
+
+/* ─────────────────────────────────────────────────────────
+   SHARED ANIMATION COMPONENT (identyczny jak w strony-www)
+───────────────────────────────────────────────────────── */
+
+function AnimatedSection({
+  children,
+  className = '',
+  delay = 0,
+}: {
+  children: ReactNode
+  className?: string
+  delay?: number
+}) {
+  const [visible, setVisible] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => setVisible(true), delay)
+          observer.unobserve(entry.target)
+        }
+      },
+      { threshold: 0.1, rootMargin: '-50px' },
+    )
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [delay])
+
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-1000 ease-out ${
+        visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+      } ${className}`}
+    >
+      {children}
+    </div>
+  )
+}
+
+/* ─────────────────────────────────────────────────────────
+   MAIN COMPONENT
+───────────────────────────────────────────────────────── */
 
 export default function PorozmawiajmyContent() {
   const searchParams = useSearchParams()
+  const utm = useMemo(() => ({
+    utm_source: searchParams?.get('utm_source') ?? undefined,
+    utm_medium: searchParams?.get('utm_medium') ?? undefined,
+    utm_campaign: searchParams?.get('utm_campaign') ?? undefined,
+  }), [searchParams])
 
-  const utm = useMemo(() => {
-    return {
-      utm_source: searchParams?.get('utm_source') ?? undefined,
-      utm_medium: searchParams?.get('utm_medium') ?? undefined,
-      utm_campaign: searchParams?.get('utm_campaign') ?? undefined,
-    }
-  }, [searchParams])
+  const [heroVisible, setHeroVisible] = useState(false)
+  useEffect(() => setHeroVisible(true), [])
 
+  // PostHog view
   const viewTrackedRef = useRef(false)
   useEffect(() => {
     if (viewTrackedRef.current) return
     viewTrackedRef.current = true
     trackEvent('lead_landing_view', {
       ...utm,
-      device:
-        typeof navigator !== 'undefined' && /Mobi|Android/i.test(navigator.userAgent)
-          ? 'mobile'
-          : 'desktop',
+      device: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
     })
   }, [utm])
 
+  // Section tracker
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    const sections = Array.from(
-      document.querySelectorAll<HTMLElement>('[data-section]'),
-    )
-    if (sections.length === 0) return
+    const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-ph-section]'))
+    if (!sections.length) return
     const seen = new Set<string>()
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          const name = e.target.getAttribute('data-section')
-          if (!name || seen.has(name)) continue
-          if (e.isIntersecting) {
-            seen.add(name)
-            trackEvent('lead_section_viewed', { section_name: name })
-          }
-        }
-      },
-      { threshold: 0.4 },
-    )
-    sections.forEach((s) => io.observe(s))
+    const io = new IntersectionObserver(entries => {
+      for (const e of entries) {
+        const name = e.target.getAttribute('data-ph-section')
+        if (!name || seen.has(name) || !e.isIntersecting) continue
+        seen.add(name)
+        trackEvent('lead_section_viewed', { section_name: name })
+      }
+    }, { threshold: 0.35 })
+    sections.forEach(s => io.observe(s))
     return () => io.disconnect()
   }, [])
 
   const scrollToForm = () => {
-    const el = document.getElementById('formularz')
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    document.getElementById('pzm-formularz')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  const handleCtaClick = useCallback(
-    (position: 'hero' | 'post-3-obszary' | 'post-audyt') => {
-      trackEvent('lead_cta_clicked', { position })
-      scrollToForm()
-    },
-    [],
-  )
-
-  const handleSubpageClick = (target: 'strony' | 'sklepy' | 'realizacje') => {
-    trackEvent('lead_subpage_clicked', { target })
+  const handleCta = (position: 'hero' | 'post-3-obszary' | 'post-audyt') => {
+    trackEvent('lead_cta_clicked', { position })
+    scrollToForm()
   }
 
+  /* ── FORM STATE ── */
   const [step, setStep] = useState<1 | 2 | 3>(1)
   const [form, setForm] = useState<FormState>({
-    hasWebsite: '',
-    websiteUrl: '',
-    industry: '',
-    goal: '',
-    pain: '',
-    fullName: '',
-    email: '',
-    budget: '',
-    timeline: '',
-    phone: '',
-    rodo: false,
-    hp: '',
+    hasWebsite: '', websiteUrl: '', industry: '', goal: '', pain: '',
+    fullName: '', email: '', budget: '', timeline: '', phone: '', rodo: false, hp: '',
   })
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({})
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
 
-  const update = <K extends keyof FormState>(key: K, value: FormState[K]) => {
-    setForm((s) => ({ ...s, [key]: value }))
-    setErrors((e) => ({ ...e, [key]: undefined }))
+  const set = <K extends keyof FormState>(k: K, v: FormState[K]) => {
+    setForm(s => ({ ...s, [k]: v }))
+    setErrors(e => ({ ...e, [k]: undefined }))
   }
 
-  const validateStep1 = (): boolean => {
+  const validateStep1 = () => {
     const e: Partial<Record<keyof FormState, string>> = {}
     if (!form.hasWebsite) e.hasWebsite = 'Wybierz opcję.'
     if (!isValidUrl(form.websiteUrl)) e.websiteUrl = 'Podaj poprawny URL strony.'
     if (!form.industry) e.industry = 'Wybierz branżę.'
-    setErrors(e)
-    return Object.keys(e).length === 0
+    setErrors(e); return !Object.keys(e).length
   }
-
-  const validateStep2 = (): boolean => {
+  const validateStep2 = () => {
     const e: Partial<Record<keyof FormState, string>> = {}
     if (!form.goal) e.goal = 'Wybierz cel.'
     if (form.pain.length > 500) e.pain = 'Maks. 500 znaków.'
-    setErrors(e)
-    return Object.keys(e).length === 0
+    setErrors(e); return !Object.keys(e).length
   }
-
-  const validateStep3 = (): boolean => {
+  const validateStep3 = () => {
     const e: Partial<Record<keyof FormState, string>> = {}
     if (form.fullName.trim().length < 2) e.fullName = 'Podaj imię i nazwisko.'
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
-      e.email = 'Podaj poprawny email.'
-    if (!form.budget) e.budget = 'Wybierz przedział budżetu.'
-    if (!form.timeline) e.timeline = 'Wybierz horyzont czasowy.'
-    if (!form.rodo) e.rodo = 'Wymagana zgoda na przetwarzanie danych.'
-    setErrors(e)
-    return Object.keys(e).length === 0
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Podaj poprawny email.'
+    if (!form.budget) e.budget = 'Wybierz budżet.'
+    if (!form.timeline) e.timeline = 'Wybierz horyzont.'
+    if (!form.rodo) e.rodo = 'Wymagana zgoda.'
+    setErrors(e); return !Object.keys(e).length
   }
 
   const goNext = () => {
-    if (step === 1) {
-      if (!validateStep1()) return
-      setStep(2)
-    } else if (step === 2) {
-      if (!validateStep2()) return
-      setStep(3)
-    }
-    scrollToForm()
+    if (step === 1 && !validateStep1()) return
+    if (step === 2 && !validateStep2()) return
+    if (step < 3) setStep(s => (s + 1) as 2 | 3)
+    document.getElementById('pzm-formularz')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
-
-  const goBack = () => {
-    if (step === 2) setStep(1)
-    if (step === 3) setStep(2)
-  }
+  const goBack = () => step > 1 && setStep(s => (s - 1) as 1 | 2)
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (!validateStep3()) return
-    setSubmitting(true)
-    setSubmitError(null)
+    setSubmitting(true); setSubmitError(null)
     try {
       const res = await fetch('/api/audyt-submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...form,
-          utm,
-        }),
+        body: JSON.stringify({ ...form, utm }),
       })
       if (!res.ok) {
         const body = (await res.json().catch(() => null)) as { error?: string } | null
-        throw new Error(body?.error ?? 'Coś poszło nie tak. Spróbuj ponownie.')
+        throw new Error(body?.error ?? 'Coś poszło nie tak.')
       }
-      trackEvent('lead_form_submitted', {
-        budget_range: form.budget,
-        timeline: form.timeline,
-        industry: form.industry,
-      })
+      trackEvent('lead_form_submitted', { budget_range: form.budget, timeline: form.timeline, industry: form.industry })
       setSubmitted(true)
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : 'Błąd wysyłki.')
@@ -306,467 +332,582 @@ export default function PorozmawiajmyContent() {
     }
   }
 
-  const ctaClass =
-    'inline-flex min-h-[48px] items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 px-8 py-4 font-medium tracking-wider text-white shadow-lg transition-all hover:shadow-purple-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 focus-visible:ring-offset-2 focus-visible:ring-offset-black'
-
+  /* ── RENDER ── */
   return (
-    <div className="min-h-screen w-full bg-black text-[#F5F3FF]" style={{ overflowX: 'clip' }}>
-      <main
-        id="main-content"
-        className="mx-auto max-w-[720px] px-6 pb-16 pt-10 md:px-10 md:pt-16"
+    <div className="min-h-screen w-full" style={{ overflowX: 'clip' }}>
+      <SubpageScrollbar sections={scrollbarSections} />
+
+      {/* ─── 1. HERO ──────────────────────────────────────────────── */}
+      <section
+        id="pzm-hero"
+        data-ph-section="hero"
+        className="relative z-10 flex min-h-screen items-center justify-center px-6 pt-32 pb-20 lg:px-12"
       >
-        {/* 1. Hero */}
-        <section data-section="hero" className="mb-16 md:mb-20">
-          <h1 className="mb-6 text-[clamp(2rem,5vw,3rem)] font-light leading-[1.15] tracking-tight text-white">
-            Strategia to różnica między stroną, która sprzedaje, a tą, która
-            tylko ładnie wygląda.
-          </h1>
-          <p className="mb-8 text-[17px] leading-relaxed text-gray-300 md:text-lg">
-            90% stron w polskim internecie wygląda dobrze i nie sprzedaje. Powód
-            jest jeden: powstały bez strategii.
-          </p>
-          <button type="button" onClick={() => handleCtaClick('hero')} className={ctaClass}>
-            Zamów darmowy audyt swojej strony <ArrowRight className="h-4 w-4" />
-          </button>
-          <p className="mt-4 text-sm text-gray-500">
-            <em className="not-italic">3 minuty wypełniania. Raport w 3 dni. Zero sales calli.</em>
-          </p>
-        </section>
-
-        {/* 2. Bez strategii */}
-        <section data-section="bez-strategii" className="mb-16 md:mb-20">
-          <h2 className="mb-6 text-[clamp(1.5rem,4vw,2rem)] font-light leading-tight text-white md:text-[2rem]">
-            Strona bez strategii wygląda tak:
-          </h2>
-          <ul className="mb-8 list-none space-y-3 text-[17px] leading-relaxed text-gray-200 md:text-lg">
-            {BEZ_STRATEGII_LINES.map((line, i) => (
-              <li key={i} className="flex gap-3">
-                <span className="flex-none select-none text-gray-500">—</span>
-                <span>{line}</span>
-              </li>
-            ))}
-          </ul>
-          <p className="text-[15px] leading-relaxed text-gray-400 md:text-[17px]">
-            <strong className="font-medium text-gray-300">Efekt:</strong> ruch
-            jest, leadów nie ma. Marketing pyta sprzedaży gdzie konwersje,
-            sprzedaż pyta marketingu gdzie ruch.
-          </p>
-        </section>
-      </main>
-
-      {/* 3. Trzy obszary + repeat CTA (grid do 880px) */}
-      <section data-section="3-obszary" className="border-y border-white/5 bg-white/[0.02] px-6 py-16 md:px-10 md:py-24">
-        <div className="mx-auto max-w-[880px]">
-          <h2 className="mb-10 text-[clamp(1.5rem,4vw,2rem)] font-light leading-tight text-white md:text-[2rem]">
-            Trzy miejsca, w których strategia decyduje o wyniku
-          </h2>
-          <div className="mb-14 grid gap-6 md:grid-cols-3 md:gap-5">
-            <article className="flex flex-col rounded-2xl border border-white/10 bg-black/35 p-6">
-              <h3 className="mb-3 text-lg font-medium text-white">Strona internetowa</h3>
-              <p className="mb-6 flex-grow text-[15px] leading-relaxed text-gray-300">
-                Buyer persona, lejek, hierarchia treści, performance. Każda sekcja
-                ma rolę w drodze klienta do zakupu — albo jej tam nie ma.
-              </p>
-              <Link
-                href="/strony-www"
-                onClick={() => handleSubpageClick('strony')}
-                className="mt-auto inline-flex min-h-[44px] items-center gap-2 text-[15px] font-medium tracking-wide text-purple-300 underline decoration-purple-400/60 underline-offset-4 transition-colors hover:text-white hover:decoration-white"
-              >
-                Jak budujemy strony <ArrowRight className="h-4 w-4" />
-              </Link>
-            </article>
-            <article className="flex flex-col rounded-2xl border border-white/10 bg-black/35 p-6">
-              <h3 className="mb-3 text-lg font-medium text-white">Sklep online</h3>
-              <p className="mb-6 flex-grow text-[15px] leading-relaxed text-gray-300">
-                Kategorie zbudowane wokół intencji zakupowej klienta, nie wokół
-                katalogu producenta. Checkout zoptymalizowany pod konkretną
-                branżę.
-              </p>
-              <Link
-                href="/sklepy"
-                onClick={() => handleSubpageClick('sklepy')}
-                className="mt-auto inline-flex min-h-[44px] items-center gap-2 text-[15px] font-medium tracking-wide text-purple-300 underline decoration-purple-400/60 underline-offset-4 transition-colors hover:text-white hover:decoration-white"
-              >
-                Jak budujemy sklepy <ArrowRight className="h-4 w-4" />
-              </Link>
-            </article>
-            <article className="flex flex-col rounded-2xl border border-white/10 bg-black/35 p-6">
-              <h3 className="mb-3 text-lg font-medium text-white">
-                Komunikacja i wiarygodność
-              </h3>
-              <p className="mb-6 flex-grow text-[15px] leading-relaxed text-gray-300">
-                Tone of voice, UVP, dowody. Strona, oferty i LinkedIn mówią
-                jednym głosem — albo klient czuje rozjazd i wychodzi.
-              </p>
-              <Link
-                href="/realizacje"
-                onClick={() => handleSubpageClick('realizacje')}
-                className="mt-auto inline-flex min-h-[44px] items-center gap-2 text-[15px] font-medium tracking-wide text-purple-300 underline decoration-purple-400/60 underline-offset-4 transition-colors hover:text-white hover:decoration-white"
-              >
-                Realizacje i case studies <ArrowRight className="h-4 w-4" />
-              </Link>
-            </article>
+        <div
+          className={`mx-auto max-w-3xl text-center transition-all duration-1000 ${
+            heroVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+          }`}
+        >
+          {/* Badge */}
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-gray-400">
+            <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+            BOFU — ostatni krok przed decyzją
           </div>
 
-          <div className="rounded-2xl border border-yellow-400/20 bg-yellow-400/[0.06] p-8 text-center">
-            <p className="mb-6 text-[17px] leading-relaxed italic text-yellow-50/95 md:text-lg">
-              Nie wiesz, w którym obszarze tkwi problem Twojej strony? Sprawdźmy
-              konkretnie.
-            </p>
-            <button type="button" onClick={() => handleCtaClick('post-3-obszary')} className={ctaClass}>
-              Zamów darmowy audyt swojej strony <ArrowRight className="h-4 w-4" />
+          <h1 className="font-heading glow-text mb-6 text-5xl font-light tracking-tight md:text-6xl lg:text-7xl">
+            Skuteczne strony i sklepy,{' '}
+            <GradientText
+              colors={['#ffaa40', '#9c40ff', '#ffaa40']}
+              animationSpeed={4}
+              className="font-medium"
+            >
+              które sprzedają.
+            </GradientText>
+          </h1>
+
+          <p className="mx-auto mb-4 max-w-2xl text-lg font-light leading-relaxed tracking-wide text-gray-300 md:text-xl">
+            Oparte o strategię, lejek i KPI — nie o szablon i 15 wtyczek
+            WordPressa. Buyer persona i hierarchia treści ustalamy przed
+            pierwszą linią kodu. Każda sekcja ma rolę, albo jej tam nie ma.
+          </p>
+
+          <p className="mb-10 text-sm italic text-gray-500">
+            Średni PageSpeed naszych stron: 96/100. RetroHouse: 80 → 240 leadów/mc.
+          </p>
+
+          {/* CTA row */}
+          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+            {/* Primary */}
+            <div className="group relative w-fit shrink-0">
+              <div
+                className="animate-gradient absolute -inset-1 -z-10 rounded-full opacity-25 blur-md transition-opacity group-hover:opacity-50"
+                style={{
+                  backgroundImage: 'linear-gradient(to right, #ffaa40, #9c40ff, #ffaa40)',
+                  backgroundSize: '300% 100%',
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => handleCta('hero')}
+                className="relative z-10 inline-flex min-h-[48px] items-center gap-2 rounded-full bg-white px-8 py-3 font-medium tracking-wider text-gray-900 shadow-lg shadow-white/10 transition-all hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              >
+                Zamów darmowy audyt swojej strony
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </button>
+            </div>
+
+            {/* Sticky CTA (identyczny pattern jak strony-www) */}
+            <StickyCtaFloat
+              heroId="pzm-hero"
+              hideSectionId="pzm-formularz"
+              href="/porozmawiajmy#pzm-formularz"
+              label="Zamów audyt"
+            />
+          </div>
+
+          <p className="mt-4 text-sm text-gray-500">
+            3 minuty wypełniania. Raport w 3 dni. Zero sales calli.
+          </p>
+
+          {/* Secondary link */}
+          <div className="mt-6">
+            <button
+              type="button"
+              onClick={() => document.getElementById('pzm-obszary')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+              className="group inline-flex items-center gap-1.5 text-sm text-gray-400 transition-colors hover:text-white"
+            >
+              Zobacz najpierw, jak budujemy strony
+              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
             </button>
+          </div>
+        </div>
+
+        {/* Scroll mouse */}
+        <div
+          className={`absolute bottom-10 left-1/2 -translate-x-1/2 transition-all delay-700 duration-1000 ${
+            heroVisible ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          <button
+            type="button"
+            aria-label="Przewiń w dół"
+            onClick={() => document.getElementById('pzm-bez-strategii')?.scrollIntoView({ behavior: 'smooth' })}
+            className="group flex flex-col items-center gap-2"
+          >
+            <div className="flex h-10 w-6 justify-center rounded-full border-2 border-gray-600 group-hover:border-gray-400 transition-colors">
+              <div className="mt-2 h-3 w-1 animate-bounce rounded-full bg-gray-400 group-hover:bg-white transition-colors" />
+            </div>
+          </button>
+        </div>
+      </section>
+
+      {/* ─── 2. BEZ STRATEGII ─────────────────────────────────────── */}
+      <section
+        id="pzm-bez-strategii"
+        data-ph-section="bez-strategii"
+        className="relative z-10 px-6 py-32 lg:px-12"
+      >
+        <div className="mx-auto max-w-4xl">
+          <AnimatedSection className="mb-16 text-center">
+            <h2 className="glow-text mb-6 text-3xl font-light tracking-wide md:text-5xl">
+              Strona bez strategii{' '}
+              <span className="text-red-400">wygląda tak:</span>
+            </h2>
+            <p className="mx-auto max-w-xl text-xl text-gray-400">
+              Klient się rozpoznaje — i rozumie, dlaczego konwersji nie ma.
+            </p>
+          </AnimatedSection>
+
+          <div className="mb-16 grid gap-4 md:grid-cols-2 md:gap-5">
+            {BEZ_STRATEGII.map((line, i) => (
+              <AnimatedSection key={i} delay={i * 80}>
+                <div className="flex items-start gap-4 rounded-2xl border border-red-500/20 bg-red-500/5 p-5 transition-colors hover:border-red-500/40">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-500/10">
+                    <XCircle className="h-5 w-5 text-red-400" />
+                  </div>
+                  <p className="text-white leading-relaxed">{line}</p>
+                </div>
+              </AnimatedSection>
+            ))}
+          </div>
+
+          <AnimatedSection delay={500}>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center">
+              <p className="text-lg leading-relaxed text-gray-300">
+                <strong className="font-medium text-white">Efekt:</strong> ruch
+                jest, leadów nie ma. Marketing pyta sprzedaży gdzie konwersje,
+                sprzedaż pyta marketingu gdzie ruch.
+              </p>
+            </div>
+          </AnimatedSection>
+        </div>
+      </section>
+
+      {/* Transition */}
+      <section className="relative z-10 px-6 py-24 lg:px-12">
+        <AnimatedSection className="mx-auto max-w-3xl text-center">
+          <p className="text-2xl font-light leading-relaxed text-gray-400 md:text-4xl">
+            A gdyby strona działała jak{' '}
+            <span className="text-white">lejek</span>, nie jak{' '}
+            <span className="bg-linear-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+              broszura?
+            </span>
+          </p>
+        </AnimatedSection>
+      </section>
+
+      {/* ─── 3. TRZY OBSZARY ──────────────────────────────────────── */}
+      <section
+        id="pzm-obszary"
+        data-ph-section="3-obszary"
+        className="relative z-10 bg-linear-to-b from-transparent via-blue-950/10 to-transparent px-6 py-32 lg:px-12"
+      >
+        <div className="mx-auto max-w-5xl">
+          <AnimatedSection className="mb-16 text-center">
+            <h2 className="glow-text mb-6 text-3xl font-light tracking-wide md:text-5xl">
+              Trzy miejsca, w których{' '}
+              <span className="bg-linear-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                strategia decyduje o wyniku
+              </span>
+            </h2>
+            <p className="mx-auto max-w-xl text-xl text-gray-400">
+              Klient wybiera obszar, który go dotyczy, i klika dalej. Jeśli
+              żaden — klika audyt.
+            </p>
+          </AnimatedSection>
+
+          <div className="mb-16 grid gap-6 md:grid-cols-3 md:gap-8">
+            {OBSZARY.map((item, i) => {
+              const Icon = item.icon
+              return (
+                <AnimatedSection key={i} delay={i * 150}>
+                  <TiltCard className="h-full">
+                    <div className="group relative h-full">
+                      <div
+                        className={`absolute -inset-0.5 bg-linear-to-r ${item.gradient} rounded-2xl opacity-0 blur-lg transition-opacity duration-500 group-hover:opacity-20`}
+                      />
+                      <div className="relative flex h-full flex-col rounded-2xl border border-white/10 bg-gray-900/80 p-8 backdrop-blur-sm">
+                        <div
+                          className={`mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br ${item.gradient}`}
+                        >
+                          <Icon size={28} className="text-white" />
+                        </div>
+                        <h3 className="mb-3 text-xl font-medium text-white">
+                          {item.title}
+                        </h3>
+                        <p className="mb-6 grow text-gray-400 leading-relaxed">
+                          {item.body}
+                        </p>
+                        <Link
+                          href={item.href}
+                          onClick={() =>
+                            trackEvent('lead_subpage_clicked', { target: item.trackTarget })
+                          }
+                          className="group/link mt-auto inline-flex items-center gap-2 text-[15px] font-medium text-white/70 transition-colors hover:text-white"
+                        >
+                          {item.cta}
+                          <ArrowRight className="h-4 w-4 transition-transform group-hover/link:translate-x-1" />
+                        </Link>
+                      </div>
+                    </div>
+                  </TiltCard>
+                </AnimatedSection>
+              )
+            })}
+          </div>
+
+          {/* Repeat CTA */}
+          <AnimatedSection delay={400}>
+            <div className="group relative mx-auto max-w-2xl">
+              <div className="absolute -inset-1 rounded-3xl bg-linear-to-r from-purple-500 via-pink-500 to-orange-500 opacity-15 blur-xl transition-opacity duration-500 group-hover:opacity-25" />
+              <div className="relative rounded-3xl border border-white/10 bg-gray-900/80 p-10 text-center backdrop-blur-sm">
+                <p className="mb-6 text-xl leading-relaxed text-gray-300">
+                  Nie wiesz, w którym obszarze tkwi problem Twojej strony?{' '}
+                  <strong className="font-medium text-white">
+                    Sprawdźmy konkretnie.
+                  </strong>
+                </p>
+                <div className="relative inline-block w-fit">
+                  <div
+                    className="animate-gradient absolute -inset-1 -z-10 rounded-full opacity-30 blur-md transition-opacity group-hover:opacity-50"
+                    style={{
+                      backgroundImage: 'linear-gradient(to right, #9c40ff, #ff6b6b, #9c40ff)',
+                      backgroundSize: '300% 100%',
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleCta('post-3-obszary')}
+                    className="relative z-10 inline-flex min-h-[48px] items-center gap-2 rounded-full bg-white px-8 py-3 font-medium tracking-wider text-gray-900 shadow-lg transition-all hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  >
+                    Zamów darmowy audyt swojej strony
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </button>
+                </div>
+                <p className="mt-4 text-sm text-gray-500">
+                  3 minuty wypełniania. Raport w 3 dni. Zero sales calli.
+                </p>
+              </div>
+            </div>
+          </AnimatedSection>
+        </div>
+      </section>
+
+      {/* ─── 4. CO DOSTAJESZ W AUDYCIE ────────────────────────────── */}
+      <section
+        id="pzm-audyt"
+        data-ph-section="audyt"
+        className="relative z-10 px-6 py-32 lg:px-12"
+      >
+        <div className="mx-auto max-w-4xl">
+          <AnimatedSection className="mb-16 text-center">
+            <h2 className="glow-text mb-4 text-3xl font-light tracking-wide md:text-5xl">
+              Co dostajesz w audycie
+            </h2>
+            <p className="text-xl text-gray-400">
+              Czas: 3 dni robocze. Zobowiązania: zero.
+            </p>
+          </AnimatedSection>
+
+          <div className="mb-16 grid gap-6 md:grid-cols-2">
+            {/* Tier 1 */}
+            <AnimatedSection delay={0}>
+              <div className="relative h-full overflow-hidden rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-8">
+                <div className="absolute -top-8 -right-8 h-40 w-40 rounded-full bg-emerald-500/10 blur-2xl" />
+                <div className="relative">
+                  <div className="mb-2 inline-block rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-300 tracking-wider">
+                    TIER 1 — PEŁNY AUDYT
+                  </div>
+                  <p className="mb-1 text-sm text-gray-400 italic">budżet projektu 30k+ PLN</p>
+                  <ul className="mt-4 space-y-3 text-[15px] leading-relaxed text-gray-200">
+                    {[
+                      'PDF z analizą w 5 obszarach',
+                      'PageSpeed, Core Web Vitals, SEO',
+                      '5–10 konkretnych rekomendacji',
+                      'Wstępna wycena projektu',
+                      '10-min Loom osobiście',
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <span className="mt-0.5 text-emerald-400">✓</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </AnimatedSection>
+
+            {/* Tier 2 */}
+            <AnimatedSection delay={150}>
+              <div className="relative h-full overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-8">
+                <div className="absolute -top-8 -right-8 h-40 w-40 rounded-full bg-white/5 blur-2xl" />
+                <div className="relative">
+                  <div className="mb-2 inline-block rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-gray-300 tracking-wider">
+                    TIER 2 — MINI-AUDYT
+                  </div>
+                  <p className="mb-1 text-sm text-gray-400 italic">mniejsze projekty</p>
+                  <ul className="mt-4 space-y-3 text-[15px] leading-relaxed text-gray-200">
+                    {[
+                      'PageSpeed snapshot',
+                      '3 quick-winy z szablonu',
+                      'Rekomendacja kierunku',
+                      'Redesign / optymalizacja / no-code',
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <span className="mt-0.5 text-gray-400">✓</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </AnimatedSection>
+          </div>
+
+          {/* Third CTA */}
+          <AnimatedSection delay={200} className="text-center">
+            <button
+              type="button"
+              onClick={() => handleCta('post-audyt')}
+              className="group inline-flex items-center gap-3 rounded-full bg-linear-to-r from-blue-500 to-cyan-500 px-8 py-4 font-medium text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/30"
+            >
+              Zamów darmowy audyt swojej strony
+              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+            </button>
+          </AnimatedSection>
+        </div>
+      </section>
+
+      {/* ─── 5. FAQ ───────────────────────────────────────────────── */}
+      <section
+        id="pzm-faq"
+        data-ph-section="faq"
+        className="relative z-10 px-6 py-32 lg:px-12"
+      >
+        <div className="mx-auto max-w-3xl">
+          <AnimatedSection className="mb-16 text-center">
+            <h2 className="glow-text text-3xl font-light tracking-wide md:text-5xl">
+              Pytania i odpowiedzi
+            </h2>
+          </AnimatedSection>
+
+          <div className="space-y-4">
+            {FAQ_ITEMS.map((item, i) => (
+              <AnimatedSection key={i} delay={i * 60}>
+                <details className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition-colors hover:border-white/20">
+                  <summary className="flex cursor-pointer list-none items-center justify-between p-6">
+                    <span className="pr-4 font-medium text-white">{item.q}</span>
+                    <ChevronDown className="h-5 w-5 shrink-0 text-gray-400 transition-transform duration-300 group-open:rotate-180" />
+                  </summary>
+                  <div className="px-6 pb-6 pt-0">
+                    <p className="leading-relaxed text-gray-400">{item.a}</p>
+                  </div>
+                </details>
+              </AnimatedSection>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* 4–6: tiery audytu, CTA, FAQ, formularz */}
-      <div className="mx-auto max-w-[720px] px-6 py-16 md:px-10 md:py-24">
-        <section data-section="audyt" className="mb-14">
-          <h2 className="mb-8 text-[clamp(1.5rem,4vw,2rem)] font-light leading-tight text-white md:text-[2rem]">
-            Co dostajesz w audycie
-          </h2>
-          <div className="space-y-6">
-            <div className="rounded-2xl border border-emerald-400/25 bg-emerald-400/[0.06] p-6">
-              <h3 className="mb-4 text-lg font-medium text-white">
-                Tier 1 — pełny audyt{' '}
-                <span className="text-sm font-normal text-gray-400">
-                  (budżet projektu 30k+ PLN)
-                </span>
-              </h3>
-              <p className="text-[15px] leading-relaxed text-gray-200">
-                PDF z analizą Twojej strony w 5 obszarach + twarde liczby
-                (PageSpeed, Core Web Vitals, SEO) + 5–10 rekomendacji + wstępna
-                wycena + 10-min Loom.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-              <h3 className="mb-4 text-lg font-medium text-white">
-                Tier 2 — mini-audyt automatyczny{' '}
-                <span className="text-sm font-normal text-gray-400">
-                  (mniejsze projekty)
-                </span>
-              </h3>
-              <p className="text-[15px] leading-relaxed text-gray-200">
-                PageSpeed snapshot + 3 quick-winy z szablonu + rekomendacja
-                kierunku (redesign / optymalizacja / no-code).
-              </p>
-            </div>
-          </div>
-          <p className="mt-8 text-[15px] leading-relaxed text-gray-300">
-            <strong className="text-white">Czas:</strong> 3 dni robocze.{' '}
-            <strong className="text-white">Zobowiązania:</strong> zero.
-          </p>
-          <div className="mt-10">
-            <button type="button" onClick={() => handleCtaClick('post-audyt')} className={ctaClass}>
-              Zamów darmowy audyt swojej strony <ArrowRight className="h-4 w-4" />
-            </button>
-          </div>
-        </section>
-
-        <section data-section="faq" className="mb-20">
-          <h2 className="mb-8 text-[clamp(1.5rem,4vw,2rem)] font-light leading-tight text-white md:text-[2rem]">
-            FAQ — częste pytania
-          </h2>
-          <div className="divide-y divide-white/5 rounded-2xl border border-white/5 bg-white/[0.02]">
-            {FAQ.map((item, i) => (
-              <details key={i} className="group p-5 open:bg-white/[0.02]">
-                <summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-[15px] font-medium text-white">
-                  <span>{item.q}</span>
-                  <span className="mt-1 shrink-0 select-none text-gray-500 transition-transform group-open:rotate-45">
-                    +
-                  </span>
-                </summary>
-                <p className="mt-3 text-[15px] leading-relaxed text-gray-300">{item.a}</p>
-              </details>
-            ))}
-          </div>
-        </section>
-
-        {/* Form osobny, pod treścią (Notion: modal lub sekcja niżej) */}
-        <section
-          data-section="form"
-          id="formularz"
-          aria-labelledby="form-heading"
-          className="scroll-mt-28 pb-12"
-        >
-          <h2
-            id="form-heading"
-            className="mb-2 text-[clamp(1.5rem,4vw,2rem)] font-light leading-tight text-white md:text-[2rem]"
-          >
-            Zamów darmowy audyt
-          </h2>
-          <p className="mb-8 text-sm text-gray-400">3 kroki, ok. 3 minuty.</p>
+      {/* ─── 6. FORMULARZ ─────────────────────────────────────────── */}
+      <section
+        id="pzm-formularz"
+        data-ph-section="form"
+        className="relative z-10 scroll-mt-24 px-6 py-32 lg:px-12 bg-linear-to-b from-transparent via-purple-950/10 to-transparent"
+      >
+        <div className="mx-auto max-w-2xl">
+          <AnimatedSection className="mb-12 text-center">
+            <h2 className="glow-text mb-4 text-3xl font-light tracking-wide md:text-5xl">
+              Zamów darmowy audyt
+            </h2>
+            <p className="text-xl text-gray-400">
+              3 kroki, ok. 3 minuty.
+            </p>
+          </AnimatedSection>
 
           {submitted ? (
-            <SubmittedCard email={form.email} />
+            <AnimatedSection>
+              <SubmittedCard email={form.email} />
+            </AnimatedSection>
           ) : (
-            <form
-              onSubmit={handleSubmit}
-              className="relative rounded-2xl border border-white/5 bg-white/[0.02] p-6 md:p-8"
-              noValidate
-            >
-              <ProgressBar step={step} />
-
-              {step === 1 && (
-                <fieldset className="space-y-6">
-                  <legend className="mb-2 text-base font-medium text-white">
-                    Krok 1: Twoja sytuacja
-                  </legend>
-                  <Field label="Masz już stronę?" error={errors.hasWebsite} htmlFor="hasWebsite">
-                    <RadioGroup
-                      name="hasWebsite"
-                      value={form.hasWebsite}
-                      onChange={(v) => update('hasWebsite', v as HasWebsite)}
-                      options={[
-                        { value: 'dziala', label: 'Tak, działa' },
-                        { value: 'do_wymiany', label: 'Tak, ale chcę nowej' },
-                      ]}
-                    />
-                  </Field>
-                  <Field
-                    label="URL strony"
-                    required
-                    error={errors.websiteUrl}
-                    htmlFor="websiteUrl"
-                    hint="Ten landing jest dla firm z istniejącą stroną. Klienci „od zera” mają osobny lejek na /strony-www."
-                  >
-                    <input
-                      id="websiteUrl"
-                      type="text"
-                      inputMode="url"
-                      autoComplete="url"
-                      placeholder="np. twoja-firma.pl"
-                      value={form.websiteUrl}
-                      onChange={(e) => update('websiteUrl', e.target.value)}
-                      className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-[15px] text-white placeholder-gray-500 outline-none transition focus:border-purple-400/50 focus:ring-2 focus:ring-purple-400/20"
-                    />
-                  </Field>
-                  <Field label="Branża" required error={errors.industry} htmlFor="industry">
-                    <select
-                      id="industry"
-                      value={form.industry}
-                      onChange={(e) =>
-                        update('industry', e.target.value as Industry)
-                      }
-                      className="w-full appearance-none rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-[15px] text-white outline-none transition focus:border-purple-400/50 focus:ring-2 focus:ring-purple-400/20"
-                    >
-                      <option value="">— wybierz —</option>
-                      {INDUSTRIES.map((it) => (
-                        <option key={it.value} value={it.value}>
-                          {it.label}
-                        </option>
-                      ))}
-                    </select>
-                  </Field>
-                </fieldset>
-              )}
-
-              {step === 2 && (
-                <fieldset className="space-y-6">
-                  <legend className="mb-2 text-base font-medium text-white">
-                    Krok 2: Cel biznesowy
-                  </legend>
-                  <Field label="Co chcesz osiągnąć?" required error={errors.goal} htmlFor="goal">
-                    <RadioGroup
-                      name="goal"
-                      value={form.goal}
-                      onChange={(v) => update('goal', v as Goal)}
-                      options={GOALS}
-                      columns={1}
-                    />
-                  </Field>
-                  <Field
-                    label="Największy ból ze stroną dzisiaj? (opcjonalnie, max 500 znaków)"
-                    error={errors.pain}
-                    htmlFor="pain"
-                  >
-                    <textarea
-                      id="pain"
-                      rows={4}
-                      maxLength={500}
-                      value={form.pain}
-                      onChange={(e) => update('pain', e.target.value)}
-                      placeholder='np. „dużo wejść z reklam, mało telefonów”'
-                      className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-[15px] text-white placeholder-gray-500 outline-none transition focus:border-purple-400/50 focus:ring-2 focus:ring-purple-400/20"
-                    />
-                    <div className="mt-1 text-right text-xs text-gray-500">
-                      {form.pain.length}/500
-                    </div>
-                  </Field>
-                </fieldset>
-              )}
-
-              {step === 3 && (
-                <fieldset className="space-y-6">
-                  <legend className="mb-2 text-base font-medium text-white">
-                    Krok 3: Praktyczne
-                  </legend>
-                  <Field label="Imię i nazwisko" required error={errors.fullName} htmlFor="fullName">
-                    <input
-                      id="fullName"
-                      type="text"
-                      autoComplete="name"
-                      value={form.fullName}
-                      onChange={(e) => update('fullName', e.target.value)}
-                      className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-[15px] text-white outline-none transition focus:border-purple-400/50 focus:ring-2 focus:ring-purple-400/20"
-                    />
-                  </Field>
-                  <Field
-                    label="Email"
-                    required
-                    error={errors.email}
-                    htmlFor="email"
-                    hint={
-                      form.email && isGenericEmail(form.email)
-                        ? 'Używamy też adresu firmowego — jeśli go masz, podaj ten (lepsze dopasowanie).'
-                        : undefined
-                    }
-                  >
-                    <input
-                      id="email"
-                      type="email"
-                      autoComplete="email"
-                      value={form.email}
-                      onChange={(e) => update('email', e.target.value)}
-                      className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-[15px] text-white outline-none transition focus:border-purple-400/50 focus:ring-2 focus:ring-purple-400/20"
-                    />
-                  </Field>
-                  <Field label="Budżet projektu" required error={errors.budget} htmlFor="budget">
-                    <RadioGroup
-                      name="budget"
-                      value={form.budget}
-                      onChange={(v) => update('budget', v as Budget)}
-                      options={BUDGETS}
-                    />
-                  </Field>
-                  <Field
-                    label="Kiedy chcesz wystartować?"
-                    required
-                    error={errors.timeline}
-                    htmlFor="timeline"
-                  >
-                    <RadioGroup
-                      name="timeline"
-                      value={form.timeline}
-                      onChange={(v) => update('timeline', v as Timeline)}
-                      options={TIMELINES}
-                    />
-                  </Field>
-                  <Field label="Telefon (opcjonalnie)" htmlFor="phone">
-                    <input
-                      id="phone"
-                      type="tel"
-                      inputMode="tel"
-                      autoComplete="tel"
-                      value={form.phone}
-                      onChange={(e) => update('phone', e.target.value)}
-                      className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-[15px] text-white outline-none transition focus:border-purple-400/50 focus:ring-2 focus:ring-purple-400/20"
-                    />
-                  </Field>
-                  <label className="flex cursor-pointer items-start gap-3 text-[14px] leading-relaxed text-gray-300">
-                    <input
-                      type="checkbox"
-                      checked={form.rodo}
-                      onChange={(e) => update('rodo', e.target.checked)}
-                      className="mt-1 h-4 w-4 rounded border-white/20 bg-black/40 text-purple-500 focus:ring-2 focus:ring-purple-400/40"
-                    />
-                    <span>
-                      Wyrażam zgodę na przetwarzanie moich danych zgodnie z{' '}
-                      <Link
-                        href="/polityka-prywatnosci"
-                        className="underline underline-offset-4 hover:text-white"
-                        target="_blank"
-                      >
-                        polityką prywatności
-                      </Link>{' '}
-                      Syntance (RODO — cel: przygotowanie i przesłanie raportu).{' '}
-                      <span className="text-red-300">*</span>
-                    </span>
-                  </label>
-                  {errors.rodo && (
-                    <p className="text-sm text-red-300">{errors.rodo}</p>
-                  )}
-                  <input
-                    type="text"
-                    name="hp"
-                    value={form.hp}
-                    tabIndex={-1}
-                    autoComplete="off"
-                    aria-hidden
-                    onChange={(e) => setForm((s) => ({ ...s, hp: e.target.value }))}
-                    className="pointer-events-none absolute left-[-9999px] h-0 w-0 opacity-0"
-                  />
-                </fieldset>
-              )}
-
-              {submitError && (
-                <p
-                  role="alert"
-                  className="mt-6 rounded-lg border border-red-400/30 bg-red-400/[0.06] p-4 text-sm text-red-100"
+            <AnimatedSection>
+              <div className="relative">
+                <div className="absolute -inset-1 rounded-3xl bg-linear-to-r from-purple-500/20 to-blue-500/20 blur-xl" />
+                <form
+                  onSubmit={handleSubmit}
+                  className="relative rounded-3xl border border-white/10 bg-gray-900/80 p-8 backdrop-blur-sm md:p-10"
+                  noValidate
                 >
-                  {submitError}
-                </p>
-              )}
-              <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
-                {step > 1 ? (
-                  <button
-                    type="button"
-                    onClick={goBack}
-                    className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm text-gray-200 transition hover:bg-white/[0.05] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300"
-                  >
-                    <ArrowLeft className="h-4 w-4" aria-hidden /> Wstecz
-                  </button>
-                ) : (
-                  <span aria-hidden />
-                )}
-                {step < 3 ? (
-                  <button
-                    type="button"
-                    onClick={goNext}
-                    className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 px-8 py-3 font-medium tracking-wider text-white shadow-lg transition hover:shadow-purple-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300"
-                  >
-                    Dalej <ArrowRight className="h-4 w-4" aria-hidden />
-                  </button>
-                ) : (
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 px-8 py-3 font-medium tracking-wider text-white shadow-lg transition hover:shadow-purple-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 disabled:opacity-55"
-                  >
-                    {submitting ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                        Wysyłamy…
-                      </>
-                    ) : (
-                      <>
-                        Wyślij i odbierz raport{' '}
-                        <ArrowRight className="h-4 w-4" aria-hidden />
-                      </>
-                    )}
-                  </button>
-                )}
-              </div>
-            </form>
-          )}
-        </section>
-      </div>
+                  <ProgressBar step={step} />
 
-      <footer className="border-t border-white/5 px-6 py-8 md:px-10">
-        <div className="mx-auto flex max-w-[720px] flex-col items-start justify-between gap-6 text-sm text-gray-500 md:flex-row md:items-center">
-          <div>
-            <span className="font-medium text-gray-300">Syntance</span>{' '}
-            <span>— strategia, strony, sklepy</span>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-            <span>© {new Date().getFullYear()}</span>
-            <Link href="/polityka-prywatnosci" className="underline-offset-4 hover:text-gray-300">
-              Polityka prywatności
+                  {step === 1 && (
+                    <fieldset className="space-y-6">
+                      <legend className="mb-6 text-lg font-medium text-white">
+                        Krok 1 — Twoja sytuacja
+                      </legend>
+                      <Field label="Masz już stronę?" error={errors.hasWebsite} htmlFor="hasWebsite">
+                        <RadioGroup
+                          name="hasWebsite" value={form.hasWebsite}
+                          onChange={v => set('hasWebsite', v as HasWebsite)}
+                          options={[
+                            { value: 'dziala', label: 'Tak, działa' },
+                            { value: 'do_wymiany', label: 'Tak, ale chcę nowej' },
+                          ]}
+                        />
+                      </Field>
+                      <Field label="URL strony" required error={errors.websiteUrl} htmlFor="websiteUrl"
+                        hint={'Ten landing jest dla firm z istniejącą stroną. Klienci \u201eod zera\u201d mają osobny lejek na /strony-www.'}>
+                        <input id="websiteUrl" type="text" inputMode="url" autoComplete="url"
+                          placeholder="np. twoja-firma.pl" value={form.websiteUrl}
+                          onChange={e => set('websiteUrl', e.target.value)}
+                          className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-[15px] text-white placeholder-gray-600 outline-none transition focus:border-purple-400/60 focus:ring-2 focus:ring-purple-400/20"
+                        />
+                      </Field>
+                      <Field label="Branża" required error={errors.industry} htmlFor="industry">
+                        <select id="industry" value={form.industry}
+                          onChange={e => set('industry', e.target.value as Industry)}
+                          className="w-full appearance-none rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-[15px] text-white outline-none transition focus:border-purple-400/60 focus:ring-2 focus:ring-purple-400/20"
+                        >
+                          <option value="">— wybierz —</option>
+                          {INDUSTRIES.map(it => <option key={it.value} value={it.value}>{it.label}</option>)}
+                        </select>
+                      </Field>
+                    </fieldset>
+                  )}
+
+                  {step === 2 && (
+                    <fieldset className="space-y-6">
+                      <legend className="mb-6 text-lg font-medium text-white">
+                        Krok 2 — Cel biznesowy
+                      </legend>
+                      <Field label="Co chcesz osiągnąć?" required error={errors.goal} htmlFor="goal">
+                        <RadioGroup name="goal" value={form.goal}
+                          onChange={v => set('goal', v as Goal)} options={GOALS} columns={1} />
+                      </Field>
+                      <Field label="Największy ból ze stroną dzisiaj? (opcjonalnie, max 500 znaków)"
+                        error={errors.pain} htmlFor="pain">
+                        <textarea id="pain" rows={4} maxLength={500} value={form.pain}
+                          onChange={e => set('pain', e.target.value)}
+                          placeholder='np. „dużo wejść z reklam, mało telefonów"'
+                          className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-[15px] text-white placeholder-gray-600 outline-none transition focus:border-purple-400/60 focus:ring-2 focus:ring-purple-400/20"
+                        />
+                        <p className="mt-1 text-right text-xs text-gray-500">{form.pain.length}/500</p>
+                      </Field>
+                    </fieldset>
+                  )}
+
+                  {step === 3 && (
+                    <fieldset className="space-y-6">
+                      <legend className="mb-6 text-lg font-medium text-white">
+                        Krok 3 — Praktyczne
+                      </legend>
+                      <Field label="Imię i nazwisko" required error={errors.fullName} htmlFor="fullName">
+                        <input id="fullName" type="text" autoComplete="name" value={form.fullName}
+                          onChange={e => set('fullName', e.target.value)}
+                          className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-[15px] text-white outline-none transition focus:border-purple-400/60 focus:ring-2 focus:ring-purple-400/20"
+                        />
+                      </Field>
+                      <Field label="Email" required error={errors.email} htmlFor="email"
+                        hint={form.email && isGenericEmail(form.email) ? 'Używamy też adresu firmowego — jeśli go masz, podaj ten (lepsze dopasowanie).' : undefined}>
+                        <input id="email" type="email" autoComplete="email" value={form.email}
+                          onChange={e => set('email', e.target.value)}
+                          className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-[15px] text-white outline-none transition focus:border-purple-400/60 focus:ring-2 focus:ring-purple-400/20"
+                        />
+                      </Field>
+                      <Field label="Budżet projektu" required error={errors.budget} htmlFor="budget">
+                        <RadioGroup name="budget" value={form.budget}
+                          onChange={v => set('budget', v as Budget)} options={BUDGETS} />
+                      </Field>
+                      <Field label="Kiedy chcesz wystartować?" required error={errors.timeline} htmlFor="timeline">
+                        <RadioGroup name="timeline" value={form.timeline}
+                          onChange={v => set('timeline', v as Timeline)} options={TIMELINES} />
+                      </Field>
+                      <Field label="Telefon (opcjonalnie)" htmlFor="phone">
+                        <input id="phone" type="tel" inputMode="tel" autoComplete="tel" value={form.phone}
+                          onChange={e => set('phone', e.target.value)}
+                          className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-[15px] text-white outline-none transition focus:border-purple-400/60 focus:ring-2 focus:ring-purple-400/20"
+                        />
+                      </Field>
+                      <label className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-gray-300">
+                        <input type="checkbox" checked={form.rodo}
+                          onChange={e => set('rodo', e.target.checked)}
+                          className="mt-1 h-4 w-4 rounded border-white/20 bg-black/40 text-purple-500 focus:ring-2 focus:ring-purple-400/40"
+                        />
+                        <span>
+                          Wyrażam zgodę na przetwarzanie danych zgodnie z{' '}
+                          <Link href="/polityka-prywatnosci" target="_blank"
+                            className="underline underline-offset-4 hover:text-white">
+                            polityką prywatności
+                          </Link>{' '}
+                          Syntance (cel: przygotowanie audytu).{' '}
+                          <span className="text-red-400">*</span>
+                        </span>
+                      </label>
+                      {errors.rodo && <p className="text-sm text-red-400">{errors.rodo}</p>}
+                      {/* Honeypot */}
+                      <input type="text" name="hp" value={form.hp} tabIndex={-1} aria-hidden
+                        autoComplete="off"
+                        onChange={e => setForm(s => ({ ...s, hp: e.target.value }))}
+                        className="pointer-events-none absolute left-[-9999px] h-0 w-0 opacity-0"
+                      />
+                    </fieldset>
+                  )}
+
+                  {submitError && (
+                    <p role="alert" className="mt-6 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
+                      {submitError}
+                    </p>
+                  )}
+
+                  <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    {step > 1 ? (
+                      <button type="button" onClick={goBack}
+                        className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm text-gray-200 transition hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30">
+                        <ArrowLeft className="h-4 w-4" /> Wstecz
+                      </button>
+                    ) : <span />}
+                    {step < 3 ? (
+                      <button type="button" onClick={goNext}
+                        className="group inline-flex min-h-[48px] items-center gap-2 rounded-full bg-linear-to-r from-purple-500 to-blue-500 px-8 py-3 font-medium tracking-wider text-white shadow-lg transition-all hover:scale-105 hover:shadow-purple-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300">
+                        Dalej <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </button>
+                    ) : (
+                      <button type="submit" disabled={submitting}
+                        className="group inline-flex min-h-[48px] items-center gap-2 rounded-full bg-linear-to-r from-purple-500 to-blue-500 px-8 py-3 font-medium tracking-wider text-white shadow-lg transition-all hover:scale-105 hover:shadow-purple-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 disabled:opacity-50 disabled:pointer-events-none">
+                        {submitting ? (
+                          <><Loader2 className="h-4 w-4 animate-spin" /> Wysyłamy…</>
+                        ) : (
+                          <>Wyślij i odbierz raport <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                  <p className="mt-4 text-center text-xs text-gray-500">
+                    Bez spamu. Email tylko z raportem i ewentualną propozycją.
+                  </p>
+                </form>
+              </div>
+            </AnimatedSection>
+          )}
+        </div>
+      </section>
+
+      {/* ─── FOOTER ───────────────────────────────────────────────── */}
+      <footer className="relative z-10 border-t border-gray-900 px-6 py-12 lg:px-12">
+        <div className="mx-auto max-w-5xl">
+          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+            <Link href="/" className="text-sm font-medium text-gray-400 transition-colors hover:text-white">
+              Syntance — strategia, strony, sklepy
             </Link>
-            <a href="mailto:kamil@syntance.com" className="underline-offset-4 hover:text-gray-300">
-              kamil@syntance.com
-            </a>
+            <div className="flex items-center gap-6 text-sm text-gray-500">
+              <span>© {new Date().getFullYear()}</span>
+              <Link href="/polityka-prywatnosci" className="transition-colors hover:text-gray-300">
+                Polityka prywatności
+              </Link>
+              <a href="mailto:kamil@syntance.com" className="transition-colors hover:text-gray-300">
+                kamil@syntance.com
+              </a>
+            </div>
           </div>
         </div>
       </footer>
@@ -774,16 +915,20 @@ export default function PorozmawiajmyContent() {
   )
 }
 
+/* ─────────────────────────────────────────────────────────
+   SUB-COMPONENTS
+───────────────────────────────────────────────────────── */
+
 function ProgressBar({ step }: { step: 1 | 2 | 3 }) {
   return (
     <div className="mb-8" aria-live="polite">
-      <div className="mb-2 flex items-center justify-between text-xs text-gray-400">
+      <div className="mb-2 flex justify-between text-xs text-gray-400">
         <span>Krok {step} z 3</span>
         <span>{Math.round((step / 3) * 100)}%</span>
       </div>
       <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
         <div
-          className="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-[width]"
+          className="h-full bg-linear-to-r from-purple-500 to-blue-500 transition-[width] duration-500"
           style={{ width: `${(step / 3) * 100}%` }}
         />
       </div>
@@ -791,67 +936,44 @@ function ProgressBar({ step }: { step: 1 | 2 | 3 }) {
   )
 }
 
-function Field(props: {
-  label: string
-  htmlFor: string
-  required?: boolean
-  error?: string
-  hint?: string
-  children: ReactNode
+function Field({
+  label, htmlFor, required, error, hint, children,
+}: {
+  label: string; htmlFor: string; required?: boolean; error?: string; hint?: string; children: ReactNode
 }) {
-  const { label, htmlFor, required, error, hint, children } = props
   return (
-    <div className="text-left">
+    <div>
       <label htmlFor={htmlFor} className="mb-2 block text-sm font-medium text-gray-200">
-        {label}
-        {required ? (
-          <>
-            {' '}
-            <span className="text-red-300">*</span>
-          </>
-        ) : null}
+        {label}{required && <span className="ml-1 text-red-400">*</span>}
       </label>
       {children}
-      {hint && !error ? <p className="mt-2 text-xs text-gray-500">{hint}</p> : null}
-      {error ? (
-        <p className="mt-2 text-sm text-red-300" role="alert">
-          {error}
-        </p>
-      ) : null}
+      {hint && !error && <p className="mt-2 text-xs text-gray-500">{hint}</p>}
+      {error && <p role="alert" className="mt-2 text-sm text-red-400">{error}</p>}
     </div>
   )
 }
 
-function RadioGroup(props: {
-  name: string
-  value: string
-  onChange: (value: string) => void
-  options: readonly { value: string; label: string }[]
-  columns?: 1 | 2
+function RadioGroup({
+  name, value, onChange, options, columns = 2,
+}: {
+  name: string; value: string; onChange: (v: string) => void
+  options: readonly { value: string; label: string }[]; columns?: 1 | 2
 }) {
-  const { name, value, onChange, options, columns = 2 } = props
   return (
     <div className={`grid gap-3 ${columns === 2 ? 'sm:grid-cols-2' : ''}`}>
-      {options.map((opt) => {
-        const id = `${name}-${opt.value}`
+      {options.map(opt => {
         const selected = value === opt.value
         return (
-          <label
-            key={opt.value}
-            htmlFor={id}
-            className={`flex cursor-pointer gap-3 rounded-xl border px-4 py-3 text-[15px] transition-colors ${
+          <label key={opt.value} htmlFor={`${name}-${opt.value}`}
+            className={`flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-[15px] transition-colors ${
               selected
-                ? 'border-purple-400/55 bg-purple-400/[0.12] text-white'
-                : 'border-white/10 bg-black/30 text-gray-200 hover:border-white/22'
+                ? 'border-purple-400/60 bg-purple-400/10 text-white'
+                : 'border-white/10 bg-black/30 text-gray-200 hover:border-white/20'
             }`}
           >
-            <input
-              id={id}
-              name={name}
-              type="radio"
-              checked={selected}
-              onChange={() => onChange(opt.value)}
-              className="mt-[3px] h-4 w-4 shrink-0 border-white/25 bg-transparent text-purple-500 focus-visible:ring-2 focus-visible:ring-purple-400/50"
+            <input id={`${name}-${opt.value}`} name={name} type="radio"
+              checked={selected} onChange={() => onChange(opt.value)}
+              className="h-4 w-4 shrink-0 border-white/25 bg-transparent text-purple-500"
             />
             <span>{opt.label}</span>
           </label>
@@ -863,21 +985,22 @@ function RadioGroup(props: {
 
 function SubmittedCard({ email }: { email: string }) {
   return (
-    <div className="rounded-2xl border border-emerald-400/35 bg-emerald-400/[0.06] p-8 md:p-10">
-      <h3 className="mb-4 text-xl font-medium text-white">Dzięki — zapisaliśmy zgłoszenie.</h3>
-      <p className="text-[15px] leading-relaxed text-gray-200">
-        Na adres <strong className="text-white">{email}</strong> pojawi się potwierdzenie. Raport
-        (analiza + rekomendacje) przygotujemy najpóźniej w&nbsp;
-        <strong className="text-white">ciągu 3 dni roboczych</strong>, tak jak zakładamy przy
-        tej kampanii.
-      </p>
-      <p className="mt-6 text-sm text-gray-400">
-        Brak czegoś na skrzynce? Pisz bezpośrednio:{' '}
-        <a className="text-gray-200 underline underline-offset-4" href="mailto:kamil@syntance.com">
-          kamil@syntance.com
-        </a>
-        .
-      </p>
+    <div className="relative overflow-hidden rounded-3xl border border-emerald-500/30 bg-emerald-500/5 p-10 text-center">
+      <div className="absolute -top-12 left-1/2 -translate-x-1/2 h-40 w-80 rounded-full bg-emerald-500/10 blur-3xl" />
+      <div className="relative">
+        <div className="mb-4 text-5xl">✓</div>
+        <h3 className="mb-4 text-2xl font-medium text-white">Dzięki — zapisaliśmy zgłoszenie.</h3>
+        <p className="mx-auto max-w-sm leading-relaxed text-gray-300">
+          Na adres <strong className="text-white">{email}</strong> pojawi się potwierdzenie.
+          Raport przygotujemy do <strong className="text-white">3 dni roboczych</strong>.
+        </p>
+        <p className="mt-6 text-sm text-gray-500">
+          Brak czegoś na skrzynce? Pisz:{' '}
+          <a href="mailto:kamil@syntance.com" className="text-gray-300 underline underline-offset-4">
+            kamil@syntance.com
+          </a>
+        </p>
+      </div>
     </div>
   )
 }

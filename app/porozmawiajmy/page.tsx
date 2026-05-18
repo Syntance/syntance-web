@@ -5,7 +5,7 @@ export default function PorozmawiajmyPage() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ContactPage',
-    name: 'Dlaczego strategia decyduje, czy strona sprzedaje — Syntance',
+    name: 'Skuteczne strony i sklepy, które sprzedają — Syntance',
     url: 'https://syntance.com/porozmawiajmy',
     mainEntity: {
       '@type': 'Organization',
