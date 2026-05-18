@@ -485,7 +485,7 @@ export default function PorozmawiajmyContent() {
               </span>
             </h2>
             <p className="mx-auto max-w-xl text-xl text-gray-400">
-              Klient wybiera obszar, który go dotyczy, i klika dalej. Jeśli
+              Klient wybiera obszar, który go dotyczy i klika dalej. Jeśli
               żaden — klika audyt.
             </p>
           </AnimatedSection>
