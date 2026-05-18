@@ -13,6 +13,7 @@ import { useSearchParams } from 'next/navigation'
 import {
   ArrowRight,
   ArrowLeft,
+  ArrowDown,
   ChevronDown,
   Loader2,
   XCircle,
@@ -365,6 +366,14 @@ export default function PorozmawiajmyContent() {
 
           {/* CTA row */}
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+            {/* Sticky CTA — inline w hero, po scrollu przechodzi do fixed corner */}
+            <StickyCtaFloat
+              heroId="pzm-hero"
+              hideSectionId="pzm-formularz"
+              href="/"
+              label="Dowiedz się więcej"
+            />
+
             {/* Primary */}
             <div className="group relative w-fit shrink-0">
               <div
@@ -380,17 +389,9 @@ export default function PorozmawiajmyContent() {
                 className="relative z-10 inline-flex min-h-[48px] items-center gap-2 rounded-full bg-white px-8 py-3 font-medium tracking-wider text-gray-900 shadow-lg shadow-white/10 transition-all hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
                 Porozmawiajmy
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                <ArrowDown className="h-4 w-4 transition-transform group-hover:translate-y-1" />
               </button>
             </div>
-
-            {/* Sticky CTA — inline w hero, po scrollu przechodzi do fixed corner */}
-            <StickyCtaFloat
-              heroId="pzm-hero"
-              hideSectionId="pzm-formularz"
-              href="/"
-              label="Dowiedz się więcej"
-            />
           </div>
 
         </div>
