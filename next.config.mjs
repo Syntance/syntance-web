@@ -2,6 +2,10 @@
 const nextConfig = {
   experimental: {
     serverActions: { bodySizeLimit: '2mb' },
+    // Inline krytycznego CSS w <head> — eliminuje render-blocking requesty po CSS chunki.
+    inlineCss: true,
+    // Tree-shaking importów ikon/UI — mniejszy bundle JS (lucide ma setki ikon).
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
   images: {
     remotePatterns: [

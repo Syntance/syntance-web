@@ -51,10 +51,8 @@ export default async function RootLayout({
       className={`${spaceGrotesk.variable} ${plusJakartaSans.variable}`}
     >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-        {/* Preconnect dla Sanity (API + CDN) — używane w fetchach klient-side i obrazach */}
+        {/* Brak preconnect do Google Fonts — next/font self-hostuje pliki z własnej domeny.
+            Preconnect tylko do realnie używanych origin (Sanity API + CDN). */}
         <link
           rel="preconnect"
           href={

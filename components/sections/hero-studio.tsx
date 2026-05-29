@@ -1,16 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import GradientText from "../GradientText";
 import StickyCtaFloat from "../StickyCtaFloat";
 
 export default function HeroStudio() {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
-
   const scrollToNext = () => {
     const element = document.getElementById("anatomy-studio");
     if (element) {
@@ -27,11 +20,7 @@ export default function HeroStudio() {
       aria-labelledby="hero-heading"
       className="relative z-10 min-h-screen flex items-center justify-center px-6 lg:px-12 pt-32 pb-20"
     >
-      <div
-        className={`max-w-3xl mx-auto text-center transition-all duration-1000 ${
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-        }`}
-      >
+      <div className="max-w-3xl mx-auto text-center hero-enter">
         <h1
           id="hero-heading"
           className="font-heading mb-6 glow-text"
@@ -69,21 +58,20 @@ export default function HeroStudio() {
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <div
-        className={`absolute bottom-10 left-1/2 -translate-x-1/2 transition-all duration-1000 delay-700 ${
-          isVisible ? "opacity-100" : "opacity-0"
-        }`}
-      >
-        <button
-          onClick={scrollToNext}
-          className="group flex flex-col items-center gap-2 cursor-pointer"
-          aria-label="Przewiń w dół"
-        >
-          <div className="w-6 h-10 border-2 border-gray-600 rounded-full flex justify-center group-hover:border-gray-400 transition-colors">
-            <div className="w-1 h-3 bg-gray-400 rounded-full mt-2 animate-bounce group-hover:bg-white transition-colors" />
-          </div>
-        </button>
+      {/* Scroll indicator — centrowanie na zewn. divie, animacja wejścia na wewn. (translateY
+          z keyframe nie nadpisuje wtedy -translate-x-1/2). */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
+        <div className="hero-enter-delayed">
+          <button
+            onClick={scrollToNext}
+            className="group flex flex-col items-center gap-2 cursor-pointer"
+            aria-label="Przewiń w dół"
+          >
+            <div className="w-6 h-10 border-2 border-gray-600 rounded-full flex justify-center group-hover:border-gray-400 transition-colors">
+              <div className="w-1 h-3 bg-gray-400 rounded-full mt-2 animate-bounce group-hover:bg-white transition-colors" />
+            </div>
+          </button>
+        </div>
       </div>
     </section>
   );

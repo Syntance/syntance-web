@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useLayoutEffect } from "react";
+import { useLayoutEffect } from "react";
 import dynamic from "next/dynamic";
 import SectionScrollbar from "@/components/SectionScrollbar";
 
@@ -20,8 +20,7 @@ const PricingStudioNew = dynamic(() => import("@/components/sections/pricing-stu
 
 
 export default function HomePage() {
-  const [isPageReady, setIsPageReady] = useState(false);
-
+  // Scroll restoration bez ukrywania treści — content musi być widoczny w SSR (LCP).
   useLayoutEffect(() => {
     if (typeof window === 'undefined') return;
     if ('scrollRestoration' in history) {
@@ -30,11 +29,10 @@ export default function HomePage() {
     if (!window.location.hash) {
       window.scrollTo({ top: 0, behavior: 'auto' });
     }
-    setIsPageReady(true);
   }, []);
 
   return (
-    <div className={`min-h-screen transition-opacity duration-200 ${isPageReady ? 'opacity-100' : 'opacity-0'}`}>
+    <div className="min-h-screen">
       <SectionScrollbar />
       
       <main id="main-content">
