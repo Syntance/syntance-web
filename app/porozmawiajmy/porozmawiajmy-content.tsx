@@ -725,7 +725,7 @@ export default function PorozmawiajmyContent() {
                           onChange={v => set('hasWebsite', v as HasWebsite)}
                           options={[
                             { value: 'dziala', label: 'Tak, działa' },
-                            { value: 'do_wymiany', label: 'Tak, ale chcę nowej' },
+                            { value: 'do_wymiany', label: 'Tak, ale chcę nową' },
                           ]}
                         />
                       </Field>
