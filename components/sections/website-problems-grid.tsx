@@ -66,9 +66,9 @@ function ProblemCard({
 }) {
   return (
     <article
-      className={`problem-card rounded-2xl border border-red-500/20 bg-red-500/5 p-6 transition-colors hover:border-red-500/35 ${className}`}
+      className={`problem-card h-full rounded-2xl border border-red-500/20 bg-red-500/5 p-6 transition-colors hover:border-red-500/35 ${className}`}
     >
-      <div className="flex items-start gap-4">
+      <div className="flex h-full items-start gap-4">
         <ProblemIcon />
         <div className="min-w-0 flex-1">
           <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.16em] text-red-300/70">
@@ -115,11 +115,11 @@ export function WebsiteProblemsGrid({ animate = true }: WebsiteProblemsGridProps
 
   return (
     <div>
-      <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
+      <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 md:items-stretch">
         {websiteProblemCards.map((card, index) => (
           <li
             key={card.label}
-            className={cardVisibilityClass}
+            className={`${cardVisibilityClass} h-full`}
             style={animate ? { transitionDelay: `${index * 80}ms` } : undefined}
           >
             <ProblemCard {...card} />
