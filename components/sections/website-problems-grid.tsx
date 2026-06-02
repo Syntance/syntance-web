@@ -7,34 +7,24 @@ export const websiteProblemCards = [
   {
     label: "Czym się zajmujesz",
     headline: "Po 5 sekundach klient nadal nie wie, co sprzedajesz i dla kogo.",
-    consequence:
-      'Hero pełen ogólników: „kompleksowe rozwiązania”, „indywidualne podejście”. Klient nie dopasowuje tego do swojego problemu, więc cofa się do Google i klika konkurenta.',
   },
   {
     label: "Lejek",
     headline: "Sekcje ułożone losowo, nie wzdłuż drogi zakupowej klienta.",
-    consequence:
-      '„O nas”, „Galeria”, „Zespół”, „Blog” w przypadkowej kolejności. Żadna nie odpowiada na pytanie, które klient zadaje na swoim etapie decyzji — scrolluje i wychodzi bez akcji.',
   },
   {
     label: "CTA",
     headline:
       'CTA nie prowadzi do żadnego założonego rezultatu — wszędzie tylko „Kontakt”.',
-    consequence:
-      "Brak jednej zaplanowanej akcji na danym etapie (pobierz / umów / zamów audyt). Klient gotowy do działania nie wie, co ma zrobić, więc nie robi nic.",
   },
   {
     label: "Performance",
     headline:
       "WordPress + 15 wtyczek: 4 s ładowania na telefonie, PageSpeed poniżej 40/100.",
-    consequence:
-      "Każda sekunda powyżej 1 s to ok. −17% konwersji i wyższy koszt leada w Google Ads. Klient z reklamy zamyka kartę, zanim doczyta hero.",
   },
   {
     label: "Spójność",
     headline: "Strona, oferta PDF i profil na LinkedIn mówią trzema różnymi głosami.",
-    consequence:
-      "Inny ton, inne UVP, inne kolory w każdym kanale. Klient czuje rozjazd, traci zaufanie i pyta znajomych o rekomendację zamiast wypełnić formularz.",
   },
 ] as const;
 
@@ -64,12 +54,10 @@ function ProblemIcon() {
 function ProblemCard({
   label,
   headline,
-  consequence,
   className = "",
 }: {
   label: string;
   headline: string;
-  consequence: string;
   className?: string;
 }) {
   return (
@@ -82,11 +70,8 @@ function ProblemCard({
           <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.16em] text-red-300/70">
             {label}
           </p>
-          <p className="mb-3 text-base font-medium leading-snug text-white md:text-lg">
+          <p className="text-base font-medium leading-snug text-white md:text-lg">
             {headline}
-          </p>
-          <p className="text-sm italic leading-relaxed text-gray-400 md:text-[15px]">
-            {consequence}
           </p>
         </div>
       </div>
