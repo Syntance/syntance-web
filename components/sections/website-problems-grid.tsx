@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import AnimatedSection from "@/components/AnimatedSection";
 
 export const websiteProblemCards = [
   {
@@ -27,9 +26,6 @@ export const websiteProblemCards = [
     headline: "Strona, oferta PDF i profil na LinkedIn mówią trzema różnymi głosami.",
   },
 ] as const;
-
-export const websiteProblemEffect =
-  "Efekt: ruch jest, leadów nie ma. Marketing pyta sprzedaży gdzie konwersje, sprzedaż pyta marketingu gdzie ruch. Budżet reklamowy płaci za bounce.";
 
 function ProblemIcon() {
   return (
@@ -123,16 +119,6 @@ export function WebsiteProblemsGrid({ animate = true }: WebsiteProblemsGridProps
         ))}
       </ul>
 
-      {animate ? (
-        <AnimatedSection delay={450} className="mt-8 md:mt-10">
-          <EffectBar />
-        </AnimatedSection>
-      ) : (
-        <div className="mt-8 md:mt-10">
-          <EffectBar />
-        </div>
-      )}
-
       <style jsx>{`
         .problem-card-item.problem-card-visible {
           opacity: 1;
@@ -140,16 +126,5 @@ export function WebsiteProblemsGrid({ animate = true }: WebsiteProblemsGridProps
         }
       `}</style>
     </div>
-  );
-}
-
-export function EffectBar() {
-  return (
-    <aside className="rounded-2xl border border-red-500/25 bg-gradient-to-r from-red-500/10 via-red-500/5 to-orange-500/10 px-6 py-5 md:px-8 md:py-6">
-      <blockquote className="text-base leading-relaxed text-gray-200 md:text-lg">
-        <span className="font-medium text-white">Efekt:</span>{" "}
-        {websiteProblemEffect.replace(/^Efekt:\s*/, "")}
-      </blockquote>
-    </aside>
   );
 }
