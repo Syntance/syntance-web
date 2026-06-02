@@ -16,7 +16,6 @@ import {
   ArrowDown,
   ChevronDown,
   Loader2,
-  XCircle,
   LayoutTemplate,
   ShoppingCart,
   BadgeCheck,
@@ -423,10 +422,13 @@ export default function PorozmawiajmyContent() {
       >
         <div className="mx-auto max-w-4xl">
           <AnimatedSection className="mb-16 text-center">
-            <h2 className="glow-text text-3xl font-light tracking-wide md:text-5xl">
+            <h2 className="glow-text mb-6 text-3xl font-light tracking-wide md:text-5xl">
               Strona bez strategii{' '}
               <span className="text-red-400">wygląda tak:</span>
             </h2>
+            <p className="mx-auto max-w-xl text-xl text-gray-400">
+              Klient się rozpoznaje — i rozumie, dlaczego konwersji nie ma.
+            </p>
           </AnimatedSection>
 
           <div className="mb-16 grid gap-4 md:grid-cols-2 md:gap-5">
