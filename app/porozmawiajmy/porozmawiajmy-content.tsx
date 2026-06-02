@@ -22,7 +22,6 @@ import {
   BadgeCheck,
 } from 'lucide-react'
 import GradientText from '@/components/GradientText'
-import { WebsiteProblemsGrid } from '@/components/sections/website-problems-grid'
 import TiltCard from '@/components/tilt-card'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
 import StickyCtaFloat from '@/components/StickyCtaFloat'
@@ -39,6 +38,14 @@ const scrollbarSections = [
   { id: 'pzm-audyt', label: 'Audyt' },
   { id: 'pzm-faq', label: 'FAQ' },
 ]
+
+const BEZ_STRATEGII = [
+  'Nagłówek o sobie zamiast o kliencie.',
+  'Pięć równorzędnych CTA zamiast jednej oczywistej akcji.',
+  'Blog jako kolekcja artykułów, nie lejek do oferty.',
+  'Stack dobrany „bo każdy ma WordPress".',
+  'Brak liczb, opinii, case studies.',
+] as const
 
 const OBSZARY = [
   {
@@ -414,15 +421,39 @@ export default function PorozmawiajmyContent() {
         data-ph-section="bez-strategii"
         className="relative z-10 px-6 py-32 lg:px-12"
       >
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-4xl">
           <AnimatedSection className="mb-16 text-center">
-            <h2 className="glow-text text-3xl font-light tracking-wide md:text-5xl">
+            <h2 className="glow-text mb-6 text-3xl font-light tracking-wide md:text-5xl">
               Strona bez strategii{' '}
               <span className="text-red-400">wygląda tak:</span>
             </h2>
+            <p className="mx-auto max-w-xl text-xl text-gray-400">
+              Klient się rozpoznaje — i rozumie, dlaczego konwersji nie ma.
+            </p>
           </AnimatedSection>
 
-          <WebsiteProblemsGrid />
+          <div className="mb-16 grid gap-4 md:grid-cols-2 md:gap-5">
+            {BEZ_STRATEGII.map((line, i) => (
+              <AnimatedSection key={i} delay={i * 80}>
+                <div className="flex items-start gap-4 rounded-2xl border border-red-500/20 bg-red-500/5 p-5 transition-colors hover:border-red-500/40">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-500/10">
+                    <XCircle className="h-5 w-5 text-red-400" />
+                  </div>
+                  <p className="text-white leading-relaxed">{line}</p>
+                </div>
+              </AnimatedSection>
+            ))}
+          </div>
+
+          <AnimatedSection delay={500}>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center">
+              <p className="text-lg leading-relaxed text-gray-300">
+                <strong className="font-medium text-white">Efekt:</strong> ruch
+                jest, leadów nie ma. Marketing pyta sprzedaży gdzie konwersje,
+                sprzedaż pyta marketingu gdzie ruch.
+              </p>
+            </div>
+          </AnimatedSection>
         </div>
       </section>
 
@@ -453,10 +484,6 @@ export default function PorozmawiajmyContent() {
                 strategia decyduje o wyniku
               </span>
             </h2>
-            <p className="mx-auto max-w-xl text-xl text-gray-400">
-              Klient wybiera obszar, który go dotyczy i klika dalej. Jeśli
-              żaden — klika audyt.
-            </p>
           </AnimatedSection>
 
           <div className="mb-16 grid gap-6 md:grid-cols-3 md:gap-8">
