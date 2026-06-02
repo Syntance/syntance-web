@@ -26,10 +26,14 @@ export const websiteProblemCards = [
     label: "Spójność",
     headline: "Strona, oferta PDF i profil na LinkedIn mówią trzema różnymi głosami.",
   },
+  {
+    label: "Efekt biznesowy",
+    headline: "Strona nie spełnia celu biznesowego.",
+  },
 ] as const;
 
 export const websiteProblemEffect =
-  "Efekt: ruch jest, leadów nie ma. Marketing pyta sprzedaży gdzie konwersje, sprzedaż pyta marketingu gdzie ruch. Budżet reklamowy płaci za bounce.";
+  "Efekt: ruch jest, leadów nie ma. Marketing pyta sprzedaży gdzie konwersje, sprzedaż pyta marketingu gdzie ruch.";
 
 function ProblemIcon() {
   return (
