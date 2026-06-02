@@ -4,14 +4,15 @@ import { useEffect, useState, useRef } from 'react'
 import {
   Check,
   ArrowRight,
+  XCircle,
   Building2,
   Factory,
   Lightbulb,
   Home,
   ChevronDown,
+  TrendingUp,
 } from 'lucide-react'
 import Link from 'next/link'
-import { WebsiteProblemsGrid } from '@/components/sections/website-problems-grid'
 import GradientText from '@/components/GradientText'
 import TiltCard from '@/components/tilt-card'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
@@ -68,6 +69,13 @@ function AnimatedSection({
     </div>
   )
 }
+
+const problems = [
+  { icon: XCircle, text: "Wolna", desc: "użytkownicy uciekają po 3 sekundach" },
+  { icon: XCircle, text: "Niewidoczna w Google i AI", desc: "brak ruchu organicznego." },
+  { icon: XCircle, text: "Przestarzała technologia", desc: "WordPress z 50 wtyczkami" },
+  { icon: XCircle, text: "Brak strategii", desc: "\"ładna\" strona bez celu biznesowego" },
+]
 
 const solutions = [
   { title: "Szybkość", description: "PageSpeed 90+ gwarantowany" },
@@ -196,20 +204,34 @@ export default function StronyWWWContent({
         </div>
       </section>
 
-      {/* Problem Section */}
+      {/* Problem Section - Dramatic reveal */}
       <section id="problem" className="relative z-10 py-32 px-6 lg:px-12">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <AnimatedSection>
             <h2 className="text-3xl md:text-5xl font-light tracking-wide text-center mb-6">
               Dlaczego Twoja strona{' '}
               <span className="text-red-400">nie działa?</span>
             </h2>
-            <p className="text-xl text-gray-400 text-center mb-16 md:mb-20">
+            <p className="text-xl text-gray-400 text-center mb-20">
               Większość stron wygląda dobrze, ale nie sprzedaje.
             </p>
           </AnimatedSection>
-
-          <WebsiteProblemsGrid />
+          
+          <div className="grid md:grid-cols-2 gap-6">
+            {problems.map((problem, index) => (
+              <AnimatedSection key={index} delay={index * 100}>
+                <div className="flex items-start gap-4 p-6 rounded-2xl bg-red-500/5 border border-red-500/20 hover:border-red-500/40 transition-colors">
+                  <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center flex-shrink-0">
+                    <problem.icon className="w-5 h-5 text-red-400" />
+                  </div>
+                  <div>
+                    <p className="text-white font-medium mb-1">{problem.text}</p>
+                    <p className="text-gray-400 text-sm">{problem.desc}</p>
+                  </div>
+                </div>
+              </AnimatedSection>
+            ))}
+          </div>
         </div>
       </section>
 
