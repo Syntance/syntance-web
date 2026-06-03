@@ -548,25 +548,27 @@ const GooeyNav = ({
                     </svg>
                   )}
                 </a>
-                {/* Dropdown menu */}
-                {item.dropdown && item.dropdown.length > 0 && (
-                  <div
-                    className={`gooey-dropdown ${openDropdown === index ? 'open' : ''}`}
-                  >
-                    {item.dropdown.map((dropItem, dropIndex) => (
-                      <button
-                        key={dropIndex}
-                        className="gooey-dropdown-item w-full text-left"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDropdownClick(dropItem.href);
-                        }}
-                      >
-                        {dropItem.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
+                {/* Dropdown tylko gdy otwarty — brak w SSR/HTML przy reload (FOUC) */}
+                {openDropdown === index &&
+                  item.dropdown &&
+                  item.dropdown.length > 0 && (
+                    <div className="gooey-dropdown" role="menu">
+                      {item.dropdown.map((dropItem, dropIndex) => (
+                        <button
+                          key={dropIndex}
+                          type="button"
+                          role="menuitem"
+                          className="gooey-dropdown-item w-full text-left"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDropdownClick(dropItem.href);
+                          }}
+                        >
+                          {dropItem.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
               </li>
             ))}
           </ul>

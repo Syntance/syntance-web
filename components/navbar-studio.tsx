@@ -262,9 +262,11 @@ export default function NavbarStudio() {
 
               <div
                 id="mobile-blog-submenu"
-                className={`overflow-hidden transition-all duration-300 ease-out ${
-                  mobileBlogOpen ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'
-                }`}
+                className={
+                  mobileBlogOpen
+                    ? 'overflow-hidden max-h-[200px] opacity-100 transition-all duration-300 ease-out'
+                    : 'hidden'
+                }
               >
                 <div className="pl-4 pb-2 space-y-0.5 border-l-2 border-purple-500/30 ml-2">
                   <Link
