@@ -530,45 +530,52 @@ const GooeyNav = ({
                 <a
                   href={item.href}
                   onKeyDown={e => handleKeyDown(e, index)}
-                  className="outline-none py-[0.5em] px-[0.7em] xl:py-[0.6em] xl:px-[1em] inline-flex items-center"
+                  className={`outline-none py-[0.5em] px-[0.7em] xl:py-[0.6em] xl:px-[1em] ${
+                    item.dropdown && item.dropdown.length > 0
+                      ? 'gooey-nav-with-chevron'
+                      : 'inline-flex items-center'
+                  }`}
                   onClick={(e) => item.dropdown && e.preventDefault()}
                 >
-                  {item.label}
-                  {item.dropdown && item.dropdown.length > 0 && (
-                    <svg 
-                      className={`gooey-chevron ${openDropdown === index ? 'open' : ''}`}
-                      width="14" 
-                      height="14" 
-                      viewBox="0 0 24 24" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      strokeWidth="2"
-                    >
-                      <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
+                  {item.dropdown && item.dropdown.length > 0 ? (
+                    <>
+                      <span>{item.label}</span>
+                      <svg
+                        aria-hidden
+                        className={`gooey-nav-chevron ${
+                          openDropdown === index ? 'is-open' : ''
+                        }`}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <polyline points="6 9 12 15 18 9" />
+                      </svg>
+                    </>
+                  ) : (
+                    item.label
                   )}
                 </a>
-                {/* Dropdown tylko gdy otwarty — brak w SSR/HTML przy reload (FOUC) */}
-                {openDropdown === index &&
-                  item.dropdown &&
-                  item.dropdown.length > 0 && (
-                    <div className="gooey-dropdown" role="menu">
-                      {item.dropdown.map((dropItem, dropIndex) => (
-                        <button
-                          key={dropIndex}
-                          type="button"
-                          role="menuitem"
-                          className="gooey-dropdown-item w-full text-left"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDropdownClick(dropItem.href);
-                          }}
-                        >
-                          {dropItem.label}
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                {/* Dropdown menu */}
+                {item.dropdown && item.dropdown.length > 0 && (
+                  <div
+                    className={`gooey-dropdown ${openDropdown === index ? 'open' : ''}`}
+                  >
+                    {item.dropdown.map((dropItem, dropIndex) => (
+                      <button
+                        key={dropIndex}
+                        className="gooey-dropdown-item w-full text-left"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDropdownClick(dropItem.href);
+                        }}
+                      >
+                        {dropItem.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </li>
             ))}
           </ul>
