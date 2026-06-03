@@ -20,7 +20,7 @@ export default function HeroStudio() {
       aria-labelledby="hero-heading"
       className="relative z-10 min-h-screen flex items-center justify-center px-6 lg:px-12 pt-32 pb-20"
     >
-      <div className="max-w-3xl mx-auto text-center hero-enter">
+      <div className="max-w-3xl mx-auto text-center">
         <h1
           id="hero-heading"
           className="font-heading mb-6 glow-text"
@@ -59,17 +59,15 @@ export default function HeroStudio() {
       </div>
 
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
-        <div>
-          <button
-            onClick={scrollToNext}
-            className="group flex flex-col items-center gap-2 cursor-pointer"
-            aria-label="Przewiń w dół"
-          >
-            <div className="w-6 h-10 border-2 border-gray-600 rounded-full flex justify-center group-hover:border-gray-400 transition-colors">
-              <div className="w-1 h-3 bg-gray-400 rounded-full mt-2 animate-bounce group-hover:bg-white transition-colors" />
-            </div>
-          </button>
-        </div>
+        <button
+          onClick={scrollToNext}
+          className="group flex flex-col items-center gap-2 cursor-pointer"
+          aria-label="Przewiń w dół"
+        >
+          <div className="w-6 h-10 border-2 border-gray-600 rounded-full flex justify-center group-hover:border-gray-400 transition-colors">
+            <div className="w-1 h-3 bg-gray-400 rounded-full mt-2 animate-bounce group-hover:bg-white transition-colors" />
+          </div>
+        </button>
       </div>
     </section>
   );
