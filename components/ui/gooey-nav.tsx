@@ -457,51 +457,6 @@ const GooeyNav = ({
           transition: all 0.3s ease;
           z-index: -1;
         }
-        .gooey-dropdown {
-          position: absolute;
-          top: 100%;
-          left: 50%;
-          transform: translateX(-50%);
-          margin-top: 1rem;
-          padding: 0.5rem 0;
-          background: rgba(17, 24, 39, 0.95);
-          backdrop-filter: blur(12px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 0.75rem;
-          min-width: 180px;
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-          z-index: 50;
-          opacity: 0;
-          pointer-events: none;
-          transition: all 0.2s ease;
-        }
-        .gooey-dropdown.open {
-          opacity: 1;
-          pointer-events: auto;
-          transform: translateX(-50%) translateY(0);
-        }
-        .gooey-dropdown-item {
-          display: block;
-          padding: 0.5rem 1rem;
-          color: rgba(156, 163, 175, 1);
-          font-size: 0.875rem;
-          font-weight: 300;
-          letter-spacing: 0.05em;
-          transition: all 0.15s ease;
-          cursor: pointer;
-        }
-        .gooey-dropdown-item:hover {
-          color: white;
-          background: rgba(255, 255, 255, 0.05);
-        }
-        .gooey-chevron {
-          display: inline-block;
-          margin-left: 4px;
-          transition: transform 0.2s ease;
-        }
-        .gooey-chevron.open {
-          transform: rotate(180deg);
-        }
       `}</style>
       <div className="relative" ref={containerRef}>
         <nav className="flex relative" style={{ transform: 'translate3d(0,0,0.01px)' }}>
@@ -530,52 +485,47 @@ const GooeyNav = ({
                 <a
                   href={item.href}
                   onKeyDown={e => handleKeyDown(e, index)}
-                  className={`outline-none py-[0.5em] px-[0.7em] xl:py-[0.6em] xl:px-[1em] ${
-                    item.dropdown && item.dropdown.length > 0
-                      ? 'gooey-nav-with-chevron'
-                      : 'inline-flex items-center'
-                  }`}
+                  className="outline-none py-[0.5em] px-[0.7em] xl:py-[0.6em] xl:px-[1em] inline-flex items-center gap-1.5 whitespace-nowrap"
                   onClick={(e) => item.dropdown && e.preventDefault()}
                 >
-                  {item.dropdown && item.dropdown.length > 0 ? (
-                    <>
-                      <span>{item.label}</span>
-                      <svg
-                        aria-hidden
-                        className={`gooey-nav-chevron ${
-                          openDropdown === index ? 'is-open' : ''
-                        }`}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <polyline points="6 9 12 15 18 9" />
-                      </svg>
-                    </>
-                  ) : (
-                    item.label
+                  {item.label}
+                  {item.dropdown && item.dropdown.length > 0 && (
+                    <svg
+                      aria-hidden
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      className={`size-3.5 shrink-0 transition-transform duration-200 ${
+                        openDropdown === index ? 'rotate-180' : ''
+                      }`}
+                    >
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
                   )}
                 </a>
-                {/* Dropdown menu */}
-                {item.dropdown && item.dropdown.length > 0 && (
-                  <div
-                    className={`gooey-dropdown ${openDropdown === index ? 'open' : ''}`}
-                  >
-                    {item.dropdown.map((dropItem, dropIndex) => (
-                      <button
-                        key={dropIndex}
-                        className="gooey-dropdown-item w-full text-left"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDropdownClick(dropItem.href);
-                        }}
-                      >
-                        {dropItem.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
+                {openDropdown === index &&
+                  item.dropdown &&
+                  item.dropdown.length > 0 && (
+                    <div className="gooey-dropdown" role="menu">
+                      {item.dropdown.map((dropItem, dropIndex) => (
+                        <button
+                          key={dropIndex}
+                          type="button"
+                          role="menuitem"
+                          className="gooey-dropdown-item w-full text-left"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDropdownClick(dropItem.href);
+                          }}
+                        >
+                          {dropItem.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
               </li>
             ))}
           </ul>
