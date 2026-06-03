@@ -20,7 +20,7 @@ export default function HeroStudio() {
       aria-labelledby="hero-heading"
       className="relative z-10 min-h-screen flex items-center justify-center px-6 lg:px-12 pt-32 pb-20"
     >
-      <div className="max-w-3xl mx-auto text-center">
+      <div className="max-w-3xl mx-auto text-center hero-enter">
         <h1
           id="hero-heading"
           className="font-heading mb-6 glow-text"
@@ -61,7 +61,7 @@ export default function HeroStudio() {
       {/* Scroll indicator — centrowanie na zewn. divie, animacja wejścia na wewn. (translateY
           z keyframe nie nadpisuje wtedy -translate-x-1/2). */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
-        <div className="hero-enter-delayed">
+        <div>
           <button
             onClick={scrollToNext}
             className="group flex flex-col items-center gap-2 cursor-pointer"
