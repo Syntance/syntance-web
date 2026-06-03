@@ -1,7 +1,10 @@
 'use client'
 
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback, type MouseEvent } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
+
+const CTA_CLASS =
+  'px-8 py-3 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 glow-box cursor-pointer inline-flex items-center justify-center text-center whitespace-nowrap shadow-lg shadow-white/10'
 
 interface StickyCtaFloatProps {
   heroId: string
@@ -23,37 +26,18 @@ function StickyCtaFloatInner({
 }: StickyCtaFloatProps) {
   const router = useRouter()
   const wrapRef = useRef<HTMLDivElement>(null)
-  const elRef = useRef<HTMLAnchorElement | null>(null)
+  const elRef = useRef<HTMLAnchorElement>(null)
   const isFixedRef = useRef(false)
   const animatingRef = useRef(false)
   const flipGenRef = useRef(0)
 
-  useEffect(() => {
-    const wrap = wrapRef.current
-    if (!wrap) return
-
-    const el = document.createElement('a')
-    el.href = href
-    el.textContent = label
-    el.setAttribute('data-syntance-sticky-cta', 'true')
-    el.className =
-      'px-8 py-3 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 glow-box cursor-pointer inline-flex items-center justify-center text-center whitespace-nowrap shadow-lg shadow-white/10'
-    el.style.transition = 'opacity 0.3s ease-out'
-    el.addEventListener('click', (e) => {
+  const handleClick = useCallback(
+    (e: MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault()
       router.push(href)
-    })
-    wrap.appendChild(el)
-    elRef.current = el
-
-    return () => {
-      el.style.cssText = 'display:none!important'
-      el.remove()
-      elRef.current = null
-      isFixedRef.current = false
-      animatingRef.current = false
-    }
-  }, [href, label, router])
+    },
+    [href, router],
+  )
 
   const flipToFixed = useCallback(() => {
     const el = elRef.current
@@ -69,7 +53,6 @@ function StickyCtaFloatInner({
     document.body.appendChild(el)
 
     el.style.position = 'fixed'
-    // safe-area-inset-bottom uwzględnia iOS home indicator, fallback 1.5rem.
     el.style.bottom = 'max(1.5rem, env(safe-area-inset-bottom))'
     el.style.right = 'max(1.5rem, env(safe-area-inset-right))'
     el.style.left = 'auto'
@@ -77,7 +60,6 @@ function StickyCtaFloatInner({
     el.style.zIndex = '50'
     el.style.fontSize = '0.875rem'
     el.style.padding = '0.75rem 1.5rem'
-    // Touch target ≥ 44px (Apple HIG / WCAG 2.2)
     el.style.minHeight = '44px'
 
     const last = el.getBoundingClientRect()
@@ -150,12 +132,14 @@ function StickyCtaFloatInner({
     const startTime = performance.now()
 
     const ease = (t: number) => {
-      const x1 = 0.22, x2 = 0.36
+      const x1 = 0.22
+      const x2 = 0.36
       let s = t
       for (let i = 0; i < 8; i++) {
         const cs = 1 - s
         const x = 3 * cs * cs * s * x1 + 3 * cs * s * s * x2 + s * s * s
-        const dx = 3 * cs * cs * x1 + 6 * cs * s * (x2 - x1) + 3 * s * s * (1 - x2)
+        const dx =
+          3 * cs * cs * x1 + 6 * cs * s * (x2 - x1) + 3 * s * s * (1 - x2)
         if (Math.abs(dx) < 1e-6) break
         s = Math.max(0, Math.min(1, s - (x - t) / dx))
       }
@@ -171,9 +155,10 @@ function StickyCtaFloatInner({
       const dx = baseDx * (1 - e)
       const sx = sxStart + (1 - sxStart) * e
       const sy = syStart + (1 - syStart) * e
-      el.style.transform = p < 1
-        ? `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`
-        : 'none'
+      el.style.transform =
+        p < 1
+          ? `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`
+          : 'none'
       if (p < 1) {
         requestAnimationFrame(tick)
       } else {
@@ -196,7 +181,7 @@ function StickyCtaFloatInner({
           flipToInline()
         }
       },
-      { threshold: [0, 0.3, 0.5, 0.7, 0.8, 1] }
+      { threshold: [0, 0.3, 0.5, 0.7, 0.8, 1] },
     )
     observer.observe(hero)
 
@@ -222,19 +207,19 @@ function StickyCtaFloatInner({
           el.style.pointerEvents = ''
         }
       },
-      { threshold: 0.15 }
+      { threshold: 0.15 },
     )
     observer.observe(section)
     return () => observer.disconnect()
   }, [hideSectionId])
 
-  // Ukryj czy pokaż przycisk gdy menu mobilne się otwiera/zamyka
   useEffect(() => {
     const checkMenuState = () => {
       const el = elRef.current
       if (!el) return
-      
-      const isMenuOpen = document.documentElement.getAttribute('data-mobile-nav-open') === 'true'
+
+      const isMenuOpen =
+        document.documentElement.getAttribute('data-mobile-nav-open') === 'true'
       if (isMenuOpen) {
         el.style.display = 'none'
       } else {
@@ -242,10 +227,8 @@ function StickyCtaFloatInner({
       }
     }
 
-    // Sprawdź natychmiast przy montowaniu
     checkMenuState()
 
-    // Obserwuj zmiany atrybutu na HTML
     const observer = new MutationObserver(checkMenuState)
     observer.observe(document.documentElement, {
       attributes: true,
@@ -265,7 +248,7 @@ function StickyCtaFloatInner({
       }
     }
 
-    const onClick = (e: MouseEvent) => {
+    const onClick = (e: globalThis.MouseEvent) => {
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
       const elLink = (e.target as HTMLElement | null)?.closest?.('a[href]')
       if (!elLink || !(elLink instanceof HTMLAnchorElement)) return
@@ -288,9 +271,21 @@ function StickyCtaFloatInner({
       }
     }
     document.addEventListener('click', onClick, true)
-    return () =>
-      document.removeEventListener('click', onClick, true)
+    return () => document.removeEventListener('click', onClick, true)
   }, [])
 
-  return <div ref={wrapRef} className="inline-flex justify-center" />
+  return (
+    <div ref={wrapRef} className="inline-flex justify-center shrink-0">
+      <a
+        ref={elRef}
+        href={href}
+        data-syntance-sticky-cta="true"
+        onClick={handleClick}
+        className={CTA_CLASS}
+        style={{ transition: 'opacity 0.3s ease-out' }}
+      >
+        {label}
+      </a>
+    </div>
+  )
 }
