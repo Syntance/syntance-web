@@ -61,7 +61,7 @@ export default function HeroStudio() {
       {/* Scroll indicator — centrowanie na zewn. divie, animacja wejścia na wewn. (translateY
           z keyframe nie nadpisuje wtedy -translate-x-1/2). */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
-        <div className="hero-enter-delayed">
+        <div>
           <button
             onClick={scrollToNext}
             className="group flex flex-col items-center gap-2 cursor-pointer"
