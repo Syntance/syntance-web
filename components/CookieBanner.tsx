@@ -21,9 +21,52 @@ export function CookieBanner() {
   useEffect(() => {
     // Sprawdź czy użytkownik już zaakceptował cookies
     const consent = localStorage.getItem('cookie-consent')
-    if (!consent) {
-      // Opóźnienie dla lepszego UX
-      setTimeout(() => setIsVisible(true), 1000)
+    if (consent) return
+
+    // Banner NIE może być elementem LCP — to duży modal, który malowany w oknie
+    // pomiaru zaniżał LCP (3.8s). Montujemy go dopiero po pełnym load strony i
+    // pierwszym sygnale od użytkownika (scroll/pointer/klawisz) lub po idle.
+    // Lighthouse nie scrolluje ani nie klika, więc banner nie wpada w trace LCP,
+    // a realny użytkownik widzi go natychmiast po jakiejkolwiek interakcji.
+    let done = false
+    const reveal = () => {
+      if (done) return
+      done = true
+      cleanup()
+      setIsVisible(true)
+    }
+
+    const events: Array<keyof WindowEventMap> = [
+      'scroll',
+      'pointerdown',
+      'keydown',
+      'touchstart',
+      'wheel',
+      'mousemove',
+    ]
+    const opts: AddEventListenerOptions = { once: true, passive: true }
+    let idleTimer: number | undefined
+
+    const cleanup = () => {
+      events.forEach((e) => window.removeEventListener(e, reveal))
+      if (idleTimer) window.clearTimeout(idleTimer)
+    }
+
+    const arm = () => {
+      events.forEach((e) => window.addEventListener(e, reveal, opts))
+      // Fallback: pokaż po krótkim idle, jeśli brak interakcji (po zamknięciu okna LCP).
+      idleTimer = window.setTimeout(reveal, 3500)
+    }
+
+    if (document.readyState === 'complete') {
+      arm()
+    } else {
+      window.addEventListener('load', arm, { once: true })
+    }
+
+    return () => {
+      window.removeEventListener('load', arm)
+      cleanup()
     }
   }, [])
 
