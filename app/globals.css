@@ -159,47 +159,6 @@
   }
 }
 
-/* GooeyNav — dropdown Blog w bundlu CSS (nie czeka na styled-jsx po hydracji) */
-.gooey-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-top: 1rem;
-  padding: 0.5rem 0;
-  background: rgba(17, 24, 39, 0.95);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.75rem;
-  min-width: 180px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-  z-index: 50;
-  opacity: 1;
-  pointer-events: auto;
-}
-.gooey-dropdown-item {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: rgba(156, 163, 175, 1);
-  font-size: 0.875rem;
-  font-weight: 300;
-  letter-spacing: 0.05em;
-  transition: background-color 0.15s ease, color 0.15s ease;
-  cursor: pointer;
-}
-.gooey-dropdown-item:hover {
-  color: white;
-  background: rgba(255, 255, 255, 0.05);
-}
-.gooey-chevron {
-  display: inline-block;
-  margin-left: 4px;
-  transition: transform 0.2s ease;
-}
-.gooey-chevron.open {
-  transform: rotate(180deg);
-}
-
 /* ─────────────────────────────────────────────────────────────────
    Mobile-only fundamenty (rules: 50-perf-a11y / WCAG 2.2).
    Wszystkie reguły wewnątrz @media (max-width: 768px) NIE wpływają
@@ -331,25 +290,6 @@
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
-}
-
-/* Wejście hero — animacja CZYSTO CSS (startuje przy pierwszym renderze, nie czeka na
-   hydrację JS). Kluczowe dla LCP: <h1> jest w SSR HTML i maluje się od razu. */
-@keyframes hero-rise {
-  from { opacity: 0; transform: translateY(2rem); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@utility hero-enter {
-  animation: hero-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-@utility hero-enter-delayed {
-  animation: hero-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.6s both;
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-enter,
-  .hero-enter-delayed {
-    animation: none;
-  }
 }
 
 /* tailwindcss-animate replacements */

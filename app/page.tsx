@@ -1,6 +1,8 @@
+"use client";
+
+import { useLayoutEffect } from "react";
 import dynamic from "next/dynamic";
 import SectionScrollbar from "@/components/SectionScrollbar";
-import ScrollRestoration from "@/components/ScrollRestoration";
 
 import AnimatedSection from "@/components/AnimatedSection";
 import { ContactForm } from "@/components/contact-form";
@@ -18,9 +20,19 @@ const PricingStudioNew = dynamic(() => import("@/components/sections/pricing-stu
 
 
 export default function HomePage() {
+  // Scroll restoration bez ukrywania treści — content musi być widoczny w SSR (LCP).
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined') return;
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    if (!window.location.hash && window.scrollY > 0) {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+  }, []);
+
   return (
     <div className="min-h-screen">
-      <ScrollRestoration />
       <SectionScrollbar />
       
       <main id="main-content">
