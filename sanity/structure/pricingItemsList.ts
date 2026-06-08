@@ -1,111 +1,76 @@
-import type { StructureBuilder, StructureResolverContext } from 'sanity/structure'
-
-const API_VERSION = '2024-01-01'
+import type { StructureBuilder } from 'sanity/structure'
 
 const PRICING_ITEM_ORDERING = [
   { field: 'category.order', direction: 'asc' as const },
   { field: 'order', direction: 'asc' as const },
 ]
 
-type FilterDoc = {
-  _id: string
-  name: string
-}
-
-function allPricingItemsList(S: StructureBuilder) {
-  return S.documentTypeList('pricingItem')
-    .title('Wszystkie pozycje')
+function filteredPricingItemsList(
+  S: StructureBuilder,
+  title: string,
+  filter: string,
+  params: Record<string, string>
+) {
+  return S.documentList()
+    .schemaType('pricingItem')
+    .title(title)
+    .filter(filter)
+    .params(params)
     .defaultOrdering(PRICING_ITEM_ORDERING)
 }
 
-function pricingItemsByProjectTypeList(
-  S: StructureBuilder,
-  context: StructureResolverContext
-) {
-  return context
-    .getClient({ apiVersion: API_VERSION })
-    .fetch<FilterDoc[]>(
-      `*[_type == "projectType"] | order(order asc) { _id, name }`
-    )
-    .then((projectTypes) =>
-      S.list()
-        .title('Według typu projektu')
-        .items(
-          projectTypes.map((projectType) =>
-            S.listItem()
-              .id(`pricingItem-projectType-${projectType._id}`)
-              .title(projectType.name)
-              .child(
-                S.documentList()
-                  .schemaType('pricingItem')
-                  .title(projectType.name)
-                  .filter(
-                    '_type == "pricingItem" && references($projectTypeId)'
-                  )
-                  .params({ projectTypeId: projectType._id })
-                  .defaultOrdering(PRICING_ITEM_ORDERING)
-              )
+export function pricingConfiguratorItems(S: StructureBuilder) {
+  return [
+    S.listItem()
+      .title('🏷️ Typ pakietu (WWW / sklep / app)')
+      .id('projectType')
+      .child(
+        S.documentTypeList('projectType').title('Typ pakietu (gotowe pakiety)')
+      ),
+    S.listItem()
+      .title('📂 Kategorie w pakietach')
+      .id('pricingCategory')
+      .child(
+        S.documentTypeList('pricingCategory').title('Kategorie w pakietach')
+      ),
+    S.divider(),
+    S.listItem()
+      .title('🧩 Wszystkie pozycje cennika')
+      .id('pricingItem-all')
+      .child(
+        S.documentTypeList('pricingItem')
+          .title('Wszystkie pozycje cennika')
+          .defaultOrdering(PRICING_ITEM_ORDERING)
+      ),
+    S.listItem()
+      .title('🏷️ Filtruj po typie projektu')
+      .id('pricingItem-filter-projectType')
+      .child(
+        S.documentTypeList('projectType')
+          .title('Wybierz typ projektu')
+          .child((projectTypeId) =>
+            filteredPricingItemsList(
+              S,
+              'Pozycje cennika',
+              '_type == "pricingItem" && references($projectTypeId)',
+              { projectTypeId }
+            )
           )
-        )
-    )
-}
-
-function pricingItemsByCategoryList(
-  S: StructureBuilder,
-  context: StructureResolverContext
-) {
-  return context
-    .getClient({ apiVersion: API_VERSION })
-    .fetch<FilterDoc[]>(
-      `*[_type == "pricingCategory"] | order(order asc) { _id, name }`
-    )
-    .then((categories) =>
-      S.list()
-        .title('Według kategorii')
-        .items(
-          categories.map((category) =>
-            S.listItem()
-              .id(`pricingItem-category-${category._id}`)
-              .title(category.name)
-              .child(
-                S.documentList()
-                  .schemaType('pricingItem')
-                  .title(category.name)
-                  .filter(
-                    '_type == "pricingItem" && category._ref == $categoryId'
-                  )
-                  .params({ categoryId: category._id })
-                  .defaultOrdering(PRICING_ITEM_ORDERING)
-              )
+      ),
+    S.listItem()
+      .title('📂 Filtruj po kategorii')
+      .id('pricingItem-filter-category')
+      .child(
+        S.documentTypeList('pricingCategory')
+          .title('Wybierz kategorię')
+          .child((categoryId) =>
+            filteredPricingItemsList(
+              S,
+              'Pozycje cennika',
+              '_type == "pricingItem" && category._ref == $categoryId',
+              { categoryId }
+            )
           )
-        )
-    )
-}
-
-export function pricingItemsListItem(
-  S: StructureBuilder,
-  context: StructureResolverContext
-) {
-  return S.listItem()
-    .title('🧩 Pozycje cennika i dodatki')
-    .id('pricingItem')
-    .child(
-      S.list()
-        .title('Pozycje cennika i dodatki')
-        .items([
-          S.listItem()
-            .title('📋 Wszystkie pozycje')
-            .id('pricingItem-all')
-            .child(allPricingItemsList(S)),
-          S.divider(),
-          S.listItem()
-            .title('🏷️ Według typu projektu')
-            .id('pricingItem-by-projectType')
-            .child(() => pricingItemsByProjectTypeList(S, context)),
-          S.listItem()
-            .title('📂 Według kategorii')
-            .id('pricingItem-by-category')
-            .child(() => pricingItemsByCategoryList(S, context)),
-        ])
-    )
+      ),
+  ]
 }
