@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { fetchPricingData } from '@/lib/pricing-data'
 import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
 
-export const revalidate = 120
+export const dynamic = 'force-dynamic'
 
 /**
  * Publiczne kwoty „od …” (netto) — spójne z meta, FAQ i konfiguratorem.
@@ -14,7 +14,7 @@ export async function GET() {
     const body = getConfiguratorMinimumPricesNet(data)
     return NextResponse.json(body, {
       headers: {
-        'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
+        'Cache-Control': 'no-store, max-age=0',
       },
     })
   } catch (e) {

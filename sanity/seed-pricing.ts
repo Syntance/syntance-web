@@ -39,7 +39,6 @@ interface Item {
   required?: boolean
   maxQuantity?: number
   percentageAdd?: number
-  order?: number
   popular?: boolean
   new?: boolean
 }
@@ -62,71 +61,71 @@ const projectTypes: ProjectType[] = [
 
 const items: Item[] = [
   // BAZA - WEBSITE
-  { id: 'web-setup', name: 'Setup projektu', description: 'Next.js, Vercel, DNS, SSL', price: 1600, hours: 8, category: 'base', projectTypes: ['website'], required: true, order: 1 },
-  { id: 'web-design-system', name: 'Design System', description: 'Style, typografia, komponenty', price: 600, hours: 3, category: 'base', projectTypes: ['website'], required: true, order: 2 },
-  { id: 'web-homepage', name: 'Strona główna', description: 'Do 5 sekcji, responsywność', price: 2200, hours: 11, category: 'base', projectTypes: ['website'], required: true, order: 3 },
+  { id: 'web-setup', name: 'Setup projektu', description: 'Next.js, Vercel, DNS, SSL', price: 1600, hours: 8, category: 'base', projectTypes: ['website'], required: true },
+  { id: 'web-design-system', name: 'Design System', description: 'Style, typografia, komponenty', price: 600, hours: 3, category: 'base', projectTypes: ['website'], required: true },
+  { id: 'web-homepage', name: 'Strona główna', description: 'Do 5 sekcji, responsywność', price: 2200, hours: 11, category: 'base', projectTypes: ['website'], required: true },
   
   // PODSTRONY
-  { id: 'page-standard', name: 'Podstrona standardowa', description: 'O nas, Kontakt, Usługi', price: 400, hours: 2, category: 'pages', projectTypes: ['website', 'ecommerce'], maxQuantity: 10, order: 1 },
-  { id: 'page-cms', name: 'Podstrona CMS', description: 'Edytowalna treść w Sanity', price: 800, hours: 4, category: 'pages', projectTypes: ['website', 'ecommerce'], maxQuantity: 10, order: 2, popular: true },
-  { id: 'page-landing', name: 'Landing Page', description: 'Strona promocyjna / kampania', price: 1200, hours: 6, category: 'pages', projectTypes: ['website'], maxQuantity: 5, order: 3 },
+  { id: 'page-standard', name: 'Podstrona standardowa', description: 'O nas, Kontakt, Usługi', price: 400, hours: 2, category: 'pages', projectTypes: ['website', 'ecommerce'], maxQuantity: 10 },
+  { id: 'page-cms', name: 'Podstrona CMS', description: 'Edytowalna treść w Sanity', price: 800, hours: 4, category: 'pages', projectTypes: ['website', 'ecommerce'], maxQuantity: 10, popular: true },
+  { id: 'page-landing', name: 'Landing Page', description: 'Strona promocyjna / kampania', price: 1200, hours: 6, category: 'pages', projectTypes: ['website'], maxQuantity: 5 },
   
   // SEKCJE
-  { id: 'section-faq', name: 'FAQ', description: 'Pytania i odpowiedzi', price: 200, hours: 1, category: 'sections', projectTypes: ['website', 'ecommerce'], order: 1 },
-  { id: 'section-portfolio', name: 'Portfolio / Case Studies', description: 'Prezentacja realizacji', price: 500, hours: 4, category: 'sections', projectTypes: ['website'], order: 2 },
-  { id: 'section-testimonials', name: 'Opinie / Referencje', description: 'Karuzela opinii klientów', price: 300, hours: 2, category: 'sections', projectTypes: ['website', 'ecommerce'], order: 3 },
-  { id: 'section-pricing', name: 'Cennik', description: 'Tabela cenowa z CTA', price: 400, hours: 3, category: 'sections', projectTypes: ['website'], order: 4 },
-  { id: 'section-blog', name: 'Blog (lista + artykuł)', description: 'System blogowy z CMS', price: 1200, hours: 8, category: 'sections', projectTypes: ['website'], order: 5, popular: true },
-  { id: 'section-team', name: 'Zespół', description: 'Prezentacja członków zespołu', price: 300, hours: 2, category: 'sections', projectTypes: ['website'], order: 6 },
-  { id: 'section-contact', name: 'Formularz kontaktowy', description: 'Z walidacją i wysyłką email', price: 400, hours: 3, category: 'sections', projectTypes: ['website', 'ecommerce'], order: 7 },
+  { id: 'section-faq', name: 'FAQ', description: 'Pytania i odpowiedzi', price: 200, hours: 1, category: 'sections', projectTypes: ['website', 'ecommerce'] },
+  { id: 'section-portfolio', name: 'Portfolio / Case Studies', description: 'Prezentacja realizacji', price: 500, hours: 4, category: 'sections', projectTypes: ['website'] },
+  { id: 'section-testimonials', name: 'Opinie / Referencje', description: 'Karuzela opinii klientów', price: 300, hours: 2, category: 'sections', projectTypes: ['website', 'ecommerce'] },
+  { id: 'section-pricing', name: 'Cennik', description: 'Tabela cenowa z CTA', price: 400, hours: 3, category: 'sections', projectTypes: ['website'] },
+  { id: 'section-blog', name: 'Blog (lista + artykuł)', description: 'System blogowy z CMS', price: 1200, hours: 8, category: 'sections', projectTypes: ['website'], popular: true },
+  { id: 'section-team', name: 'Zespół', description: 'Prezentacja członków zespołu', price: 300, hours: 2, category: 'sections', projectTypes: ['website'] },
+  { id: 'section-contact', name: 'Formularz kontaktowy', description: 'Z walidacją i wysyłką email', price: 400, hours: 3, category: 'sections', projectTypes: ['website', 'ecommerce'] },
   
   // INTEGRACJE
-  { id: 'int-cms', name: 'CMS Sanity', description: 'Panel do edycji treści + szkolenie', price: 1000, hours: 5, category: 'integrations', projectTypes: ['website', 'ecommerce'], order: 1, popular: true },
-  { id: 'int-analytics', name: 'Analytics (GA4 + GTM)', description: 'Śledzenie konwersji i zdarzeń', price: 400, hours: 2, category: 'integrations', projectTypes: ['website', 'ecommerce'], order: 2 },
-  { id: 'int-i18n', name: 'Wielojęzyczność', description: 'Dodatkowy język (bez tłumaczeń)', price: 0, hours: 0, percentageAdd: 20, category: 'integrations', projectTypes: ['website', 'ecommerce'], order: 3 },
-  { id: 'int-calendly', name: 'Calendly / rezerwacje', description: 'System umawiania spotkań', price: 300, hours: 2, category: 'integrations', projectTypes: ['website'], order: 4 },
-  { id: 'int-crm', name: 'Integracja CRM', description: 'Pipedrive, HubSpot, Salesforce', price: 600, hours: 4, category: 'integrations', projectTypes: ['website', 'ecommerce'], order: 5 },
-  { id: 'int-newsletter', name: 'Newsletter', description: 'Mailchimp, ConvertKit, MailerLite', price: 400, hours: 3, category: 'integrations', projectTypes: ['website', 'ecommerce'], order: 6 },
-  { id: 'int-chat', name: 'Live Chat', description: 'Intercom, Crisp, Tidio', price: 300, hours: 2, category: 'integrations', projectTypes: ['website', 'ecommerce'], order: 7 },
+  { id: 'int-cms', name: 'CMS Sanity', description: 'Panel do edycji treści + szkolenie', price: 1000, hours: 5, category: 'integrations', projectTypes: ['website', 'ecommerce'], popular: true },
+  { id: 'int-analytics', name: 'Analytics (GA4 + GTM)', description: 'Śledzenie konwersji i zdarzeń', price: 400, hours: 2, category: 'integrations', projectTypes: ['website', 'ecommerce'] },
+  { id: 'int-i18n', name: 'Wielojęzyczność', description: 'Dodatkowy język (bez tłumaczeń)', price: 0, hours: 0, percentageAdd: 20, category: 'integrations', projectTypes: ['website', 'ecommerce'] },
+  { id: 'int-calendly', name: 'Calendly / rezerwacje', description: 'System umawiania spotkań', price: 300, hours: 2, category: 'integrations', projectTypes: ['website'] },
+  { id: 'int-crm', name: 'Integracja CRM', description: 'Pipedrive, HubSpot, Salesforce', price: 600, hours: 4, category: 'integrations', projectTypes: ['website', 'ecommerce'] },
+  { id: 'int-newsletter', name: 'Newsletter', description: 'Mailchimp, ConvertKit, MailerLite', price: 400, hours: 3, category: 'integrations', projectTypes: ['website', 'ecommerce'] },
+  { id: 'int-chat', name: 'Live Chat', description: 'Intercom, Crisp, Tidio', price: 300, hours: 2, category: 'integrations', projectTypes: ['website', 'ecommerce'] },
   
   // E-COMMERCE BASE
-  { id: 'ecom-setup', name: 'Setup sklepu', description: 'Next.js, Medusa/Shopify, Vercel', price: 4000, hours: 20, category: 'base', projectTypes: ['ecommerce'], required: true, order: 1 },
-  { id: 'ecom-design', name: 'Design System sklepu', description: 'UI kit dla e-commerce', price: 2000, hours: 10, category: 'base', projectTypes: ['ecommerce'], required: true, order: 2 },
-  { id: 'ecom-homepage', name: 'Strona główna sklepu', description: 'Slider, kategorie, produkty', price: 3000, hours: 15, category: 'base', projectTypes: ['ecommerce'], required: true, order: 3 },
-  { id: 'ecom-pdp', name: 'Karta produktu (PDP)', description: 'Galeria, warianty, opinie', price: 2500, hours: 12, category: 'base', projectTypes: ['ecommerce'], required: true, order: 4 },
-  { id: 'ecom-plp', name: 'Lista produktów (PLP)', description: 'Filtry, sortowanie, paginacja', price: 2000, hours: 10, category: 'base', projectTypes: ['ecommerce'], required: true, order: 5 },
-  { id: 'ecom-cart', name: 'Koszyk + Checkout', description: 'Wieloetapowy checkout', price: 3000, hours: 15, category: 'base', projectTypes: ['ecommerce'], required: true, order: 6 },
+  { id: 'ecom-setup', name: 'Setup sklepu', description: 'Next.js, Medusa/Shopify, Vercel', price: 4000, hours: 20, category: 'base', projectTypes: ['ecommerce'], required: true },
+  { id: 'ecom-design', name: 'Design System sklepu', description: 'UI kit dla e-commerce', price: 2000, hours: 10, category: 'base', projectTypes: ['ecommerce'], required: true },
+  { id: 'ecom-homepage', name: 'Strona główna sklepu', description: 'Slider, kategorie, produkty', price: 3000, hours: 15, category: 'base', projectTypes: ['ecommerce'], required: true },
+  { id: 'ecom-pdp', name: 'Karta produktu (PDP)', description: 'Galeria, warianty, opinie', price: 2500, hours: 12, category: 'base', projectTypes: ['ecommerce'], required: true },
+  { id: 'ecom-plp', name: 'Lista produktów (PLP)', description: 'Filtry, sortowanie, paginacja', price: 2000, hours: 10, category: 'base', projectTypes: ['ecommerce'], required: true },
+  { id: 'ecom-cart', name: 'Koszyk + Checkout', description: 'Wieloetapowy checkout', price: 3000, hours: 15, category: 'base', projectTypes: ['ecommerce'], required: true },
   
   // E-COMMERCE FEATURES
-  { id: 'ecom-search', name: 'Wyszukiwarka', description: 'Algolia / ElasticSearch', price: 800, hours: 5, category: 'features', projectTypes: ['ecommerce'], order: 1, new: true },
-  { id: 'ecom-wishlist', name: 'Lista życzeń', description: 'Zapisywanie ulubionych', price: 400, hours: 3, category: 'features', projectTypes: ['ecommerce'], order: 2 },
-  { id: 'ecom-reviews', name: 'System opinii', description: 'Oceny i recenzje produktów', price: 600, hours: 4, category: 'features', projectTypes: ['ecommerce'], order: 3 },
-  { id: 'ecom-coupons', name: 'Kody rabatowe', description: 'Kupony i promocje', price: 500, hours: 3, category: 'features', projectTypes: ['ecommerce'], order: 4 },
+  { id: 'ecom-search', name: 'Wyszukiwarka', description: 'Algolia / ElasticSearch', price: 800, hours: 5, category: 'features', projectTypes: ['ecommerce'], new: true },
+  { id: 'ecom-wishlist', name: 'Lista życzeń', description: 'Zapisywanie ulubionych', price: 400, hours: 3, category: 'features', projectTypes: ['ecommerce'] },
+  { id: 'ecom-reviews', name: 'System opinii', description: 'Oceny i recenzje produktów', price: 600, hours: 4, category: 'features', projectTypes: ['ecommerce'] },
+  { id: 'ecom-coupons', name: 'Kody rabatowe', description: 'Kupony i promocje', price: 500, hours: 3, category: 'features', projectTypes: ['ecommerce'] },
   
   // PŁATNOŚCI
-  { id: 'pay-stripe', name: 'Stripe', description: 'Karty, Apple Pay, Google Pay', price: 800, hours: 4, category: 'payments', projectTypes: ['ecommerce'], order: 1, popular: true },
-  { id: 'pay-przelewy24', name: 'Przelewy24', description: 'Przelewy, BLIK, karty', price: 800, hours: 4, category: 'payments', projectTypes: ['ecommerce'], order: 2 },
-  { id: 'pay-payu', name: 'PayU', description: 'Raty, płatność odroczona', price: 800, hours: 4, category: 'payments', projectTypes: ['ecommerce'], order: 3 },
-  { id: 'pay-blik', name: 'BLIK One-click', description: 'Szybkie płatności BLIK', price: 400, hours: 2, category: 'payments', projectTypes: ['ecommerce'], order: 4 },
+  { id: 'pay-stripe', name: 'Stripe', description: 'Karty, Apple Pay, Google Pay', price: 800, hours: 4, category: 'payments', projectTypes: ['ecommerce'], popular: true },
+  { id: 'pay-przelewy24', name: 'Przelewy24', description: 'Przelewy, BLIK, karty', price: 800, hours: 4, category: 'payments', projectTypes: ['ecommerce'] },
+  { id: 'pay-payu', name: 'PayU', description: 'Raty, płatność odroczona', price: 800, hours: 4, category: 'payments', projectTypes: ['ecommerce'] },
+  { id: 'pay-blik', name: 'BLIK One-click', description: 'Szybkie płatności BLIK', price: 400, hours: 2, category: 'payments', projectTypes: ['ecommerce'] },
   
   // DOSTAWA
-  { id: 'ship-inpost', name: 'InPost Paczkomaty', description: 'Mapa paczkomatów + API', price: 600, hours: 4, category: 'shipping', projectTypes: ['ecommerce'], order: 1, popular: true },
-  { id: 'ship-dpd', name: 'DPD', description: 'Kurier DPD + punkty', price: 400, hours: 2, category: 'shipping', projectTypes: ['ecommerce'], order: 2 },
-  { id: 'ship-dhl', name: 'DHL', description: 'Kurier DHL + punkty', price: 400, hours: 2, category: 'shipping', projectTypes: ['ecommerce'], order: 3 },
-  { id: 'ship-ups', name: 'UPS', description: 'Kurier UPS', price: 400, hours: 2, category: 'shipping', projectTypes: ['ecommerce'], order: 4 },
-  { id: 'ship-poczta', name: 'Poczta Polska', description: 'Kurier + punkty', price: 400, hours: 2, category: 'shipping', projectTypes: ['ecommerce'], order: 5 },
+  { id: 'ship-inpost', name: 'InPost Paczkomaty', description: 'Mapa paczkomatów + API', price: 600, hours: 4, category: 'shipping', projectTypes: ['ecommerce'], popular: true },
+  { id: 'ship-dpd', name: 'DPD', description: 'Kurier DPD + punkty', price: 400, hours: 2, category: 'shipping', projectTypes: ['ecommerce'] },
+  { id: 'ship-dhl', name: 'DHL', description: 'Kurier DHL + punkty', price: 400, hours: 2, category: 'shipping', projectTypes: ['ecommerce'] },
+  { id: 'ship-ups', name: 'UPS', description: 'Kurier UPS', price: 400, hours: 2, category: 'shipping', projectTypes: ['ecommerce'] },
+  { id: 'ship-poczta', name: 'Poczta Polska', description: 'Kurier + punkty', price: 400, hours: 2, category: 'shipping', projectTypes: ['ecommerce'] },
   
   // WEBAPP BASE
-  { id: 'webapp-setup', name: 'Setup aplikacji', description: 'Next.js, Auth, Database', price: 8000, hours: 40, category: 'base', projectTypes: ['webapp'], required: true, order: 1 },
-  { id: 'webapp-design', name: 'Design System aplikacji', description: 'UI kit, komponenty, dark mode', price: 4000, hours: 20, category: 'base', projectTypes: ['webapp'], required: true, order: 2 },
-  { id: 'webapp-dashboard', name: 'Dashboard użytkownika', description: 'Panel główny z widżetami', price: 6000, hours: 30, category: 'base', projectTypes: ['webapp'], required: true, order: 3 },
-  { id: 'webapp-auth', name: 'System autentykacji', description: 'Logowanie, rejestracja, role', price: 4000, hours: 20, category: 'base', projectTypes: ['webapp'], required: true, order: 4 },
+  { id: 'webapp-setup', name: 'Setup aplikacji', description: 'Next.js, Auth, Database', price: 8000, hours: 40, category: 'base', projectTypes: ['webapp'], required: true },
+  { id: 'webapp-design', name: 'Design System aplikacji', description: 'UI kit, komponenty, dark mode', price: 4000, hours: 20, category: 'base', projectTypes: ['webapp'], required: true },
+  { id: 'webapp-dashboard', name: 'Dashboard użytkownika', description: 'Panel główny z widżetami', price: 6000, hours: 30, category: 'base', projectTypes: ['webapp'], required: true },
+  { id: 'webapp-auth', name: 'System autentykacji', description: 'Logowanie, rejestracja, role', price: 4000, hours: 20, category: 'base', projectTypes: ['webapp'], required: true },
   
   // WEBAPP FEATURES
-  { id: 'webapp-notifications', name: 'Powiadomienia', description: 'Push, email, in-app', price: 1500, hours: 8, category: 'features', projectTypes: ['webapp'], order: 1 },
-  { id: 'webapp-api', name: 'REST API', description: 'Dokumentacja Swagger', price: 2000, hours: 12, category: 'features', projectTypes: ['webapp'], order: 2 },
-  { id: 'webapp-reports', name: 'Raporty / Eksport', description: 'PDF, Excel, CSV', price: 1200, hours: 8, category: 'features', projectTypes: ['webapp'], order: 3 },
-  { id: 'webapp-admin', name: 'Panel administracyjny', description: 'Zarządzanie użytkownikami', price: 3000, hours: 16, category: 'features', projectTypes: ['webapp'], order: 4 },
+  { id: 'webapp-notifications', name: 'Powiadomienia', description: 'Push, email, in-app', price: 1500, hours: 8, category: 'features', projectTypes: ['webapp'] },
+  { id: 'webapp-api', name: 'REST API', description: 'Dokumentacja Swagger', price: 2000, hours: 12, category: 'features', projectTypes: ['webapp'] },
+  { id: 'webapp-reports', name: 'Raporty / Eksport', description: 'PDF, Excel, CSV', price: 1200, hours: 8, category: 'features', projectTypes: ['webapp'] },
+  { id: 'webapp-admin', name: 'Panel administracyjny', description: 'Zarządzanie użytkownikami', price: 3000, hours: 16, category: 'features', projectTypes: ['webapp'] },
 ]
 
 const config = {
@@ -225,7 +224,6 @@ async function seed() {
       required: item.required || false,
       maxQuantity: item.maxQuantity,
       percentageAdd: item.percentageAdd,
-      order: item.order || 0,
       popular: item.popular || false,
       new: item.new || false,
     })

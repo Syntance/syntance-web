@@ -22,17 +22,7 @@ import {
   isConfiguratorProjectTypeId,
   projectTypesForConfigurator,
 } from '@/lib/configurator-project-types'
-
-/** Kolejność w konfiguratorze: `projectTypeOrder` dla aktywnego typu, inaczej globalne `order` z CMS. */
-function sortOrderForProjectType(item: PricingItem, projectTypeId: string): number {
-  const row = item.projectTypeOrder?.find(
-    (pto) => pto.projectType != null && pto.projectType === projectTypeId,
-  )
-  if (row !== undefined && typeof row.order === 'number' && Number.isFinite(row.order)) {
-    return row.order
-  }
-  return item.order ?? 0
-}
+import { comparePricingItemsForConfigurator } from '@/lib/pricing-item-order'
 
 // Mapa ikon - używamy typu LucideIcon
 const iconMap: Record<string, typeof Layout> = {
@@ -155,14 +145,12 @@ export function PricingConfigurator({ data }: Props) {
     )
   }, [items, state.projectType])
 
-  // Elementy wymagane (zawsze zaznaczone) — ta sama kolejność co dla opcji (per `projectTypeOrder`)
+  // Elementy wymagane (zawsze zaznaczone) — kolejność z `configuratorOrderRanks` (Studio)
   const requiredItems = useMemo(() => {
     const list = availableItems.filter((item) => item.required)
-    return [...list].sort((a, b) => {
-      const ao = sortOrderForProjectType(a, state.projectType)
-      const bo = sortOrderForProjectType(b, state.projectType)
-      return ao - bo
-    })
+    return [...list].sort((a, b) =>
+      comparePricingItemsForConfigurator(a, b, state.projectType),
+    )
   }, [availableItems, state.projectType])
 
   // Elementy opcjonalne pogrupowane według kategorii
@@ -172,11 +160,9 @@ export function PricingConfigurator({ data }: Props) {
       ...cat,
       items: optional
         .filter(item => item.category === cat.id)
-        .sort((a, b) => {
-          const aOrder = sortOrderForProjectType(a, state.projectType)
-          const bOrder = sortOrderForProjectType(b, state.projectType)
-          return aOrder - bOrder
-        })
+        .sort((a, b) =>
+          comparePricingItemsForConfigurator(a, b, state.projectType),
+        )
     })).filter(cat => cat.items.length > 0)
   }, [availableItems, categories, state.projectType])
 

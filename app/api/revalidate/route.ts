@@ -1,46 +1,92 @@
-import { revalidateTag } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
+import { clientWithoutToken } from '@/sanity/lib/client'
+import {
+  PRICING_REVALIDATE_PATHS,
+  shouldRevalidatePricing,
+} from '@/lib/sanity-revalidate'
 
-// Webhook endpoint dla Sanity do rewalidacji cache
+type SanityWebhookBody = {
+  _type?: string
+  ids?: {
+    created?: string[]
+    updated?: string[]
+    deleted?: string[]
+  }
+  transactionId?: string
+  projectId?: string
+  dataset?: string
+}
+
+function isAuthorized(request: NextRequest): boolean {
+  const secret = process.env.SANITY_REVALIDATE_SECRET
+  if (!secret) return true
+  return request.nextUrl.searchParams.get('secret') === secret
+}
+
+async function resolveDocumentTypes(ids: string[]): Promise<Set<string>> {
+  const uniqueIds = [...new Set(ids.map((id) => id.replace(/^drafts\./, '')))]
+  if (uniqueIds.length === 0) return new Set()
+
+  const rows = await clientWithoutToken.fetch<Array<{ _type: string }>>(
+    `*[_id in $ids]{ _type }`,
+    { ids: uniqueIds }
+  )
+
+  return new Set(rows.map((row) => row._type))
+}
+
+function revalidatePricingSurfaces() {
+  revalidateTag('pricing', { expire: 0 })
+  revalidateTag('faq', { expire: 0 })
+  for (const path of PRICING_REVALIDATE_PATHS) {
+    revalidatePath(path, 'page')
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
-    // Sprawdź secret (opcjonalne ale zalecane)
-    const secret = request.nextUrl.searchParams.get('secret')
-    
-    if (process.env.SANITY_REVALIDATE_SECRET && secret !== process.env.SANITY_REVALIDATE_SECRET) {
+    if (!isAuthorized(request)) {
       return NextResponse.json({ message: 'Invalid secret' }, { status: 401 })
     }
 
-    // Pobierz tag z query params lub body
     const tag = request.nextUrl.searchParams.get('tag')
-    
     if (tag) {
       revalidateTag(tag, { expire: 0 })
       return NextResponse.json({ revalidated: true, tag, now: Date.now() })
     }
 
-    // Jeśli brak tagu, spróbuj pobrać z body (dla webhooków Sanity)
-    const body = await request.json().catch(() => ({}))
-    
-    // Sanity wysyła typ dokumentu w _type
-    const documentType = body._type
-    
-    // Mapowanie typów dokumentów na tagi
-    const tagMap: Record<string, string> = {
-      pricingCategory: 'pricing',
-      projectType: 'pricing',
-      pricingItem: 'pricing',
-      pricingConfig: 'pricing',
+    const body = (await request.json().catch(() => ({}))) as SanityWebhookBody
+    const changedIds = [
+      ...(body.ids?.created ?? []),
+      ...(body.ids?.updated ?? []),
+      ...(body.ids?.deleted ?? []),
+    ]
+
+    let documentTypes: Set<string>
+    if (changedIds.length > 0) {
+      documentTypes = await resolveDocumentTypes(changedIds)
+    } else if (body._type) {
+      documentTypes = new Set([body._type])
+    } else {
+      documentTypes = new Set()
     }
 
-    const tagToRevalidate = tagMap[documentType] || 'pricing'
-    revalidateTag(tagToRevalidate, { expire: 0 })
+    const revalidatePricing =
+      documentTypes.size === 0 ||
+      [...documentTypes].some((documentType) =>
+        shouldRevalidatePricing(documentType)
+      )
 
-    return NextResponse.json({ 
-      revalidated: true, 
-      tag: tagToRevalidate, 
-      documentType,
-      now: Date.now() 
+    if (revalidatePricing) {
+      revalidatePricingSurfaces()
+    }
+
+    return NextResponse.json({
+      revalidated: revalidatePricing,
+      documentTypes: [...documentTypes],
+      paths: revalidatePricing ? [...PRICING_REVALIDATE_PATHS] : [],
+      now: Date.now(),
     })
   } catch (error) {
     console.error('Revalidation error:', error)
@@ -48,18 +94,31 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Obsługa GET dla prostszego testowania
 export async function GET(request: NextRequest) {
-  const tag = request.nextUrl.searchParams.get('tag')
-  
-  if (!tag) {
-    return NextResponse.json({ 
-      message: 'Provide ?tag=pricing to revalidate',
-      availableTags: ['pricing']
-    })
+  if (!isAuthorized(request)) {
+    return NextResponse.json({ message: 'Invalid secret' }, { status: 401 })
   }
 
+  const tag = request.nextUrl.searchParams.get('tag')
+  const all = request.nextUrl.searchParams.get('all')
+
   try {
+    if (all === 'pricing') {
+      revalidatePricingSurfaces()
+      return NextResponse.json({
+        revalidated: true,
+        paths: [...PRICING_REVALIDATE_PATHS],
+        now: Date.now(),
+      })
+    }
+
+    if (!tag) {
+      return NextResponse.json({
+        message: 'Provide ?tag=pricing or ?all=pricing',
+        availableTags: ['pricing', 'faq'],
+      })
+    }
+
     revalidateTag(tag, { expire: 0 })
     return NextResponse.json({ revalidated: true, tag, now: Date.now() })
   } catch (error) {

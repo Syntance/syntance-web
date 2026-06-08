@@ -1,8 +1,10 @@
+import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-list'
 import { defineField, defineType } from 'sanity'
+import { CONFIGURATOR_PROJECT_TYPE_SLUGS } from '../lib/pricingConfiguratorScope'
 
 export default defineType({
   name: 'pricingItem',
-  title: 'Składnik pakietu lub dodatek (konfigurator)',
+  title: 'Pozycja cennika (konfigurator /cennik)',
   type: 'document',
   groups: [
     { name: 'basic', title: 'Podstawowe', default: true },
@@ -51,41 +53,22 @@ export default defineType({
       group: 'basic',
       validation: (Rule) => Rule.required().min(1),
     }),
+    orderRankField({ type: 'pricingItem' }),
     defineField({
-      name: 'order',
-      title: 'Kolejność w kategorii (globalna)',
-      type: 'number',
-      group: 'basic',
-      initialValue: 0,
-      description: 'Używana jako fallback, jeśli nie ma pozycji dla typu projektu',
-    }),
-    defineField({
-      name: 'projectTypeOrder',
-      title: 'Pozycja dla każdego typu projektu',
-      type: 'array',
-      group: 'basic',
-      of: [
-        {
-          type: 'object',
-          fields: [
-            defineField({
-              name: 'projectType',
-              title: 'Typ projektu',
-              type: 'reference',
-              to: [{ type: 'projectType' }],
-              validation: (Rule) => Rule.required(),
-            }),
-            defineField({
-              name: 'order',
-              title: 'Pozycja w kategorii',
-              type: 'number',
-              initialValue: 0,
-              validation: (Rule) => Rule.required(),
-            }),
-          ],
-        },
-      ],
-      description: 'Ustaw indywidualną pozycję dla każdego typu projektu. Jeśli brak, używana będzie pozycja globalna.',
+      name: 'configuratorOrderRanks',
+      title: 'Kolejność per typ projektu (Studio)',
+      type: 'object',
+      hidden: true,
+      readOnly: true,
+      description:
+        'Ustawiane automatycznie przez „Kolejność pozycji (przeciągnij)” — osobna kolejność dla WWW / sklepu / app.',
+      fields: CONFIGURATOR_PROJECT_TYPE_SLUGS.map((slug) =>
+        defineField({
+          name: slug,
+          title: slug,
+          type: 'string',
+        })
+      ),
     }),
 
     // === CENY I CZAS ===
@@ -296,24 +279,23 @@ export default defineType({
     select: {
       title: 'name',
       price: 'price',
-      category: 'category.name',
+      slug: 'id.current',
+      categoryName: 'category.name',
     },
-    prepare({ title, price, category }) {
+    prepare({ title, price, slug, categoryName }) {
+      const parts = [
+        price != null ? `${price.toLocaleString('pl-PL')} PLN` : null,
+        categoryName || null,
+      ].filter(Boolean)
+
       return {
-        title,
-        subtitle: `${price?.toLocaleString('pl-PL') || 0} PLN | ${category || 'Brak kategorii'}`,
+        title: title || slug || 'Bez nazwy',
+        subtitle: parts.length > 0 ? parts.join(' | ') : undefined,
       }
     },
   },
   orderings: [
-    {
-      title: 'Kategoria + Kolejność',
-      name: 'categoryOrder',
-      by: [
-        { field: 'category.order', direction: 'asc' },
-        { field: 'order', direction: 'asc' },
-      ],
-    },
+    orderRankOrdering,
     {
       title: 'Nazwa A-Z',
       name: 'nameAsc',

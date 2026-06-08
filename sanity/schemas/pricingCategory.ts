@@ -36,6 +36,14 @@ export default defineType({
       description: 'np. Layout, ShoppingCart, Settings',
     }),
     defineField({
+      name: 'showInConfigurator',
+      title: 'Pokaż w konfiguratorze /cennik',
+      type: 'boolean',
+      initialValue: true,
+      description:
+        'Wyłącz dla kategorii spoza konfiguratora (np. Strategia). Takie pozycje nie pojawią się na /cennik ani w kolejności przeciągania.',
+    }),
+    defineField({
       name: 'disabled',
       title: 'Wyłączona (niedostępna)',
       type: 'boolean',
