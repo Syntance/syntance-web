@@ -16,7 +16,7 @@ export const pricingDataQuery = groq`{
     icon,
     disabled
   },
-  "items": *[_type == "pricingItem"] | order(order asc) {
+  "items": *[_type == "pricingItem"] | order(orderRank asc, order asc) {
     "id": id.current,
     name,
     description,
@@ -30,6 +30,7 @@ export const pricingDataQuery = groq`{
     includedInBase,
     maxQuantity,
     percentageAdd,
+    orderRank,
     order,
     projectTypeOrder[] {
       "projectType": projectType->id.current,
@@ -118,6 +119,7 @@ export interface PricingItem {
   includedInBase?: boolean
   maxQuantity?: number
   percentageAdd?: number
+  orderRank?: string
   order?: number
   projectTypeOrder?: Array<{
     projectType: string

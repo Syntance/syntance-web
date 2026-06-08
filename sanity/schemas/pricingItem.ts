@@ -1,3 +1,4 @@
+import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-list'
 import { defineField, defineType } from 'sanity'
 
 export default defineType({
@@ -51,19 +52,23 @@ export default defineType({
       group: 'basic',
       validation: (Rule) => Rule.required().min(1),
     }),
+    orderRankField({ type: 'pricingItem' }),
     defineField({
       name: 'order',
-      title: 'Kolejność w kategorii (globalna)',
+      title: 'Kolejność (legacy — fallback)',
       type: 'number',
       group: 'basic',
       initialValue: 0,
-      description: 'Używana jako fallback, jeśli nie ma pozycji dla typu projektu',
+      hidden: true,
+      description:
+        'Używane tylko gdy brak orderRank. Kolejność ustawiaj w Studio: „Kolejność pozycji (przeciągnij)”.',
     }),
     defineField({
       name: 'projectTypeOrder',
-      title: 'Pozycja dla każdego typu projektu',
+      title: 'Pozycja per typ (legacy — fallback)',
       type: 'array',
       group: 'basic',
+      hidden: true,
       of: [
         {
           type: 'object',
@@ -85,7 +90,7 @@ export default defineType({
           ],
         },
       ],
-      description: 'Ustaw indywidualną pozycję dla każdego typu projektu. Jeśli brak, używana będzie pozycja globalna.',
+      description: 'Stare pole — kolejność ustawiaj przeciąganiem w Studio.',
     }),
 
     // === CENY I CZAS ===
@@ -315,8 +320,9 @@ export default defineType({
     },
   },
   orderings: [
+    orderRankOrdering,
     {
-      title: 'Kategoria + Kolejność',
+      title: 'Kategoria + Kolejność (legacy)',
       name: 'categoryOrder',
       by: [
         { field: 'category.order', direction: 'asc' },
