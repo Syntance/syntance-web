@@ -10,9 +10,19 @@ interface SanityFetchOptions {
 
 export async function sanityFetch<T>({
   query,
+  tags = [],
 }: SanityFetchOptions): Promise<T> {
-  // Wyłącz cache Next.js — zawsze świeże dane po stronie serwera
   noStore()
 
-  return clientWithoutToken.fetch<T>(query, {}, { next: { revalidate: 0 } })
+  return clientWithoutToken.fetch<T>(
+    query,
+    {},
+    {
+      cache: 'no-store',
+      next: {
+        revalidate: 0,
+        ...(tags.length > 0 ? { tags } : {}),
+      },
+    }
+  )
 }

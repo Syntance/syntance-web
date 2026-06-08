@@ -1,5 +1,6 @@
 import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-list'
 import { defineField, defineType } from 'sanity'
+import { CONFIGURATOR_PROJECT_TYPE_SLUGS } from '../lib/pricingConfiguratorScope'
 
 export default defineType({
   name: 'pricingItem',
@@ -53,6 +54,22 @@ export default defineType({
       validation: (Rule) => Rule.required().min(1),
     }),
     orderRankField({ type: 'pricingItem' }),
+    defineField({
+      name: 'configuratorOrderRanks',
+      title: 'Kolejność per typ projektu (Studio)',
+      type: 'object',
+      hidden: true,
+      readOnly: true,
+      description:
+        'Ustawiane automatycznie przez „Kolejność pozycji (przeciągnij)” — osobna kolejność dla WWW / sklepu / app.',
+      fields: CONFIGURATOR_PROJECT_TYPE_SLUGS.map((slug) =>
+        defineField({
+          name: slug,
+          title: slug,
+          type: 'string',
+        })
+      ),
+    }),
 
     // === CENY I CZAS ===
     defineField({

@@ -8,6 +8,11 @@ type OrderableEntity = {
   hasPublished?: boolean
 }
 
+export type ReorderPatch = {
+  id: string
+  set: Record<string, unknown>
+}
+
 function parseOrderRank(value: unknown, fallback: LexoRank): LexoRank {
   if (typeof value !== 'string') return fallback
   try {
@@ -24,16 +29,22 @@ function lexicographicalSort(a: OrderableEntity, b: OrderableEntity): number {
   return 0
 }
 
+function publishedId(documentId: string): string {
+  return documentId.replace(/^drafts\./, '')
+}
+
 export function reorderDocuments({
   entities,
   selectedIds,
   source,
   destination,
+  buildPatchSet,
 }: {
   entities: OrderableEntity[]
   selectedIds: string[]
   source: { index: number }
   destination: { index: number }
+  buildPatchSet?: (doc: OrderableEntity, orderRank: string) => Record<string, unknown>
 }) {
   const startIndex = source.index
   const endIndex = destination.index
@@ -96,16 +107,15 @@ export function reorderDocuments({
     { all: [], selected: [] }
   )
 
-  const patches = selected.flatMap((doc) => {
-    const docPatches: Array<[string, { set: { orderRank: string } }]> = [
-      [doc._id, { set: { [ORDER_FIELD_NAME]: doc.orderRank ?? '' } }],
-    ]
+  const patches: ReorderPatch[] = selected.flatMap((doc) => {
+    const rank = doc.orderRank ?? ''
+    const patchSet =
+      buildPatchSet?.(doc, rank) ?? { [ORDER_FIELD_NAME]: rank }
+    const published = publishedId(doc._id)
+    const docPatches: ReorderPatch[] = [{ id: published, set: patchSet }]
 
-    if (doc._id.startsWith('drafts.') && doc.hasPublished) {
-      docPatches.push([
-        doc._id.replace('drafts.', ''),
-        { set: { [ORDER_FIELD_NAME]: doc.orderRank ?? '' } },
-      ])
+    if (doc._id.startsWith('drafts.')) {
+      docPatches.push({ id: doc._id, set: patchSet })
     }
 
     return docPatches

@@ -13,7 +13,13 @@ import {
   useSchema,
 } from 'sanity'
 import { usePaneRouter } from 'sanity/structure'
-import { ORDER_FIELD_NAME, reorderDocuments } from '../lib/reorderDocuments'
+import {
+  configuratorOrderRankPatch,
+  isConfiguratorProjectTypeSlug,
+  rankForProjectType,
+  type ConfiguratorOrderRanks,
+} from '../lib/configuratorOrderRanks'
+import { reorderDocuments, type ReorderPatch } from '../lib/reorderDocuments'
 
 const API_VERSION = 'v2025-06-27'
 
@@ -21,6 +27,8 @@ type PricingItemDoc = {
   _id: string
   _type: string
   orderRank?: string
+  effectiveOrderRank?: string
+  configuratorOrderRanks?: ConfiguratorOrderRanks
   name?: string
   price?: number
   id?: string
@@ -32,6 +40,7 @@ type Props = {
   options: {
     filter?: string
     params?: Record<string, unknown>
+    projectTypeSlug?: string
   }
 }
 
@@ -60,22 +69,40 @@ function dedupeDocuments(documents: PricingItemDoc[]): PricingItemDoc[] {
   return Array.from(byBaseId.values())
 }
 
-function buildQuery(filter?: string) {
+function buildQuery(filter?: string, projectTypeSlug?: string) {
   const perspectiveFilter =
     '(_id in path("drafts.**") || (!(_id in path("drafts.**")) && !(_id in path("versions.**"))))'
   const combinedFilter = [`_type == $type`, perspectiveFilter, filter]
     .filter(Boolean)
     .join(' && ')
+  const rankProjection = projectTypeSlug
+    ? `coalesce(configuratorOrderRanks.${projectTypeSlug}, orderRank)`
+    : 'orderRank'
 
-  return `*[${combinedFilter}] | order(orderRank asc) {
+  return `*[${combinedFilter}] | order(${rankProjection} asc) {
     _id,
     _type,
     orderRank,
+    configuratorOrderRanks,
+    "effectiveOrderRank": ${rankProjection},
     name,
     price,
     "id": id.current,
     "category": category->name
   }`
+}
+
+function withEffectiveRank(
+  documents: PricingItemDoc[],
+  projectTypeSlug?: string
+): PricingItemDoc[] {
+  return documents.map((doc) => ({
+    ...doc,
+    orderRank:
+      doc.effectiveOrderRank ??
+      rankForProjectType(doc.configuratorOrderRanks, projectTypeSlug ?? '', doc.orderRank) ??
+      doc.orderRank,
+  }))
 }
 
 export default function PricingItemOrderList({ options }: Props) {
@@ -87,11 +114,15 @@ export default function PricingItemOrderList({ options }: Props) {
   const client = useClient({ apiVersion: API_VERSION }).withConfig({
     perspective: perspectiveStack,
   })
+  const projectTypeSlug = options.projectTypeSlug
 
   const schemaType = schema.get('pricingItem')
   const [listIsUpdating, setListIsUpdating] = useState(false)
 
-  const query = useMemo(() => buildQuery(options.filter), [options.filter])
+  const query = useMemo(
+    () => buildQuery(options.filter, projectTypeSlug),
+    [options.filter, projectTypeSlug]
+  )
   const queryParams = useMemo(
     () => ({
       type: 'pricingItem',
@@ -106,17 +137,21 @@ export default function PricingItemOrderList({ options }: Props) {
   })
 
   const documents = useMemo(
-    () => dedupeDocuments(Array.isArray(data) ? data : []),
-    [data]
+    () =>
+      withEffectiveRank(
+        dedupeDocuments(Array.isArray(data) ? data : []),
+        projectTypeSlug
+      ),
+    [data, projectTypeSlug]
   )
 
-  const unorderedCount = documents.filter((doc) => !doc[ORDER_FIELD_NAME]).length
+  const unorderedCount = documents.filter((doc) => !doc.orderRank).length
 
   const transactPatches = useCallback(
-    async (patches: Array<[string, { set: { orderRank: string } }]>, message: string) => {
+    async (patches: ReorderPatch[], message: string) => {
       try {
         const transaction = patches.reduce(
-          (trx, [id, patch]) => trx.patch(id, patch),
+          (trx, patch) => trx.patch(patch.id, { set: patch.set }),
           client.transaction()
         )
         const updated = await transaction.commit({
@@ -148,7 +183,9 @@ export default function PricingItemOrderList({ options }: Props) {
         source.index === destination?.index ||
         !destination ||
         !draggableId ||
-        documents.length === 0
+        documents.length === 0 ||
+        !projectTypeSlug ||
+        !isConfiguratorProjectTypeSlug(projectTypeSlug)
       ) {
         return
       }
@@ -159,6 +196,8 @@ export default function PricingItemOrderList({ options }: Props) {
         selectedIds: [draggableId],
         source,
         destination,
+        buildPatchSet: (_doc, orderRank) =>
+          configuratorOrderRankPatch(projectTypeSlug, orderRank),
       })
 
       if (patches.length > 0) {
@@ -167,11 +206,23 @@ export default function PricingItemOrderList({ options }: Props) {
         setListIsUpdating(false)
       }
     },
-    [documents, transactPatches]
+    [documents, projectTypeSlug, transactPatches]
   )
 
   if (!schemaType) {
     return null
+  }
+
+  if (!projectTypeSlug || !isConfiguratorProjectTypeSlug(projectTypeSlug)) {
+    return (
+      <Box padding={2}>
+        <Feedback
+          tone="critical"
+          title="Brak typu projektu"
+          description="Lista kolejności wymaga parametru projectTypeSlug."
+        />
+      </Box>
+    )
   }
 
   if (loading) {
@@ -207,7 +258,7 @@ export default function PricingItemOrderList({ options }: Props) {
       {unorderedCount > 0 && (
         <Feedback
           tone="caution"
-          description={`${unorderedCount}/${documents.length} pozycji nie ma kolejności. Uruchom migrację orderRank lub przesuń elementy ręcznie.`}
+          description={`${unorderedCount}/${documents.length} pozycji nie ma kolejności dla „${projectTypeSlug}”. Przesuń elementy ręcznie lub uruchom migrację.`}
         />
       )}
 

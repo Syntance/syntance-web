@@ -136,6 +136,7 @@ function orderablePricingList(
         options: {
           filter,
           params,
+          projectTypeSlug: projectType.slug,
         },
       })
     )

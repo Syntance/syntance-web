@@ -31,6 +31,7 @@ export const pricingDataQuery = groq`{
     maxQuantity,
     percentageAdd,
     orderRank,
+    configuratorOrderRanks,
     "dependencies": dependencies[]->id.current,
     "bundledWith": bundledWith[]->id.current,
     popular,
@@ -115,6 +116,9 @@ export interface PricingItem {
   maxQuantity?: number
   percentageAdd?: number
   orderRank?: string
+  configuratorOrderRanks?: Partial<
+    Record<'website' | 'ecommerce' | 'webapp', string>
+  >
   dependencies?: string[]
   bundledWith?: string[]
   popular?: boolean
