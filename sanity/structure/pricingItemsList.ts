@@ -98,26 +98,46 @@ async function fetchOrderablePairs(
 
 function orderablePricingList(
   S: StructureBuilder,
+  _context: StructureResolverContext,
   pair: OrderablePair
 ) {
   const { projectType, category } = pair
   const listId = `orderable-pricing-${projectType._id}-${category._id}`
+  const filter = `${PRICING_ITEM_CONFIGURATOR_FILTER} && category._ref == $categoryId && references($projectTypeId)`
+  const params = {
+    ...PRICING_ITEM_CONFIGURATOR_FILTER_PARAMS,
+    categoryId: category._id,
+    projectTypeId: projectType._id,
+  }
+  const listTitle = `Pozycje: ${projectType.name} → ${category.name}`
+
+  const documentListNode = S.documentTypeList('pricingItem')
+    .title(listTitle)
+    .filter(filter)
+    .params(params)
+    .canHandleIntent(() => false)
+    .child((documentId) =>
+      S.document()
+        .documentId(documentId)
+        .schemaType('pricingItem')
+        .title('Edycja pozycji cennika')
+    )
 
   return S.listItem()
-    .title(`Pozycje: ${projectType.name} → ${category.name}`)
+    .title(listTitle)
     .id(listId)
+    .schemaType('pricingItem')
     .child(
-      S.component(PricingItemOrderList)
-        .id(listId)
-        .title(`Pozycje: ${projectType.name} → ${category.name}`)
-        .options({
-          filter: `${PRICING_ITEM_CONFIGURATOR_FILTER} && category._ref == $categoryId && references($projectTypeId)`,
-          params: {
-            ...PRICING_ITEM_CONFIGURATOR_FILTER_PARAMS,
-            categoryId: category._id,
-            projectTypeId: projectType._id,
-          },
-        })
+      Object.assign(documentListNode.serialize(), {
+        __preserveInstance: true,
+        key: listId,
+        type: 'component',
+        component: PricingItemOrderList,
+        options: {
+          filter,
+          params,
+        },
+      })
     )
 }
 
@@ -128,7 +148,7 @@ function pricingOrderLists(
   return fetchOrderablePairs(context).then((pairs) =>
     S.list()
       .title('Kolejność pozycji cennika (przeciągnij)')
-        .items(pairs.map((pair) => orderablePricingList(S, pair)))
+        .items(pairs.map((pair) => orderablePricingList(S, context, pair)))
   )
 }
 

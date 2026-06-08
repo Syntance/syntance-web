@@ -216,14 +216,23 @@ export default function PricingItemOrderList({ options }: Props) {
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
               {documents.map((doc, index) => {
+                const activePaneId =
+                  router.routerPanesState[router.groupIndex + 1]?.[0]?.id
+                const normalizedDocId = doc._id.replace(/^drafts\./, '')
                 const pressed =
-                  router.routerPanesState[router.groupIndex + 1]?.[0]?.id ===
-                    doc._id ||
-                  router.routerPanesState[router.groupIndex + 1]?.[0]?.id ===
-                    doc._id.replace('drafts.', '')
+                  activePaneId === doc._id || activePaneId === normalizedDocId
+                const selected =
+                  pressed &&
+                  router.routerPanesState.length === router.groupIndex + 2
 
                 function DocumentLink(linkProps: ComponentProps<typeof ChildLink>) {
-                  return <ChildLink {...linkProps} childId={doc._id} />
+                  return (
+                    <ChildLink
+                      {...linkProps}
+                      childId={doc._id}
+                      childParameters={{ type: 'pricingItem' }}
+                    />
+                  )
                 }
 
                 return (
@@ -244,10 +253,12 @@ export default function PricingItemOrderList({ options }: Props) {
                             shadow={snapshot.isDragging ? 2 : undefined}
                             tone={pressed ? 'primary' : 'default'}
                           >
-                            <Flex align="center" padding={2}>
+                            <Flex align="center">
                               <Box
-                                paddingX={2}
-                                style={{ flexShrink: 0 }}
+                                padding={3}
+                                style={{ flexShrink: 0, cursor: 'grab' }}
+                                onClick={(event) => event.stopPropagation()}
+                                onMouseDown={(event) => event.stopPropagation()}
                                 {...innerProvided.dragHandleProps}
                               >
                                 <Text size={2}>
@@ -255,14 +266,16 @@ export default function PricingItemOrderList({ options }: Props) {
                                 </Text>
                               </Box>
 
-                              <Box flex={1}>
+                              <Box flex={1} style={{ minWidth: 0 }}>
                                 <PreviewCard
                                   __unstable_focusRing
                                   as={DocumentLink}
                                   data-as="a"
                                   data-ui="PaneItem"
+                                  flex={1}
                                   radius={2}
                                   pressed={pressed}
+                                  selected={selected}
                                   sizing="border"
                                   tabIndex={-1}
                                   tone="inherit"

@@ -1,5 +1,5 @@
 {
-  "createdAt": "2026-05-11T10:04:59.456Z",
+  "createdAt": "2026-06-08T10:54:29.678Z",
   "studioVersion": "5.20.0",
   "version": 3,
   "workspaces": [
@@ -13,7 +13,7 @@
       },
       "name": "syntance-studio",
       "projectId": "sqgw0wlq",
-      "schema": "f895f0a7.create-schema.json",
+      "schema": "f09373ca.create-schema.json",
       "title": "Syntance Studio CMS",
       "tools": "a1fd46b5.create-tools.json"
     }
