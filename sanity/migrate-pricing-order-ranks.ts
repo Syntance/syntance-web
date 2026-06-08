@@ -6,6 +6,10 @@
  */
 import { createClient } from '@sanity/client'
 import { LexoRank } from 'lexorank'
+import {
+  CONFIGURATOR_PROJECT_TYPE_SLUGS,
+  PRICING_ITEM_CONFIGURATOR_FILTER_PARAMS,
+} from './lib/pricingConfiguratorScope'
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'sqgw0wlq'
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
@@ -50,8 +54,15 @@ function legacyOrder(item: PricingItemRow, projectTypeId: string): number {
 }
 
 async function main() {
+  const strategiaCategories = await client.fetch<string[]>(
+    `*[_type == "pricingCategory" && id.current == "strategia"]._id`
+  )
+  for (const categoryId of strategiaCategories) {
+    await client.patch(categoryId).set({ showInConfigurator: false }).commit()
+  }
+
   const items = await client.fetch<PricingItemRow[]>(
-    `*[_type == "pricingItem"]{
+    `*[_type == "pricingItem" && coalesce(category->showInConfigurator, true) == true && category->id.current in $categorySlugs]{
       _id,
       order,
       orderRank,
@@ -61,14 +72,22 @@ async function main() {
         "projectTypeId": projectType._ref,
         order
       }
-    }`
+    }`,
+    { categorySlugs: PRICING_ITEM_CONFIGURATOR_FILTER_PARAMS.categorySlugs }
   )
 
   const pairKeys = new Set<string>()
   const pairs: Pair[] = []
 
+  const configuratorProjectTypeIds = await client.fetch<string[]>(
+    `*[_type == "projectType" && id.current in $slugs]._id`,
+    { slugs: [...CONFIGURATOR_PROJECT_TYPE_SLUGS] }
+  )
+  const configuratorProjectTypeIdSet = new Set(configuratorProjectTypeIds)
+
   for (const item of items) {
     for (const projectTypeId of item.projectTypeIds) {
+      if (!configuratorProjectTypeIdSet.has(projectTypeId)) continue
       const key = `${projectTypeId}::${item.categoryId}`
       if (pairKeys.has(key)) continue
       pairKeys.add(key)

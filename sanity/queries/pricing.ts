@@ -1,7 +1,7 @@
 import { groq } from 'next-sanity'
 
 export const pricingDataQuery = groq`{
-  "categories": *[_type == "pricingCategory"] | order(order asc) {
+  "categories": *[_type == "pricingCategory" && coalesce(showInConfigurator, true) == true] | order(order asc) {
     "id": id.current,
     name,
     description,
@@ -16,7 +16,7 @@ export const pricingDataQuery = groq`{
     icon,
     disabled
   },
-  "items": *[_type == "pricingItem"] | order(orderRank asc, order asc) {
+  "items": *[_type == "pricingItem" && coalesce(category->showInConfigurator, true) == true && count((projectTypes[]->id.current)[@ in ["website", "ecommerce", "webapp"]]) > 0] | order(orderRank asc, order asc) {
     "id": id.current,
     name,
     description,
