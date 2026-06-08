@@ -297,11 +297,20 @@ export default defineType({
       title: 'name',
       price: 'price',
       category: 'category.name',
+      projectTypeNames: 'projectTypes[].name',
     },
-    prepare({ title, price, category }) {
+    prepare({ title, price, category, projectTypeNames }) {
+      const types = Array.isArray(projectTypeNames)
+        ? projectTypeNames.filter(Boolean).join(', ')
+        : ''
+      const parts = [
+        `${price?.toLocaleString('pl-PL') || 0} PLN`,
+        category || 'Brak kategorii',
+        types || 'Brak typów',
+      ]
       return {
         title,
-        subtitle: `${price?.toLocaleString('pl-PL') || 0} PLN | ${category || 'Brak kategorii'}`,
+        subtitle: parts.join(' | '),
       }
     },
   },

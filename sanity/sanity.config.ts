@@ -1,10 +1,12 @@
 import { defineConfig } from 'sanity'
 import { deskTool } from 'sanity/desk'
+import type { StructureBuilder, StructureResolverContext } from 'sanity/structure'
 import { schemaTypes } from './schemas'
 import EmailPreviewPanel from './components/EmailPreviewPanel'
+import { pricingItemsListItem } from './structure/pricingItemsList'
 
 // Konfiguracja struktury dla singletonów
-const structure = (S: any) =>
+const structure = (S: StructureBuilder, context: StructureResolverContext) =>
   S.list()
     .title('Zawartość')
     .items([
@@ -94,12 +96,7 @@ const structure = (S: any) =>
                 .child(
                   S.documentTypeList('pricingCategory').title('Kategorie w pakietach')
                 ),
-              S.listItem()
-                .title('🧩 Pozycje cennika i dodatki')
-                .id('pricingItem')
-                .child(
-                  S.documentTypeList('pricingItem').title('Pozycje cennika i dodatki')
-                ),
+              pricingItemsListItem(S, context),
             ])
         ),
       S.listItem()
