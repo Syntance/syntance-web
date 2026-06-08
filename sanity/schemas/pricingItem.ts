@@ -53,45 +53,6 @@ export default defineType({
       validation: (Rule) => Rule.required().min(1),
     }),
     orderRankField({ type: 'pricingItem' }),
-    defineField({
-      name: 'order',
-      title: 'Kolejność (legacy — fallback)',
-      type: 'number',
-      group: 'basic',
-      initialValue: 0,
-      hidden: true,
-      description:
-        'Używane tylko gdy brak orderRank. Kolejność ustawiaj w Studio: „Kolejność pozycji (przeciągnij)”.',
-    }),
-    defineField({
-      name: 'projectTypeOrder',
-      title: 'Pozycja per typ (legacy — fallback)',
-      type: 'array',
-      group: 'basic',
-      hidden: true,
-      of: [
-        {
-          type: 'object',
-          fields: [
-            defineField({
-              name: 'projectType',
-              title: 'Typ projektu',
-              type: 'reference',
-              to: [{ type: 'projectType' }],
-              validation: (Rule) => Rule.required(),
-            }),
-            defineField({
-              name: 'order',
-              title: 'Pozycja w kategorii',
-              type: 'number',
-              initialValue: 0,
-              validation: (Rule) => Rule.required(),
-            }),
-          ],
-        },
-      ],
-      description: 'Stare pole — kolejność ustawiaj przeciąganiem w Studio.',
-    }),
 
     // === CENY I CZAS ===
     defineField({
@@ -318,14 +279,6 @@ export default defineType({
   },
   orderings: [
     orderRankOrdering,
-    {
-      title: 'Kategoria + Kolejność (legacy)',
-      name: 'categoryOrder',
-      by: [
-        { field: 'category.order', direction: 'asc' },
-        { field: 'order', direction: 'asc' },
-      ],
-    },
     {
       title: 'Nazwa A-Z',
       name: 'nameAsc',

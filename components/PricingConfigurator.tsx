@@ -145,13 +145,11 @@ export function PricingConfigurator({ data }: Props) {
     )
   }, [items, state.projectType])
 
-  // Elementy wymagane (zawsze zaznaczone) — ta sama kolejność co dla opcji (per `projectTypeOrder`)
+  // Elementy wymagane (zawsze zaznaczone) — ta sama kolejność co dla opcji (`orderRank` z Studio)
   const requiredItems = useMemo(() => {
     const list = availableItems.filter((item) => item.required)
-    return [...list].sort((a, b) =>
-      comparePricingItemsForConfigurator(a, b, state.projectType),
-    )
-  }, [availableItems, state.projectType])
+    return [...list].sort(comparePricingItemsForConfigurator)
+  }, [availableItems])
 
   // Elementy opcjonalne pogrupowane według kategorii
   const optionalItemsByCategory = useMemo(() => {
@@ -160,9 +158,7 @@ export function PricingConfigurator({ data }: Props) {
       ...cat,
       items: optional
         .filter(item => item.category === cat.id)
-        .sort((a, b) =>
-          comparePricingItemsForConfigurator(a, b, state.projectType),
-        )
+        .sort(comparePricingItemsForConfigurator)
     })).filter(cat => cat.items.length > 0)
   }, [availableItems, categories, state.projectType])
 

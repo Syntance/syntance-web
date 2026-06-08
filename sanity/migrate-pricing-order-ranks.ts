@@ -1,5 +1,5 @@
 /**
- * Migracja orderRank per para (typ projektu × kategoria),
+ * Uzupełnia brakujące orderRank per para (typ projektu × kategoria),
  * zgodnie z listami „Kolejność pozycji (przeciągnij)” w Studio.
  *
  * Uruchom: pnpm exec tsx sanity/migrate-pricing-order-ranks.ts
@@ -33,11 +33,10 @@ const client = createClient({
 
 type PricingItemRow = {
   _id: string
-  order?: number
+  name: string
   orderRank?: string
   categoryId: string
   projectTypeIds: string[]
-  projectTypeOrder: Array<{ projectTypeId: string; order: number }>
 }
 
 type Pair = {
@@ -45,12 +44,13 @@ type Pair = {
   categoryId: string
 }
 
-function legacyOrder(item: PricingItemRow, projectTypeId: string): number {
-  const row = item.projectTypeOrder?.find(
-    (entry) => entry.projectTypeId === projectTypeId
-  )
-  if (row && Number.isFinite(row.order)) return row.order
-  return item.order ?? 0
+function compareForPair(a: PricingItemRow, b: PricingItemRow): number {
+  if (a.orderRank && b.orderRank) {
+    return a.orderRank.localeCompare(b.orderRank)
+  }
+  if (a.orderRank) return -1
+  if (b.orderRank) return 1
+  return a.name.localeCompare(b.name, 'pl')
 }
 
 async function main() {
@@ -64,14 +64,10 @@ async function main() {
   const items = await client.fetch<PricingItemRow[]>(
     `*[_type == "pricingItem" && coalesce(category->showInConfigurator, true) == true && category->id.current in $categorySlugs]{
       _id,
-      order,
+      name,
       orderRank,
       "categoryId": category._ref,
-      "projectTypeIds": projectTypes[]._ref,
-      projectTypeOrder[]{
-        "projectTypeId": projectType._ref,
-        order
-      }
+      "projectTypeIds": projectTypes[]._ref
     }`,
     { categorySlugs: PRICING_ITEM_CONFIGURATOR_FILTER_PARAMS.categorySlugs }
   )
@@ -104,11 +100,7 @@ async function main() {
         item.projectTypeIds.includes(pair.projectTypeId)
     )
 
-    const sorted = [...bucket].sort(
-      (a, b) =>
-        legacyOrder(a, pair.projectTypeId) -
-        legacyOrder(b, pair.projectTypeId)
-    )
+    const sorted = [...bucket].sort(compareForPair)
 
     let rank = LexoRank.min()
     for (const item of sorted) {
