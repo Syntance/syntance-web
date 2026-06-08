@@ -301,21 +301,18 @@ export default defineType({
     select: {
       title: 'name',
       price: 'price',
-      category: 'category.name',
-      projectTypeNames: 'projectTypes[].name',
+      slug: 'id.current',
+      categoryName: 'category.name',
     },
-    prepare({ title, price, category, projectTypeNames }) {
-      const types = Array.isArray(projectTypeNames)
-        ? projectTypeNames.filter(Boolean).join(', ')
-        : ''
+    prepare({ title, price, slug, categoryName }) {
       const parts = [
-        `${price?.toLocaleString('pl-PL') || 0} PLN`,
-        category || 'Brak kategorii',
-        types || 'Brak typów',
-      ]
+        price != null ? `${price.toLocaleString('pl-PL')} PLN` : null,
+        categoryName || null,
+      ].filter(Boolean)
+
       return {
-        title,
-        subtitle: parts.join(' | '),
+        title: title || slug || 'Bez nazwy',
+        subtitle: parts.length > 0 ? parts.join(' | ') : undefined,
       }
     },
   },

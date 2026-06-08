@@ -1,5 +1,5 @@
-import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list'
 import type { StructureBuilder, StructureResolverContext } from 'sanity/structure'
+import PricingItemOrderList from '../components/PricingItemOrderList'
 import {
   CONFIGURATOR_PROJECT_TYPE_SLUGS,
   PRICING_ITEM_CONFIGURATOR_FILTER,
@@ -98,24 +98,27 @@ async function fetchOrderablePairs(
 
 function orderablePricingList(
   S: StructureBuilder,
-  context: StructureResolverContext,
   pair: OrderablePair
 ) {
   const { projectType, category } = pair
-  return orderableDocumentListDeskItem({
-    type: 'pricingItem',
-    title: `Pozycje: ${projectType.name} → ${category.name}`,
-    id: `orderable-pricing-${projectType._id}-${category._id}`,
-    filter: `${PRICING_ITEM_CONFIGURATOR_FILTER} && category._ref == $categoryId && references($projectTypeId)`,
-    params: {
-      ...PRICING_ITEM_CONFIGURATOR_FILTER_PARAMS,
-      categoryId: category._id,
-      projectTypeId: projectType._id,
-    },
-    createIntent: false,
-    S,
-    context,
-  })
+  const listId = `orderable-pricing-${projectType._id}-${category._id}`
+
+  return S.listItem()
+    .title(`Pozycje: ${projectType.name} → ${category.name}`)
+    .id(listId)
+    .child(
+      S.component(PricingItemOrderList)
+        .id(listId)
+        .title(`Pozycje: ${projectType.name} → ${category.name}`)
+        .options({
+          filter: `${PRICING_ITEM_CONFIGURATOR_FILTER} && category._ref == $categoryId && references($projectTypeId)`,
+          params: {
+            ...PRICING_ITEM_CONFIGURATOR_FILTER_PARAMS,
+            categoryId: category._id,
+            projectTypeId: projectType._id,
+          },
+        })
+    )
 }
 
 function pricingOrderLists(
@@ -125,7 +128,7 @@ function pricingOrderLists(
   return fetchOrderablePairs(context).then((pairs) =>
     S.list()
       .title('Kolejność pozycji cennika (przeciągnij)')
-      .items(pairs.map((pair) => orderablePricingList(S, context, pair)))
+        .items(pairs.map((pair) => orderablePricingList(S, pair)))
   )
 }
 
