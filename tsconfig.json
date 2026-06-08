@@ -36,6 +36,15 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "sanity/components",
+    "sanity/structure",
+    "sanity/schemas",
+    "sanity/sanity.config.ts",
+    "sanity/migrate-*.ts",
+    "sanity/seed-*.ts",
+    "sanity/exec-*.ts",
+    "sanity.cli.ts",
+    "sanity.config.ts"
   ]
 }

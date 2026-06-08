@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useMemo, useState, type ComponentProps } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { DragDropContext, Draggable, Droppable, type DropResult } from '@hello-pangea/dnd'
 import { DragHandleIcon } from '@sanity/icons'
 import { Box, Card, Flex, Spinner, Stack, Text, useToast } from '@sanity/ui'
@@ -276,16 +276,6 @@ export default function PricingItemOrderList({ options }: Props) {
                   pressed &&
                   router.routerPanesState.length === router.groupIndex + 2
 
-                function DocumentLink(linkProps: ComponentProps<typeof ChildLink>) {
-                  return (
-                    <ChildLink
-                      {...linkProps}
-                      childId={doc._id}
-                      childParameters={{ type: 'pricingItem' }}
-                    />
-                  )
-                }
-
                 return (
                   <Draggable key={doc._id} draggableId={doc._id} index={index}>
                     {(innerProvided, snapshot) => (
@@ -320,7 +310,9 @@ export default function PricingItemOrderList({ options }: Props) {
                               <Box flex={1} style={{ minWidth: 0 }}>
                                 <PreviewCard
                                   __unstable_focusRing
-                                  as={DocumentLink}
+                                  as={ChildLink}
+                                  childId={doc._id}
+                                  childParameters={{ type: 'pricingItem' }}
                                   data-as="a"
                                   data-ui="PaneItem"
                                   flex={1}
