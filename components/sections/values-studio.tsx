@@ -45,6 +45,37 @@ const values = [
   },
 ];
 
+const TECH_STACK_BADGES = [
+  { name: "Next.js", dotColor: "oklch(0.92 0 0)" },
+  { name: "Medusa", dotColor: "oklch(0.72 0.17 162)" },
+  { name: "Sanity", dotColor: "oklch(0.65 0.22 25)" },
+  { name: "Vercel", dotColor: "oklch(0.78 0 0)" },
+  { name: "R2", dotColor: "oklch(0.72 0.18 55)" },
+  { name: "GitHub", dotColor: "oklch(0.75 0.05 300)" },
+] as const;
+
+function TechStackBadges({ className = "" }: { className?: string }) {
+  return (
+    <ul
+      className={`flex flex-wrap justify-center gap-2 ${className}`}
+      aria-label="Technologie, z których korzystamy"
+    >
+      {TECH_STACK_BADGES.map((tech) => (
+        <li key={tech.name}>
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1.5 text-[11px] font-medium tracking-wide text-gray-300 md:text-xs">
+            <span
+              className="size-1.5 shrink-0 rounded-full"
+              style={{ backgroundColor: tech.dotColor }}
+              aria-hidden="true"
+            />
+            {tech.name}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export default function ValuesStudio() {
   const cardsRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
@@ -81,6 +112,7 @@ export default function ValuesStudio() {
           <h2 id="values-heading" className="text-3xl font-light tracking-tight leading-[1.15] mb-3 text-white">
             Jakość agencji <span className="text-gray-400">w tempie</span> freelancera
           </h2>
+          <TechStackBadges className="mt-4" />
         </header>
 
         <ul className="space-y-3">
@@ -127,6 +159,7 @@ export default function ValuesStudio() {
             <p className="text-lg font-light tracking-wide text-gray-400">
               Jakość agencji w tempie freelancera
             </p>
+            <TechStackBadges className="mt-8" />
           </header>
         </AnimatedSection>
 
