@@ -2,6 +2,7 @@ export type PanelViewId =
   | 'overview'
   | 'products'
   | 'orders'
+  | 'emails'
   | 'cms'
   | 'seo'
   | 'stats'
@@ -9,12 +10,13 @@ export type PanelViewId =
 
 export const PANEL_NAV: { id: PanelViewId; label: string }[] = [
   { id: 'overview', label: 'Przegląd' },
+  { id: 'stats', label: 'Statystyki' },
   { id: 'products', label: 'Produkty' },
   { id: 'orders', label: 'Zamówienia' },
-  { id: 'cms', label: 'CMS' },
-  { id: 'seo', label: 'SEO' },
-  { id: 'stats', label: 'Statystyki' },
   { id: 'returns', label: 'Zwroty' },
+  { id: 'cms', label: 'CMS' },
+  { id: 'emails', label: 'E-maile' },
+  { id: 'seo', label: 'SEO' },
 ]
 
 export const PROOF_BAR = [
@@ -51,6 +53,12 @@ export const SHOWCASE_STEPS: {
       'Wszystko, co ważne, na jednym ekranie. Przychód, zamówienia, klienci i ruch po zalogowaniu.',
   },
   {
+    id: 'stats',
+    title: 'Statystyki',
+    description:
+      'GA4 i PostHog w jednym widoku. Sprzedaż i pełny lejek bez przeskakiwania między narzędziami.',
+  },
+  {
     id: 'products',
     title: 'Produkty',
     description:
@@ -62,25 +70,25 @@ export const SHOWCASE_STEPS: {
     description: 'Od kliknięcia po wysyłkę. Statusy, płatności i dane klienta w jednym widoku.',
   },
   {
+    id: 'returns',
+    title: 'Zwroty i reklamacje',
+    description: 'Obsługa po sprzedaży bez chaosu w mailach.',
+  },
+  {
     id: 'cms',
     title: 'CMS',
     description: 'Zmieniasz teksty na żywo, w kilka sekund. Nagłówki, FAQ, ceny, sekcje strony.',
   },
   {
+    id: 'emails',
+    title: 'E-maile',
+    description:
+      'Konfigurator szablonów z podglądem na żywo. Treści z konfiguratora, formularza i rezerwacji — bez osobnego narzędzia.',
+  },
+  {
     id: 'seo',
     title: 'SEO',
     description: 'Tytuły i opisy per podstrona, publikowane od razu. Bez wtyczek.',
-  },
-  {
-    id: 'stats',
-    title: 'Statystyki',
-    description:
-      'GA4 i PostHog w jednym widoku. Sprzedaż i pełny lejek bez przeskakiwania między narzędziami.',
-  },
-  {
-    id: 'returns',
-    title: 'Zwroty i reklamacje',
-    description: 'Obsługa po sprzedaży bez chaosu w mailach.',
   },
 ]
 

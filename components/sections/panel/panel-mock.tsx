@@ -91,6 +91,80 @@ function ViewOrders() {
   )
 }
 
+function ViewEmails() {
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="rounded-xl border border-white/10 bg-black/30 p-2.5">
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <p className="text-[11px] font-medium text-white">Konfigurator emaili</p>
+          <span className="text-[10px] text-gray-500">Podgląd na żywo</span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <label className="col-span-2 block">
+            <span className="mb-0.5 block text-[9px] uppercase tracking-wider text-gray-500">Szablon</span>
+            <span className="flex items-center justify-between rounded-md border border-purple-400/30 bg-purple-500/10 px-2.5 py-1.5 text-[10px] text-purple-200">
+              Konfigurator → klient
+              <span className="text-gray-500" aria-hidden="true">
+                ▾
+              </span>
+            </span>
+          </label>
+
+          <label className="block">
+            <span className="mb-0.5 block text-[9px] uppercase tracking-wider text-gray-500">Imię</span>
+            <span className="block rounded-md border border-white/10 bg-black/40 px-2.5 py-1 text-[11px] text-white">
+              Anna
+            </span>
+          </label>
+
+          <label className="block">
+            <span className="mb-0.5 block text-[9px] uppercase tracking-wider text-gray-500">Dni rob.</span>
+            <span className="block rounded-md border border-white/10 bg-black/40 px-2.5 py-1 text-[11px] text-white">
+              14
+            </span>
+          </label>
+
+          <label className="col-span-2 block">
+            <span className="mb-0.5 block text-[9px] uppercase tracking-wider text-gray-500">Temat</span>
+            <span className="block truncate rounded-md border border-white/10 bg-white/[0.02] px-2.5 py-1 font-mono text-[10px] text-purple-300">
+              Twoja wycena strony WWW · 11.05.2026
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div className="overflow-hidden rounded-xl border border-white/10 bg-[#ececee]">
+        <div className="border-b border-black/5 bg-white/90 px-2.5 py-1">
+          <p className="text-[9px] text-gray-500">Podgląd HTML</p>
+        </div>
+        <div className="flex min-h-[11rem] flex-col px-2.5 py-3">
+          <div className="flex flex-1 flex-col rounded-md bg-white p-3 shadow-sm ring-1 ring-black/5">
+            <div className="mb-2 flex items-center gap-1.5 border-b border-gray-100 pb-2">
+              <span className="inline-flex size-4 items-center justify-center rounded bg-gray-900 text-[7px] font-bold text-white">
+                S
+              </span>
+              <span className="text-[9px] font-semibold text-gray-900">Syntance</span>
+            </div>
+            <p className="mb-1.5 text-[10px] font-medium text-gray-900">Cześć Anna,</p>
+            <p className="mb-2 text-[9px] leading-relaxed text-gray-600">
+              Dziękujemy za wycenę z konfiguratora. Poniżej podsumowanie — termin ok.{' '}
+              <strong className="font-medium text-gray-800">14 dni roboczych</strong>.
+            </p>
+            <ul className="mb-3 flex-1 space-y-1 border-y border-gray-100 py-2 text-[9px] text-gray-700">
+              <li>· Wdrożenie designu</li>
+              <li>· CMS · panel sklepu</li>
+            </ul>
+            <span className="inline-block self-start rounded-full bg-gray-900 px-2.5 py-1 text-[8px] font-medium text-white">
+              Zobacz szczegóły wyceny
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function ViewCms() {
   return (
     <div className="space-y-3">
@@ -226,6 +300,7 @@ const VIEW_META: Record<PanelViewId, { title: string; subtitle: string }> = {
   overview: { title: 'Przegląd', subtitle: 'KPI sklepu po zalogowaniu' },
   products: { title: 'Produkty', subtitle: 'Katalog, ceny i stany magazynowe' },
   orders: { title: 'Zamówienia', subtitle: 'Statusy, płatności i wysyłka' },
+  emails: { title: 'E-maile', subtitle: 'Konfigurator szablonów z podglądem' },
   cms: { title: 'CMS', subtitle: 'Treści publikowane na żywo' },
   seo: { title: 'SEO', subtitle: 'Meta per podstrona' },
   stats: { title: 'Statystyki', subtitle: 'GA4 + PostHog w jednym widoku' },
@@ -240,6 +315,8 @@ function ViewContent({ view }: { view: PanelViewId }) {
       return <ViewProducts />
     case 'orders':
       return <ViewOrders />
+    case 'emails':
+      return <ViewEmails />
     case 'cms':
       return <ViewCms />
     case 'seo':
