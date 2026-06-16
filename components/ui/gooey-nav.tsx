@@ -509,13 +509,16 @@ const GooeyNav = ({
                 {openDropdown === index &&
                   item.dropdown &&
                   item.dropdown.length > 0 && (
-                    <div className="gooey-dropdown" role="menu">
+                    <div
+                      className="absolute top-full left-1/2 z-50 mt-4 min-w-[180px] -translate-x-1/2 rounded-xl border border-white/10 bg-gray-900/95 py-2 shadow-2xl backdrop-blur-md"
+                      role="menu"
+                    >
                       {item.dropdown.map((dropItem, dropIndex) => (
                         <button
                           key={dropIndex}
                           type="button"
                           role="menuitem"
-                          className="gooey-dropdown-item w-full text-left"
+                          className="block w-full cursor-pointer px-4 py-2 text-left text-sm font-light tracking-wider text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleDropdownClick(dropItem.href);
