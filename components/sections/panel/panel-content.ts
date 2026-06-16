@@ -155,5 +155,5 @@ export const SCROLLBAR_SECTIONS = [
   { id: 'panel-security', label: 'Bezpieczeństwo' },
   { id: 'panel-stack', label: 'Stack' },
   { id: 'panel-faq', label: 'FAQ' },
-  { id: 'panel-cta', label: 'Kontakt' },
+  { id: 'panel-cta', label: 'Cennik' },
 ]

@@ -3,11 +3,12 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { ArrowRight, ChevronDown } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import GradientText from '@/components/GradientText'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
 import StickyCtaFloat from '@/components/StickyCtaFloat'
 import PanelMock from '@/components/sections/panel/panel-mock'
+import PricingStudioNew from '@/components/sections/pricing-studio-new'
 import {
   ANALYTICS_BULLETS,
   PANEL_FAQ,
@@ -124,11 +125,10 @@ export default function PanelPageClient() {
 
               <div className="flex flex-col sm:flex-row gap-3 mb-8">
                 <Link
-                  href="/kontakt"
-                  className="inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-3.5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white text-sm md:text-base font-medium tracking-wide transition-all hover:shadow-lg hover:shadow-purple-500/25 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                  href="/cennik"
+                  className="inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-3.5 rounded-full bg-white text-gray-900 text-sm md:text-base font-medium tracking-wide transition-all hover:bg-white/90 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black glow-box"
                 >
-                  Umów demo panelu
-                  <ArrowRight size={18} aria-hidden="true" />
+                  Sprawdź cenę
                 </Link>
                 <a
                   href="#panel-showcase"
@@ -136,14 +136,8 @@ export default function PanelPageClient() {
                 >
                   Zobacz, jak działa
                 </a>
-                {/* Anchor dla floating CTA — ukryty inline, widoczny dopiero po scrollu */}
                 <div className="sr-only" aria-hidden="true">
-                  <StickyCtaFloat
-                    heroId="panel-hero"
-                    hideSectionId="panel-cta"
-                    href="/kontakt"
-                    label="Umów demo"
-                  />
+                  <StickyCtaFloat heroId="panel-hero" hideSectionId="panel-cta" />
                 </div>
               </div>
 
@@ -396,37 +390,8 @@ export default function PanelPageClient() {
         </div>
       </section>
 
-      {/* 9. CTA */}
-      <section id="panel-cta" aria-labelledby="panel-cta-heading" className="relative z-10 py-20 md:py-28 px-5 md:px-6 lg:px-12">
-        <AnimatedSection className="max-w-4xl mx-auto text-center">
-          <div className="relative">
-            <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 rounded-3xl blur-xl opacity-20" />
-            <div className="relative rounded-3xl border border-white/10 bg-gray-900/80 backdrop-blur-sm p-10 md:p-14">
-              <h2 id="panel-cta-heading" className="text-3xl md:text-4xl font-light text-white mb-4">
-                Zobacz panel na własne oczy
-              </h2>
-              <p className="text-sm md:text-lg text-gray-400 mb-8 max-w-2xl mx-auto">
-                Pokażemy Ci panel na żywo i policzymy wycenę pod Twój sklep.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Link
-                  href="/kontakt"
-                  className="inline-flex items-center justify-center gap-2 min-h-[48px] px-8 py-3.5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium transition-all hover:shadow-lg hover:shadow-purple-500/25 hover:scale-[1.02]"
-                >
-                  Umów demo
-                  <ArrowRight size={18} aria-hidden="true" />
-                </Link>
-                <Link
-                  href="/cennik"
-                  className="inline-flex items-center justify-center min-h-[48px] px-8 py-3.5 rounded-full border border-white/15 text-gray-300 font-light transition-colors hover:border-white/25 hover:text-white"
-                >
-                  Sprawdź cenę
-                </Link>
-              </div>
-            </div>
-          </div>
-        </AnimatedSection>
-      </section>
+      {/* 9. Cennik — ta sama sekcja co na stronie głównej */}
+      <PricingStudioNew sectionId="panel-cta" headingId="panel-cta-heading" />
 
       <footer className="relative z-10 border-t border-gray-900 pt-12 pb-10 px-5 md:px-6 lg:px-12">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">

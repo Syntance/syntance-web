@@ -4,7 +4,15 @@ import { useEffect, useRef } from "react";
 import { Check } from "lucide-react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
-export default function PricingStudioNew() {
+type PricingStudioNewProps = {
+  sectionId?: string;
+  headingId?: string;
+};
+
+export default function PricingStudioNew({
+  sectionId = "pricing-studio",
+  headingId = "pricing-heading",
+}: PricingStudioNewProps = {}) {
   const sectionRef = useRef<HTMLElement>(null);
   const isMobile = useIsMobile();
 
@@ -33,9 +41,9 @@ export default function PricingStudioNew() {
 
   return (
     <section
-      id="pricing-studio"
+      id={sectionId}
       ref={sectionRef}
-      aria-labelledby="pricing-heading"
+      aria-labelledby={headingId}
       className="relative z-10 py-20 md:py-32 px-5 md:px-6 lg:px-12 overflow-hidden opacity-0 translate-y-8 transition-all duration-1000"
     >
       {/* ─────────────────────  MOBILE  ───────────────────── */}
@@ -44,7 +52,7 @@ export default function PricingStudioNew() {
           <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-purple-300/70 mb-3">
             Cennik
           </p>
-          <h2 id="pricing-heading" className="text-3xl font-light tracking-tight leading-[1.15] text-white mb-3">
+          <h2 id={headingId} className="text-3xl font-light tracking-tight leading-[1.15] text-white mb-3">
             Sprawdź cenę <span className="bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">w 2 minuty</span>
           </h2>
           <p className="text-sm text-gray-400 leading-relaxed">
@@ -109,7 +117,7 @@ export default function PricingStudioNew() {
       <div className="hidden md:block max-w-4xl mx-auto text-center">
         {/* Header */}
         <header className="mb-16">
-          <h2 id="pricing-heading" className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
+          <h2 id={headingId} className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
             Cennik i wycena
           </h2>
           <p className="text-lg font-light tracking-wide text-gray-400 max-w-2xl mx-auto">
