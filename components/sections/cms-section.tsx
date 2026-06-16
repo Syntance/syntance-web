@@ -38,7 +38,7 @@ export default function CMSSection() {
             </p>
             <p className="text-sm md:text-base text-gray-500 max-w-2xl mx-auto leading-relaxed">
               Nasz CMS eliminuje klasyczny problem wydajności — lekkie treści edytujesz na żywo, a ciężkie
-              elementy kompilujemy w build (poniżej 1&nbsp;s).
+              elementy kompilowane są w build.
             </p>
           </header>
         </AnimatedSection>
