@@ -92,7 +92,6 @@ export default function PanelPageClient() {
   return (
     <div className="bg-black min-h-screen">
       <SubpageScrollbar sections={SCROLLBAR_SECTIONS} />
-      <StickyCtaFloat heroId="panel-hero" hideSectionId="panel-cta" href="/kontakt" label="Umów demo" />
 
       {/* 1. Hero */}
       <section
@@ -137,6 +136,15 @@ export default function PanelPageClient() {
                 >
                   Zobacz, jak działa
                 </a>
+                {/* Anchor dla floating CTA — ukryty inline, widoczny dopiero po scrollu */}
+                <div className="sr-only" aria-hidden="true">
+                  <StickyCtaFloat
+                    heroId="panel-hero"
+                    hideSectionId="panel-cta"
+                    href="/kontakt"
+                    label="Umów demo"
+                  />
+                </div>
               </div>
 
               <ProofBar className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 md:px-5" />
