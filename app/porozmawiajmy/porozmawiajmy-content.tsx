@@ -64,7 +64,7 @@ const OBSZARY = [
     title: 'Komunikacja i wiarygodność',
     body: 'Tone of voice, UVP, dowody. Strona, oferty i LinkedIn mówią jednym głosem — albo klient czuje rozjazd i wychodzi.',
     cta: 'Realizacje i case studies',
-    href: '/realizacje',
+    href: '/portfolio',
     gradient: 'from-amber-500 to-orange-500',
     trackTarget: 'realizacje' as const,
   },

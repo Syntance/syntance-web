@@ -23,7 +23,7 @@ const navItems = [
     href: "#",
     dropdown: [{ label: "Panel", href: "/panel" }],
   },
-  { label: "Portfolio", href: "/#portfolio-studio" },
+  { label: "Portfolio", href: "/portfolio" },
   {
     label: "Blog",
     href: "#",
@@ -43,6 +43,7 @@ const pathToNavIndex: Record<string, number> = {
   '/sklepy-internetowe': 1,
   '/agencje-marketingowe': 1,
   '/panel': 2,
+  '/portfolio': 3,
   '/realizacje': 3,
   '/strategia-marketingu-i-sprzedazy': 4,
   '/nextjs': 4,
@@ -130,7 +131,7 @@ export default function NavbarStudio() {
 
   const isProduktyActive = pathname === '/panel';
 
-  const isPortfolioActive = pathname === '/realizacje';
+  const isPortfolioActive = pathname === '/portfolio' || pathname === '/realizacje';
 
   const isBlogActive = pathname === '/strategia-marketingu-i-sprzedazy' || pathname === '/nextjs';
 
@@ -345,7 +346,7 @@ export default function NavbarStudio() {
             </div>
 
             <Link
-              href="/#portfolio-studio"
+              href="/portfolio"
               className={`block tap-target justify-start py-4 text-base font-light tracking-wider transition-colors border-b border-white/5 ${
                 isPortfolioActive ? 'text-white' : 'text-gray-300 hover:text-white active:text-purple-300'
               }`}

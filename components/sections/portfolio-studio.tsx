@@ -2,17 +2,21 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import { PORTFOLIO_CASE_STUDIES, toPortfolioGridItems } from "@/lib/portfolio-content";
 import { PortfolioItem } from "@/sanity/queries/portfolio";
 
+const staticGridItems = toPortfolioGridItems(PORTFOLIO_CASE_STUDIES);
+
 export default function PortfolioStudio() {
-  const [items, setItems] = useState<PortfolioItem[] | null>(null);
+  const [items, setItems] = useState<PortfolioItem[]>(staticGridItems);
 
   useEffect(() => {
     const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
     const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
     if (!projectId) {
-      setItems([]);
       return;
     }
 
@@ -27,8 +31,6 @@ export default function PortfolioStudio() {
       }`
     );
 
-    // AbortController + 5s timeout (rules: 60-quality "Timeouty / Zombie state").
-    // Cancel jeśli komponent unmount albo network wisi.
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
 
@@ -38,12 +40,29 @@ export default function PortfolioStudio() {
     )
       .then((res) => res.json())
       .then((data) => {
-        setItems((data.result as PortfolioItem[]) ?? []);
-      })
-      .catch((err) => {
-        if (err?.name !== "AbortError") {
-          setItems([]);
+        const cmsItems = (data.result as PortfolioItem[]) ?? [];
+        if (cmsItems.length === 0) return;
+
+        const merged = new Map(
+          staticGridItems.map((item) => [item.url.replace(/\/$/, "").toLowerCase(), item])
+        );
+
+        for (const cmsItem of cmsItems) {
+          const key = cmsItem.url.replace(/\/$/, "").toLowerCase();
+          const existing = merged.get(key);
+          merged.set(key, {
+            ...existing,
+            ...cmsItem,
+            logoAlt: cmsItem.logoAlt || existing?.logoAlt || cmsItem.name,
+          });
         }
+
+        setItems(
+          [...merged.values()].sort((a, b) => (a.order ?? 99) - (b.order ?? 99))
+        );
+      })
+      .catch(() => {
+        // Zostaw statyczne fallbacki.
       })
       .finally(() => clearTimeout(timeoutId));
 
@@ -53,8 +72,7 @@ export default function PortfolioStudio() {
     };
   }, []);
 
-  // Sekcja niewidoczna gdy brak realizacji w Sanity (lub wciąż się ładuje)
-  if (!items || items.length === 0) {
+  if (items.length === 0) {
     return null;
   }
 
@@ -65,7 +83,6 @@ export default function PortfolioStudio() {
       className="relative z-10 py-20 md:py-32 px-5 md:px-6 lg:px-12 overflow-hidden"
     >
       <div className="max-w-6xl mx-auto">
-        {/* Header — mobile zwarty, desktop oryginalny */}
         <AnimatedSection>
           <header className="text-center mb-8 md:mb-16">
             <p className="md:hidden text-[11px] font-medium uppercase tracking-[0.2em] text-purple-300/70 mb-3">
@@ -78,40 +95,64 @@ export default function PortfolioStudio() {
               Nasze realizacje
             </h2>
             <p className="text-sm md:text-lg font-light tracking-wide text-gray-400">
-              Strony, nad którymi pracowaliśmy.
+              Strony i sklepy, nad którymi pracowaliśmy.
             </p>
           </header>
         </AnimatedSection>
 
-        {/* Kafelki — mobile 2 kol z mniejszym gap */}
         <AnimatedSection delay={100}>
-          <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-8 md:mb-10">
             {items.map((item) => (
               <li key={item.id}>
                 <a
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex flex-col items-center justify-center gap-2 md:gap-3 h-full px-3 md:px-4 py-5 md:py-6 min-h-[110px] rounded-xl bg-white/[0.02] border border-white/10 hover:border-white/20 hover:bg-white/[0.04] active:bg-white/[0.06] transition-all duration-300"
+                  className="group flex h-full flex-col justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-6 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.04] active:bg-white/[0.06]"
                   aria-label={`Otwórz realizację: ${item.name}`}
                 >
-                  <div className="relative w-full h-10 md:h-12 flex items-center justify-center">
-                    <Image
-                      src={item.logoUrl}
-                      alt={item.logoAlt}
-                      width={120}
-                      height={48}
-                      className="max-w-full max-h-10 md:max-h-12 w-auto h-auto object-contain opacity-80 group-hover:opacity-100 transition-opacity"
-                      unoptimized
-                    />
+                  <div>
+                    {item.logoUrl ? (
+                      <div className="relative mb-4 flex h-12 items-center">
+                        <Image
+                          src={item.logoUrl}
+                          alt={item.logoAlt}
+                          width={120}
+                          height={48}
+                          className="max-h-12 w-auto object-contain opacity-80 transition-opacity group-hover:opacity-100"
+                          unoptimized
+                        />
+                      </div>
+                    ) : (
+                      <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.18em] text-purple-300/70">
+                        Realizacja
+                      </p>
+                    )}
+                    <p className="text-lg font-light tracking-wide text-white">
+                      {item.name}
+                    </p>
+                    <p className="mt-1 text-sm text-gray-500">
+                      {new URL(item.url).hostname.replace(/^www\./, "")}
+                    </p>
                   </div>
-                  <span className="text-xs md:text-sm font-light tracking-wide text-gray-400 group-hover:text-white transition-colors text-center leading-tight">
-                    {item.name}
+                  <span className="inline-flex items-center gap-2 text-sm text-gray-400 transition-colors group-hover:text-white">
+                    Zobacz live
+                    <ArrowRight size={16} aria-hidden="true" />
                   </span>
                 </a>
               </li>
             ))}
           </ul>
+
+          <div className="text-center">
+            <Link
+              href="/portfolio"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/15 px-8 py-3 text-sm font-medium tracking-wide text-white transition hover:border-white/30 hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
+            >
+              Pełne portfolio
+              <ArrowRight size={16} aria-hidden="true" />
+            </Link>
+          </div>
         </AnimatedSection>
       </div>
     </section>
