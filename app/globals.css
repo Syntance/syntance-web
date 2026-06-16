@@ -159,38 +159,6 @@
   }
 }
 
-/* GooeyNav — dropdown pod pozycją Blog */
-.gooey-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-top: 1rem;
-  padding: 0.5rem 0;
-  background: rgba(17, 24, 39, 0.95);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.75rem;
-  min-width: 180px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-  z-index: 50;
-}
-.gooey-dropdown-item {
-  display: block;
-  padding: 0.5rem 1rem;
-  color: rgba(156, 163, 175, 1);
-  font-size: 0.875rem;
-  font-weight: 300;
-  letter-spacing: 0.05em;
-  transition: background-color 0.15s ease, color 0.15s ease;
-  cursor: pointer;
-}
-.gooey-dropdown-item:hover {
-  color: white;
-  background: rgba(255, 255, 255, 0.05);
-}
-
-
 /* ─────────────────────────────────────────────────────────────────
    Mobile-only fundamenty (rules: 50-perf-a11y / WCAG 2.2).
    Wszystkie reguły wewnątrz @media (max-width: 768px) NIE wpływają

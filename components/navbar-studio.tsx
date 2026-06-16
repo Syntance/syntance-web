@@ -9,9 +9,21 @@ import GooeyNav from "@/components/ui/gooey-nav";
 // Główne linki nawigacyjne
 const navItems = [
   { label: "Strona główna", href: "/" },
-  { label: "Strony", href: "/strony-www" },
-  { label: "Sklepy", href: "/sklepy-internetowe" },
-  { label: "Dla agencji", href: "/agencje-marketingowe" },
+  {
+    label: "Oferta",
+    href: "#",
+    dropdown: [
+      { label: "Strony", href: "/strony-www" },
+      { label: "Sklepy", href: "/sklepy-internetowe" },
+      { label: "Dla agencji", href: "/agencje-marketingowe" },
+    ],
+  },
+  {
+    label: "Produkty",
+    href: "#",
+    dropdown: [{ label: "Panel", href: "/panel" }],
+  },
+  { label: "Portfolio", href: "/#portfolio-studio" },
   {
     label: "Blog",
     href: "#",
@@ -28,8 +40,10 @@ const navItems = [
 const pathToNavIndex: Record<string, number> = {
   '/': 0,
   '/strony-www': 1,
-  '/sklepy-internetowe': 2,
-  '/agencje-marketingowe': 3,
+  '/sklepy-internetowe': 1,
+  '/agencje-marketingowe': 1,
+  '/panel': 2,
+  '/realizacje': 3,
   '/strategia-marketingu-i-sprzedazy': 4,
   '/nextjs': 4,
   '/cennik': 5,
@@ -42,6 +56,8 @@ const HIDDEN_NAVBAR_PREFIXES = ['/admin']
 export default function NavbarStudio() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileOfertaOpen, setMobileOfertaOpen] = useState(false);
+  const [mobileProduktyOpen, setMobileProduktyOpen] = useState(false);
   const [mobileBlogOpen, setMobileBlogOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement | HTMLButtonElement | null>(null);
@@ -98,12 +114,23 @@ export default function NavbarStudio() {
   // Auto-close on pathname change (przy nawigacji między stronami)
   useEffect(() => {
     setMobileMenuOpen(false);
+    setMobileOfertaOpen(false);
+    setMobileProduktyOpen(false);
     setMobileBlogOpen(false);
   }, [pathname]);
 
   const activeNavIndex = useMemo(() => {
     return pathToNavIndex[pathname] ?? -1;
   }, [pathname]);
+
+  const isOfertaActive =
+    pathname === '/strony-www' ||
+    pathname === '/sklepy-internetowe' ||
+    pathname === '/agencje-marketingowe';
+
+  const isProduktyActive = pathname === '/panel';
+
+  const isPortfolioActive = pathname === '/realizacje';
 
   const isBlogActive = pathname === '/strategia-marketingu-i-sprzedazy' || pathname === '/nextjs';
 
@@ -215,31 +242,115 @@ export default function NavbarStudio() {
               </Link>
             )}
 
-            <Link
-              href="/strony-www"
-              className={`block tap-target justify-start py-4 text-base font-light tracking-wider transition-colors border-b border-white/5 ${
-                pathname === '/strony-www' ? 'text-white' : 'text-gray-300 hover:text-white active:text-purple-300'
-              }`}
-            >
-              Strony
-            </Link>
+            {/* Oferta dropdown */}
+            <div className="border-b border-white/5">
+              <button
+                onClick={() => setMobileOfertaOpen(!mobileOfertaOpen)}
+                aria-expanded={mobileOfertaOpen}
+                aria-controls="mobile-oferta-submenu"
+                className={`w-full flex items-center justify-between tap-target py-4 text-base font-light tracking-wider transition-colors cursor-pointer ${
+                  isOfertaActive ? 'text-white' : 'text-gray-300'
+                }`}
+              >
+                Oferta
+                <ChevronDown
+                  size={18}
+                  className={`transition-transform duration-200 ${mobileOfertaOpen ? 'rotate-180' : ''}`}
+                  aria-hidden="true"
+                />
+              </button>
+
+              <div
+                id="mobile-oferta-submenu"
+                className={
+                  mobileOfertaOpen
+                    ? 'overflow-hidden max-h-[240px] opacity-100 transition-all duration-300 ease-out'
+                    : 'hidden'
+                }
+              >
+                <div className="pl-4 pb-2 space-y-0.5 border-l-2 border-purple-500/30 ml-2">
+                  <Link
+                    href="/strony-www"
+                    className={`block tap-target justify-start py-3 text-sm font-light tracking-wider transition-colors ${
+                      pathname === '/strony-www'
+                        ? 'text-white'
+                        : 'text-gray-400 hover:text-white active:text-purple-300'
+                    }`}
+                  >
+                    Strony
+                  </Link>
+                  <Link
+                    href="/sklepy-internetowe"
+                    className={`block tap-target justify-start py-3 text-sm font-light tracking-wider transition-colors ${
+                      pathname === '/sklepy-internetowe'
+                        ? 'text-white'
+                        : 'text-gray-400 hover:text-white active:text-purple-300'
+                    }`}
+                  >
+                    Sklepy
+                  </Link>
+                  <Link
+                    href="/agencje-marketingowe"
+                    className={`block tap-target justify-start py-3 text-sm font-light tracking-wider transition-colors ${
+                      pathname === '/agencje-marketingowe'
+                        ? 'text-white'
+                        : 'text-gray-400 hover:text-white active:text-purple-300'
+                    }`}
+                  >
+                    Dla agencji
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Produkty dropdown */}
+            <div className="border-b border-white/5">
+              <button
+                onClick={() => setMobileProduktyOpen(!mobileProduktyOpen)}
+                aria-expanded={mobileProduktyOpen}
+                aria-controls="mobile-produkty-submenu"
+                className={`w-full flex items-center justify-between tap-target py-4 text-base font-light tracking-wider transition-colors cursor-pointer ${
+                  isProduktyActive ? 'text-white' : 'text-gray-300'
+                }`}
+              >
+                Produkty
+                <ChevronDown
+                  size={18}
+                  className={`transition-transform duration-200 ${mobileProduktyOpen ? 'rotate-180' : ''}`}
+                  aria-hidden="true"
+                />
+              </button>
+
+              <div
+                id="mobile-produkty-submenu"
+                className={
+                  mobileProduktyOpen
+                    ? 'overflow-hidden max-h-[120px] opacity-100 transition-all duration-300 ease-out'
+                    : 'hidden'
+                }
+              >
+                <div className="pl-4 pb-2 space-y-0.5 border-l-2 border-purple-500/30 ml-2">
+                  <Link
+                    href="/panel"
+                    className={`block tap-target justify-start py-3 text-sm font-light tracking-wider transition-colors ${
+                      pathname === '/panel'
+                        ? 'text-white'
+                        : 'text-gray-400 hover:text-white active:text-purple-300'
+                    }`}
+                  >
+                    Panel
+                  </Link>
+                </div>
+              </div>
+            </div>
 
             <Link
-              href="/sklepy-internetowe"
+              href="/#portfolio-studio"
               className={`block tap-target justify-start py-4 text-base font-light tracking-wider transition-colors border-b border-white/5 ${
-                pathname === '/sklepy-internetowe' ? 'text-white' : 'text-gray-300 hover:text-white active:text-purple-300'
+                isPortfolioActive ? 'text-white' : 'text-gray-300 hover:text-white active:text-purple-300'
               }`}
             >
-              Sklepy
-            </Link>
-
-            <Link
-              href="/agencje-marketingowe"
-              className={`block tap-target justify-start py-4 text-base font-light tracking-wider transition-colors border-b border-white/5 ${
-                pathname === '/agencje-marketingowe' ? 'text-white' : 'text-gray-300 hover:text-white active:text-purple-300'
-              }`}
-            >
-              Dla agencji
+              Portfolio
             </Link>
 
             {/* Blog dropdown */}

@@ -48,7 +48,7 @@ const GooeyNav = ({
   const textRef = useRef<HTMLSpanElement>(null);
   const [activeIndex, setActiveIndex] = useState(initialActiveIndex);
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
-  const dropdownRef = useRef<HTMLLIElement | null>(null);
+  const dropdownRefs = useRef<Map<number, HTMLLIElement>>(new Map());
   const isNavigatingRef = useRef(false);
   const navigatingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -62,9 +62,11 @@ const GooeyNav = ({
   // Zamknij dropdown po kliknięciu poza nim
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setOpenDropdown(null);
+      const target = event.target as Node;
+      for (const el of dropdownRefs.current.values()) {
+        if (el.contains(target)) return;
       }
+      setOpenDropdown(null);
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -471,11 +473,12 @@ const GooeyNav = ({
             {items.map((item, index) => (
               <li
                 key={index}
-                ref={
-                  item.dropdown && item.dropdown.length > 0
-                    ? dropdownRef
-                    : undefined
-                }
+                ref={(el) => {
+                  if (item.dropdown && item.dropdown.length > 0) {
+                    if (el) dropdownRefs.current.set(index, el);
+                    else dropdownRefs.current.delete(index);
+                  }
+                }}
                 className={`gooey-nav-item rounded-full relative cursor-pointer transition-[background-color_color] duration-300 ease text-white text-xs xl:text-sm font-light tracking-wider ${
                   activeIndex === index ? 'active' : ''
                 }`}
@@ -509,13 +512,16 @@ const GooeyNav = ({
                 {openDropdown === index &&
                   item.dropdown &&
                   item.dropdown.length > 0 && (
-                    <div className="gooey-dropdown" role="menu">
+                    <div
+                      className="absolute top-full left-1/2 z-50 mt-4 min-w-[180px] -translate-x-1/2 rounded-xl border border-white/10 bg-gray-900/95 py-2 shadow-[0_20px_40px_rgba(0,0,0,0.4)] backdrop-blur-md"
+                      role="menu"
+                    >
                       {item.dropdown.map((dropItem, dropIndex) => (
                         <button
                           key={dropIndex}
                           type="button"
                           role="menuitem"
-                          className="gooey-dropdown-item w-full text-left"
+                          className="block w-full cursor-pointer px-4 py-2 text-left text-sm font-light tracking-wider text-gray-400 transition-colors duration-150 hover:bg-white/5 hover:text-white"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleDropdownClick(dropItem.href);
