@@ -117,39 +117,6 @@ export default function PricingStudioNew() {
           </p>
         </header>
 
-        {/* Value propositions */}
-        <div className="grid md:grid-cols-3 gap-6 mb-16">
-          <div className="product-card rounded-2xl p-6 text-center">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center mx-auto mb-4">
-              <Check className="text-blue-400" size={24} />
-            </div>
-            <h3 className="text-lg font-medium mb-2">Transparentność</h3>
-            <p className="text-sm text-gray-400 font-light">
-              Jasna wycena bez ukrytych kosztów
-            </p>
-          </div>
-
-          <div className="product-card rounded-2xl p-6 text-center">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center mx-auto mb-4">
-              <Check className="text-purple-400" size={24} />
-            </div>
-            <h3 className="text-lg font-medium mb-2">Elastyczność</h3>
-            <p className="text-sm text-gray-400 font-light">
-              Dopasowanie do budżetu i potrzeb
-            </p>
-          </div>
-
-          <div className="product-card rounded-2xl p-6 text-center">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-400 flex items-center justify-center mx-auto mb-4">
-              <Check className="text-amber-400" size={24} />
-            </div>
-            <h3 className="text-lg font-medium mb-2">Wartość</h3>
-            <p className="text-sm text-gray-400 font-light">
-              Inwestycja, która się zwraca
-            </p>
-          </div>
-        </div>
-
         {/* CTA Box */}
         <div className="relative group">
           {/* Gradient border effect */}
