@@ -11,7 +11,7 @@ export default function PanelShowcase() {
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
-  const stepRefs = useRef<(HTMLDivElement | null)[]>([])
+  const stepRefs = useRef<(HTMLElement | null)[]>([])
 
   useEffect(() => {
     if (reducedMotion) return
