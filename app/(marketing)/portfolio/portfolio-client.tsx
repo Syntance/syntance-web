@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { ArrowRight, ArrowUpRight, ExternalLink } from 'lucide-react'
+import { ArrowUpRight, ExternalLink } from 'lucide-react'
 import StickyCtaFloat from '@/components/StickyCtaFloat'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
 import {
@@ -131,7 +131,7 @@ function ProjectCard({
             ))}
           </div>
 
-          <div className="mt-auto flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="mt-auto">
             <a
               href={project.url}
               target="_blank"
@@ -141,13 +141,6 @@ function ProjectCard({
               Otwórz {project.domain}
               <ExternalLink size={16} aria-hidden="true" />
             </a>
-            <Link
-              href="/porozmawiajmy"
-              className="inline-flex min-h-11 items-center justify-center gap-2 text-sm text-gray-400 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 rounded-full px-2"
-            >
-              Podobny projekt?
-              <ArrowRight size={16} aria-hidden="true" />
-            </Link>
           </div>
         </div>
       </article>
@@ -210,7 +203,7 @@ export default function PortfolioPageClient({
               wdrożenia dopasowanym do Twojego celu biznesowego.
             </p>
             <Link
-              href="/porozmawiajmy"
+              href="/kontakt"
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-medium tracking-wider text-gray-900 transition hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
             >
               Porozmawiajmy o projekcie
