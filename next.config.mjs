@@ -17,6 +17,18 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'cdn.sanity.io',
       },
+      {
+        protocol: 'https',
+        hostname: 'lumineconcept.pl',
+      },
+      {
+        protocol: 'https',
+        hostname: 'sklep-retrohouse.pl',
+      },
+      {
+        protocol: 'https',
+        hostname: 'assets.sklep-retrohouse.pl',
+      },
     ],
     formats: ['image/avif', 'image/webp'],
   },

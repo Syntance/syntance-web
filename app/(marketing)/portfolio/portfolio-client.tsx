@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowUpRight, ExternalLink } from 'lucide-react'
 import StickyCtaFloat from '@/components/StickyCtaFloat'
@@ -65,23 +66,28 @@ function ProjectCard({
 
   return (
     <AnimatedSection delay={delay}>
-      <article className="group relative h-full overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] transition-colors hover:border-white/20 hover:bg-white/[0.04]">
-        <div
-          className="relative flex min-h-[220px] items-end overflow-hidden border-b border-white/10 p-8"
-          style={{
-            background:
-              project.type === 'ecommerce'
-                ? 'radial-gradient(circle at top right, oklch(0.28 0.08 162 / 0.45), transparent 55%), linear-gradient(180deg, oklch(0.16 0.02 260), oklch(0.12 0.01 260))'
-                : 'radial-gradient(circle at top right, oklch(0.32 0.1 280 / 0.4), transparent 55%), linear-gradient(180deg, oklch(0.16 0.02 280), oklch(0.12 0.01 260))',
-          }}
+      <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] transition-colors hover:border-white/20 hover:bg-white/[0.04]">
+        <a
+          href={project.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="relative block aspect-[1200/630] overflow-hidden border-b border-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-purple-400"
+          aria-label={`Podgląd strony ${project.name} — otwórz ${project.domain}`}
         >
-          <div className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-            <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-purple-500/10 blur-3xl" />
-          </div>
-
-          <div className="relative z-10 w-full">
-            <div className="mb-4 flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-3 py-1 text-[11px] font-medium tracking-wide text-gray-300">
+          <Image
+            src={project.previewImage}
+            alt={project.previewImageAlt}
+            fill
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+          />
+          <div
+            className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[oklch(0.12_0.01_260/0.85)] via-[oklch(0.12_0.01_260/0.15)] to-transparent"
+            aria-hidden="true"
+          />
+          <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/35 px-3 py-1 text-[11px] font-medium tracking-wide text-gray-200 backdrop-blur-sm">
                 <span
                   className="size-1.5 shrink-0 rounded-full"
                   style={{ backgroundColor: dotColor }}
@@ -89,36 +95,20 @@ function ProjectCard({
                 />
                 {project.typeLabel}
               </span>
-              <span className="rounded-full border border-white/10 px-3 py-1 text-[11px] text-gray-500">
+              <span className="rounded-full border border-white/10 bg-black/25 px-3 py-1 text-[11px] text-gray-400 backdrop-blur-sm">
                 {project.domain}
               </span>
             </div>
-
             <h2 className="text-2xl font-light tracking-wide text-white md:text-3xl">
               {project.name}
             </h2>
           </div>
-        </div>
+        </a>
 
-        <div className="flex h-full flex-col p-8">
+        <div className="flex flex-1 flex-col p-6 md:p-8">
           <p className="mb-6 text-sm leading-relaxed text-gray-400 md:text-base">
             {project.description}
           </p>
-
-          <ul className="mb-6 space-y-2">
-            {project.highlights.map((highlight) => (
-              <li
-                key={highlight}
-                className="flex items-start gap-2 text-sm text-gray-300"
-              >
-                <span
-                  className="mt-2 size-1 shrink-0 rounded-full bg-purple-400/80"
-                  aria-hidden="true"
-                />
-                {highlight}
-              </li>
-            ))}
-          </ul>
 
           <div className="mb-8 flex flex-wrap gap-2">
             {project.stack.map((tech) => (

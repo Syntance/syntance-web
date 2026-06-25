@@ -2,20 +2,22 @@ import { sanityFetch } from '@/sanity/lib/fetch'
 import {
   PORTFOLIO_CASE_STUDIES,
   type PortfolioCaseStudy,
+  type PortfolioCaseStudyInput,
 } from '@/lib/portfolio-content'
 import {
   portfolioItemsQuery,
   type PortfolioItem,
 } from '@/sanity/queries/portfolio'
+import { resolvePortfolioPreviewImage } from '@/lib/portfolio-preview'
 
 function normalizeUrl(url: string): string {
   return url.replace(/\/$/, '').toLowerCase()
 }
 
 function mergePortfolioItems(
-  base: readonly PortfolioCaseStudy[],
+  base: readonly PortfolioCaseStudyInput[],
   cmsItems: PortfolioItem[],
-): PortfolioCaseStudy[] {
+): PortfolioCaseStudyInput[] {
   const byUrl = new Map(base.map((item) => [normalizeUrl(item.url), { ...item }]))
 
   for (const cmsItem of cmsItems) {
@@ -43,14 +45,30 @@ function mergePortfolioItems(
       typeLabel: 'Realizacja',
       description: `Realizacja dla ${cmsItem.name}.`,
       highlights: ['Projekt wdrożony w Next.js'],
-      stack: ['Next.js'],
+      stack: ['Next.js', 'CMS / Magazyn', 'Vercel'],
       order: cmsItem.order ?? 99,
+      previewImageFallback: undefined,
+      previewImageAlt: `Podgląd realizacji ${cmsItem.name}`,
       logoUrl: cmsItem.logoUrl,
       logoAlt: cmsItem.logoAlt,
     })
   }
 
   return [...byUrl.values()].sort((a, b) => a.order - b.order)
+}
+
+async function withResolvedPreviewImages(
+  items: PortfolioCaseStudyInput[],
+): Promise<PortfolioCaseStudy[]> {
+  return Promise.all(
+    items.map(async (item) => ({
+      ...item,
+      previewImage: await resolvePortfolioPreviewImage({
+        url: item.url,
+        previewImageFallback: item.previewImageFallback,
+      }),
+    })),
+  )
 }
 
 export async function fetchPortfolioItems(): Promise<PortfolioCaseStudy[]> {
@@ -61,12 +79,14 @@ export async function fetchPortfolioItems(): Promise<PortfolioCaseStudy[]> {
     })
 
     if (!cmsItems?.length) {
-      return [...PORTFOLIO_CASE_STUDIES]
+      return withResolvedPreviewImages([...PORTFOLIO_CASE_STUDIES])
     }
 
-    return mergePortfolioItems(PORTFOLIO_CASE_STUDIES, cmsItems)
+    return withResolvedPreviewImages(
+      mergePortfolioItems(PORTFOLIO_CASE_STUDIES, cmsItems),
+    )
   } catch (error) {
     console.error('Error fetching portfolio items:', error)
-    return [...PORTFOLIO_CASE_STUDIES]
+    return withResolvedPreviewImages([...PORTFOLIO_CASE_STUDIES])
   }
 }

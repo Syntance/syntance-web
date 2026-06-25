@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { useState, useMemo, useEffect, useRef } from "react";
 import GooeyNav from "@/components/ui/gooey-nav";
+import SyntanceLogo from "@/components/syntance-logo";
 
 // Główne linki nawigacyjne
 const navItems = [
@@ -150,23 +151,26 @@ export default function NavbarStudio() {
         }`}
       />
 
-      <nav className="fixed top-0 left-0 right-0 z-50 py-4 px-4 sm:py-6 sm:px-6 lg:px-12 backdrop-blur-md bg-black/30 transition-all duration-300 safe-pt">
-        <div className="flex justify-between items-center">
+      <nav className="fixed top-0 left-0 right-0 z-50 py-4 px-4 sm:py-6 sm:px-6 lg:px-12 bg-black/30 transition-all duration-300 safe-pt isolate">
+        <div className="pointer-events-none absolute inset-0 -z-10 backdrop-blur-md" aria-hidden="true" />
+        <div className="relative flex justify-between items-center">
           {pathname === '/' ? (
             <button
               onClick={() => {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="text-xl sm:text-2xl font-medium tracking-widest glow-text cursor-pointer hover:opacity-80 transition-opacity"
+              className="text-white cursor-pointer hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-sm shrink-0"
+              aria-label="Syntance — strona główna"
             >
-              Syntance
+              <SyntanceLogo priority className="h-10 sm:h-11" />
             </button>
           ) : (
             <Link
               href="/"
-              className="text-xl sm:text-2xl font-medium tracking-widest glow-text cursor-pointer hover:opacity-80 transition-opacity"
+              className="text-white cursor-pointer hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-sm shrink-0"
+              aria-label="Syntance — strona główna"
             >
-              Syntance
+              <SyntanceLogo priority className="h-10 sm:h-11" />
             </Link>
           )}
 
@@ -209,7 +213,7 @@ export default function NavbarStudio() {
         }`}
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
-          <span className="text-xl font-medium tracking-widest glow-text">Syntance</span>
+          <SyntanceLogo className="h-10" />
           <button
             className="tap-target text-white -mr-2 cursor-pointer"
             onClick={() => setMobileMenuOpen(false)}

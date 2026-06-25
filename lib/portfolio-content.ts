@@ -1,6 +1,15 @@
 export type PortfolioProjectType = 'website' | 'ecommerce'
 
-export interface PortfolioCaseStudy {
+export function getPortfolioTypeDotColor(type: PortfolioProjectType): string {
+  return type === 'ecommerce' ? 'oklch(0.72 0.17 162)' : 'oklch(0.72 0.14 250)'
+}
+
+export type PortfolioCaseStudyInput = Omit<PortfolioCaseStudy, 'previewImage'> & {
+  previewImage?: string
+  previewImageFallback?: string
+}
+
+export type PortfolioCaseStudy = {
   id: string
   name: string
   url: string
@@ -11,11 +20,14 @@ export interface PortfolioCaseStudy {
   highlights: readonly string[]
   stack: readonly string[]
   order: number
+  previewImage: string
+  previewImageAlt: string
+  previewImageFallback?: string
   logoUrl?: string
   logoAlt?: string
 }
 
-export const PORTFOLIO_CASE_STUDIES: readonly PortfolioCaseStudy[] = [
+export const PORTFOLIO_CASE_STUDIES: readonly PortfolioCaseStudyInput[] = [
   {
     id: 'lumine-concept',
     name: 'Lumine Concept',
@@ -30,8 +42,18 @@ export const PORTFOLIO_CASE_STUDIES: readonly PortfolioCaseStudy[] = [
       'Spójna identyfikacja wizualna (logo 3D, plexi)',
       'Layout pod konwersję i prezentację produktów',
     ],
-    stack: ['Next.js', 'Medusa', 'Vercel', 'R2'],
+    stack: [
+      'Next.js',
+      'Medusa',
+      'CMS / Magazyn',
+      'Zarządzanie produktami',
+      'Vercel',
+      'R2',
+    ],
     order: 1,
+    previewImageFallback: '/portfolio/lumine-concept-preview.webp',
+    previewImageAlt:
+      'Podgląd strony Lumine Concept — sklep beauty z logo 3D i sprzedażą online',
   },
   {
     id: 'retrohouse',
@@ -47,14 +69,21 @@ export const PORTFOLIO_CASE_STUDIES: readonly PortfolioCaseStudy[] = [
       'Formularz kontaktu i obsługa zapytań B2B',
       'Architektura pod skalowanie kolekcji',
     ],
-    stack: ['Next.js', 'Medusa', 'Vercel', 'R2'],
+    stack: [
+      'Next.js',
+      'Medusa',
+      'CMS / Magazyn',
+      'Zarządzanie produktami',
+      'Vercel',
+      'R2',
+    ],
     order: 2,
+    previewImageFallback:
+      'https://assets.sklep-retrohouse.pl/att.lUy8_5Z-mkNgRuvwDjRohVGTwun1JIcBtFcu7pYGz-w-01KT44XPYPR0C1ZBTYNPD3F0XC.jpg',
+    previewImageAlt:
+      'Podgląd sklepu RetroHouse — antyki i vintage z Wiednia, katalog i blog',
   },
 ] as const
-
-export function getPortfolioTypeDotColor(type: PortfolioProjectType): string {
-  return type === 'ecommerce' ? 'oklch(0.72 0.17 162)' : 'oklch(0.72 0.14 250)'
-}
 
 export function toPortfolioGridItems(
   items: readonly PortfolioCaseStudy[],
