@@ -1,10 +1,8 @@
 const { chromium } = require('playwright');
 const path = require('path');
-const fs = require('fs');
 const { execSync } = require('child_process');
 
 const OUT_PNG = path.join(__dirname, '../public/portfolio/lumine-concept-preview.png');
-const OUT_WEBP = path.join(__dirname, '../public/portfolio/lumine-concept-preview.webp');
 
 (async () => {
   const browser = await chromium.launch();
@@ -13,23 +11,28 @@ const OUT_WEBP = path.join(__dirname, '../public/portfolio/lumine-concept-previe
     deviceScaleFactor: 2,
   });
 
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      'lumine.consent.v1',
+      JSON.stringify({
+        necessary: true,
+        analytics: false,
+        marketing: false,
+        updatedAt: Date.now(),
+        version: 1,
+      }),
+    );
+  });
+
   await page.goto('https://lumineconcept.pl', { waitUntil: 'networkidle' });
 
-  for (const label of ['Akceptuj wszystko', 'Tylko niezbędne', 'Odrzuć wszystko']) {
-    const btn = page.getByRole('button', { name: label });
-    if (await btn.count()) {
-      await btn.first().click();
-      await page.waitForTimeout(500);
-      break;
-    }
-  }
-
-  await page.waitForTimeout(1500);
+  // Baner popup pojawia się po 2s — ładuj hero wcześniej, zanim modal zasłoni widok.
+  await page.waitForTimeout(1200);
   await page.screenshot({ path: OUT_PNG, type: 'png' });
   await browser.close();
 
-  const py = `from PIL import Image; im=Image.open(r"${OUT_PNG.replace(/\\/g, '/')}"); im.resize((1200,630), Image.Resampling.LANCZOS).save(r"${OUT_WEBP.replace(/\\/g, '/')}", format='WEBP', quality=92, method=6)`;
-  execSync(`python -c "${py}"`, { stdio: 'inherit' });
-  fs.unlinkSync(OUT_PNG);
-  console.log('saved', OUT_WEBP);
+  execSync(
+    `python "${path.join(__dirname, 'convert-portfolio-preview.py')}" "${OUT_PNG}" "${path.join(__dirname, '../public/portfolio/lumine-concept-preview.webp')}"`,
+    { stdio: 'inherit' },
+  );
 })();

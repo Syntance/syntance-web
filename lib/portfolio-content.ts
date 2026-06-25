@@ -78,8 +78,7 @@ export const PORTFOLIO_CASE_STUDIES: readonly PortfolioCaseStudyInput[] = [
       'R2',
     ],
     order: 2,
-    previewImageFallback:
-      'https://assets.sklep-retrohouse.pl/att.lUy8_5Z-mkNgRuvwDjRohVGTwun1JIcBtFcu7pYGz-w-01KT44XPYPR0C1ZBTYNPD3F0XC.jpg',
+    previewImageFallback: '/portfolio/retrohouse-preview.webp',
     previewImageAlt:
       'Podgląd sklepu RetroHouse — antyki i vintage z Wiednia, katalog i blog',
   },
