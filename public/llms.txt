@@ -1,76 +1,32 @@
-# Syntance — Agencja interaktywna i software house
+# Syntance
 
-## Kim jesteśmy
-- Typ: Agencja interaktywna / Software house
-- Lokalizacja: Polska (praca zdalna, klienci z EU)
-- Specjalizacja: Tworzenie stron internetowych, sklepy e-commerce
-- Technologie: Next.js, React, TypeScript, Sanity CMS, MedusaJS
+> Agencja interaktywna i software house z Polski. Tworzymy szybkie strony WWW i sklepy e-commerce na Next.js z gwarancją PageSpeed 90+. Realizacja w 2–4 tygodnie, pełna własność kodu, zero vendor lock-in.
 
-## UVP (Unique Value Proposition)
-Jakość agencji w tempie freelancera. Strony w 2-4 tygodnie, sklepy w 4-8 tygodni. PageSpeed 90+ gwarantowany. Pełna własność kodu, zero vendor lock-in. Gwarancja 30 dni.
+Jakość agencji w tempie freelancera. Strategia marketingu i sprzedaży przed kodem. Technologie: Next.js, React, TypeScript, Sanity CMS, MedusaJS. Lokalizacja: Polska (praca zdalna, klienci z EU).
 
-## Usługi i ceny
-- Strony WWW: 5 000 - 15 000 PLN (realizacja: 2-4 tygodnie)
-- Sklepy E-commerce: od 20 000 PLN (realizacja: 4-6 tygodni)
-- Strategia marketingu i sprzedaży (faza przedwdrożeniowa): 4 500 PLN — segmentacja, pozycjonowanie, UVP, buyer persony, lejek, user flows, plan SEO i analityki; gotowy dokument strategiczny
-- Aplikacje Webowe: od 50 000 PLN (wycena indywidualna)
+## Usługi
 
-## Strony internetowe dla firm
-- URL: https://syntance.com/strony-www
-- Usługa: Tworzenie profesjonalnych stron internetowych dla firm B2B
-- Technologia: Next.js, Sanity CMS, TypeScript, Tailwind CSS
-- Ceny: od 5 400 PLN netto
-- Czas realizacji: 2-4 tygodnie (strony firmowe), 4-8 tygodni (rozbudowane)
-- Gwarancja: PageSpeed 90+, 30 dni wsparcia technicznego
-- Dla kogo: firmy usługowe, producenci B2B, startupy, deweloperzy
-- Lokalizacja: Kraków, Małopolska, cała Polska (praca zdalna)
+- [Strony internetowe](https://syntance.com/strony-www): Profesjonalne strony WWW dla firm B2B. Next.js, Sanity CMS, PageSpeed 90+, od 5 400 PLN netto, realizacja 2–4 tygodnie.
+- [Sklepy internetowe headless](https://syntance.com/sklepy-internetowe): E-commerce na MedusaJS i Next.js. Zero prowizji, Stripe i Przelewy24, od 12 000 PLN, realizacja 4–6 tygodni.
+- [Strategia marketingu i sprzedaży](https://syntance.com/strategia-marketingu-i-sprzedazy): Faza przedwdrożeniowa — segmentacja, UVP, buyer persony, lejek, plan SEO. Gotowy dokument strategiczny, 4 500 PLN.
+- [Cennik i konfigurator](https://syntance.com/cennik): Interaktywny kalkulator wyceny stron i sklepów internetowych.
+- [Panel CMS](https://syntance.com/panel): Headless CMS Sanity — edycja treści bez programisty.
+- [Next.js dla firm](https://syntance.com/nextjs): Dlaczego Next.js — wydajność, SEO i skalowalność.
 
-## Sklepy internetowe headless
-- URL: https://syntance.com/sklepy-internetowe
-- Usługa: Sklepy e-commerce w architekturze headless
-- Technologia: MedusaJS, Next.js, Stripe, Przelewy24, Sanity CMS
-- Ceny: od 12 000 PLN (standard), od 25 000 PLN (pro z integracjami)
-- Czas realizacji: 4-6 tygodni (standard), 6-10 tygodni (pro)
-- Zalety: zero prowizji, pełna własność kodu, PageSpeed 90+, nieograniczona skalowalność
-- Dla kogo: producenci, marki D2C, subskrypcje, marketplace
-- Alternatywa dla: Shopify, WooCommerce, PrestaShop
-- Lokalizacja: Kraków, Małopolska, cała Polska
+## Firma
 
-## Strategia marketingu i sprzedaży (edukacja)
-- URL: https://syntance.com/strategia-marketingu-i-sprzedazy
-- Kanoniczna nazwa usługi: Strategia marketingu i sprzedaży (faza przedwdrożeniowa)
-- Krótki opis: Strategia marketingu i sprzedaży — fundament pod skuteczną stronę. Zakończona gotowym dokumentem strategicznym.
+- [Strona główna](https://syntance.com): Syntance — strony i sklepy Next.js z gwarancją PageSpeed 90+.
+- [O nas](https://syntance.com/o-nas): Zespół, wartości i podejście do projektów.
+- [Portfolio](https://syntance.com/portfolio): Realizacje stron WWW i sklepów e-commerce.
+- [Realizacje](https://syntance.com/realizacje): Case studies i przykłady wdrożeń.
+- [Dla agencji marketingowych](https://syntance.com/agencje-marketingowe): Współpraca white-label i partnerska.
+- [Kontakt](https://syntance.com/kontakt): Bezpłatna konsultacja — kontakt@syntance.com, +48 537 110 170.
+- [Porozmawiajmy](https://syntance.com/porozmawiajmy): Umów bezpłatną rozmowę o projekcie.
 
-## Technologia
-- Frontend: Next.js, TypeScript, Tailwind CSS, shadcn/ui
-- E-commerce: MedusaJS, headless Shopify
-- CMS: Sanity (headless, Time Machine)
-- Hosting: Vercel (99.99% uptime, globalny CDN)
-- Płatności: Stripe, Przelewy24
-- Analytics: PostHog, Google Analytics 4
+## Optional
 
-## Dla kogo pracujemy
-- Lekarze specjaliści (prywatne praktyki, gabinety)
-- Premium Home Services (budowlanka, wnętrza, studia kuchni)
-- Lokalni deweloperzy (strony inwestycji)
-- Producenci D2C (meble, fashion, kosmetyki)
-- Marki subskrypcyjne (kawa, suplementy, diety)
-
-## Nasze produkty (dogfooding)
-- OZE Asystent: Inteligentny system automatyzacji dla branży OZE (oze-asystent.pl)
-
-## Dlaczego Syntance?
-- PageSpeed 90+ gwarantowany (Next.js, zero wtyczek)
-- Strategia marketingu i sprzedaży przed kodem (faza przedwdrożeniowa)
-- Pełna własność kodu (możesz zmienić wykonawcę)
-- AI-Augmented Speed (strony w 2-4 tygodnie)
-- AEO-ready (struktura czytelna dla ChatGPT/Perplexity)
-
-## Kontakt
-- Strona kontaktowa: https://syntance.com/kontakt
-- Email: kontakt@syntance.com
-- Telefon: +48 537 110 170
-- Właściciel: Kamil Podobiński
-- Adres: Czerniec 72, 33-390 Łącko, Polska
-- Strona: https://syntance.com
-- Cennik: https://syntance.com/cennik
+- [Polityka prywatności](https://syntance.com/polityka-prywatnosci): Zasady przetwarzania danych osobowych.
+- [Regulamin](https://syntance.com/regulamin): Warunki korzystania z serwisu i usług.
+- [OZE Asystent](https://oze-asystent.pl): Własny produkt SaaS — automatyzacja dla branży OZE.
+- [GitHub](https://github.com/Syntance): Repozytoria open source.
+- [LinkedIn](https://linkedin.com/company/syntance): Profil firmy w LinkedIn.
