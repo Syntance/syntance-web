@@ -13,7 +13,6 @@ import {
   ANALYTICS_BULLETS,
   PANEL_FAQ,
   PROBLEM_CARDS,
-  PROOF_BAR,
   SCROLLBAR_SECTIONS,
   STACK_BADGES,
   SECURITY_PILLARS,
@@ -69,103 +68,97 @@ function AnimatedSection({
   )
 }
 
-function ProofBar({ className = '' }: { className?: string }) {
-  return (
-    <p
-      className={`flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-xs md:text-sm text-gray-300 ${className}`}
-      aria-label="Kluczowe cechy panelu"
-    >
-      {PROOF_BAR.map((item, index) => (
-        <span key={item} className="inline-flex items-center gap-3">
-          {index > 0 && (
-            <span className="text-gray-600" aria-hidden="true">
-              ·
-            </span>
-          )}
-          {item}
-        </span>
-      ))}
-    </p>
-  )
-}
-
 export default function PanelPageClient() {
+  const scrollToNext = () => {
+    const element = document.getElementById('panel-problem')
+    if (!element) return
+
+    const navbarHeight = 100
+    const elementRect = element.getBoundingClientRect()
+    const elementTop = elementRect.top + window.scrollY
+    window.scrollTo({ top: elementTop - navbarHeight, behavior: 'smooth' })
+  }
+
   return (
     <div className="bg-black min-h-screen">
       <SubpageScrollbar sections={SCROLLBAR_SECTIONS} />
 
-      {/* 1. Hero */}
+      {/* 1. Hero — pełny viewport, wyśrodkowany jak na HP */}
       <section
         id="panel-hero"
         aria-labelledby="panel-hero-heading"
-        className="relative z-10 pt-28 pb-16 md:pt-36 md:pb-24 px-5 md:px-6 lg:px-12"
+        className="relative z-10 flex min-h-screen items-center px-5 pb-20 pt-32 md:px-6 lg:px-12"
       >
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-            <AnimatedSection>
-              <p className="text-[11px] md:text-xs font-medium uppercase tracking-[0.2em] text-purple-300/70 mb-4">
+        <div className="mx-auto w-full max-w-6xl">
+          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
+            <div>
+              <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.2em] text-purple-300/70 md:text-xs">
                 Panel sklepu Syntance
               </p>
               <h1
                 id="panel-hero-heading"
-                className="text-3xl sm:text-4xl md:text-5xl font-light tracking-tight leading-[1.12] text-white mb-5"
+                className="mb-5 text-3xl font-light leading-[1.12] tracking-tight text-white sm:text-4xl md:text-5xl"
               >
                 Cały sklep z jednego panelu.{' '}
                 <span className="text-gray-400">
                   Bez Shopify, bez Sanity, bez pięciu logowań.
                 </span>
               </h1>
-              <p className="text-sm md:text-lg text-gray-400 leading-relaxed mb-4">
+              <p className="mb-4 text-sm leading-relaxed text-gray-400 md:text-lg">
                 Strona, produkty, zamówienia, treści, SEO i analityka — wszystkim zarządzasz w jednym,
                 autorskim panelu zbudowanym pod Twój biznes.
               </p>
-              <p className="text-sm text-gray-500 leading-relaxed mb-6">
+              <p className="mb-8 text-sm leading-relaxed text-gray-500">
                 Prosto i intuicyjnie. Zmianę tekstu czy ceny widzisz na stronie w kilka sekund.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-3 mb-8">
-                <Link
-                  href="/cennik"
-                  className="inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-3.5 rounded-full bg-white text-gray-900 text-sm md:text-base font-medium tracking-wide transition-all hover:bg-white/90 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black glow-box"
+              <div className="flex flex-col flex-wrap items-stretch gap-3 sm:flex-row sm:items-center">
+                <button
+                  type="button"
+                  onClick={scrollToNext}
+                  className="inline-flex min-h-[48px] cursor-pointer items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-6 py-3.5 text-sm font-light tracking-wide text-gray-300 transition-colors hover:border-white/25 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black md:text-base"
                 >
-                  Sprawdź cenę
-                </Link>
-                <a
-                  href="#panel-showcase"
-                  className="inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-3.5 rounded-full border border-white/15 bg-white/[0.03] text-sm md:text-base font-light text-gray-300 tracking-wide transition-colors hover:border-white/25 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                >
-                  Zobacz, jak działa
-                </a>
-                <div className="sr-only" aria-hidden="true">
-                  <StickyCtaFloat heroId="panel-hero" hideSectionId="panel-cta" />
-                </div>
+                  Dowiedz się więcej
+                </button>
+                <StickyCtaFloat heroId="panel-hero" hideSectionId="panel-cta" />
               </div>
+            </div>
 
-              <ProofBar className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 md:px-5" />
-            </AnimatedSection>
-
-            <AnimatedSection delay={100}>
+            <div className="hidden lg:block">
               <PanelMock view="overview" />
-            </AnimatedSection>
+            </div>
           </div>
+        </div>
+
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
+          <button
+            type="button"
+            onClick={scrollToNext}
+            className="group flex cursor-pointer flex-col items-center gap-2"
+            aria-label="Przewiń w dół"
+          >
+            <div className="flex h-10 w-6 justify-center rounded-full border-2 border-gray-600 transition-colors group-hover:border-gray-400">
+              <div className="mt-2 h-3 w-1 animate-bounce rounded-full bg-gray-400 transition-colors motion-reduce:animate-none group-hover:bg-white" />
+            </div>
+          </button>
         </div>
       </section>
 
-      {/* 2. Problem */}
+      {/* 2. Problem — poniżej foldu, wejście przy scrollu */}
       <section
         id="panel-problem"
         aria-labelledby="panel-problem-heading"
-        className="relative z-10 py-20 md:py-24 px-5 md:px-6 lg:px-12 bg-gradient-to-b from-transparent via-purple-950/10 to-transparent"
+        className="relative z-10 scroll-mt-24 px-5 py-20 md:px-6 md:py-24 lg:px-12 bg-gradient-to-b from-transparent via-purple-950/10 to-transparent"
       >
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="mx-auto max-w-4xl text-center">
           <AnimatedSection>
             <h2
               id="panel-problem-heading"
-              className="text-2xl md:text-4xl font-light tracking-tight text-white mb-4 leading-snug"
+              className="mb-4 text-2xl font-light leading-snug tracking-tight text-white md:text-4xl"
             >
               Sklep w Shopify. Treści w Sanity. Maile w osobnym narzędziu. Analityka w trzech zakładkach.
             </h2>
-            <p className="text-sm md:text-lg text-gray-400 leading-relaxed mb-10 max-w-3xl mx-auto">
+            <p className="mx-auto mb-10 max-w-3xl text-sm leading-relaxed text-gray-400 md:text-lg">
               Każde narzędzie to osobna subskrypcja, osobne logowanie i osobny rachunek. A dane nigdzie
               się nie spotykają.
             </p>

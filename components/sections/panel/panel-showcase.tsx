@@ -1,8 +1,52 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import PanelMock from '@/components/sections/panel/panel-mock'
 import { SHOWCASE_STEPS, type PanelViewId } from '@/components/sections/panel/panel-content'
+
+function RevealOnScroll({
+  children,
+  className = '',
+  delay = 0,
+  reducedMotion = false,
+}: {
+  children: ReactNode
+  className?: string
+  delay?: number
+  reducedMotion?: boolean
+}) {
+  const [isVisible, setIsVisible] = useState(reducedMotion)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (reducedMotion) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => setIsVisible(true), delay)
+          observer.unobserve(entry.target)
+        }
+      },
+      { threshold: 0.12, rootMargin: '-60px' },
+    )
+
+    const node = ref.current
+    if (node) observer.observe(node)
+    return () => observer.disconnect()
+  }, [delay, reducedMotion])
+
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-1000 ease-out ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+      } ${reducedMotion ? 'opacity-100 translate-y-0 transition-none' : ''} ${className}`}
+    >
+      {children}
+    </div>
+  )
+}
 
 export default function PanelShowcase() {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -42,19 +86,24 @@ export default function PanelShowcase() {
   const activeView: PanelViewId = SHOWCASE_STEPS[activeIndex]?.id ?? 'overview'
 
   return (
-    <section id="panel-showcase" aria-labelledby="panel-showcase-heading" className="relative z-10 py-20 md:py-28 px-5 md:px-6 lg:px-12">
-      <div className="max-w-6xl mx-auto">
-        <header className="text-center mb-10 md:mb-14 max-w-3xl mx-auto">
-          <h2
-            id="panel-showcase-heading"
-            className="text-3xl md:text-5xl font-light tracking-tight md:tracking-widest text-white mb-4"
-          >
-            Zobacz panel w akcji
-          </h2>
-          <p className="text-sm md:text-lg text-gray-400 leading-relaxed">
-            Przewijaj — pokażemy każdą część panelu po kolei.
-          </p>
-        </header>
+    <section
+      id="panel-showcase"
+      aria-labelledby="panel-showcase-heading"
+      className="relative z-10 scroll-mt-24 px-5 pb-20 pt-32 md:px-6 md:pb-28 md:pt-44 lg:px-12"
+    >
+      <RevealOnScroll reducedMotion={reducedMotion}>
+        <div className="mx-auto max-w-6xl">
+          <header className="mx-auto mb-12 max-w-3xl text-center md:mb-16">
+            <h2
+              id="panel-showcase-heading"
+              className="mb-4 text-3xl font-light tracking-tight text-white md:text-5xl md:tracking-widest"
+            >
+              Zobacz panel w akcji
+            </h2>
+            <p className="text-sm leading-relaxed text-gray-400 md:text-lg">
+              Przewijaj — pokażemy każdą część panelu po kolei.
+            </p>
+          </header>
 
         {!reducedMotion && (
           <div className="hidden lg:grid lg:grid-cols-2 lg:gap-12 xl:gap-16">
@@ -98,7 +147,8 @@ export default function PanelShowcase() {
             </article>
           ))}
         </div>
-      </div>
+        </div>
+      </RevealOnScroll>
     </section>
   )
 }
