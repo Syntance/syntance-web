@@ -2,12 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { Cookie, X, Settings, Shield, BarChart3, CheckCircle2 } from 'lucide-react'
-
-type CookiePreferences = {
-  necessary: boolean
-  analytics: boolean
-  marketing: boolean
-}
+import {
+  type CookiePreferences,
+  COOKIE_CONSENT_KEY,
+  notifyCookieConsentUpdated,
+} from '@/lib/consent'
 
 export function CookieBanner() {
   const [isVisible, setIsVisible] = useState(false)
@@ -20,7 +19,7 @@ export function CookieBanner() {
 
   useEffect(() => {
     // Sprawdź czy użytkownik już zaakceptował cookies
-    const consent = localStorage.getItem('cookie-consent')
+    const consent = localStorage.getItem(COOKIE_CONSENT_KEY)
     if (consent) return
 
     // Banner NIE może być elementem LCP — to duży modal, który malowany w oknie
@@ -71,19 +70,9 @@ export function CookieBanner() {
   }, [])
 
   const savePreferences = (prefs: CookiePreferences) => {
-    localStorage.setItem('cookie-consent', JSON.stringify(prefs))
+    localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(prefs))
     localStorage.setItem('cookie-consent-date', new Date().toISOString())
-    
-    // Tutaj możesz dodać logikę inicjalizacji analytics/marketing
-    if (prefs.analytics) {
-      // np. inicjalizacja Google Analytics
-      console.log('Analytics enabled')
-    }
-    if (prefs.marketing) {
-      // np. inicjalizacja Meta Pixel
-      console.log('Marketing enabled')
-    }
-    
+    notifyCookieConsentUpdated()
     setIsVisible(false)
   }
 

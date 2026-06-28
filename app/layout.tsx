@@ -8,6 +8,7 @@ import { generateSeoMetadata, getSeoSettings } from "@/lib/seo";
 import NavbarStudio from "@/components/navbar-studio";
 import { ProgressBar } from "@/components/progress-bar";
 import { CookieBanner } from "@/components/CookieBanner";
+import { PostHogProvider } from "@/components/posthog-provider";
 import { Suspense } from "react";
 
 const spaceGrotesk = Space_Grotesk({
@@ -64,6 +65,12 @@ export default async function RootLayout({
         />
         <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+        {process.env.NEXT_PUBLIC_POSTHOG_HOST ? (
+          <>
+            <link rel="preconnect" href={process.env.NEXT_PUBLIC_POSTHOG_HOST} crossOrigin="anonymous" />
+            <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_POSTHOG_HOST} />
+          </>
+        ) : null}
       </head>
       <body className="font-sans antialiased bg-black text-[#F5F3FF]">
         {/* Skip link (WCAG 2.2) — niewidoczny do momentu fokusu klawiaturą */}
@@ -78,7 +85,7 @@ export default async function RootLayout({
         </Suspense>
         <AllSchemasDynamic seo={seo} />
         <NavbarStudio />
-        {children}
+        <PostHogProvider>{children}</PostHogProvider>
         <CookieBanner />
         <Analytics />
         <SpeedInsights />
