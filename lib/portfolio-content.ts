@@ -85,7 +85,7 @@ export const PORTFOLIO_CASE_STUDIES: readonly PortfolioCaseStudyInput[] = [
 ] as const
 
 export function toPortfolioGridItems(
-  items: readonly PortfolioCaseStudy[],
+  items: readonly PortfolioCaseStudyInput[],
 ): Array<{
   id: string
   name: string
