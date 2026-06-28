@@ -11,7 +11,6 @@ import { Twitter, Linkedin, Github } from "@/components/icons/social";
 // Import sections - bez lazy loadingu dla hero, żeby uniknąć flashowania kontaktu
 import HeroStudio from "@/components/sections/hero-studio";
 const AnatomyStudio = dynamic(() => import("@/components/sections/anatomy-studio"), { ssr: true });
-const OfferCards = dynamic(() => import("@/components/sections/offer-cards"), { ssr: true });
 const ValuesStudio = dynamic(() => import("@/components/sections/values-studio"), { ssr: true });
 const TechComparison = dynamic(() => import("@/components/sections/tech-comparison"), { ssr: true });
 const PortfolioStudio = dynamic(() => import("@/components/sections/portfolio-studio"), { ssr: true });
@@ -39,7 +38,6 @@ export default function HomePage() {
         <HeroStudio />
         <AnatomyStudio />
         <ValuesStudio />
-        <OfferCards />
         <TechComparison />
         <CMSSection />
         <PortfolioStudio />

@@ -23,7 +23,7 @@ const defaultPages: any[] = [
     focusKeyword: 'strony Next.js',
     metaTitle: 'Syntance — Strony i sklepy Next.js | PageSpeed 90+ | Polska',
     metaDescription:
-      'Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od 5k PLN, sklepy od 20k PLN. Realizacja w 2-4 tygodnie.',
+      'Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od 5k PLN, sklepy od 20k PLN. Strony w 2-4 tygodnie, sklepy w 4-8 tygodni.',
     keywords: [
       'strony Next.js',
       'sklepy Next.js',

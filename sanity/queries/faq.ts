@@ -133,7 +133,7 @@ export const defaultFaqItems: PricingFaqItem[] = [
     category: 'time',
     question: 'Ile trwa realizacja strony?',
     answer:
-      'Strona firmowa: miesiąc. Sklep e-commerce: 2 miesiące. Widzisz postęp na żywo (preview link) — nie czekasz 3 miesiące na "efekt końcowy".',
+      'Strona firmowa: 2-4 tygodnie. Sklep e-commerce: 4-8 tygodni. Widzisz postęp na żywo (preview link) — nie czekasz 3 miesiące na "efekt końcowy".',
     order: 5,
   },
   {
@@ -219,7 +219,7 @@ export const defaultFaqSklepy: SimpleFaqQA[] = [
   },
   {
     question: 'Jak długo trwa budowa sklepu?',
-    answer: 'Sklep standard (katalog, koszyk, płatności): 4-6 tygodni. Sklep pro z integracjami: 6-10 tygodni.',
+    answer: 'Sklep standard (katalog, koszyk, płatności): 4-8 tygodni. Sklep pro z integracjami: 8-12 tygodni.',
   },
   {
     question: 'Czy MedusaJS to sprawdzona technologia?',

@@ -41,19 +41,18 @@ export default function TiltCard({ children, className = '' }: TiltCardProps) {
 
   const handleMouseLeave = () => {
     if (!cardRef.current) return;
-    cardRef.current.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+    cardRef.current.style.transform = 'none';
     cardRef.current.style.boxShadow = '0px 20px 40px rgba(0, 0, 0, 0.3)';
   };
 
   return (
     <div
       ref={cardRef}
-      className={`transition-all duration-75 ease-out ${className}`}
+      className={`transition-[box-shadow,transform] duration-75 ease-out ${className}`}
       onMouseMove={isMobile ? undefined : handleMouseMove}
       onMouseLeave={isMobile ? undefined : handleMouseLeave}
       style={{
         transformStyle: 'preserve-3d',
-        transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg)',
         boxShadow: '0px 20px 40px rgba(0, 0, 0, 0.3)',
       }}
     >

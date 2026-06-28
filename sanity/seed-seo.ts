@@ -21,7 +21,7 @@ const defaultSeoSettings = {
   metaTitle: 'Syntance — Strony i sklepy Next.js | PageSpeed 90+ | Polska',
   metaTitleTemplate: '%s | Syntance',
   metaDescription:
-    'Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od 5k PLN, sklepy od 20k PLN. Pełna własność kodu. Realizacja w 2-4 tygodnie.',
+    'Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od 5k PLN, sklepy od 20k PLN. Pełna własność kodu. Strony w 2-4 tygodnie, sklepy w 4-8 tygodni.',
   canonicalUrl: 'https://syntance.com',
   
   // Słowa kluczowe
@@ -43,13 +43,13 @@ const defaultSeoSettings = {
   // Open Graph
   ogTitle: 'Syntance — Strony i sklepy Next.js | PageSpeed 90+',
   ogDescription:
-    'Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od 5k PLN. Realizacja w 2-4 tygodnie.',
+    'Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od 5k PLN. Strony w 2-4 tygodnie, sklepy w 4-8 tygodni.',
   ogImageUrl: 'https://syntance.com/og/og-home-1200x630.png',
   
   // Twitter
   twitterTitle: 'Syntance — Strony i sklepy Next.js | PageSpeed 90+',
   twitterDescription:
-    'Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od 5k PLN. Realizacja w 2-4 tygodnie.',
+    'Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od 5k PLN. Strony w 2-4 tygodnie, sklepy w 4-8 tygodni.',
   twitterImageAlt: 'Syntance - Studio tworzące szybkie strony i sklepy internetowe Next.js',
   
   // Schema.org

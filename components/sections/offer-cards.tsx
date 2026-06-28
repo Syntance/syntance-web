@@ -92,7 +92,7 @@ export default function OfferCards() {
           {/* Strony WWW */}
           <Link
             href="/strony-www"
-            className="block relative overflow-hidden rounded-2xl bg-white/[0.03] border border-white/10 active:bg-white/[0.05] transition-colors"
+            className="block relative overflow-hidden rounded-2xl border border-white/10 bg-gray-900 active:bg-gray-900/90 transition-colors"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-cyan-500/5 blur-2xl rounded-full -translate-y-12 translate-x-12 pointer-events-none" />
             <div className="relative p-5">
@@ -110,7 +110,7 @@ export default function OfferCards() {
               <p className="text-sm text-gray-300 leading-relaxed mb-2">
                 Strony wizytówkowe, landing page, strony firmowe.
               </p>
-              <p className="text-xs text-gray-500 leading-relaxed mb-4">
+              <p className="text-xs text-gray-400 leading-relaxed mb-4">
                 Dla lekarzy, prawników, firm usługowych, deweloperów.
               </p>
               <div className="flex items-center justify-between pt-4 border-t border-white/10">
@@ -131,7 +131,7 @@ export default function OfferCards() {
           {/* Sklepy e-commerce */}
           <Link
             href="/sklepy-internetowe"
-            className="block relative overflow-hidden rounded-2xl bg-white/[0.03] border border-white/10 active:bg-white/[0.05] transition-colors"
+            className="block relative overflow-hidden rounded-2xl border border-white/10 bg-gray-900 active:bg-gray-900/90 transition-colors"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-pink-500/5 blur-2xl rounded-full -translate-y-12 translate-x-12 pointer-events-none" />
             <div className="relative p-5">
@@ -143,13 +143,13 @@ export default function OfferCards() {
                   </h3>
                 </div>
                 <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-purple-300/70 bg-purple-500/10 px-2 py-1 rounded-full whitespace-nowrap">
-                  2 miesiące
+                  4-8 tygodni
                 </span>
               </div>
               <p className="text-sm text-gray-300 leading-relaxed mb-2">
                 Headless e-commerce na MedusaJS.
               </p>
-              <p className="text-xs text-gray-500 leading-relaxed mb-4">
+              <p className="text-xs text-gray-400 leading-relaxed mb-4">
                 Dla butików, marek D2C, niszowych sprzedawców.
               </p>
               <div className="flex items-center justify-between pt-4 border-t border-white/10">
@@ -190,7 +190,7 @@ export default function OfferCards() {
             <TiltCard className="h-full">
               <Link 
                 href="/strony-www"
-                className="group h-full product-card rounded-3xl p-8 cursor-pointer transition-all duration-300 block"
+                className="group h-full block cursor-pointer rounded-3xl border border-white/10 bg-gray-900 p-8 transition-colors duration-300 hover:border-white/15"
               >
                 <div className="text-5xl mb-6">🌐</div>
                 
@@ -202,18 +202,18 @@ export default function OfferCards() {
                   Strony WWW
                 </h3>
                 
-                <p className="text-gray-400 font-light mb-4 leading-relaxed">
+                <p className="mb-4 leading-relaxed text-gray-200">
                   Strony wizytówkowe, landing page, strony firmowe
                 </p>
                 
-                <p className="text-sm text-gray-400 font-light mb-6">
+                <p className="mb-6 text-sm text-gray-300">
                   Dla: lekarzy, prawników, firm usługowych, deweloperów
                 </p>
                 
                 <div className="flex items-center justify-between mb-6 pb-6 border-b border-white/10">
                   <div>
                     <div className="text-2xl font-light text-white">Od&nbsp; {formatPrice(basePrices.website)} PLN</div>
-                    <div className="text-sm text-gray-400 font-light mt-1">miesiąc</div>
+                    <div className="text-sm text-gray-300 mt-1">miesiąc</div>
                   </div>
                 </div>
                 
@@ -230,7 +230,7 @@ export default function OfferCards() {
             <TiltCard className="h-full">
               <Link 
                 href="/sklepy-internetowe"
-                className="group h-full product-card rounded-3xl p-8 cursor-pointer transition-all duration-300 block"
+                className="group h-full block cursor-pointer rounded-3xl border border-white/10 bg-gray-900 p-8 transition-colors duration-300 hover:border-white/15"
               >
                 <div className="text-5xl mb-6">🛒</div>
                 
@@ -242,18 +242,18 @@ export default function OfferCards() {
                   Sklepy e-commerce
                 </h3>
                 
-                <p className="text-gray-400 font-light mb-4 leading-relaxed">
+                <p className="mb-4 leading-relaxed text-gray-200">
                   Headless e-commerce na MedusaJS
                 </p>
                 
-                <p className="text-sm text-gray-400 font-light mb-6">
+                <p className="mb-6 text-sm text-gray-300">
                   Dla: butików, marek D2C, niszowych sprzedawców
                 </p>
                 
                 <div className="flex items-center justify-between mb-6 pb-6 border-b border-white/10">
                   <div>
                     <div className="text-2xl font-light text-white">Od&nbsp; {formatPrice(basePrices.ecommerce)} PLN</div>
-                    <div className="text-sm text-gray-400 font-light mt-1">2 miesiące</div>
+                    <div className="text-sm text-gray-300 mt-1">4-8 tygodni</div>
                   </div>
                 </div>
                 
