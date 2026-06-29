@@ -1,7 +1,8 @@
 export type AdminPanelScreenshot = {
-  src: string
+  src?: string
   alt: string
   caption?: string
+  placeholder?: boolean
 }
 
 export type AdminPanelGalleryGroup = {

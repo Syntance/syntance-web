@@ -2,7 +2,64 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import type { PortfolioAdminGallery } from '@/lib/portfolio-admin-gallery'
+import type { AdminPanelScreenshot, PortfolioAdminGallery } from '@/lib/portfolio-admin-gallery'
+
+function AdminPanelPlaceholder({
+  brand,
+  caption,
+}: {
+  brand: string
+  caption?: string
+}) {
+  return (
+    <div className="flex aspect-[16/10] w-full flex-col bg-[oklch(0.14_0.012_260)]">
+      <div className="flex items-center gap-3 border-b border-white/10 px-4 py-3">
+        <span className="size-2 rounded-full bg-[oklch(0.72_0.14_250)]" aria-hidden="true" />
+        <span className="text-xs font-medium tracking-wide text-neutral-300">{brand}</span>
+        {caption ? (
+          <span className="ml-auto text-[11px] text-neutral-500">{caption}</span>
+        ) : null}
+      </div>
+      <div className="flex min-h-0 flex-1">
+        <div className="hidden w-44 shrink-0 border-r border-white/10 bg-black/20 p-4 sm:block">
+          <div className="space-y-2">
+            {['Produkty', 'Zamówienia', 'Treści', 'Ustawienia'].map((item, index) => (
+              <div
+                key={item}
+                className={`h-2 rounded-full ${index === 0 ? 'w-24 bg-white/20' : 'w-20 bg-white/[0.08]'}`}
+                aria-hidden="true"
+              />
+            ))}
+          </div>
+        </div>
+        <div className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center">
+          <div className="grid w-full max-w-md grid-cols-2 gap-2 opacity-40" aria-hidden="true">
+            <div className="h-16 rounded-xl border border-dashed border-white/15 bg-white/[0.02]" />
+            <div className="h-16 rounded-xl border border-dashed border-white/15 bg-white/[0.02]" />
+            <div className="col-span-2 h-24 rounded-xl border border-dashed border-white/15 bg-white/[0.02]" />
+          </div>
+          <p className="text-sm text-neutral-400">Zrzut panelu Lumine Concept wkrótce</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function AdminPanelImage({ shot }: { shot: AdminPanelScreenshot }) {
+  if (shot.placeholder || !shot.src) {
+    return <AdminPanelPlaceholder brand="Lumine Concept" caption={shot.caption} />
+  }
+
+  return (
+    <Image
+      src={shot.src}
+      alt={shot.alt}
+      fill
+      sizes="(max-width: 1024px) 100vw, 960px"
+      className="object-cover object-top"
+    />
+  )
+}
 
 export function AdminPanelShowcase({ gallery }: { gallery: PortfolioAdminGallery }) {
   const [activeGroupId, setActiveGroupId] = useState(gallery.groups[0]?.id ?? '')
@@ -27,7 +84,7 @@ export function AdminPanelShowcase({ gallery }: { gallery: PortfolioAdminGallery
             Panel administracyjny
           </p>
           <h2 id="admin-panel-heading" className="text-2xl font-light tracking-wide text-white md:text-3xl">
-            Magazyn i CMS w produkcji
+            Panel administracyjny Lumine
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-400">{gallery.intro}</p>
         </div>
@@ -74,13 +131,7 @@ export function AdminPanelShowcase({ gallery }: { gallery: PortfolioAdminGallery
           <div className="border-b border-white/10 px-4 py-2 text-xs text-neutral-500">{activeShot.caption}</div>
         ) : null}
         <div className="relative aspect-[16/10] w-full bg-neutral-950">
-          <Image
-            src={activeShot.src}
-            alt={activeShot.alt}
-            fill
-            sizes="(max-width: 1024px) 100vw, 960px"
-            className="object-cover object-top"
-          />
+          <AdminPanelImage shot={activeShot} />
         </div>
         <figcaption className="sr-only">{activeShot.alt}</figcaption>
       </figure>
@@ -92,7 +143,7 @@ export function AdminPanelShowcase({ gallery }: { gallery: PortfolioAdminGallery
           aria-label={`Zrzuty — ${activeGroup.label}`}
         >
           {activeGroup.screenshots.map((shot, index) => (
-            <li key={shot.src}>
+            <li key={shot.caption ?? shot.alt}>
               <button
                 type="button"
                 role="tab"

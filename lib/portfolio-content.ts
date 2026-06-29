@@ -114,46 +114,46 @@ const LUMINE_PERFORMANCE: PortfolioPerformanceReport = {
 
 const LUMINE_ADMIN_GALLERY: PortfolioAdminGallery = {
   intro:
-    'Zamiast ciężkiego WordPress admin i wtyczek WooCommerce — jeden panel Magazyn do sklepu, treści i konfiguracji. CMS podstron i FAQ bez edytora bloków.',
+    'Własny panel administracyjny Lumine Concept — produkty, zamówienia i treści sklepu w jednym miejscu, bez ciężkiego WordPress admin i wtyczek WooCommerce.',
   highlights: [
-    'Magazyn: cennik, SEO, e-maile transakcyjne i ustawienia w jednym miejscu',
-    'CMS: FAQ i treści podstron sklepu — edycja bez deployu frontu',
+    'Zarządzanie katalogiem produktów i zamówieniami sklepu beauty',
+    'Edycja treści podstron i FAQ bez deployu frontu',
     'Headless stack — panel nie obciąża frontu sklepu ani Core Web Vitals',
   ],
   groups: [
     {
-      id: 'magazyn',
-      label: 'Moduł Magazyn',
+      id: 'sklep',
+      label: 'Panel sklepu',
       description:
-        'Panel operacyjny sklepu: przegląd, konfigurator cennika, rezerwacje i ustawienia — wdrożony na lumineconcept.pl zamiast WP admin.',
+        'Operacje sklepu Lumine Concept: produkty, zamówienia i ustawienia — zamiast panelu WordPress/WooCommerce.',
       screenshots: [
         {
-          src: '/portfolio/lumine-concept/admin/magazyn-przeglad.png',
-          alt: 'Panel Magazyn Lumine Concept — widok przeglądu',
+          placeholder: true,
+          alt: 'Panel sklepu Lumine Concept — widok główny (placeholder)',
           caption: 'Przegląd panelu',
         },
         {
-          src: '/portfolio/lumine-concept/admin/magazyn-cennik.png',
-          alt: 'Panel Magazyn Lumine Concept — konfigurator cennika',
-          caption: 'Cennik i konfigurator',
+          placeholder: true,
+          alt: 'Panel sklepu Lumine Concept — katalog produktów (placeholder)',
+          caption: 'Produkty i zamówienia',
         },
       ],
     },
     {
       id: 'cms',
-      label: 'CMS treści',
+      label: 'Treści sklepu',
       description:
-        'Treści podstron i FAQ sklepu — edycja w panelu, publikacja od razu na headless front (Next.js).',
+        'Treści podstron i FAQ sklepu Lumine — edycja w panelu, publikacja od razu na headless front (Next.js).',
       screenshots: [
         {
-          src: '/portfolio/lumine-concept/admin/cms-sklepy.png',
-          alt: 'CMS Lumine Concept — FAQ podstrony Sklepy internetowe',
-          caption: 'FAQ — Sklepy internetowe',
+          placeholder: true,
+          alt: 'Panel treści Lumine Concept — FAQ sklepu (placeholder)',
+          caption: 'FAQ sklepu',
         },
         {
-          src: '/portfolio/lumine-concept/admin/cms-portfolio.png',
-          alt: 'CMS Lumine Concept — zarządzanie portfolio realizacji',
-          caption: 'Portfolio realizacji',
+          placeholder: true,
+          alt: 'Panel treści Lumine Concept — podstrony (placeholder)',
+          caption: 'Podstrony i content',
         },
       ],
     },

@@ -16,7 +16,7 @@ import {
 const sections = [
   { id: 'case-hero', label: 'Projekt' },
   { id: 'case-performance', label: 'PageSpeed' },
-  { id: 'case-admin', label: 'Magazyn' },
+  { id: 'case-admin', label: 'Panel' },
   { id: 'case-details', label: 'Szczegóły' },
   { id: 'case-cta', label: 'Kontakt' },
 ]

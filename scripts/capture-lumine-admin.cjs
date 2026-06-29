@@ -1,7 +1,7 @@
 /**
- * Zrzuty panelu Magazyn + CMS do case study Lumine.
+ * Zrzuty panelu administracyjnego Lumine Concept do case study.
  *
- * Użycie (lokalnie lub na produkcji klienta):
+ * Użycie (po podpięciu docelowych URL panelu klienta):
  *   pnpm dev
  *   node scripts/capture-lumine-admin.cjs
  *   node scripts/capture-lumine-admin.cjs https://lumineconcept.pl
@@ -10,6 +10,7 @@
  *   ADMIN_EMAIL, ADMIN_PASSWORD
  *
  * Wynik: public/portfolio/lumine-concept/admin/*.png
+ * Po capture ustaw src w lib/portfolio-content.ts (LUMINE_ADMIN_GALLERY) i placeholder: false.
  */
 const { chromium } = require('playwright');
 const fs = require('fs');
