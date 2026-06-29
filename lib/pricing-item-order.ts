@@ -1,4 +1,4 @@
-import type { PricingItem } from '@/sanity/queries/pricing'
+import type { PricingItem } from '@/lib/data/pricing'
 
 type ConfiguratorOrderRanks = Partial<
   Record<'website' | 'ecommerce' | 'webapp', string>

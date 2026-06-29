@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { cookies } from 'next/headers'
 import { ADMIN_COOKIE_NAME, verifySession } from '@/lib/admin-auth'
-import { getBookingRules, saveBookingRules } from '@/lib/sanity/booking'
+import { getBookingRules, saveBookingRules } from '@/lib/db/queries/booking'
 
 const HHMM = /^([01]\d|2[0-3]):[0-5]\d$/
 

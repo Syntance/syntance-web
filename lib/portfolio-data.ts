@@ -1,13 +1,10 @@
-import { sanityFetch } from '@/sanity/lib/fetch'
 import {
   PORTFOLIO_CASE_STUDIES,
   type PortfolioCaseStudy,
   type PortfolioCaseStudyInput,
 } from '@/lib/portfolio-content'
-import {
-  portfolioItemsQuery,
-  type PortfolioItem,
-} from '@/sanity/queries/portfolio'
+import { fetchPortfolioItemsFromDb } from '@/lib/db/queries/portfolio'
+import type { PortfolioItem } from '@/lib/data/portfolio-types'
 import { resolvePortfolioPreviewImage } from '@/lib/portfolio-preview'
 
 function normalizeUrl(url: string): string {
@@ -73,20 +70,17 @@ async function withResolvedPreviewImages(
 
 export async function fetchPortfolioItems(): Promise<PortfolioCaseStudy[]> {
   try {
-    const cmsItems = await sanityFetch<PortfolioItem[]>({
-      query: portfolioItemsQuery,
-      tags: ['portfolio'],
-    })
+    const cmsItems = await fetchPortfolioItemsFromDb()
 
-    if (!cmsItems?.length) {
+    if (!cmsItems.length) {
       return withResolvedPreviewImages([...PORTFOLIO_CASE_STUDIES])
     }
 
-    return withResolvedPreviewImages(
-      mergePortfolioItems(PORTFOLIO_CASE_STUDIES, cmsItems),
-    )
+    return withResolvedPreviewImages(mergePortfolioItems(PORTFOLIO_CASE_STUDIES, cmsItems))
   } catch (error) {
     console.error('Error fetching portfolio items:', error)
     return withResolvedPreviewImages([...PORTFOLIO_CASE_STUDIES])
   }
 }
+
+export type { PortfolioItem } from '@/lib/data/portfolio-types'

@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { getDiscoveryWorkshopPrice } from '@/lib/sanity/discovery-workshop-price'
+import { getDiscoveryWorkshopPrice } from '@/lib/pricing-discovery'
 
 function formatPrice(price: number): string {
   return price.toLocaleString('pl-PL')

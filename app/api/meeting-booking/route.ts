@@ -3,8 +3,8 @@ import { z } from 'zod'
 import { Resend } from 'resend'
 import { getAvailableSlotsForDate, warsawSlotToIso } from '@/lib/booking-slots'
 import { createMeetingEvent } from '@/lib/google-calendar'
-import { createBooking, getBookingRules } from '@/lib/sanity/booking'
-import { getEmailTemplates } from '@/sanity/queries/emailTemplates'
+import { createBooking, getBookingRules } from '@/lib/db/queries/booking'
+import { getEmailTemplates } from '@/lib/db/queries/settings'
 import {
   renderMeetingBookingClientEmail,
   renderMeetingBookingOwnerPlain,

@@ -1,4 +1,4 @@
-import { getBookingRules, getBlocksBetween, type BookingRules } from '@/lib/sanity/booking'
+import { getBookingRules, getBlocksBetween, type BookingRules } from '@/lib/db/queries/booking'
 import { getBusyIntervals } from '@/lib/google-calendar'
 
 const TIMEZONE = 'Europe/Warsaw'

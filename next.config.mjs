@@ -38,7 +38,6 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   reactStrictMode: true,
-  transpilePackages: ['sanity', 'next-sanity'],
 
   async headers() {
     // Security headers wg fundament/55-security + 50-perf-a11y.

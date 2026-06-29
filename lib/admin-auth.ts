@@ -9,7 +9,7 @@
  * Cookie:
  *   name:  syntance_admin
  *   value: `${email}.${exp}.${sig}` (sig = HMAC-SHA256 nad `${email}.${exp}`)
- *   HttpOnly, Secure (w prod), SameSite=Lax, Path=/admin
+ *   HttpOnly, Secure (w prod), SameSite=Lax, Path=/
  *
  * Działa zarówno w Node (route handlers), jak i Edge (middleware) — używa Web Crypto.
  */
@@ -56,12 +56,12 @@ function timingSafeEqual(a: string, b: string): boolean {
 }
 
 export async function verifyCredentials(email: string, password: string): Promise<boolean> {
-  const expectedEmail = process.env.ADMIN_EMAIL
-  const expectedPassword = process.env.ADMIN_PASSWORD
+  const expectedEmail = process.env.ADMIN_EMAIL?.trim()
+  const expectedPassword = process.env.ADMIN_PASSWORD?.trim()
   if (!expectedEmail || !expectedPassword) return false
   return (
-    timingSafeEqual(email.trim().toLowerCase(), expectedEmail.trim().toLowerCase()) &&
-    timingSafeEqual(password, expectedPassword)
+    timingSafeEqual(email.trim().toLowerCase(), expectedEmail.toLowerCase()) &&
+    timingSafeEqual(password.trim(), expectedPassword)
   )
 }
 
@@ -101,4 +101,19 @@ export function buildSessionCookie(token: string, maxAgeSeconds = DEFAULT_TTL_SE
 export function buildClearCookie(): string {
   const secure = process.env.NODE_ENV === 'production' ? 'Secure; ' : ''
   return `${ADMIN_COOKIE_NAME}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax; ${secure}`
+}
+
+/** Server-only — sesja admina z cookie (RSC / route handlers). */
+export async function getAdminSession(): Promise<VerifiedSession | null> {
+  const { cookies } = await import('next/headers')
+  const jar = await cookies()
+  return verifySession(jar.get(ADMIN_COOKIE_NAME)?.value)
+}
+
+export async function requireAdminSession(): Promise<VerifiedSession> {
+  const session = await getAdminSession()
+  if (!session) {
+    throw new Error('Unauthorized')
+  }
+  return session
 }

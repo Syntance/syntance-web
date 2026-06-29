@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { ChevronDown, DollarSign, Clock, Shield, Scale } from 'lucide-react'
 import { Twitter, Linkedin, Github } from '@/components/icons/social'
 import { ContactForm } from '@/components/contact-form'
-import { PricingFaqItem, defaultFaqItems } from '@/sanity/queries/faq'
+import { PricingFaqItem, defaultFaqItems } from '@/lib/data/faq'
 
 interface FAQItem {
   question: string

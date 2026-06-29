@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { ADMIN_COOKIE_NAME, verifySession } from '@/lib/admin-auth'
-import { listBookings } from '@/lib/sanity/booking'
+import { listBookings } from '@/lib/db/queries/booking'
 
 async function requireAdmin() {
   const jar = await cookies()

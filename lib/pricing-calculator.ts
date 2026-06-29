@@ -1,5 +1,5 @@
-import type { PricingConfig, PricingItem, ProjectTypeBundleRow } from '@/sanity/queries/pricing'
-import { defaultStartingPrices } from '@/sanity/queries/pricing'
+import type { PricingConfig, PricingItem, ProjectTypeBundleRow } from '@/lib/data/pricing'
+import { defaultStartingPrices } from '@/lib/data/pricing'
 
 /** Domyślny `id` kategorii „Baza projektu” (musi zgadzać się z `pricingCategory.id`). */
 export const DEFAULT_BASE_PROJECT_CATEGORY_ID = 'base'

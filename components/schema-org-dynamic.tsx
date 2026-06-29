@@ -1,4 +1,4 @@
-import { SeoSettings } from '@/sanity/queries/seo'
+import { SeoSettings } from '@/lib/data/seo-types'
 
 interface SchemaProps {
   seo: SeoSettings

@@ -27,7 +27,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   preload: true,
 });
 
-// Dynamiczne generowanie metadata z Sanity
+// Dynamiczne generowanie metadata z bazy (Neon)
 export async function generateMetadata(): Promise<Metadata> {
   return generateSeoMetadata();
 }
@@ -43,7 +43,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Pobierz ustawienia SEO z Sanity
+  // Ustawienia SEO z Postgres
   const seo = await getSeoSettings();
   
   return (
@@ -52,19 +52,6 @@ export default async function RootLayout({
       className={`${spaceGrotesk.variable} ${plusJakartaSans.variable}`}
     >
       <head>
-        {/* Brak preconnect do Google Fonts — next/font self-hostuje pliki z własnej domeny.
-            Preconnect tylko do realnie używanych origin (Sanity API + CDN). */}
-        <link
-          rel="preconnect"
-          href={
-            process.env.NEXT_PUBLIC_SANITY_PROJECT_ID
-              ? `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io`
-              : "https://api.sanity.io"
-          }
-          crossOrigin="anonymous"
-        />
-        <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://cdn.sanity.io" />
         {process.env.NEXT_PUBLIC_POSTHOG_HOST ? (
           <>
             <link rel="preconnect" href={process.env.NEXT_PUBLIC_POSTHOG_HOST} crossOrigin="anonymous" />

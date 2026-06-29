@@ -1,17 +1,21 @@
-import { sanityFetch } from '@/sanity/lib/fetch'
-import {
-  pricingDataQuery,
-  defaultPricingData,
-  type PricingData,
-} from '@/sanity/queries/pricing'
+import { fetchPricingData as fetchPricingDataFromDb } from '@/lib/db/queries/pricing'
+import { defaultPricingData, type PricingData } from '@/lib/data/pricing'
 
-/** Pełne dane cennika do kalkulacji jak w konfiguratorze (z cache tagiem pricing). */
+export type {
+  PricingCategory,
+  ProjectType,
+  PricingItem,
+  PricingConfig,
+  PricingData,
+  StartingPrices,
+  ProjectTypeBundleRow,
+} from '@/lib/data/pricing'
+
+export { defaultPricingData, defaultStartingPrices } from '@/lib/data/pricing'
+
 export async function fetchPricingData(): Promise<PricingData> {
   try {
-    const data = await sanityFetch<PricingData>({
-      query: pricingDataQuery,
-      tags: ['pricing'],
-    })
+    const data = await fetchPricingDataFromDb()
     if (!data?.categories?.length || !data?.projectTypes?.length) {
       return defaultPricingData
     }

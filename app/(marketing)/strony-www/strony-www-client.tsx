@@ -17,7 +17,7 @@ import GradientText from '@/components/GradientText'
 import TiltCard from '@/components/tilt-card'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
 import StickyCtaFloat from '@/components/StickyCtaFloat'
-import type { SimpleFaqQA } from '@/sanity/queries/faq'
+import type { SimpleFaqQA } from '@/lib/data/faq'
 
 // Sekcje dla scrollbar
 const scrollbarSections = [

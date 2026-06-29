@@ -2,9 +2,8 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { cookies } from 'next/headers'
 import { ADMIN_COOKIE_NAME, verifySession } from '@/lib/admin-auth'
-import { updateBookingStatus } from '@/lib/sanity/booking'
 import { cancelEvent } from '@/lib/google-calendar'
-import { client, clientWithoutToken } from '@/sanity/lib/client'
+import { findBookingById, updateBookingStatus, deleteBooking } from '@/lib/db/queries/booking'
 
 const schema = z.object({
   status: z.enum(['confirmed', 'cancelled', 'done', 'no_show']),
@@ -24,10 +23,7 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
   }
 
   if (parsed.data.cancelInCalendar && parsed.data.status === 'cancelled') {
-    const doc = await clientWithoutToken.fetch<{ googleEventId?: string } | null>(
-      `*[_id == $id][0]{ googleEventId }`,
-      { id }
-    )
+    const doc = await findBookingById(id)
     if (doc?.googleEventId) {
       await cancelEvent(doc.googleEventId)
     }
@@ -43,13 +39,10 @@ export async function DELETE(_req: Request, ctx: { params: Promise<{ id: string 
   if (!session) return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await ctx.params
-  const doc = await clientWithoutToken.fetch<{ googleEventId?: string } | null>(
-    `*[_id == $id][0]{ googleEventId }`,
-    { id }
-  )
+  const doc = await findBookingById(id)
   if (doc?.googleEventId) {
     await cancelEvent(doc.googleEventId)
   }
-  await client.delete(id)
+  await deleteBooking(id)
   return NextResponse.json({ ok: true })
 }

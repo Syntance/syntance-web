@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import { PORTFOLIO_CASE_STUDIES, toPortfolioGridItems } from "@/lib/portfolio-content";
-import { PortfolioItem } from "@/sanity/queries/portfolio";
+import { PortfolioItem } from "@/lib/data/portfolio-types";
 
 const staticGridItems = toPortfolioGridItems(PORTFOLIO_CASE_STUDIES);
 
@@ -14,34 +14,13 @@ export default function PortfolioStudio() {
   const [items, setItems] = useState<PortfolioItem[]>(staticGridItems);
 
   useEffect(() => {
-    const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
-    const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
-    if (!projectId) {
-      return;
-    }
-
-    const query = encodeURIComponent(
-      `*[_type == "portfolioItem" && !disabled] | order(order asc, name asc) {
-        "id": _id,
-        name,
-        url,
-        "logoUrl": logo.asset->url,
-        "logoAlt": coalesce(logo.alt, name),
-        order
-      }`
-    );
-
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-    fetch(
-      `https://${projectId}.api.sanity.io/v2024-01-01/data/query/${dataset}?query=${query}`,
-      { signal: controller.signal }
-    )
+    fetch("/api/portfolio", { signal: controller.signal })
       .then((res) => res.json())
-      .then((data) => {
-        const cmsItems = (data.result as PortfolioItem[]) ?? [];
-        if (cmsItems.length === 0) return;
+      .then((cmsItems: PortfolioItem[]) => {
+        if (!cmsItems?.length) return;
 
         const merged = new Map(
           staticGridItems.map((item) => [item.url.replace(/\/$/, "").toLowerCase(), item])

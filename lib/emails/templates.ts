@@ -15,11 +15,11 @@ import {
   type EmailTemplateQuoteRequestClient,
   type EmailTemplateQuoteRequestOwner,
   type EmailTemplates,
-} from '../../sanity/queries/emailTemplates'
+} from '@/lib/data/email-templates'
 import {
   resolveTransferTitle,
   type PaymentSettings,
-} from '../../sanity/queries/paymentSettings'
+} from '@/lib/db/queries/settings'
 
 export interface EmailRenderData {
   bookingId: string

@@ -1,5 +1,5 @@
-import type { PricingData } from '@/sanity/queries/pricing'
-import { defaultStartingPrices } from '@/sanity/queries/pricing'
+import type { PricingData } from '@/lib/data/pricing'
+import { defaultStartingPrices } from '@/lib/data/pricing'
 import { computeConfiguratorPricing, getBaseBundlePriceNet } from '@/lib/pricing-calculator'
 
 /** Ostatnia deska ratunku, gdy brak typu w CMS albo zero z konfiguratora i z basePrice typu. */

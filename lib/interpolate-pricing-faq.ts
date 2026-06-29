@@ -1,4 +1,4 @@
-import type { PricingFaqItem, SimpleFaqQA } from '@/sanity/queries/faq'
+import type { PricingFaqItem, SimpleFaqQA } from '@/lib/data/faq'
 import type { ConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
 
 export const PRICING_FAQ_TOKEN_WEBSITE = '{{WEBSITE_NET}}'

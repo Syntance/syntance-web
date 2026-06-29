@@ -17,7 +17,7 @@ import {
 import GradientText from '@/components/GradientText'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
 import { ContactForm } from '@/components/contact-form'
-import type { SimpleFaqQA } from '@/sanity/queries/faq'
+import type { SimpleFaqQA } from '@/lib/data/faq'
 
 const LINKEDIN_COMPANY = 'https://www.linkedin.com/company/syntance'
 

@@ -19,7 +19,7 @@ import {
 import Link from 'next/link'
 import TiltCard from '@/components/tilt-card'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
-import type { SimpleFaqQA } from '@/sanity/queries/faq'
+import type { SimpleFaqQA } from '@/lib/data/faq'
 
 const scrollbarSections = [
   { id: "hero-strategia", label: "Start" },

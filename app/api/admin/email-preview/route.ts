@@ -15,8 +15,8 @@ import {
 import {
   getEmailTemplates,
   DEFAULT_EMAIL_TEMPLATES,
-} from '@/sanity/queries/emailTemplates'
-import { getPaymentSettings } from '@/sanity/queries/paymentSettings'
+} from '@/lib/db/queries/settings'
+import { getPaymentSettings } from '@/lib/db/queries/settings'
 
 /**
  * Serwerowy podgląd HTML emaila — używany do testów / linkowania.
@@ -99,8 +99,7 @@ export async function GET(req: NextRequest) {
       // Header X-Frame-Options jest globalny (next.config.mjs) — CSP frame-ancestors
       // ma pierwszeństwo w nowoczesnych przeglądarkach, ale część (Safari) honoruje XFO.
       // W praktyce Studio używa srcDoc (same-origin null), więc to tylko dla podglądu po URL.
-      'Content-Security-Policy':
-        "frame-ancestors 'self' https://*.sanity.studio https://syntance.sanity.studio",
+      'Content-Security-Policy': "frame-ancestors 'self'",
     },
   })
 }

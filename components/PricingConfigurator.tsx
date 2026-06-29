@@ -6,7 +6,7 @@ import {
   Globe, ShoppingCart, Smartphone, Check, Sparkles, Clock,
   Send, Download, ChevronRight, Link2, Gift, Star, Target, Lightbulb, Timer
 } from 'lucide-react'
-import { PricingData, PricingItem } from '@/sanity/queries/pricing'
+import { PricingData, PricingItem } from '@/lib/data/pricing'
 import { ConfirmDialog } from './ConfirmDialog'
 import { MiniSummaryBar } from './MiniSummaryBar'
 import { BookingModal } from './BookingModal'

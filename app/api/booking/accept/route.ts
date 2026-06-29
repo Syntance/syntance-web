@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { google } from "googleapis";
 import { updateProjectStatus, addProjectNote, resolveBookingIdFromAttioLink } from "@/lib/attio";
-import { getPaymentSettings } from "@/sanity/queries/paymentSettings";
-import { getContractFiles } from "@/sanity/queries/contractFiles";
-import { getEmailTemplates } from "@/sanity/queries/emailTemplates";
+import { getPaymentSettings } from "@/lib/db/queries/settings";
+import { getContractFiles } from "@/lib/db/queries/settings";
+import { getEmailTemplates } from "@/lib/db/queries/settings";
 import {
   renderContractsEmail,
   renderPaymentEmail,

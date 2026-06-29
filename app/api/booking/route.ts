@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { Resend } from "resend";
 import { createProject, getNextOrderNumberFromAttio } from "@/lib/attio";
-import { getEmailTemplates } from "@/sanity/queries/emailTemplates";
+import { getEmailTemplates } from "@/lib/db/queries/settings";
 import {
   renderQuoteRequestClientEmail,
   renderQuoteRequestOwnerEmail,

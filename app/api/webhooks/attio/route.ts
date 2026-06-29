@@ -17,9 +17,9 @@ import {
   releaseAttioReminderSend,
   releaseAttioStageEmailSend,
 } from '@/lib/attio-email-dedupe'
-import { getPaymentSettings } from '@/sanity/queries/paymentSettings'
-import { getContractFiles } from '@/sanity/queries/contractFiles'
-import { getEmailTemplates } from '@/sanity/queries/emailTemplates'
+import { getPaymentSettings } from '@/lib/db/queries/settings'
+import { getContractFiles } from '@/lib/db/queries/settings'
+import { getEmailTemplates } from '@/lib/db/queries/settings'
 import {
   renderContractsEmail,
   renderDealReminderEmail,
