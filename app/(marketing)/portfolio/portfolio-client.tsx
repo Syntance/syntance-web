@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { ArrowUpRight, ExternalLink } from 'lucide-react'
 import StickyCtaFloat from '@/components/StickyCtaFloat'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
+import { PerformanceTeaser } from '@/components/sections/portfolio/performance-before-after'
 import {
   getPortfolioTypeDotColor,
   type PortfolioCaseStudy,
@@ -63,16 +64,14 @@ function ProjectCard({
   delay?: number
 }) {
   const dotColor = getPortfolioTypeDotColor(project.type)
+  const caseStudyHref = `/portfolio/${project.id}`
 
   return (
     <AnimatedSection delay={delay}>
       <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] transition-colors hover:border-white/20 hover:bg-white/[0.04]">
-        <a
-          href={project.url}
-          target="_blank"
-          rel="noopener noreferrer"
+        <Link
+          href={caseStudyHref}
           className="relative block aspect-[1200/630] overflow-hidden border-b border-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-purple-400"
-          aria-label={`Podgląd strony ${project.name} — otwórz ${project.domain}`}
         >
           <Image
             src={project.previewImage}
@@ -103,9 +102,15 @@ function ProjectCard({
               {project.name}
             </h2>
           </div>
-        </a>
+        </Link>
 
         <div className="flex flex-1 flex-col p-6 md:p-8">
+          {project.performance ? (
+            <div className="mb-4">
+              <PerformanceTeaser performance={project.performance} />
+            </div>
+          ) : null}
+
           <p className="mb-6 text-sm leading-relaxed text-gray-400 md:text-base">
             {project.description}
           </p>
@@ -121,14 +126,21 @@ function ProjectCard({
             ))}
           </div>
 
-          <div className="mt-auto">
+          <div className="mt-auto flex flex-wrap gap-3">
+            <Link
+              href={caseStudyHref}
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-medium tracking-wide text-black transition hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
+            >
+              Case study
+              <ArrowUpRight size={16} aria-hidden="true" />
+            </Link>
             <a
               href={project.url}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm font-medium tracking-wide text-white transition hover:border-white/30 hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
             >
-              Otwórz {project.domain}
+              Otwórz live
               <ExternalLink size={16} aria-hidden="true" />
             </a>
           </div>

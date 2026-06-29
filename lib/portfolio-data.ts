@@ -1,5 +1,6 @@
 import {
   PORTFOLIO_CASE_STUDIES,
+  getPortfolioCaseStudyInput,
   type PortfolioCaseStudy,
   type PortfolioCaseStudyInput,
 } from '@/lib/portfolio-content'
@@ -80,6 +81,24 @@ export async function fetchPortfolioItems(): Promise<PortfolioCaseStudy[]> {
   } catch (error) {
     console.error('Error fetching portfolio items:', error)
     return withResolvedPreviewImages([...PORTFOLIO_CASE_STUDIES])
+  }
+}
+
+export async function fetchPortfolioCaseStudy(id: string): Promise<PortfolioCaseStudy | null> {
+  const base = getPortfolioCaseStudyInput(id)
+  if (!base) return null
+
+  try {
+    const cmsItems = await fetchPortfolioItemsFromDb()
+    const merged = cmsItems.length
+      ? mergePortfolioItems([base], cmsItems).find((item) => item.id === id) ?? base
+      : base
+    const [resolved] = await withResolvedPreviewImages([merged])
+    return resolved ?? null
+  } catch (error) {
+    console.error('Error fetching portfolio case study:', error)
+    const [resolved] = await withResolvedPreviewImages([base])
+    return resolved ?? null
   }
 }
 

@@ -1,7 +1,14 @@
 import { MetadataRoute } from "next";
+import { listPortfolioCaseStudyIds } from "@/lib/portfolio-content";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://syntance.com";
+  const portfolioCaseStudies = listPortfolioCaseStudyIds().map((slug) => ({
+    url: `${baseUrl}/portfolio/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.8,
+  }));
 
   return [
     // Główne strony
@@ -110,5 +117,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "yearly",
       priority: 0.3,
     },
+    ...portfolioCaseStudies,
   ];
 }

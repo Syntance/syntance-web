@@ -10,6 +10,10 @@ import { PortfolioItem } from "@/lib/data/portfolio-types";
 
 const staticGridItems = toPortfolioGridItems(PORTFOLIO_CASE_STUDIES);
 
+const caseStudyByUrl = new Map(
+  PORTFOLIO_CASE_STUDIES.map((item) => [item.url.replace(/\/$/, "").toLowerCase(), `/portfolio/${item.id}`]),
+);
+
 export default function PortfolioStudio() {
   const [items, setItems] = useState<PortfolioItem[]>(staticGridItems);
 
@@ -81,14 +85,23 @@ export default function PortfolioStudio() {
 
         <AnimatedSection delay={100}>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-8 md:mb-10">
-            {items.map((item) => (
+            {items.map((item) => {
+              const caseStudyHref = caseStudyByUrl.get(item.url.replace(/\/$/, "").toLowerCase());
+              const CardTag = caseStudyHref ? Link : "a";
+              const cardProps = caseStudyHref
+                ? { href: caseStudyHref }
+                : {
+                    href: item.url,
+                    target: "_blank" as const,
+                    rel: "noopener noreferrer",
+                  };
+
+              return (
               <li key={item.id}>
-                <a
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <CardTag
+                  {...cardProps}
                   className="group flex h-full flex-col justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-6 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.04] active:bg-white/[0.06]"
-                  aria-label={`Otwórz realizację: ${item.name}`}
+                  aria-label={caseStudyHref ? `Case study: ${item.name}` : `Otwórz realizację: ${item.name}`}
                 >
                   <div>
                     {item.logoUrl ? (
@@ -115,12 +128,13 @@ export default function PortfolioStudio() {
                     </p>
                   </div>
                   <span className="inline-flex items-center gap-2 text-sm text-gray-400 transition-colors group-hover:text-white">
-                    Zobacz live
+                    {caseStudyHref ? "Case study" : "Zobacz live"}
                     <ArrowRight size={16} aria-hidden="true" />
                   </span>
-                </a>
+                </CardTag>
               </li>
-            ))}
+              );
+            })}
           </ul>
 
           <div className="text-center">
