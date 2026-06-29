@@ -179,13 +179,13 @@ export function CennikClient({
       <DbBanner connected={dbConnected} />
 
       <div className="flex flex-col gap-6 lg:flex-row">
-        <nav className="flex shrink-0 flex-row flex-wrap gap-1 rounded-xl border border-white/10 bg-white/[0.02] p-2 lg:w-52 lg:flex-col lg:gap-1 lg:p-2.5">
+        <nav className="flex shrink-0 flex-row flex-wrap gap-1 lg:w-52 lg:flex-col lg:gap-0.5">
           {CENNIK_SECTIONS.map((item) => (
             <button
               key={item.id}
               type="button"
               onClick={() => setSection(item.id)}
-              className={`w-full rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
+              className={`rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                 section === item.id ? 'bg-white/10 text-white' : 'text-neutral-400 hover:bg-white/5 hover:text-white'
               }`}
             >

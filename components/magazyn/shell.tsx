@@ -15,10 +15,10 @@ export function MagazynShell({
   const pathname = usePathname()
 
   return (
-    <div className="min-h-dvh bg-neutral-950 text-neutral-100">
+    <div className="min-h-[calc(100dvh-100px)]">
       <div className="mx-auto flex max-w-7xl">
         <aside className="hidden w-56 shrink-0 border-r border-white/10 md:block">
-          <div className="sticky top-0 flex h-dvh flex-col p-4">
+          <div className="sticky top-[100px] flex h-[calc(100dvh-100px)] flex-col p-4">
             <Link href="/magazyn" className="mb-6 px-2 text-sm font-semibold tracking-wide text-white">
               Syntance · Magazyn
             </Link>

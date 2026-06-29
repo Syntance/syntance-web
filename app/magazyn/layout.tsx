@@ -14,9 +14,9 @@ export default async function MagazynLayout({ children }: { children: React.Reac
   const jar = await cookies()
   const session = await verifySession(jar.get(ADMIN_COOKIE_NAME)?.value)
 
-  if (!session) {
-    return <>{children}</>
-  }
-
-  return <MagazynShell email={session.email}>{children}</MagazynShell>
+  return (
+    <div className="min-h-dvh bg-neutral-950 pt-[100px] text-neutral-100">
+      {session ? <MagazynShell email={session.email}>{children}</MagazynShell> : children}
+    </div>
+  )
 }
