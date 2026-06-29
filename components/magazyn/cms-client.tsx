@@ -1,13 +1,22 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react'
 import type {
+  FaqPricingCategory,
   FaqPricingEntrySanity,
   FaqSettingsDocument,
   FaqSimpleEntrySanity,
 } from '@/lib/data/faq'
 import type { portfolioItems } from '@/lib/db/schema'
+import {
+  CMS_PAGES,
+  PRICING_FAQ_SECTIONS,
+  SIMPLE_FAQ_SECTION,
+  type CmsFaqPageDef,
+  type CmsPageId,
+  isPortfolioPage,
+} from '@/lib/magazyn/cms-config'
 import {
   DbBanner,
   Field,
@@ -22,18 +31,6 @@ import {
 
 type PortfolioRow = typeof portfolioItems.$inferSelect
 
-type FaqSectionKey = keyof FaqSettingsDocument
-
-const FAQ_SECTIONS: Array<{ key: FaqSectionKey; label: string; pricing?: boolean }> = [
-  { key: 'faqCennik', label: 'Cennik', pricing: true },
-  { key: 'faqStronyWww', label: 'Strony WWW' },
-  { key: 'faqSklepy', label: 'Sklepy' },
-  { key: 'faqStrategia', label: 'Strategia' },
-  { key: 'faqONas', label: 'O nas' },
-  { key: 'faqKontakt', label: 'Kontakt' },
-  { key: 'faqAgencje', label: 'Agencje' },
-]
-
 type Props = {
   faqSettings: FaqSettingsDocument
   portfolioRows: PortfolioRow[]
@@ -44,63 +41,145 @@ function newKey(prefix: string) {
   return `${prefix}-${crypto.randomUUID().slice(0, 8)}`
 }
 
+function navButtonClass(active: boolean) {
+  return `w-full rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+    active ? 'bg-white/10 text-white' : 'text-neutral-400 hover:bg-white/5 hover:text-white'
+  }`
+}
+
 export function CmsClient({ faqSettings, portfolioRows, dbConnected }: Props) {
-  const [tab, setTab] = useState<'faq' | 'portfolio'>('faq')
   const [faq, setFaq] = useState(faqSettings)
-  const [faqSection, setFaqSection] = useState<FaqSectionKey>('faqCennik')
   const [portfolio, setPortfolio] = useState(portfolioRows)
+  const [activePageId, setActivePageId] = useState<CmsPageId>('cennik')
+  const [activeSectionId, setActiveSectionId] = useState<string>('pricing')
+  const [activePortfolioId, setActivePortfolioId] = useState<string | null>(
+    portfolioRows[0]?.id ?? null,
+  )
   const [status, setStatus] = useState<string | null>(null)
   const [error, setError] = useState(false)
   const [pending, setPending] = useState(false)
 
-  const sectionMeta = FAQ_SECTIONS.find((s) => s.key === faqSection)!
-  const entries = useMemo(() => faq[faqSection] ?? [], [faq, faqSection])
+  const activePage = CMS_PAGES.find((p) => p.id === activePageId) ?? CMS_PAGES[0]
+  const isPortfolio = isPortfolioPage(activePage)
 
-  function updateEntry(index: number, patch: Partial<FaqSimpleEntrySanity & FaqPricingEntrySanity>) {
+  const faqPage = !isPortfolio ? activePage : null
+  const faqKey = faqPage?.faqKey
+  const allFaqEntries = faqKey ? (faq[faqKey] ?? []) : []
+
+  const visibleFaqEntries = useMemo(() => {
+    if (!faqPage) return []
+    if (faqPage.pricing) {
+      return allFaqEntries.filter(
+        (entry) => (entry as FaqPricingEntrySanity).category === activeSectionId,
+      )
+    }
+    return allFaqEntries
+  }, [allFaqEntries, faqPage, activeSectionId])
+
+  const faqCount = CMS_PAGES.filter((p) => !isPortfolioPage(p)).reduce(
+    (n, p) => n + (faq[(p as CmsFaqPageDef).faqKey]?.length ?? 0),
+    0,
+  )
+
+  function selectPage(pageId: CmsPageId) {
+    setActivePageId(pageId)
+    const page = CMS_PAGES.find((p) => p.id === pageId)
+    if (!page) return
+    if (isPortfolioPage(page)) {
+      setActivePortfolioId(portfolio[0]?.id ?? null)
+      return
+    }
+    if (page.pricing) {
+      setActiveSectionId('pricing')
+    } else {
+      setActiveSectionId(SIMPLE_FAQ_SECTION.id)
+    }
+  }
+
+  function updateFaqEntry(indexInSection: number, patch: Partial<FaqSimpleEntrySanity & FaqPricingEntrySanity>) {
+    if (!faqKey) return
+    const entry = visibleFaqEntries[indexInSection]
+    if (!entry) return
+
     setFaq((prev) => {
-      const list = [...(prev[faqSection] ?? [])]
-      list[index] = { ...list[index], ...patch }
-      return { ...prev, [faqSection]: list }
+      const list = [...(prev[faqKey] ?? [])]
+      const globalIndex = list.findIndex((row) => row._key === entry._key)
+      if (globalIndex < 0) return prev
+      list[globalIndex] = { ...list[globalIndex], ...patch }
+      return { ...prev, [faqKey]: list }
     })
   }
 
-  function addEntry() {
+  function addFaqEntry() {
+    if (!faqPage || !faqKey) return
+
     setFaq((prev) => {
-      const list = [...(prev[faqSection] ?? [])]
+      const list = [...(prev[faqKey] ?? [])]
       const base: FaqSimpleEntrySanity = {
-        _key: newKey(faqSection),
+        _key: newKey(faqKey),
         question: '',
         answer: '',
         order: list.length,
         isActive: true,
       }
-      if (sectionMeta.pricing) {
-        const entry: FaqPricingEntrySanity = { ...base, category: 'pricing' }
+      if (faqPage.pricing) {
+        const entry: FaqPricingEntrySanity = {
+          ...base,
+          category: activeSectionId as FaqPricingCategory,
+        }
         list.push(entry)
       } else {
         list.push(base)
       }
-      return { ...prev, [faqSection]: list }
+      return { ...prev, [faqKey]: list }
     })
   }
 
-  function removeEntry(index: number) {
+  function removeFaqEntry(indexInSection: number) {
+    if (!faqKey) return
+    const entry = visibleFaqEntries[indexInSection]
+    if (!entry) return
+
     setFaq((prev) => {
-      const list = [...(prev[faqSection] ?? [])]
-      list.splice(index, 1)
-      return { ...prev, [faqSection]: list }
+      const list = [...(prev[faqKey] ?? [])]
+      const globalIndex = list.findIndex((row) => row._key === entry._key)
+      if (globalIndex < 0) return prev
+      list.splice(globalIndex, 1)
+      return { ...prev, [faqKey]: list.map((row, i) => ({ ...row, order: i })) }
     })
   }
 
-  function moveEntry(index: number, dir: -1 | 1) {
+  function moveFaqEntry(indexInSection: number, dir: -1 | 1) {
+    if (!faqKey || !faqPage) return
+    const entry = visibleFaqEntries[indexInSection]
+    const swapEntry = visibleFaqEntries[indexInSection + dir]
+    if (!entry || !swapEntry) return
+
     setFaq((prev) => {
-      const list = [...(prev[faqSection] ?? [])]
-      const next = index + dir
-      if (next < 0 || next >= list.length) return prev
-      const tmp = list[index]
-      list[index] = list[next]
-      list[next] = tmp
-      return { ...prev, [faqSection]: list.map((e, i) => ({ ...e, order: i })) }
+      const list = [...(prev[faqKey] ?? [])]
+      const indexA = list.findIndex((row) => row._key === entry._key)
+      const indexB = list.findIndex((row) => row._key === swapEntry._key)
+      if (indexA < 0 || indexB < 0) return prev
+
+      const orderA = list[indexA].order ?? indexA
+      const orderB = list[indexB].order ?? indexB
+      list[indexA] = { ...list[indexA], order: orderB }
+      list[indexB] = { ...list[indexB], order: orderA }
+
+      if (faqPage.pricing) {
+        const category = activeSectionId as FaqPricingCategory
+        const inCategory = list
+          .filter((row) => (row as FaqPricingEntrySanity).category === category)
+          .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+        inCategory.forEach((row, i) => {
+          const idx = list.findIndex((r) => r._key === row._key)
+          if (idx >= 0) list[idx] = { ...list[idx], order: i }
+        })
+      } else {
+        return { ...prev, [faqKey]: list.map((row, i) => ({ ...row, order: i })) }
+      }
+
+      return { ...prev, [faqKey]: list }
     })
   }
 
@@ -115,7 +194,7 @@ export function CmsClient({ faqSettings, portfolioRows, dbConnected }: Props) {
         body: JSON.stringify(faq),
       })
       if (!res.ok) throw new Error('Zapis FAQ nie powiódł się')
-      setStatus('FAQ zapisane.')
+      setStatus('Treści FAQ zapisane.')
     } catch (e) {
       setError(true)
       setStatus(e instanceof Error ? e.message : 'Błąd')
@@ -144,15 +223,16 @@ export function CmsClient({ faqSettings, portfolioRows, dbConnected }: Props) {
     }
   }
 
-  function updatePortfolio(index: number, patch: Partial<PortfolioRow>) {
-    setPortfolio((prev) => prev.map((row, i) => (i === index ? { ...row, ...patch } : row)))
+  function updatePortfolio(id: string, patch: Partial<PortfolioRow>) {
+    setPortfolio((prev) => prev.map((row) => (row.id === id ? { ...row, ...patch } : row)))
   }
 
   function addPortfolio() {
+    const id = crypto.randomUUID()
     setPortfolio((prev) => [
       ...prev,
       {
-        id: crypto.randomUUID(),
+        id,
         sanityId: null,
         name: '',
         url: '',
@@ -162,175 +242,254 @@ export function CmsClient({ faqSettings, portfolioRows, dbConnected }: Props) {
         disabled: false,
       },
     ])
+    setActivePortfolioId(id)
   }
 
-  const faqCount = FAQ_SECTIONS.reduce((n, s) => n + (faq[s.key]?.length ?? 0), 0)
+  function removePortfolio(id: string) {
+    setPortfolio((prev) => {
+      const next = prev.filter((row) => row.id !== id)
+      if (activePortfolioId === id) {
+        setActivePortfolioId(next[0]?.id ?? null)
+      }
+      return next.map((row, i) => ({ ...row, sortOrder: i }))
+    })
+  }
+
+  const activePortfolio = portfolio.find((row) => row.id === activePortfolioId) ?? null
+
+  const sectionLabel = isPortfolio
+    ? 'Realizacja'
+    : faqPage?.pricing
+      ? (PRICING_FAQ_SECTIONS.find((s) => s.id === activeSectionId)?.label ?? activeSectionId)
+      : SIMPLE_FAQ_SECTION.label
+
+  const pricingTabs = PRICING_FAQ_SECTIONS.map((section) => {
+    const count = allFaqEntries.filter(
+      (e) => (e as FaqPricingEntrySanity).category === section.id,
+    ).length
+    return { id: section.id, label: `${section.label} (${count})` }
+  })
+
+  let editorContent: ReactNode
+
+  if (isPortfolio) {
+    editorContent = (
+      <>
+        {!activePortfolio ? (
+          <p className="rounded-xl border border-dashed border-white/10 p-8 text-center text-sm text-neutral-500">
+            Dodaj pierwszą realizację lub wybierz pozycję z listy.
+          </p>
+        ) : (
+          <Fieldset legend={activePortfolio.name || 'Realizacja'}>
+            <div className="mb-3 flex justify-end">
+              <button
+                type="button"
+                onClick={() => removePortfolio(activePortfolio.id)}
+                className="inline-flex items-center gap-1 rounded-full border border-red-500/30 px-3 py-1 text-xs text-red-400 hover:bg-red-500/10"
+              >
+                <Trash2 className="h-3.5 w-3.5" /> Usuń
+              </button>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field label="Nazwa">
+                <input
+                  className={magazynInputClass}
+                  value={activePortfolio.name}
+                  onChange={(e) => updatePortfolio(activePortfolio.id, { name: e.target.value })}
+                />
+              </Field>
+              <Field label="URL">
+                <input
+                  className={magazynInputClass}
+                  value={activePortfolio.url}
+                  onChange={(e) => updatePortfolio(activePortfolio.id, { url: e.target.value })}
+                />
+              </Field>
+              <Field label="Logo URL">
+                <input
+                  className={magazynInputClass}
+                  value={activePortfolio.logoUrl ?? ''}
+                  onChange={(e) => updatePortfolio(activePortfolio.id, { logoUrl: e.target.value })}
+                />
+              </Field>
+              <Field label="Logo alt">
+                <input
+                  className={magazynInputClass}
+                  value={activePortfolio.logoAlt ?? ''}
+                  onChange={(e) => updatePortfolio(activePortfolio.id, { logoAlt: e.target.value })}
+                />
+              </Field>
+            </div>
+            <label className="flex items-center gap-2 text-sm text-neutral-400">
+              <input
+                type="checkbox"
+                checked={activePortfolio.disabled}
+                onChange={(e) => updatePortfolio(activePortfolio.id, { disabled: e.target.checked })}
+              />
+              Ukryj na stronie
+            </label>
+          </Fieldset>
+        )}
+        <SaveButton pending={pending} label="Zapisz portfolio" onClick={savePortfolio} />
+      </>
+    )
+  } else {
+    editorContent = (
+      <>
+        <Fieldset legend={`FAQ — ${sectionLabel}`}>
+          <div className="mb-4 flex justify-end">
+            <button
+              type="button"
+              onClick={addFaqEntry}
+              className="inline-flex items-center gap-1 rounded-full border border-white/10 px-3 py-1.5 text-xs text-neutral-200 hover:bg-white/5"
+            >
+              <Plus className="h-3.5 w-3.5" /> Dodaj pytanie
+            </button>
+          </div>
+
+          {visibleFaqEntries.length === 0 ? (
+            <p className="rounded-lg border border-dashed border-white/10 p-6 text-center text-sm text-neutral-500">
+              Brak pytań w tej sekcji.
+            </p>
+          ) : (
+            <ul className="space-y-3">
+              {visibleFaqEntries.map((entry, index) => (
+                <li key={entry._key ?? index} className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+                  <div className="mb-3 flex items-center justify-between gap-2">
+                    <span className="text-xs text-neutral-500">#{index + 1}</span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        aria-label="Wyżej"
+                        onClick={() => moveFaqEntry(index, -1)}
+                        disabled={index === 0}
+                        className="rounded p-1 text-neutral-400 hover:bg-white/10 disabled:opacity-30"
+                      >
+                        <ChevronUp className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label="Niżej"
+                        onClick={() => moveFaqEntry(index, 1)}
+                        disabled={index === visibleFaqEntries.length - 1}
+                        className="rounded p-1 text-neutral-400 hover:bg-white/10 disabled:opacity-30"
+                      >
+                        <ChevronDown className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label="Usuń"
+                        onClick={() => removeFaqEntry(index)}
+                        className="rounded p-1 text-red-400 hover:bg-red-500/10"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <Field label="Pytanie">
+                      <input
+                        className={magazynInputClass}
+                        value={entry.question}
+                        onChange={(e) => updateFaqEntry(index, { question: e.target.value })}
+                      />
+                    </Field>
+                    <Field label="Odpowiedź">
+                      <textarea
+                        className={magazynTextareaClass}
+                        rows={4}
+                        value={entry.answer}
+                        onChange={(e) => updateFaqEntry(index, { answer: e.target.value })}
+                      />
+                    </Field>
+                    <label className="flex items-center gap-2 text-sm text-neutral-400">
+                      <input
+                        type="checkbox"
+                        checked={entry.isActive !== false}
+                        onChange={(e) => updateFaqEntry(index, { isActive: e.target.checked })}
+                        className="rounded border-white/20"
+                      />
+                      Aktywny na stronie
+                    </label>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Fieldset>
+        <SaveButton pending={pending} label="Zapisz treści podstrony" onClick={saveFaq} />
+      </>
+    )
+  }
 
   return (
     <div className="space-y-6">
       <PageHeader title="CMS" description={`FAQ (${faqCount} wpisów) · Portfolio (${portfolio.length})`} />
       <DbBanner connected={dbConnected} />
 
-      <TabPills
-        tabs={[
-          { id: 'faq', label: 'FAQ' },
-          { id: 'portfolio', label: 'Portfolio' },
-        ]}
-        active={tab}
-        onChange={setTab}
-      />
-
-      {tab === 'faq' ? (
-        <div className="flex flex-col gap-6 lg:flex-row">
-          <nav className="flex shrink-0 flex-row flex-wrap gap-1 lg:w-44 lg:flex-col lg:gap-0.5">
-            {FAQ_SECTIONS.map((s) => (
+      <div className="flex flex-col gap-6 xl:flex-row xl:items-start">
+        <nav aria-label="Podstrony CMS" className="flex shrink-0 flex-row flex-wrap gap-1 xl:w-48 xl:flex-col xl:gap-0.5">
+          {CMS_PAGES.map((page) => {
+            const count = isPortfolioPage(page)
+              ? portfolio.length
+              : (faq[(page as CmsFaqPageDef).faqKey]?.length ?? 0)
+            return (
               <button
-                key={s.key}
+                key={page.id}
                 type="button"
-                onClick={() => setFaqSection(s.key)}
-                className={`rounded-lg px-3 py-2 text-left text-sm transition-colors ${
-                  faqSection === s.key ? 'bg-white/10 text-white' : 'text-neutral-400 hover:bg-white/5'
-                }`}
+                onClick={() => selectPage(page.id)}
+                className={navButtonClass(activePageId === page.id)}
               >
-                {s.label}
-                <span className="ml-1 text-neutral-500">({faq[s.key]?.length ?? 0})</span>
+                {page.label}
+                <span className="ml-1 text-neutral-500">({count})</span>
               </button>
-            ))}
-          </nav>
+            )
+          })}
+        </nav>
 
-          <div className="min-w-0 flex-1 space-y-4">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-lg font-medium">{sectionMeta.label}</h2>
+        <div className="min-w-0 flex-1 space-y-5">
+          <div>
+            <h2 className="text-lg font-medium">CMS — {activePage.label}</h2>
+            <p className="text-sm text-neutral-500">{activePage.path}</p>
+          </div>
+
+          {faqPage?.pricing ? (
+            <TabPills
+              tabs={pricingTabs}
+              active={activeSectionId as FaqPricingCategory}
+              onChange={(id) => setActiveSectionId(id)}
+            />
+          ) : null}
+
+          {isPortfolio ? (
+            <div className="flex flex-wrap items-center gap-2">
+              {portfolio.map((item, index) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setActivePortfolioId(item.id)}
+                  className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
+                    activePortfolioId === item.id
+                      ? 'border-white/20 bg-white text-black'
+                      : 'border-white/10 text-neutral-400 hover:border-white/20 hover:text-white'
+                  }`}
+                >
+                  {item.name || `Realizacja ${index + 1}`}
+                </button>
+              ))}
               <button
                 type="button"
-                onClick={addEntry}
-                className="inline-flex items-center gap-1 rounded-full border border-white/10 px-3 py-1.5 text-xs text-neutral-200 hover:bg-white/5"
+                onClick={addPortfolio}
+                className="inline-flex items-center gap-1 rounded-full border border-dashed border-white/15 px-3 py-1.5 text-xs text-neutral-400 hover:border-white/25 hover:text-white"
               >
-                <Plus className="h-3.5 w-3.5" /> Dodaj pytanie
+                <Plus className="h-3.5 w-3.5" /> Dodaj
               </button>
             </div>
+          ) : null}
 
-            {entries.length === 0 ? (
-              <p className="rounded-xl border border-dashed border-white/10 p-8 text-center text-sm text-neutral-500">
-                Brak wpisów w tej sekcji. Dodaj pierwsze pytanie lub zaimportuj dane z Sanity (prod).
-              </p>
-            ) : (
-              <ul className="space-y-3">
-                {entries.map((entry, index) => (
-                  <li key={entry._key ?? index} className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
-                    <div className="mb-3 flex items-center justify-between gap-2">
-                      <span className="text-xs text-neutral-500">#{index + 1}</span>
-                      <div className="flex items-center gap-1">
-                        <button type="button" aria-label="Wyżej" onClick={() => moveEntry(index, -1)} className="rounded p-1 text-neutral-400 hover:bg-white/10">
-                          <ChevronUp className="h-4 w-4" />
-                        </button>
-                        <button type="button" aria-label="Niżej" onClick={() => moveEntry(index, 1)} className="rounded p-1 text-neutral-400 hover:bg-white/10">
-                          <ChevronDown className="h-4 w-4" />
-                        </button>
-                        <button type="button" aria-label="Usuń" onClick={() => removeEntry(index)} className="rounded p-1 text-red-400 hover:bg-red-500/10">
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <Field label="Pytanie">
-                        <input
-                          className={magazynInputClass}
-                          value={entry.question}
-                          onChange={(e) => updateEntry(index, { question: e.target.value })}
-                        />
-                      </Field>
-                      <Field label="Odpowiedź">
-                        <textarea
-                          className={magazynTextareaClass}
-                          rows={4}
-                          value={entry.answer}
-                          onChange={(e) => updateEntry(index, { answer: e.target.value })}
-                        />
-                      </Field>
-                      {sectionMeta.pricing && 'category' in entry ? (
-                        <Field label="Kategoria">
-                          <select
-                            className={magazynInputClass}
-                            value={(entry as FaqPricingEntrySanity).category}
-                            onChange={(e) =>
-                              updateEntry(index, {
-                                category: e.target.value as FaqPricingEntrySanity['category'],
-                              })
-                            }
-                          >
-                            {(['pricing', 'time', 'trust', 'comparison'] as const).map((c) => (
-                              <option key={c} value={c}>
-                                {c}
-                              </option>
-                            ))}
-                          </select>
-                        </Field>
-                      ) : null}
-                      <label className="flex items-center gap-2 text-sm text-neutral-400">
-                        <input
-                          type="checkbox"
-                          checked={entry.isActive !== false}
-                          onChange={(e) => updateEntry(index, { isActive: e.target.checked })}
-                          className="rounded border-white/20"
-                        />
-                        Aktywny na stronie
-                      </label>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-
-            <SaveButton pending={pending} label="Zapisz FAQ" onClick={saveFaq} />
-          </div>
+          {editorContent}
         </div>
-      ) : (
-        <div className="space-y-4">
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={addPortfolio}
-              className="inline-flex items-center gap-1 rounded-full border border-white/10 px-3 py-1.5 text-xs text-neutral-200 hover:bg-white/5"
-            >
-              <Plus className="h-3.5 w-3.5" /> Dodaj realizację
-            </button>
-          </div>
-          {portfolio.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-white/10 p-8 text-center text-sm text-neutral-500">
-              Brak realizacji w bazie.
-            </p>
-          ) : (
-            <ul className="space-y-3">
-              {portfolio.map((item, index) => (
-                <li key={item.id}>
-                  <Fieldset legend={item.name || `Realizacja ${index + 1}`}>
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <Field label="Nazwa">
-                        <input className={magazynInputClass} value={item.name} onChange={(e) => updatePortfolio(index, { name: e.target.value })} />
-                      </Field>
-                      <Field label="URL">
-                        <input className={magazynInputClass} value={item.url} onChange={(e) => updatePortfolio(index, { url: e.target.value })} />
-                      </Field>
-                      <Field label="Logo URL">
-                        <input className={magazynInputClass} value={item.logoUrl ?? ''} onChange={(e) => updatePortfolio(index, { logoUrl: e.target.value })} />
-                      </Field>
-                      <Field label="Logo alt">
-                        <input className={magazynInputClass} value={item.logoAlt ?? ''} onChange={(e) => updatePortfolio(index, { logoAlt: e.target.value })} />
-                      </Field>
-                    </div>
-                    <label className="flex items-center gap-2 text-sm text-neutral-400">
-                      <input type="checkbox" checked={item.disabled} onChange={(e) => updatePortfolio(index, { disabled: e.target.checked })} />
-                      Ukryj na stronie
-                    </label>
-                  </Fieldset>
-                </li>
-              ))}
-            </ul>
-          )}
-          <SaveButton pending={pending} label="Zapisz portfolio" onClick={savePortfolio} />
-        </div>
-      )}
+      </div>
 
       <StatusMessage message={status} error={error} />
     </div>
