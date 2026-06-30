@@ -1,6 +1,7 @@
 import type { PricingData } from '@/lib/data/pricing'
 import { defaultStartingPrices } from '@/lib/data/pricing'
 import { computeConfiguratorPricing, getBaseBundlePriceNet } from '@/lib/pricing-calculator'
+import { getStartPriceFromPackages } from '@/lib/magazyn/pricing-packages-defaults'
 
 /** Ostatnia deska ratunku, gdy brak typu w CMS albo zero z konfiguratora i z basePrice typu. */
 function configOrDefaultFallbackNet(projectTypeId: string, data: PricingData): number {
@@ -84,6 +85,11 @@ export interface ConfiguratorMinimumPricesNet {
  * na końcu zapasowe pola w cenniku / stałe w kodzie.
  */
 export function getProjectStartPriceNet(projectTypeId: string, data: PricingData): number {
+  const fromPackage = getStartPriceFromPackages(data.config.packages, projectTypeId)
+  if (typeof fromPackage === 'number' && fromPackage > 0) {
+    return fromPackage
+  }
+
   const bundleNet = getBaseBundlePriceNet(projectTypeId, data.config)
   if (typeof bundleNet === 'number' && Number.isFinite(bundleNet) && bundleNet > 0) {
     return bundleNet

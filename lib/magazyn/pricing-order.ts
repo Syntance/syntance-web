@@ -66,3 +66,81 @@ export function reorderItemsInCategory(
     return reordered.find((r) => r.id === item.id) ?? item
   })
 }
+
+export function createPricingItemForLayout(params: {
+  projectTypeId: string
+  categoryId: string
+  items: PricingItem[]
+}): PricingItem {
+  const { projectTypeId, categoryId, items } = params
+  const id = `item-${crypto.randomUUID().slice(0, 8)}`
+  const siblings = itemsForProjectTypeCategory(items, projectTypeId, categoryId)
+  const base: PricingItem = {
+    id,
+    name: 'Nowa pozycja',
+    price: 0,
+    hours: 0,
+    category: categoryId,
+    projectTypes: [projectTypeId],
+    required: false,
+    defaultSelected: false,
+    includedInBase: false,
+    disabled: false,
+  }
+  return setItemRankForProjectType(base, projectTypeId, rankAtIndex(siblings.length))
+}
+
+export function itemsAvailableForLayout(
+  items: PricingItem[],
+  projectTypeId: string,
+  categoryId: string,
+): PricingItem[] {
+  const inLayout = new Set(
+    itemsForProjectTypeCategory(items, projectTypeId, categoryId).map((item) => item.id),
+  )
+  return items
+    .filter((item) => !inLayout.has(item.id))
+    .sort((a, b) => a.name.localeCompare(b.name, 'pl'))
+}
+
+export function assignExistingItemToLayout(params: {
+  items: PricingItem[]
+  itemId: string
+  projectTypeId: string
+  categoryId: string
+}): PricingItem[] {
+  const { items, itemId, projectTypeId, categoryId } = params
+  const siblings = itemsForProjectTypeCategory(items, projectTypeId, categoryId)
+  const rank = rankAtIndex(siblings.length)
+
+  return items.map((item) => {
+    if (item.id !== itemId) return item
+    const projectTypes = item.projectTypes.includes(projectTypeId)
+      ? item.projectTypes
+      : [...item.projectTypes, projectTypeId]
+    const next: PricingItem = {
+      ...item,
+      category: categoryId,
+      projectTypes,
+    }
+    return setItemRankForProjectType(next, projectTypeId, rank)
+  })
+}
+
+export function reorderPackageItemIdsInCategory(
+  itemIds: string[],
+  items: PricingItem[],
+  categoryId: string,
+  orderedCategoryIds: string[],
+): string[] {
+  let categoryIndex = 0
+  return itemIds.map((id) => {
+    const item = items.find((entry) => entry.id === id)
+    if (item?.category === categoryId) {
+      const nextId = orderedCategoryIds[categoryIndex]
+      categoryIndex += 1
+      return nextId ?? id
+    }
+    return id
+  })
+}

@@ -53,6 +53,34 @@ export interface PricingItem {
   notificationRemoveCancelText?: string
 }
 
+export type PricingPackageProjectType = 'website' | 'ecommerce' | 'webapp'
+
+export type PricingPackageCustomLine = {
+  id: string
+  name: string
+  description?: string
+}
+
+export type PricingPackage = {
+  id: string
+  name: string
+  description?: string
+  projectType: PricingPackageProjectType
+  priceNet: number
+  hours: number
+  /** Tekst na karcie pakietu, np. „14–21 dni roboczych”. */
+  deliveryTime?: string
+  /** ID pozycji z katalogu cennika w pakiecie. */
+  itemIds: string[]
+  /** Własne pozycje spoza katalogu (np. SLA, copy). */
+  customLines: PricingPackageCustomLine[]
+  sortOrder: number
+  popular?: boolean
+  disabled?: boolean
+  /** Cena „od X PLN” na podstronach marketingowych dla tego typu projektu. */
+  useAsStartPrice?: boolean
+}
+
 export type ProjectTypeBundleRow = {
   projectTypeId: string
   baseCategorySlug?: string
@@ -94,6 +122,8 @@ export interface PricingConfig {
   hourlyRateDev: number
   hourlyRateConsulting: number
   workHoursPerDay: number
+  /** Gotowe pakiety stron / sklepów (cena, czas, pozycje). */
+  packages?: PricingPackage[]
 }
 
 // Wartości pomocnicze / fallback (np. SEO) — pełny config w `pricingDataQuery`

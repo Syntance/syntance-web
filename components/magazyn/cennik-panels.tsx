@@ -2,21 +2,25 @@
 
 import { useMemo, useState } from 'react'
 import { DragDropContext, Draggable, Droppable, type DropResult } from '@hello-pangea/dnd'
-import { GripVertical, Pencil, Plus, Trash2 } from 'lucide-react'
+import { CircleMinus, GripVertical, ListPlus, Pencil, Plus, Trash2 } from 'lucide-react'
 import type { PricingCategoryAdmin, ProjectTypeAdmin } from '@/lib/db/queries/pricing'
 import type { PricingConfig, PricingItem } from '@/lib/data/pricing'
 import {
   patchPricingItemInList,
   PricingItemCallout,
-  PricingItemEditFields,
 } from '@/components/magazyn/cennik-item-edit'
 import {
   itemsForProjectTypeCategory,
   reorderItemsInCategory,
+  createPricingItemForLayout,
+  itemsAvailableForLayout,
+  assignExistingItemToLayout,
 } from '@/lib/magazyn/pricing-order'
+import { PricingLayoutExistingPicker } from '@/components/magazyn/pricing-layout-existing-picker'
 import {
   Field,
   Fieldset,
+  MagazynActiveToggle,
   SaveButton,
   magazynInputClass,
   magazynTextareaClass,
@@ -38,10 +42,11 @@ function slugify(value: string) {
     .replace(/[^a-z0-9-]/g, '')
 }
 
-export type CennikSection = 'config' | 'layout' | 'project-types' | 'categories' | 'items'
+export type CennikSection = 'config' | 'packages' | 'layout' | 'project-types' | 'categories' | 'items'
 
 export const CENNIK_SECTIONS: Array<{ id: CennikSection; label: string }> = [
   { id: 'config', label: 'Konfiguracja' },
+  { id: 'packages', label: 'Pakiety' },
   { id: 'layout', label: 'Układ cennika' },
   { id: 'project-types', label: 'Typy projektu' },
   { id: 'categories', label: 'Kategorie' },
@@ -96,6 +101,10 @@ export function ConfigPanel({
       </Fieldset>
 
       <Fieldset legend="Ceny startowe (netto)">
+        <p className="mb-3 text-xs text-neutral-500">
+          Zapasowe wartości — preferuj sekcję <strong className="font-medium text-neutral-400">Pakiety</strong>{' '}
+          z opcją „Cena od”.
+        </p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {(
             [
@@ -189,10 +198,10 @@ export function ProjectTypesPanel({
             <Field label="Opis">
               <textarea className={magazynTextareaClass} rows={2} value={str(type.description)} onChange={(e) => update(index, { description: e.target.value })} />
             </Field>
-            <label className="mt-2 flex items-center gap-2 text-sm text-neutral-400">
-              <input type="checkbox" checked={type.disabled ?? false} onChange={(e) => update(index, { disabled: e.target.checked })} />
-              Wyłączony w konfiguratorze
-            </label>
+            <MagazynActiveToggle
+              active={!(type.disabled ?? false)}
+              onChange={(active) => update(index, { disabled: !active })}
+            />
           </li>
         ))}
       </ul>
@@ -303,12 +312,71 @@ export function LayoutPanel({
   const activeTypes = projectTypes.filter((t) => !t.disabled)
   const [projectTypeId, setProjectTypeId] = useState(activeTypes[0]?.id ?? projectTypes[0]?.id ?? '')
   const [editingItemId, setEditingItemId] = useState<string | null>(null)
+  const [editingItemIsNew, setEditingItemIsNew] = useState(false)
+  const [existingPickerCategoryId, setExistingPickerCategoryId] = useState<string | null>(null)
   const sortedCategories = [...categories].sort((a, b) => a.sortOrder - b.sortOrder)
   const editingItem = editingItemId ? items.find((i) => i.id === editingItemId) : null
 
+  function openItemEditor(itemId: string, isNew = false) {
+    setEditingItemId(itemId)
+    setEditingItemIsNew(isNew)
+  }
+
+  function closeItemEditor() {
+    setEditingItemId(null)
+    setEditingItemIsNew(false)
+  }
+
+  function addItemToCategory(categoryId: string) {
+    const newItem = createPricingItemForLayout({
+      projectTypeId,
+      categoryId,
+      items,
+    })
+    setItems([...items, newItem])
+    openItemEditor(newItem.id, true)
+  }
+
+  function addExistingItemToCategory(categoryId: string, itemId: string) {
+    setItems(
+      assignExistingItemToLayout({
+        items,
+        itemId,
+        projectTypeId,
+        categoryId,
+      }),
+    )
+    setExistingPickerCategoryId(null)
+  }
+
+  const existingPickerCategory = existingPickerCategoryId
+    ? sortedCategories.find((category) => category.id === existingPickerCategoryId)
+    : null
+
+  function removeItem(itemId: string) {
+    setItems(items.filter((item) => item.id !== itemId))
+    if (editingItemId === itemId) closeItemEditor()
+  }
+
+  function removeItemFromLayout(itemId: string) {
+    setItems(
+      items.map((item) =>
+        item.id === itemId
+          ? { ...item, projectTypes: item.projectTypes.filter((typeId) => typeId !== projectTypeId) }
+          : item,
+      ),
+    )
+    if (editingItemId === itemId) closeItemEditor()
+  }
+
+  const activeProjectTypeName =
+    activeTypes.find((type) => type.id === projectTypeId)?.name ??
+    projectTypes.find((type) => type.id === projectTypeId)?.name ??
+    'tego typu'
+
   function updateItem(itemId: string, patch: Partial<PricingItem>) {
     if (patch.id && patch.id !== itemId) {
-      setEditingItemId(patch.id)
+      openItemEditor(patch.id, editingItemIsNew)
     }
     setItems(patchPricingItemInList(items, itemId, patch))
   }
@@ -345,7 +413,9 @@ export function LayoutPanel({
   return (
     <div className="space-y-5">
       <p className="text-sm text-neutral-400">
-        Ułóż pozycje w konfiguratorze: wybierz typ projektu, przeciągnij w ramach kategorii, kliknij pozycję aby edytować.
+        Ułóż pozycje w konfiguratorze: wybierz typ projektu, przeciągnij w ramach kategorii, kliknij
+        pozycję aby edytować — dodaj nową pozycję lub wybierz istniejącą z listy. Ikona minus usuwa
+        pozycję tylko z bieżącego układu; całkowite usunięcie jest w edycji pozycji.
       </p>
 
       <div className="flex flex-wrap gap-1 rounded-full border border-white/10 bg-white/[0.02] p-1">
@@ -368,48 +438,84 @@ export function LayoutPanel({
             const droppableId = `cat-${cat.id}`
             return (
               <Fieldset key={cat.id} legend={`${cat.name} (${list.length})`}>
-                {list.length === 0 ? (
-                  <p className="text-sm text-neutral-500">Brak pozycji przypisanych do tego typu w tej kategorii.</p>
-                ) : (
-                  <Droppable droppableId={droppableId}>
-                    {(provided) => (
-                      <ul ref={provided.innerRef} {...provided.droppableProps} className="space-y-2">
-                        {list.map((item, index) => (
-                          <Draggable key={item.id} draggableId={item.id} index={index}>
-                            {(dragProvided, snapshot) => (
-                              <li
-                                ref={dragProvided.innerRef}
-                                {...dragProvided.draggableProps}
-                                className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${snapshot.isDragging ? 'border-purple-500/60 bg-purple-500/10' : 'border-white/10 bg-black/20'}`}
-                              >
-                                <button type="button" {...dragProvided.dragHandleProps} className="cursor-grab text-neutral-500 hover:text-white" aria-label="Przeciągnij">
-                                  <GripVertical className="h-4 w-4" />
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => setEditingItemId(item.id)}
-                                  className="min-w-0 flex-1 rounded-md px-1 py-0.5 text-left transition-colors hover:bg-white/5"
+                <div className="mb-3 flex flex-wrap justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setExistingPickerCategoryId(cat.id)}
+                    className="inline-flex items-center gap-1 rounded-full border border-dashed border-white/15 px-3 py-1 text-xs text-neutral-400 hover:border-white/25 hover:text-white"
+                  >
+                    <ListPlus className="h-3.5 w-3.5" aria-hidden />
+                    Dodaj istniejącą
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => addItemToCategory(cat.id)}
+                    className="inline-flex items-center gap-1 rounded-full border border-dashed border-white/15 px-3 py-1 text-xs text-neutral-400 hover:border-white/25 hover:text-white"
+                  >
+                    <Plus className="h-3.5 w-3.5" aria-hidden />
+                    Nowa pozycja
+                  </button>
+                </div>
+                <Droppable droppableId={droppableId}>
+                  {(provided) => (
+                    <>
+                      {list.length === 0 ? (
+                        <p className="mb-2 text-sm text-neutral-500">
+                          Brak pozycji — dodaj pierwszą w tej kategorii.
+                        </p>
+                      ) : (
+                        <ul ref={provided.innerRef} {...provided.droppableProps} className="space-y-2">
+                          {list.map((item, index) => (
+                            <Draggable key={item.id} draggableId={item.id} index={index}>
+                              {(dragProvided, snapshot) => (
+                                <li
+                                  ref={dragProvided.innerRef}
+                                  {...dragProvided.draggableProps}
+                                  className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${snapshot.isDragging ? 'border-purple-500/60 bg-purple-500/10' : 'border-white/10 bg-black/20'}`}
                                 >
-                                  <div className="truncate text-sm font-medium">{item.name}</div>
-                                  <div className="truncate text-xs text-neutral-500">{item.id} · {num(item.price).toLocaleString('pl-PL')} PLN</div>
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => setEditingItemId(item.id)}
-                                  className="shrink-0 rounded p-1.5 text-neutral-500 transition-colors hover:bg-white/10 hover:text-white"
-                                  aria-label={`Edytuj ${item.name}`}
-                                >
-                                  <Pencil className="h-3.5 w-3.5" />
-                                </button>
-                              </li>
-                            )}
-                          </Draggable>
-                        ))}
-                        {provided.placeholder}
-                      </ul>
-                    )}
-                  </Droppable>
-                )}
+                                  <button type="button" {...dragProvided.dragHandleProps} className="cursor-grab text-neutral-500 hover:text-white" aria-label="Przeciągnij">
+                                    <GripVertical className="h-4 w-4" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => openItemEditor(item.id)}
+                                    className="min-w-0 flex-1 rounded-md px-1 py-0.5 text-left transition-colors hover:bg-white/5"
+                                  >
+                                    <div className="truncate text-sm font-medium">{item.name}</div>
+                                    <div className="truncate text-xs text-neutral-500">{item.id} · {num(item.price).toLocaleString('pl-PL')} PLN</div>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => openItemEditor(item.id)}
+                                    className="shrink-0 rounded p-1.5 text-neutral-500 transition-colors hover:bg-white/10 hover:text-white"
+                                    aria-label={`Edytuj ${item.name}`}
+                                  >
+                                    <Pencil className="h-3.5 w-3.5" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => removeItemFromLayout(item.id)}
+                                    className="shrink-0 rounded p-1.5 text-neutral-500 transition-colors hover:bg-red-500/10 hover:text-red-400"
+                                    aria-label={`Usuń ${item.name} z układu ${activeProjectTypeName}`}
+                                  >
+                                    <CircleMinus className="h-3.5 w-3.5" />
+                                  </button>
+                                </li>
+                              )}
+                            </Draggable>
+                          ))}
+                        </ul>
+                      )}
+                      {list.length === 0 ? (
+                        <div ref={provided.innerRef} {...provided.droppableProps} className="min-h-[2px]">
+                          {provided.placeholder}
+                        </div>
+                      ) : (
+                        provided.placeholder
+                      )}
+                    </>
+                  )}
+                </Droppable>
               </Fieldset>
             )
           })}
@@ -423,6 +529,17 @@ export function LayoutPanel({
         <SaveButton pending={pending} label="Zapisz układ i pozycje" onClick={onSave} />
       </div>
 
+      {existingPickerCategory ? (
+        <PricingLayoutExistingPicker
+          categoryId={existingPickerCategory.id}
+          categoryName={existingPickerCategory.name}
+          categories={categories}
+          items={itemsAvailableForLayout(items, projectTypeId, existingPickerCategory.id)}
+          onSelect={(itemId) => addExistingItemToCategory(existingPickerCategory.id, itemId)}
+          onClose={() => setExistingPickerCategoryId(null)}
+        />
+      ) : null}
+
       {editingItem ? (
         <PricingItemCallout
           item={editingItem}
@@ -430,7 +547,10 @@ export function LayoutPanel({
           categories={categories}
           projectTypes={projectTypes}
           onUpdate={(patch) => updateItem(editingItem.id, patch)}
-          onClose={() => setEditingItemId(null)}
+          onClose={closeItemEditor}
+          allowIdEdit={editingItemIsNew}
+          onDelete={() => removeItem(editingItem.id)}
+          deleteLabel={editingItemIsNew ? 'Usuń pozycję' : 'Usuń całkowicie'}
         />
       ) : null}
     </div>
@@ -452,7 +572,8 @@ export function ItemsPanel({
   onSave: () => void
 }) {
   const [query, setQuery] = useState('')
-  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [editingItemId, setEditingItemId] = useState<string | null>(null)
+  const editingItem = editingItemId ? items.find((i) => i.id === editingItemId) : null
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -466,13 +587,15 @@ export function ItemsPanel({
   }, [items, query])
 
   function updateItem(itemId: string, patch: Partial<PricingItem>) {
+    if (patch.id && patch.id !== itemId) {
+      setEditingItemId(patch.id)
+    }
     setItems(patchPricingItemInList(items, itemId, patch))
   }
 
-  function toggleProjectType(item: PricingItem, typeId: string) {
-    const has = item.projectTypes.includes(typeId)
-    const projectTypesNext = has ? item.projectTypes.filter((t) => t !== typeId) : [...item.projectTypes, typeId]
-    updateItem(item.id, { projectTypes: projectTypesNext })
+  function removeItem(itemId: string) {
+    setItems(items.filter((item) => item.id !== itemId))
+    if (editingItemId === itemId) setEditingItemId(null)
   }
 
   return (
@@ -485,34 +608,40 @@ export function ItemsPanel({
         className={magazynInputClass}
       />
       <ul className="divide-y divide-white/5 rounded-xl border border-white/10">
-        {filtered.map((item) => {
-          const open = expandedId === item.id
-          return (
-            <li key={item.id}>
-              <button type="button" onClick={() => setExpandedId(open ? null : item.id)} className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left hover:bg-white/[0.02]">
-                <div className="min-w-0">
-                  <div className="truncate font-medium">{item.name}</div>
-                  <div className="text-xs text-neutral-500">{item.id} · {item.category} · {num(item.price).toLocaleString('pl-PL')} PLN</div>
-                </div>
-                <span className="text-xs text-neutral-500">{open ? '▲' : '▼'}</span>
-              </button>
-              {open ? (
-                <div className="space-y-3 border-t border-white/5 bg-white/[0.02] px-4 py-4">
-                  <PricingItemEditFields
-                    item={item}
-                    allItems={items}
-                    categories={categories}
-                    projectTypes={projectTypes}
-                    onUpdate={(patch) => updateItem(item.id, patch)}
-                    onToggleProjectType={(typeId) => toggleProjectType(item, typeId)}
-                  />
-                </div>
-              ) : null}
-            </li>
-          )
-        })}
+        {filtered.map((item) => (
+          <li key={item.id} className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-white/[0.02]">
+            <div className="min-w-0">
+              <div className="truncate font-medium">{item.name}</div>
+              <div className="text-xs text-neutral-500">
+                {item.id} · {item.category} · {num(item.price).toLocaleString('pl-PL')} PLN
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setEditingItemId(item.id)}
+              className="shrink-0 rounded p-1.5 text-neutral-500 transition-colors hover:bg-white/10 hover:text-white"
+              aria-label={`Edytuj ${item.name}`}
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
+          </li>
+        ))}
       </ul>
       <SaveButton pending={pending} label="Zapisz pozycje" onClick={onSave} />
+
+      {editingItem ? (
+        <PricingItemCallout
+          item={editingItem}
+          allItems={items}
+          categories={categories}
+          projectTypes={projectTypes}
+          onUpdate={(patch) => updateItem(editingItem.id, patch)}
+          onClose={() => setEditingItemId(null)}
+          allowIdEdit
+          onDelete={() => removeItem(editingItem.id)}
+          deleteLabel="Usuń całkowicie"
+        />
+      ) : null}
     </div>
   )
 }

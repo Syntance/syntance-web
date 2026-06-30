@@ -1,5 +1,6 @@
 'use client'
 
+import { useId } from 'react'
 import { Loader2, Save } from 'lucide-react'
 
 export const magazynInputClass =
@@ -165,6 +166,46 @@ export function StringListEditor({
         + Dodaj pozycję
       </button>
     </div>
+  )
+}
+
+export function MagazynActiveToggle({
+  active,
+  onChange,
+  id,
+}: {
+  active: boolean
+  onChange: (active: boolean) => void
+  id?: string
+}) {
+  const autoId = useId()
+  const inputId = id ?? autoId
+
+  return (
+    <label htmlFor={inputId} className="mt-2 inline-flex cursor-pointer items-center gap-3">
+      <span className="relative inline-flex h-6 w-11 shrink-0 align-middle">
+        <input
+          id={inputId}
+          type="checkbox"
+          role="switch"
+          checked={active}
+          onChange={(e) => onChange(e.target.checked)}
+          className="peer sr-only"
+          aria-checked={active}
+        />
+        <span
+          aria-hidden
+          className="absolute inset-0 rounded-full border border-white/15 bg-white/10 transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-purple-500/40 peer-checked:border-purple-500/50 peer-checked:bg-purple-600"
+        />
+        <span
+          aria-hidden
+          className="pointer-events-none absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5"
+        />
+      </span>
+      <span className={`text-sm font-medium ${active ? 'text-white' : 'text-neutral-500'}`}>
+        {active ? 'Aktywny' : 'Nieaktywny'}
+      </span>
+    </label>
   )
 }
 

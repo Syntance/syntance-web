@@ -12,6 +12,9 @@ import {
   ProjectTypesPanel,
   type CennikSection,
 } from '@/components/magazyn/cennik-panels'
+import { PackagesPanel } from '@/components/magazyn/cennik-packages-panel'
+import { mergePricingPackagesForAdmin } from '@/lib/magazyn/pricing-packages-defaults'
+import type { PricingPackage } from '@/lib/data/pricing'
 import { DbBanner, PageHeader, StatusMessage } from '@/components/magazyn/ui'
 
 type Props = {
@@ -79,6 +82,9 @@ export function CennikClient({
 }: Props) {
   const [section, setSection] = useState<CennikSection>('layout')
   const [configForm, setConfigForm] = useState(() => normalizeConfig(config))
+  const [packagesForm, setPackagesForm] = useState<PricingPackage[]>(() =>
+    mergePricingPackagesForAdmin(config.packages, config),
+  )
   const [categoriesForm, setCategoriesForm] = useState(categories)
   const [projectTypesForm, setProjectTypesForm] = useState(projectTypes)
   const [itemsForm, setItemsForm] = useState(() => items.map(normalizeItem))
@@ -93,13 +99,45 @@ export function CennikClient({
     setStatus(null)
     setError(false)
     try {
+      const payload = { ...configForm, packages: packagesForm }
       const res = await fetch('/api/magazyn/cennik/config', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(configForm),
+        body: JSON.stringify(payload),
       })
       if (!res.ok) throw new Error('Zapis konfiguracji nie powiódł się')
+      setConfigForm(payload)
       setStatus('Konfiguracja zapisana.')
+    } catch (e) {
+      setError(true)
+      setStatus(e instanceof Error ? e.message : 'Błąd')
+    } finally {
+      setPending(false)
+    }
+  }
+
+  async function savePackages() {
+    setPending(true)
+    setStatus(null)
+    setError(false)
+    try {
+      const configPayload = { ...configForm, packages: packagesForm }
+      const [configRes, itemsRes] = await Promise.all([
+        fetch('/api/magazyn/cennik/config', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(configPayload),
+        }),
+        fetch('/api/magazyn/cennik/items', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: itemsForm }),
+        }),
+      ])
+      if (!configRes.ok) throw new Error('Zapis pakietów nie powiódł się')
+      if (!itemsRes.ok) throw new Error('Zapis pozycji katalogu nie powiódł się')
+      setConfigForm(configPayload)
+      setStatus('Pakiety i pozycje katalogu zapisane.')
     } catch (e) {
       setError(true)
       setStatus(e instanceof Error ? e.message : 'Błąd')
@@ -174,7 +212,7 @@ export function CennikClient({
     <div className="space-y-6">
       <PageHeader
         title="Cennik"
-        description={`${itemCount} pozycji · ${categoryCount} kategorii · ${projectTypesForm.length} typów projektu`}
+        description={`${itemCount} pozycji · ${categoryCount} kategorii · ${packagesForm.length} pakietów · ${projectTypesForm.length} typów projektu`}
       />
       <DbBanner connected={dbConnected} />
 
@@ -199,6 +237,19 @@ export function CennikClient({
 
           {section === 'config' ? (
             <ConfigPanel {...shared} configForm={configForm} setConfigForm={setConfigForm} onSave={saveConfig} />
+          ) : null}
+
+          {section === 'packages' ? (
+            <PackagesPanel
+              packages={packagesForm}
+              setPackages={setPackagesForm}
+              items={itemsForm}
+              setItems={setItemsForm}
+              categories={categoriesForm}
+              projectTypes={projectTypesForm}
+              pending={pending}
+              onSave={savePackages}
+            />
           ) : null}
 
           {section === 'layout' ? (

@@ -279,6 +279,9 @@ export function PricingItemCallout({
   projectTypes,
   onUpdate,
   onClose,
+  allowIdEdit = false,
+  onDelete,
+  deleteLabel = 'Usuń pozycję',
 }: {
   item: PricingItem
   allItems: PricingItem[]
@@ -286,6 +289,9 @@ export function PricingItemCallout({
   projectTypes: ProjectTypeAdmin[]
   onUpdate: (patch: Partial<PricingItem>) => void
   onClose: () => void
+  allowIdEdit?: boolean
+  onDelete?: () => void
+  deleteLabel?: string
 }) {
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -346,10 +352,21 @@ export function PricingItemCallout({
             projectTypes={projectTypes}
             onUpdate={onUpdate}
             onToggleProjectType={toggleProjectType}
-            allowIdEdit={false}
+            allowIdEdit={allowIdEdit}
           />
         </div>
-        <div className="flex shrink-0 justify-end border-t border-white/10 px-5 py-3">
+        <div className="flex shrink-0 items-center justify-between gap-3 border-t border-white/10 px-5 py-3">
+          {onDelete ? (
+            <button
+              type="button"
+              onClick={onDelete}
+              className="inline-flex items-center gap-1 rounded-full border border-red-500/30 px-3 py-1.5 text-sm text-red-400 hover:bg-red-500/10"
+            >
+              {deleteLabel}
+            </button>
+          ) : (
+            <span />
+          )}
           <button
             type="button"
             onClick={onClose}
