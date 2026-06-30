@@ -1,58 +1,79 @@
 import {
   PORTFOLIO_CASE_STUDIES,
   getPortfolioCaseStudyInput,
+  getPortfolioTypeLabel,
   type PortfolioCaseStudy,
   type PortfolioCaseStudyInput,
+  type PortfolioProjectType,
 } from '@/lib/portfolio-content'
-import { fetchPortfolioItemsFromDb } from '@/lib/db/queries/portfolio'
-import type { PortfolioItem } from '@/lib/data/portfolio-types'
+import {
+  fetchPortfolioItemsFromDb,
+  getPortfolioItemBySlug,
+  listPortfolioSlugsFromDb,
+  type PortfolioItemRecord,
+} from '@/lib/db/queries/portfolio'
+import { hasPerformanceContent } from '@/lib/magazyn/portfolio-performance-cms'
 import { resolvePortfolioPreviewImage } from '@/lib/portfolio-preview'
 
 function normalizeUrl(url: string): string {
   return url.replace(/\/$/, '').toLowerCase()
 }
 
-function mergePortfolioItems(
-  base: readonly PortfolioCaseStudyInput[],
-  cmsItems: PortfolioItem[],
-): PortfolioCaseStudyInput[] {
-  const byUrl = new Map(base.map((item) => [normalizeUrl(item.url), { ...item }]))
-
-  for (const cmsItem of cmsItems) {
-    const key = normalizeUrl(cmsItem.url)
-    const existing = byUrl.get(key)
-
-    if (existing) {
-      byUrl.set(key, {
-        ...existing,
-        id: cmsItem.id,
-        name: cmsItem.name,
-        logoUrl: cmsItem.logoUrl,
-        logoAlt: cmsItem.logoAlt,
-        order: cmsItem.order ?? existing.order,
-      })
-      continue
-    }
-
-    byUrl.set(key, {
-      id: cmsItem.id,
-      name: cmsItem.name,
-      url: cmsItem.url,
-      domain: new URL(cmsItem.url).hostname.replace(/^www\./, ''),
-      type: 'website',
-      typeLabel: 'Realizacja',
-      description: `Realizacja dla ${cmsItem.name}.`,
-      highlights: ['Projekt wdrożony w Next.js'],
-      stack: ['Next.js', 'CMS / Magazyn', 'Vercel'],
-      order: cmsItem.order ?? 99,
-      previewImageFallback: undefined,
-      previewImageAlt: `Podgląd realizacji ${cmsItem.name}`,
-      logoUrl: cmsItem.logoUrl,
-      logoAlt: cmsItem.logoAlt,
-    })
+function extractDomain(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '')
+  } catch {
+    return url
   }
+}
 
-  return [...byUrl.values()].sort((a, b) => a.order - b.order)
+function recordToCaseStudyInput(record: PortfolioItemRecord): PortfolioCaseStudyInput {
+  return {
+    id: record.slug,
+    name: record.name,
+    url: record.url,
+    domain: extractDomain(record.url),
+    type: record.projectType,
+    typeLabel: record.typeLabel || getPortfolioTypeLabel(record.projectType),
+    description: record.description,
+    highlights: record.highlights,
+    stack: record.stack,
+    order: record.order,
+    previewImageFallback: record.previewImageFallback,
+    previewImageAlt: record.previewImageAlt ?? `Podgląd realizacji ${record.name}`,
+    logoUrl: record.logoUrl || undefined,
+    logoAlt: record.logoAlt || undefined,
+    problemStatement: record.problemStatement,
+    rebuildContext: record.rebuildContext,
+    performance: record.performance ?? undefined,
+  }
+}
+
+function enrichFromHardcoded(input: PortfolioCaseStudyInput): PortfolioCaseStudyInput {
+  const base = PORTFOLIO_CASE_STUDIES.find(
+    (item) =>
+      item.id === input.id || normalizeUrl(item.url) === normalizeUrl(input.url),
+  )
+  if (!base) return input
+
+  return {
+    ...base,
+    ...input,
+    performance:
+      input.performance && hasPerformanceContent(input.performance)
+        ? input.performance
+        : base.performance,
+    adminGallery: base.adminGallery,
+    description: input.description || base.description,
+    highlights: input.highlights.length ? input.highlights : base.highlights,
+    stack: input.stack.length ? input.stack : base.stack,
+    problemStatement: input.problemStatement ?? base.problemStatement,
+    rebuildContext: input.rebuildContext ?? base.rebuildContext,
+    previewImageFallback: input.previewImageFallback ?? base.previewImageFallback,
+    previewImageAlt: input.previewImageAlt || base.previewImageAlt,
+    type: input.type ?? base.type,
+    typeLabel: input.typeLabel || base.typeLabel,
+  }
 }
 
 async function withResolvedPreviewImages(
@@ -71,35 +92,64 @@ async function withResolvedPreviewImages(
 
 export async function fetchPortfolioItems(): Promise<PortfolioCaseStudy[]> {
   try {
-    const cmsItems = await fetchPortfolioItemsFromDb()
+    const dbItems = await fetchPortfolioItemsFromDb()
 
-    if (!cmsItems.length) {
+    if (!dbItems.length) {
       return withResolvedPreviewImages([...PORTFOLIO_CASE_STUDIES])
     }
 
-    return withResolvedPreviewImages(mergePortfolioItems(PORTFOLIO_CASE_STUDIES, cmsItems))
+    const byUrl = new Map<string, PortfolioCaseStudyInput>()
+
+    for (const record of dbItems) {
+      const input = enrichFromHardcoded(recordToCaseStudyInput(record))
+      byUrl.set(normalizeUrl(input.url), input)
+    }
+
+    for (const base of PORTFOLIO_CASE_STUDIES) {
+      const key = normalizeUrl(base.url)
+      if (!byUrl.has(key)) {
+        byUrl.set(key, { ...base })
+      }
+    }
+
+    const inputs = [...byUrl.values()].sort((a, b) => a.order - b.order)
+    return withResolvedPreviewImages(inputs)
   } catch (error) {
     console.error('Error fetching portfolio items:', error)
     return withResolvedPreviewImages([...PORTFOLIO_CASE_STUDIES])
   }
 }
 
-export async function fetchPortfolioCaseStudy(id: string): Promise<PortfolioCaseStudy | null> {
-  const base = getPortfolioCaseStudyInput(id)
+export async function fetchPortfolioCaseStudy(slug: string): Promise<PortfolioCaseStudy | null> {
+  try {
+    const dbItem = await getPortfolioItemBySlug(slug)
+    if (dbItem) {
+      const input = enrichFromHardcoded(recordToCaseStudyInput(dbItem))
+      const [resolved] = await withResolvedPreviewImages([input])
+      return resolved ?? null
+    }
+  } catch (error) {
+    console.error('Error fetching portfolio case study from DB:', error)
+  }
+
+  const base = getPortfolioCaseStudyInput(slug)
   if (!base) return null
 
-  try {
-    const cmsItems = await fetchPortfolioItemsFromDb()
-    const merged = cmsItems.length
-      ? mergePortfolioItems([base], cmsItems).find((item) => item.id === id) ?? base
-      : base
-    const [resolved] = await withResolvedPreviewImages([merged])
-    return resolved ?? null
-  } catch (error) {
-    console.error('Error fetching portfolio case study:', error)
-    const [resolved] = await withResolvedPreviewImages([base])
-    return resolved ?? null
-  }
+  const [resolved] = await withResolvedPreviewImages([base])
+  return resolved ?? null
 }
 
-export type { PortfolioItem } from '@/lib/data/portfolio-types'
+export async function listPortfolioSlugs(): Promise<string[]> {
+  try {
+    const dbSlugs = await listPortfolioSlugsFromDb()
+    const hardcodedSlugs = PORTFOLIO_CASE_STUDIES.map((item) => item.id)
+    if (dbSlugs.length) {
+      return [...new Set([...dbSlugs, ...hardcodedSlugs])]
+    }
+  } catch (error) {
+    console.error('Error listing portfolio slugs:', error)
+  }
+  return PORTFOLIO_CASE_STUDIES.map((item) => item.id)
+}
+
+export type { PortfolioProjectType }

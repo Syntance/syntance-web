@@ -104,6 +104,70 @@ export function StatusMessage({ message, error }: { message: string | null; erro
   )
 }
 
+export function StringListEditor({
+  label,
+  hint,
+  items,
+  placeholder,
+  onChange,
+}: {
+  label: string
+  hint?: string
+  items: string[]
+  placeholder?: string
+  onChange: (items: string[]) => void
+}) {
+  function updateItem(index: number, value: string) {
+    const next = [...items]
+    next[index] = value
+    onChange(next)
+  }
+
+  function addItem() {
+    onChange([...items, ''])
+  }
+
+  function removeItem(index: number) {
+    onChange(items.filter((_, i) => i !== index))
+  }
+
+  return (
+    <div className="space-y-2">
+      <div>
+        <span className="text-sm font-medium text-neutral-300">{label}</span>
+        {hint ? <p className="text-xs text-neutral-500">{hint}</p> : null}
+      </div>
+      <ul className="space-y-2">
+        {items.map((item, index) => (
+          <li key={index} className="flex gap-2">
+            <input
+              className={magazynInputClass}
+              value={item}
+              placeholder={placeholder}
+              onChange={(e) => updateItem(index, e.target.value)}
+            />
+            <button
+              type="button"
+              aria-label="Usuń"
+              onClick={() => removeItem(index)}
+              className="shrink-0 rounded-lg border border-red-500/30 px-2 text-red-400 hover:bg-red-500/10"
+            >
+              ×
+            </button>
+          </li>
+        ))}
+      </ul>
+      <button
+        type="button"
+        onClick={addItem}
+        className="text-xs text-neutral-400 underline-offset-2 hover:text-white hover:underline"
+      >
+        + Dodaj pozycję
+      </button>
+    </div>
+  )
+}
+
 export function DbBanner({ connected }: { connected: boolean }) {
   if (connected) return null
   return (

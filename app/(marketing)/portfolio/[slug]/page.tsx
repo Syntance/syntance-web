@@ -1,15 +1,15 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import CaseStudyClient from '@/app/(marketing)/portfolio/[slug]/case-study-client'
-import { listPortfolioCaseStudyIds } from '@/lib/portfolio-content'
-import { fetchPortfolioCaseStudy } from '@/lib/portfolio-data'
+import { fetchPortfolioCaseStudy, listPortfolioSlugs } from '@/lib/portfolio-data'
 
 type Props = {
   params: Promise<{ slug: string }>
 }
 
 export async function generateStaticParams() {
-  return listPortfolioCaseStudyIds().map((slug) => ({ slug }))
+  const slugs = await listPortfolioSlugs()
+  return slugs.map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

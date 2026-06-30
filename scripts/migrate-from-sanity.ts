@@ -9,6 +9,7 @@ import { getDb, getDatabaseUrl } from '@/lib/db'
 import { saveSeoSettings, upsertSeoPage } from '@/lib/db/queries/seo'
 import { replaceFaqSettings } from '@/lib/db/queries/faq'
 import { replaceAllPortfolioItems } from '@/lib/db/queries/portfolio'
+import { slugifyPortfolioName } from '@/lib/magazyn/portfolio-cms'
 import { importPricingCatalog } from '@/lib/db/queries/pricing'
 import { saveEmailTemplates, savePaymentSettings, saveContractFiles } from '@/lib/db/queries/settings'
 import { saveBookingRules } from '@/lib/db/queries/booking'
@@ -108,6 +109,7 @@ async function main() {
     await replaceAllPortfolioItems(
       portfolio.map((p) => ({
         sanityId: p.id,
+        slug: slugifyPortfolioName(p.name),
         name: p.name,
         url: p.url,
         logoUrl: p.logoUrl,

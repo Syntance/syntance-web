@@ -8,6 +8,20 @@
       "when": 1782740949158,
       "tag": "0000_init",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1782740949159,
+      "tag": "0001_portfolio_content",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782740949160,
+      "tag": "0002_portfolio_performance",
+      "breakpoints": true
     }
   ]
 }

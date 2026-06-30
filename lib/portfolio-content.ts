@@ -3,6 +3,15 @@ import type { PortfolioPerformanceReport } from '@/lib/portfolio-performance'
 
 export type PortfolioProjectType = 'website' | 'ecommerce'
 
+export const PORTFOLIO_TYPE_LABELS: Record<PortfolioProjectType, string> = {
+  website: 'Strona internetowa',
+  ecommerce: 'Sklep internetowy',
+}
+
+export function getPortfolioTypeLabel(type: PortfolioProjectType): string {
+  return PORTFOLIO_TYPE_LABELS[type]
+}
+
 export function getPortfolioTypeDotColor(type: PortfolioProjectType): string {
   return type === 'ecommerce' ? 'oklch(0.72 0.17 162)' : 'oklch(0.72 0.14 250)'
 }

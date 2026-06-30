@@ -13,6 +13,7 @@
     "analyze": "cross-env ANALYZE=true NODE_OPTIONS=--max-old-space-size=8192 next build",
     "capture:homepage": "node scripts/capture-homepage.cjs",
     "db:push": "drizzle-kit push",
+    "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "migrate:sanity": "tsx scripts/migrate-from-sanity.ts",
     "typecheck": "tsc --noEmit"
@@ -26,6 +27,7 @@
     "@tailwindcss/postcss": "^4.2.2",
     "@upstash/redis": "^1.38.0",
     "@vercel/analytics": "^2.0.1",
+    "@vercel/blob": "^2.5.0",
     "@vercel/speed-insights": "^2.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

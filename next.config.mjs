@@ -29,6 +29,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'assets.sklep-retrohouse.pl',
       },
+      {
+        protocol: 'https',
+        hostname: '*.public.blob.vercel-storage.com',
+      },
     ],
     formats: ['image/avif', 'image/webp'],
   },

@@ -17,6 +17,10 @@ import {
   type CmsPageId,
   isPortfolioPage,
 } from '@/lib/magazyn/cms-config'
+import { PORTFOLIO_PROJECT_TYPE_OPTIONS, slugifyPortfolioName } from '@/lib/magazyn/portfolio-cms'
+import { PortfolioPerformanceEditor } from '@/components/magazyn/portfolio-performance-editor'
+import { PortfolioListPicker } from '@/components/magazyn/portfolio-list-picker'
+import type { PortfolioProjectType } from '@/lib/portfolio-content'
 import {
   DbBanner,
   Field,
@@ -24,6 +28,7 @@ import {
   PageHeader,
   SaveButton,
   StatusMessage,
+  StringListEditor,
   TabPills,
   magazynInputClass,
   magazynTextareaClass,
@@ -31,10 +36,23 @@ import {
 
 type PortfolioRow = typeof portfolioItems.$inferSelect
 
+function normalizePortfolioRow(row: PortfolioRow): PortfolioRow {
+  return {
+    ...row,
+    slug: row.slug || slugifyPortfolioName(row.name || 'realizacja'),
+    projectType: row.projectType ?? 'website',
+    description: row.description ?? '',
+    highlights: row.highlights ?? [],
+    stack: row.stack ?? [],
+    performance: row.performance ?? null,
+  }
+}
+
 type Props = {
   faqSettings: FaqSettingsDocument
   portfolioRows: PortfolioRow[]
   dbConnected: boolean
+  portfolioNeedsInitialSave?: boolean
 }
 
 function newKey(prefix: string) {
@@ -47,9 +65,14 @@ function navButtonClass(active: boolean) {
   }`
 }
 
-export function CmsClient({ faqSettings, portfolioRows, dbConnected }: Props) {
+export function CmsClient({
+  faqSettings,
+  portfolioRows,
+  dbConnected,
+  portfolioNeedsInitialSave = false,
+}: Props) {
   const [faq, setFaq] = useState(faqSettings)
-  const [portfolio, setPortfolio] = useState(portfolioRows)
+  const [portfolio, setPortfolio] = useState(() => portfolioRows.map(normalizePortfolioRow))
   const [activePageId, setActivePageId] = useState<CmsPageId>('cennik')
   const [activeSectionId, setActiveSectionId] = useState<string>('pricing')
   const [activePortfolioId, setActivePortfolioId] = useState<string | null>(
@@ -204,6 +227,13 @@ export function CmsClient({ faqSettings, portfolioRows, dbConnected }: Props) {
   }
 
   async function savePortfolio() {
+    const invalid = portfolio.find((item) => !item.name.trim() || !item.slug.trim() || !item.url.trim())
+    if (invalid) {
+      setError(true)
+      setStatus('Każda realizacja wymaga nazwy, sluga i adresu URL.')
+      return
+    }
+
     setPending(true)
     setStatus(null)
     setError(false)
@@ -211,7 +241,20 @@ export function CmsClient({ faqSettings, portfolioRows, dbConnected }: Props) {
       const res = await fetch('/api/magazyn/cms/portfolio', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: portfolio }),
+        body: JSON.stringify({
+          items: portfolio.map((item) => ({
+            ...item,
+            highlights: (item.highlights ?? []).filter((line) => line.trim()),
+            stack: (item.stack ?? []).filter((line) => line.trim()),
+            performance:
+              item.performance && item.performance.improvements
+                ? {
+                    ...item.performance,
+                    improvements: item.performance.improvements.filter((line) => line.trim()),
+                  }
+                : item.performance,
+          })),
+        }),
       })
       if (!res.ok) throw new Error('Zapis portfolio nie powiódł się')
       setStatus('Portfolio zapisane.')
@@ -234,10 +277,20 @@ export function CmsClient({ faqSettings, portfolioRows, dbConnected }: Props) {
       {
         id,
         sanityId: null,
+        slug: '',
         name: '',
         url: '',
+        projectType: 'website' as PortfolioProjectType,
+        description: '',
+        highlights: [] as string[],
+        stack: [] as string[],
+        problemStatement: null,
+        rebuildContext: null,
+        previewImageFallback: null,
+        previewImageAlt: null,
         logoUrl: '',
         logoAlt: '',
+        performance: null,
         sortOrder: prev.length,
         disabled: false,
       },
@@ -280,30 +333,66 @@ export function CmsClient({ faqSettings, portfolioRows, dbConnected }: Props) {
             Dodaj pierwszą realizację lub wybierz pozycję z listy.
           </p>
         ) : (
-          <Fieldset legend={activePortfolio.name || 'Realizacja'}>
+          <Fieldset legend="Treść realizacji">
             <div className="mb-3 flex justify-end">
               <button
                 type="button"
                 onClick={() => removePortfolio(activePortfolio.id)}
                 className="inline-flex items-center gap-1 rounded-full border border-red-500/30 px-3 py-1 text-xs text-red-400 hover:bg-red-500/10"
               >
-                <Trash2 className="h-3.5 w-3.5" /> Usuń
+                <Trash2 className="h-3.5 w-3.5" /> Usuń realizację
               </button>
             </div>
+
             <div className="grid gap-3 sm:grid-cols-2">
-              <Field label="Nazwa">
+              <Field label="Nazwa projektu">
                 <input
                   className={magazynInputClass}
                   value={activePortfolio.name}
-                  onChange={(e) => updatePortfolio(activePortfolio.id, { name: e.target.value })}
+                  onChange={(e) => {
+                    const name = e.target.value
+                    const patch: Partial<PortfolioRow> = { name }
+                    if (!activePortfolio.slug.trim()) {
+                      patch.slug = slugifyPortfolioName(name)
+                    }
+                    updatePortfolio(activePortfolio.id, patch)
+                  }}
                 />
               </Field>
-              <Field label="URL">
+              <Field label="Slug (URL case study)" hint="/portfolio/[slug]">
+                <input
+                  className={magazynInputClass}
+                  value={activePortfolio.slug}
+                  onChange={(e) =>
+                    updatePortfolio(activePortfolio.id, {
+                      slug: slugifyPortfolioName(e.target.value),
+                    })
+                  }
+                />
+              </Field>
+              <Field label="Adres URL projektu">
                 <input
                   className={magazynInputClass}
                   value={activePortfolio.url}
                   onChange={(e) => updatePortfolio(activePortfolio.id, { url: e.target.value })}
                 />
+              </Field>
+              <Field label="Typ projektu">
+                <select
+                  className={magazynInputClass}
+                  value={activePortfolio.projectType ?? 'website'}
+                  onChange={(e) =>
+                    updatePortfolio(activePortfolio.id, {
+                      projectType: e.target.value as PortfolioProjectType,
+                    })
+                  }
+                >
+                  {PORTFOLIO_PROJECT_TYPE_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
               </Field>
               <Field label="Logo URL">
                 <input
@@ -319,7 +408,80 @@ export function CmsClient({ faqSettings, portfolioRows, dbConnected }: Props) {
                   onChange={(e) => updatePortfolio(activePortfolio.id, { logoAlt: e.target.value })}
                 />
               </Field>
+              <Field label="Podgląd — obraz (URL)" hint="Ścieżka w /public lub pełny URL">
+                <input
+                  className={magazynInputClass}
+                  value={activePortfolio.previewImageFallback ?? ''}
+                  onChange={(e) =>
+                    updatePortfolio(activePortfolio.id, { previewImageFallback: e.target.value })
+                  }
+                />
+              </Field>
+              <Field label="Podgląd — alt">
+                <input
+                  className={magazynInputClass}
+                  value={activePortfolio.previewImageAlt ?? ''}
+                  onChange={(e) =>
+                    updatePortfolio(activePortfolio.id, { previewImageAlt: e.target.value })
+                  }
+                />
+              </Field>
             </div>
+
+            <Field label="Opis (karta + hero case study)">
+              <textarea
+                className={magazynTextareaClass}
+                rows={4}
+                value={activePortfolio.description ?? ''}
+                onChange={(e) => updatePortfolio(activePortfolio.id, { description: e.target.value })}
+              />
+            </Field>
+
+            <Field label="Wyzwanie (case study)">
+              <textarea
+                className={magazynTextareaClass}
+                rows={3}
+                value={activePortfolio.problemStatement ?? ''}
+                onChange={(e) =>
+                  updatePortfolio(activePortfolio.id, { problemStatement: e.target.value })
+                }
+              />
+            </Field>
+
+            <Field label="Kontekst przebudowy (case study)">
+              <textarea
+                className={magazynTextareaClass}
+                rows={3}
+                value={activePortfolio.rebuildContext ?? ''}
+                onChange={(e) =>
+                  updatePortfolio(activePortfolio.id, { rebuildContext: e.target.value })
+                }
+              />
+            </Field>
+
+            <StringListEditor
+              label="Co wyszło — punkty"
+              placeholder="Np. PageSpeed 95+ na mobile"
+              items={activePortfolio.highlights ?? []}
+              onChange={(highlights) => updatePortfolio(activePortfolio.id, { highlights })}
+            />
+
+            <StringListEditor
+              label="Badge stacku"
+              hint="Technologie wyświetlane jako badge na karcie i w case study"
+              placeholder="Np. Next.js"
+              items={activePortfolio.stack ?? []}
+              onChange={(stack) => updatePortfolio(activePortfolio.id, { stack })}
+            />
+
+            <PortfolioPerformanceEditor
+              slug={activePortfolio.slug}
+              projectName={activePortfolio.name || 'Realizacja'}
+              report={activePortfolio.performance ?? null}
+              enabled={activePortfolio.performance !== null}
+              onChange={(performance) => updatePortfolio(activePortfolio.id, { performance })}
+            />
+
             <label className="flex items-center gap-2 text-sm text-neutral-400">
               <input
                 type="checkbox"
@@ -462,28 +624,23 @@ export function CmsClient({ faqSettings, portfolioRows, dbConnected }: Props) {
           ) : null}
 
           {isPortfolio ? (
-            <div className="flex flex-wrap items-center gap-2">
-              {portfolio.map((item, index) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => setActivePortfolioId(item.id)}
-                  className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
-                    activePortfolioId === item.id
-                      ? 'border-white/20 bg-white text-black'
-                      : 'border-white/10 text-neutral-400 hover:border-white/20 hover:text-white'
-                  }`}
-                >
-                  {item.name || `Realizacja ${index + 1}`}
-                </button>
-              ))}
-              <button
-                type="button"
-                onClick={addPortfolio}
-                className="inline-flex items-center gap-1 rounded-full border border-dashed border-white/15 px-3 py-1.5 text-xs text-neutral-400 hover:border-white/25 hover:text-white"
-              >
-                <Plus className="h-3.5 w-3.5" /> Dodaj
-              </button>
+            <div className="space-y-4">
+              {portfolioNeedsInitialSave ? (
+                <p className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
+                  Realizacje z domyślnej konfiguracji strony. Kliknij{' '}
+                  <strong className="font-medium">Zapisz portfolio</strong>, aby przenieść je do bazy.
+                </p>
+              ) : null}
+              <PortfolioListPicker
+                items={portfolio.map((item) => ({
+                  id: item.id,
+                  name: item.name,
+                  disabled: item.disabled,
+                }))}
+                activeId={activePortfolioId}
+                onSelect={setActivePortfolioId}
+                onAdd={addPortfolio}
+              />
             </div>
           ) : null}
 
