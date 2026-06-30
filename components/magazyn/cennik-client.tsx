@@ -247,6 +247,7 @@ export function CennikClient({
               setItems={setItemsForm}
               categories={categoriesForm}
               projectTypes={projectTypesForm}
+              workHoursPerDay={num(configForm.workHoursPerDay) || 6}
               pending={pending}
               onSave={savePackages}
             />
@@ -259,6 +260,7 @@ export function CennikClient({
               categories={categoriesForm}
               items={itemsForm}
               setItems={setItemsForm}
+              config={configForm}
               onSave={saveItems}
             />
           ) : null}

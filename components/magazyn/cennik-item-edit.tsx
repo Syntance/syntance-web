@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { X } from 'lucide-react'
 import type { PricingCategoryAdmin, ProjectTypeAdmin } from '@/lib/db/queries/pricing'
 import type { PricingItem } from '@/lib/data/pricing'
+import { getPricingDependencyRequirements } from '@/lib/magazyn/pricing-dependencies'
 import { Field, Fieldset, magazynInputClass, magazynTextareaClass } from '@/components/magazyn/ui'
 
 function str(value: string | null | undefined) {
@@ -55,6 +56,95 @@ function FlagCheckbox({
   )
 }
 
+const PRICING_ITEM_FLAG_BADGES: Array<{
+  id: string
+  label: string
+  className: string
+  isActive: (item: PricingItem) => boolean
+}> = [
+  {
+    id: 'required',
+    label: 'Wymagana',
+    className: 'border-sky-500/30 bg-sky-500/10 text-sky-300',
+    isActive: (item) => item.required === true,
+  },
+  {
+    id: 'defaultSelected',
+    label: 'Domyślnie',
+    className: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300',
+    isActive: (item) => item.defaultSelected === true,
+  },
+  {
+    id: 'popular',
+    label: 'Popularna',
+    className: 'border-purple-500/30 bg-purple-500/10 text-purple-300',
+    isActive: (item) => item.popular === true,
+  },
+  {
+    id: 'disabled',
+    label: 'Wyłączona',
+    className: 'border-white/15 bg-white/[0.04] text-neutral-500',
+    isActive: (item) => item.disabled === true,
+  },
+]
+
+export function PricingItemFlagBadges({ item }: { item: PricingItem }) {
+  const active = PRICING_ITEM_FLAG_BADGES.filter((badge) => badge.isActive(item))
+  if (active.length === 0) return null
+
+  return (
+    <>
+      {active.map((badge) => (
+        <span
+          key={badge.id}
+          className={`rounded-full border px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide ${badge.className}`}
+        >
+          {badge.label}
+        </span>
+      ))}
+    </>
+  )
+}
+
+const DEPENDENCY_BADGE_CLASS =
+  'border-orange-500/40 bg-orange-500/10 text-orange-300 normal-case tracking-normal'
+
+export function PricingItemListBadges({
+  item,
+  allItems,
+}: {
+  item: PricingItem
+  allItems: PricingItem[]
+}) {
+  const requirements = getPricingDependencyRequirements(item, allItems)
+  const hasFlagBadges = PRICING_ITEM_FLAG_BADGES.some((badge) => badge.isActive(item))
+
+  if (requirements.length === 0 && !hasFlagBadges) return null
+
+  return (
+    <div
+      className="flex max-w-[14rem] flex-wrap items-center justify-end gap-1"
+      aria-label="Status pozycji"
+    >
+      <PricingItemFlagBadges item={item} />
+      {requirements.map((requirement) => (
+        <span
+          key={requirement.id}
+          title={`Wymaga: ${requirement.name}`}
+          className={`max-w-[9rem] truncate rounded-full border px-1.5 py-0.5 text-[10px] font-medium ${DEPENDENCY_BADGE_CLASS}`}
+        >
+          Wymaga: {requirement.name}
+        </span>
+      ))}
+    </div>
+  )
+}
+
+export { pricingItemListRowBorderClass } from '@/lib/magazyn/pricing-dependencies'
+
+const itemRefListScrollClass =
+  'max-h-40 overflow-y-auto overscroll-y-contain [scrollbar-color:oklch(0.35_0_0)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/15'
+
 function ItemRefMultiSelect({
   label,
   hint,
@@ -68,30 +158,53 @@ function ItemRefMultiSelect({
   options: PricingItem[]
   onToggle: (id: string) => void
 }) {
+  const [query, setQuery] = useState('')
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (!q) return options
+    return options.filter(
+      (option) =>
+        option.name.toLowerCase().includes(q) || option.id.toLowerCase().includes(q),
+    )
+  }, [options, query])
+
   return (
     <Field label={label} hint={hint}>
-      <div className="max-h-40 space-y-1 overflow-y-auto rounded-lg border border-white/10 bg-black/20 p-2">
-        {options.length === 0 ? (
-          <p className="text-xs text-neutral-500">Brak innych pozycji.</p>
-        ) : (
-          options.map((option) => (
-            <label
-              key={option.id}
-              className="flex cursor-pointer items-start gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-white/5"
-            >
-              <input
-                type="checkbox"
-                className="mt-0.5"
-                checked={selected.includes(option.id)}
-                onChange={() => onToggle(option.id)}
-              />
-              <span className="min-w-0">
-                <span className="block truncate text-neutral-200">{option.name}</span>
-                <span className="block truncate text-xs text-neutral-500">{option.id}</span>
-              </span>
-            </label>
-          ))
-        )}
+      <div className="space-y-2 rounded-lg border border-white/10 bg-black/20 p-2">
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Szukaj po nazwie lub ID…"
+          className={magazynInputClass}
+          aria-label={`${label} — wyszukaj pozycję`}
+        />
+        <div className={`space-y-1 pr-0.5 ${itemRefListScrollClass}`}>
+          {options.length === 0 ? (
+            <p className="px-2 py-1.5 text-xs text-neutral-500">Brak innych pozycji.</p>
+          ) : filtered.length === 0 ? (
+            <p className="px-2 py-1.5 text-xs text-neutral-500">Brak wyników dla podanego wyszukiwania.</p>
+          ) : (
+            filtered.map((option) => (
+              <label
+                key={option.id}
+                className="flex cursor-pointer items-start gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-white/5"
+              >
+                <input
+                  type="checkbox"
+                  className="mt-0.5"
+                  checked={selected.includes(option.id)}
+                  onChange={() => onToggle(option.id)}
+                />
+                <span className="min-w-0">
+                  <span className="block truncate text-neutral-200">{option.name}</span>
+                  <span className="block truncate text-xs text-neutral-500">{option.id}</span>
+                </span>
+              </label>
+            ))
+          )}
+        </div>
       </div>
     </Field>
   )
@@ -201,7 +314,6 @@ export function PricingItemEditFields({
         <div className="grid gap-2 sm:grid-cols-2">
           <FlagCheckbox label="Wymagana" checked={item.required ?? false} onChange={(checked) => onUpdate({ required: checked })} />
           <FlagCheckbox label="Domyślnie zaznaczona" checked={item.defaultSelected ?? false} onChange={(checked) => onUpdate({ defaultSelected: checked })} />
-          <FlagCheckbox label="Wliczona w bazę pakietu" checked={item.includedInBase ?? false} onChange={(checked) => onUpdate({ includedInBase: checked })} />
           <FlagCheckbox label="Oznacz jako popularna" checked={item.popular ?? false} onChange={(checked) => onUpdate({ popular: checked })} />
           <FlagCheckbox label="Oznacz jako nowość" checked={item.new ?? false} onChange={(checked) => onUpdate({ new: checked })} />
           <FlagCheckbox label="Wyłączona w konfiguratorze" checked={item.disabled ?? false} onChange={(checked) => onUpdate({ disabled: checked })} />

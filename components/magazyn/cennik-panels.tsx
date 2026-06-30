@@ -5,9 +5,16 @@ import { DragDropContext, Draggable, Droppable, type DropResult } from '@hello-p
 import { CircleMinus, GripVertical, ListPlus, Pencil, Plus, Trash2 } from 'lucide-react'
 import type { PricingCategoryAdmin, ProjectTypeAdmin } from '@/lib/db/queries/pricing'
 import type { PricingConfig, PricingItem } from '@/lib/data/pricing'
+import { getBaseProjectCategoryId } from '@/lib/pricing-calculator'
+import { PricingAdminSummaryBar } from '@/components/magazyn/pricing-admin-summary-bar'
+import {
+  isPricingDependencyParent,
+  pricingItemListRowBorderClass,
+} from '@/lib/magazyn/pricing-dependencies'
 import {
   patchPricingItemInList,
   PricingItemCallout,
+  PricingItemListBadges,
 } from '@/components/magazyn/cennik-item-edit'
 import {
   itemsForProjectTypeCategory,
@@ -16,6 +23,11 @@ import {
   itemsAvailableForLayout,
   assignExistingItemToLayout,
 } from '@/lib/magazyn/pricing-order'
+import {
+  basicItemsInProjectTypeLayout,
+  itemsInProjectTypeLayout,
+  summarizeActivePricingItems,
+} from '@/lib/magazyn/pricing-admin-summary'
 import { PricingLayoutExistingPicker } from '@/components/magazyn/pricing-layout-existing-picker'
 import {
   Field,
@@ -300,6 +312,7 @@ export function LayoutPanel({
   categories,
   items,
   setItems,
+  config,
   pending,
   onSave,
 }: SharedProps & {
@@ -307,6 +320,7 @@ export function LayoutPanel({
   categories: PricingCategoryAdmin[]
   items: PricingItem[]
   setItems: (value: PricingItem[]) => void
+  config: PricingConfig
   onSave: () => void
 }) {
   const activeTypes = projectTypes.filter((t) => !t.disabled)
@@ -316,6 +330,24 @@ export function LayoutPanel({
   const [existingPickerCategoryId, setExistingPickerCategoryId] = useState<string | null>(null)
   const sortedCategories = [...categories].sort((a, b) => a.sortOrder - b.sortOrder)
   const editingItem = editingItemId ? items.find((i) => i.id === editingItemId) : null
+
+  const layoutSummary = useMemo(() => {
+    const baseCategoryId = getBaseProjectCategoryId(config, projectTypeId)
+    const inLayout = itemsInProjectTypeLayout(items, projectTypeId)
+    const active = inLayout.filter((item) => !item.disabled)
+    const basic = basicItemsInProjectTypeLayout(items, projectTypeId, baseCategoryId)
+    const workHoursPerDay = num(config.workHoursPerDay) || 6
+    return {
+      disabledInLayoutCount: inLayout.length - active.length,
+      totalActiveInLayoutCount: active.length,
+      basic: summarizeActivePricingItems(basic, workHoursPerDay),
+    }
+  }, [items, projectTypeId, config])
+
+  const layoutSummaryTitle =
+    activeTypes.find((type) => type.id === projectTypeId)?.name ??
+    projectTypes.find((type) => type.id === projectTypeId)?.name ??
+    'Układ'
 
   function openItemEditor(itemId: string, isNew = false) {
     setEditingItemId(itemId)
@@ -431,6 +463,15 @@ export function LayoutPanel({
         ))}
       </div>
 
+      <PricingAdminSummaryBar
+        title={`Podsumowanie układu · ${layoutSummaryTitle}`}
+        summary={layoutSummary.basic}
+        summaryLabel="Podstawowe pozycje"
+        summaryHint="Wymagane, domyślnie włączone lub z kategorii bazy projektu."
+        disabledInLayoutCount={layoutSummary.disabledInLayoutCount}
+        totalActiveInLayoutCount={layoutSummary.totalActiveInLayoutCount}
+      />
+
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="space-y-4">
           {sortedCategories.map((cat) => {
@@ -467,11 +508,13 @@ export function LayoutPanel({
                         <ul ref={provided.innerRef} {...provided.droppableProps} className="space-y-2">
                           {list.map((item, index) => (
                             <Draggable key={item.id} draggableId={item.id} index={index}>
-                              {(dragProvided, snapshot) => (
+                              {(dragProvided, snapshot) => {
+                                const dependencyParent = isPricingDependencyParent(item.id, items)
+                                return (
                                 <li
                                   ref={dragProvided.innerRef}
                                   {...dragProvided.draggableProps}
-                                  className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${snapshot.isDragging ? 'border-purple-500/60 bg-purple-500/10' : 'border-white/10 bg-black/20'}`}
+                                  className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${pricingItemListRowBorderClass({ isDragging: snapshot.isDragging, isDependencyParent: dependencyParent })}`}
                                 >
                                   <button type="button" {...dragProvided.dragHandleProps} className="cursor-grab text-neutral-500 hover:text-white" aria-label="Przeciągnij">
                                     <GripVertical className="h-4 w-4" />
@@ -484,24 +527,28 @@ export function LayoutPanel({
                                     <div className="truncate text-sm font-medium">{item.name}</div>
                                     <div className="truncate text-xs text-neutral-500">{item.id} · {num(item.price).toLocaleString('pl-PL')} PLN</div>
                                   </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => openItemEditor(item.id)}
-                                    className="shrink-0 rounded p-1.5 text-neutral-500 transition-colors hover:bg-white/10 hover:text-white"
-                                    aria-label={`Edytuj ${item.name}`}
-                                  >
-                                    <Pencil className="h-3.5 w-3.5" />
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => removeItemFromLayout(item.id)}
-                                    className="shrink-0 rounded p-1.5 text-neutral-500 transition-colors hover:bg-red-500/10 hover:text-red-400"
-                                    aria-label={`Usuń ${item.name} z układu ${activeProjectTypeName}`}
-                                  >
-                                    <CircleMinus className="h-3.5 w-3.5" />
-                                  </button>
+                                  <div className="flex shrink-0 items-center gap-1.5">
+                                    <PricingItemListBadges item={item} allItems={items} />
+                                    <button
+                                      type="button"
+                                      onClick={() => openItemEditor(item.id)}
+                                      className="shrink-0 rounded p-1.5 text-neutral-500 transition-colors hover:bg-white/10 hover:text-white"
+                                      aria-label={`Edytuj ${item.name}`}
+                                    >
+                                      <Pencil className="h-3.5 w-3.5" />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => removeItemFromLayout(item.id)}
+                                      className="shrink-0 rounded p-1.5 text-neutral-500 transition-colors hover:bg-red-500/10 hover:text-red-400"
+                                      aria-label={`Usuń ${item.name} z układu ${activeProjectTypeName}`}
+                                    >
+                                      <CircleMinus className="h-3.5 w-3.5" />
+                                    </button>
+                                  </div>
                                 </li>
-                              )}
+                                )
+                              }}
                             </Draggable>
                           ))}
                         </ul>

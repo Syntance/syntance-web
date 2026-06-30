@@ -17,6 +17,7 @@ import {
   computeConfiguratorPricing,
   getBaseBundlePriceNet,
   getBaseProjectCategoryId,
+  isCatalogLineIncludedInBasePrice,
 } from '@/lib/pricing-calculator'
 import { getProjectStartPriceNet } from '@/lib/pricing-configurator-minimum'
 import {
@@ -418,7 +419,6 @@ export function PricingConfigurator({ data }: Props) {
     ]
 
     const bundlePdfNet = getBaseBundlePriceNet(state.projectType, config)
-    const baseCatPdf = getBaseProjectCategoryId(config, state.projectType)
     const typeFloorPdf = currentProjectType?.basePrice ?? 0
 
     // Przygotuj listę itemów dla PDF
@@ -428,13 +428,12 @@ export function PricingConfigurator({ data }: Props) {
       
       const quantity = state.quantities[id] || 1
       const price = item.price
-      const isBaseCat = item.category === baseCatPdf
-      const inBasePackage =
-        item.includedInBase ||
-        (bundlePdfNet > 0 && (isBaseCat || item.required === true)) ||
-        (bundlePdfNet === 0 &&
-          item.required === true &&
-          (typeFloorPdf > 0 || isBaseCat))
+      const inBasePackage = isCatalogLineIncludedInBasePrice(
+        item,
+        state.projectType,
+        config,
+        typeFloorPdf,
+      )
       const total = inBasePackage ? 0 : price * quantity
 
       return {
@@ -442,7 +441,7 @@ export function PricingConfigurator({ data }: Props) {
         quantity,
         price,
         total,
-        includedInBase: item.includedInBase,
+        includedInBase: inBasePackage,
         required: item.required,
         hidePrice: item.hidePrice,
       }
@@ -596,14 +595,16 @@ export function PricingConfigurator({ data }: Props) {
                   </div>
                   {!item.hidePrice && (
                     <span className="text-gray-400 text-sm flex-shrink-0">
-                      {baseBundleNet > 0 && (item.category === baseCategoryId || item.required)
-                        ? 'w pakiecie'
-                        : baseBundleNet === 0 &&
-                            (((currentProjectType?.basePrice ?? 0) > 0 && item.required) ||
-                              (item.category === baseCategoryId &&
-                                (item.includedInBase || item.required)))
-                          ? 'w cenie pakietu'
-                          : `${item.price.toLocaleString('pl-PL')} PLN netto`}
+                      {isCatalogLineIncludedInBasePrice(
+                        item,
+                        state.projectType,
+                        config,
+                        currentProjectType?.basePrice ?? 0,
+                      )
+                        ? baseBundleNet > 0
+                          ? 'w pakiecie'
+                          : 'w cenie pakietu'
+                        : `${item.price.toLocaleString('pl-PL')} PLN netto`}
                     </span>
                   )}
                 </div>
@@ -659,17 +660,35 @@ export function PricingConfigurator({ data }: Props) {
                         <span className={`font-medium ${selected ? 'text-white' : 'text-gray-400'}`}>
                           {item.name}
                         </span>
-                        {item.includedInBase && (
+                        {isCatalogLineIncludedInBasePrice(
+                          item,
+                          state.projectType,
+                          config,
+                          currentProjectType?.basePrice ?? 0,
+                        ) && (
                           <span className="px-2 py-0.5 text-xs rounded-full bg-gradient-to-r from-emerald-500 to-green-500 text-white font-medium flex items-center gap-1">
                             <Gift size={10} /> W cenie
                           </span>
                         )}
-                        {item.defaultSelected && !item.includedInBase && (
+                        {item.defaultSelected &&
+                          !isCatalogLineIncludedInBasePrice(
+                            item,
+                            state.projectType,
+                            config,
+                            currentProjectType?.basePrice ?? 0,
+                          ) && (
                           <span className="px-2 py-0.5 text-xs rounded-full bg-gradient-to-r from-amber-500 to-yellow-500 text-white font-medium flex items-center gap-1">
                             <Star size={10} /> Rekomendowane
                           </span>
                         )}
-                        {item.popular && !item.defaultSelected && !item.includedInBase && (
+                        {item.popular &&
+                          !item.defaultSelected &&
+                          !isCatalogLineIncludedInBasePrice(
+                            item,
+                            state.projectType,
+                            config,
+                            currentProjectType?.basePrice ?? 0,
+                          ) && (
                           <span className="px-2 py-0.5 text-xs rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium">
                             Popularne
                           </span>
@@ -731,11 +750,21 @@ export function PricingConfigurator({ data }: Props) {
                     {/* Price */}
                     {!item.hidePrice && (
                       <span className={`text-sm flex-shrink-0 text-right ${
-                        item.includedInBase 
-                          ? 'text-emerald-400 font-medium' 
+                        isCatalogLineIncludedInBasePrice(
+                          item,
+                          state.projectType,
+                          config,
+                          currentProjectType?.basePrice ?? 0,
+                        )
+                          ? 'text-emerald-400 font-medium'
                           : selected ? 'text-purple-400' : 'text-gray-400'
                       }`}>
-                        {item.includedInBase 
+                        {isCatalogLineIncludedInBasePrice(
+                          item,
+                          state.projectType,
+                          config,
+                          currentProjectType?.basePrice ?? 0,
+                        )
                           ? 'Gratis'
                           : item.percentageAdd 
                             ? `+${item.percentageAdd}%`

@@ -11,7 +11,16 @@ import type {
   PricingPackageProjectType,
 } from '@/lib/data/pricing'
 import { PricingLayoutExistingPicker } from '@/components/magazyn/pricing-layout-existing-picker'
-import { patchPricingItemInList, PricingItemCallout } from '@/components/magazyn/cennik-item-edit'
+import { PricingAdminSummaryBar } from '@/components/magazyn/pricing-admin-summary-bar'
+import { patchPricingItemInList, PricingItemCallout, PricingItemListBadges } from '@/components/magazyn/cennik-item-edit'
+import {
+  isPricingDependencyParent,
+  pricingItemListRowBorderClass,
+} from '@/lib/magazyn/pricing-dependencies'
+import {
+  resolvePackageCatalogItems,
+  summarizeActivePricingItems,
+} from '@/lib/magazyn/pricing-admin-summary'
 import {
   createPricingItemForLayout,
   reorderPackageItemIdsInCategory,
@@ -37,6 +46,7 @@ type Props = {
   setItems: (value: PricingItem[]) => void
   categories: PricingCategoryAdmin[]
   projectTypes: ProjectTypeAdmin[]
+  workHoursPerDay: number
   pending: boolean
   onSave: () => void
 }
@@ -287,15 +297,13 @@ function PackageItemsLayout({
                       <ul ref={provided.innerRef} {...provided.droppableProps} className="space-y-2">
                         {list.map((item, index) => (
                           <Draggable key={item.id} draggableId={item.id} index={index}>
-                            {(dragProvided, snapshot) => (
+                            {(dragProvided, snapshot) => {
+                              const dependencyParent = isPricingDependencyParent(item.id, items)
+                              return (
                               <li
                                 ref={dragProvided.innerRef}
                                 {...dragProvided.draggableProps}
-                                className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${
-                                  snapshot.isDragging
-                                    ? 'border-purple-500/60 bg-purple-500/10'
-                                    : 'border-white/10 bg-black/20'
-                                }`}
+                                className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${pricingItemListRowBorderClass({ isDragging: snapshot.isDragging, isDependencyParent: dependencyParent })}`}
                               >
                                 <button
                                   type="button"
@@ -317,24 +325,28 @@ function PackageItemsLayout({
                                     {item.id} · {num(item.price).toLocaleString('pl-PL')} PLN · {item.hours}h
                                   </div>
                                 </button>
-                                <button
-                                  type="button"
-                                  onClick={() => openItemEditor(item.id)}
-                                  className="shrink-0 rounded p-1.5 text-neutral-500 transition-colors hover:bg-white/10 hover:text-white"
-                                  aria-label={`Edytuj ${item.name}`}
-                                >
-                                  <Pencil className="h-3.5 w-3.5" />
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => removeItemFromPackage(item.id)}
-                                  className="shrink-0 rounded p-1.5 text-neutral-500 transition-colors hover:bg-red-500/10 hover:text-red-400"
-                                  aria-label={`Usuń ${item.name} z pakietu`}
-                                >
-                                  <CircleMinus className="h-3.5 w-3.5" />
-                                </button>
+                                <div className="flex shrink-0 items-center gap-1.5">
+                                  <PricingItemListBadges item={item} allItems={items} />
+                                  <button
+                                    type="button"
+                                    onClick={() => openItemEditor(item.id)}
+                                    className="shrink-0 rounded p-1.5 text-neutral-500 transition-colors hover:bg-white/10 hover:text-white"
+                                    aria-label={`Edytuj ${item.name}`}
+                                  >
+                                    <Pencil className="h-3.5 w-3.5" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => removeItemFromPackage(item.id)}
+                                    className="shrink-0 rounded p-1.5 text-neutral-500 transition-colors hover:bg-red-500/10 hover:text-red-400"
+                                    aria-label={`Usuń ${item.name} z pakietu`}
+                                  >
+                                    <CircleMinus className="h-3.5 w-3.5" />
+                                  </button>
+                                </div>
                               </li>
-                            )}
+                              )
+                            }}
                           </Draggable>
                         ))}
                       </ul>
@@ -392,6 +404,7 @@ export function PackagesPanel({
   setItems,
   categories,
   projectTypes,
+  workHoursPerDay,
   pending,
   onSave,
 }: Props) {
@@ -405,6 +418,32 @@ export function PackagesPanel({
         .sort((a, b) => a.sortOrder - b.sortOrder),
     [packages, projectType],
   )
+
+  const expandedPackage = expandedId
+    ? visiblePackages.find((pkg) => pkg.id === expandedId) ?? null
+    : null
+
+  const packageSummary = useMemo(() => {
+    if (!expandedPackage) return null
+    const catalogItems = resolvePackageCatalogItems(items, expandedPackage.itemIds)
+    const disabledCount = expandedPackage.itemIds.filter((id) => {
+      const item = items.find((entry) => entry.id === id)
+      return item?.disabled === true
+    }).length
+    const missingCount = expandedPackage.itemIds.filter((id) => !items.some((item) => item.id === id)).length
+
+    return {
+      title: `Podsumowanie pakietu · ${expandedPackage.name || 'Bez nazwy'}`,
+      summary: summarizeActivePricingItems(catalogItems, workHoursPerDay),
+      disabledInLayoutCount: disabledCount + missingCount,
+      compare: {
+        label: 'W pakiecie (wpisane)',
+        priceNet: num(expandedPackage.priceNet),
+        hours: num(expandedPackage.hours),
+        deliveryTime: str(expandedPackage.deliveryTime) || undefined,
+      },
+    }
+  }, [expandedPackage, items, workHoursPerDay])
 
   function updatePackage(id: string, patch: Partial<PricingPackage>) {
     if (patch.useAsStartPrice) {
@@ -501,6 +540,19 @@ export function PackagesPanel({
         ))}
       </div>
 
+      {packageSummary ? (
+        <PricingAdminSummaryBar
+          title={packageSummary.title}
+          summary={packageSummary.summary}
+          disabledInLayoutCount={packageSummary.disabledInLayoutCount}
+          compare={packageSummary.compare}
+        />
+      ) : (
+        <p className="rounded-xl border border-dashed border-white/10 px-4 py-3 text-xs text-neutral-500">
+          Rozwiń pakiet, aby zobaczyć podsumowanie ceny i czasu z aktywnych pozycji katalogu.
+        </p>
+      )}
+
       <div className="flex justify-end">
         <button
           type="button"
@@ -524,12 +576,12 @@ export function PackagesPanel({
                 key={pkg.id}
                 className="overflow-hidden rounded-xl border border-white/10 bg-white/[0.02]"
               >
-                <button
-                  type="button"
-                  onClick={() => setExpandedId(open ? null : pkg.id)}
-                  className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-white/[0.03]"
-                >
-                  <div className="min-w-0 flex-1">
+                <div className="flex w-full items-center gap-3 px-4 py-3">
+                  <button
+                    type="button"
+                    onClick={() => setExpandedId(open ? null : pkg.id)}
+                    className="min-w-0 flex-1 rounded-md px-1 py-0.5 text-left transition-colors hover:bg-white/[0.03]"
+                  >
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="font-medium text-white">{pkg.name || 'Bez nazwy'}</span>
                       {pkg.popular ? (
@@ -554,33 +606,31 @@ export function PackagesPanel({
                       {' · '}
                       {pkg.itemIds.length + pkg.customLines.length} poz.
                     </div>
-                  </div>
+                  </button>
                   <div className="flex shrink-0 items-center gap-1">
                     <button
                       type="button"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        movePackage(pkg.id, -1)
-                      }}
+                      onClick={() => movePackage(pkg.id, -1)}
                       disabled={index === 0}
+                      aria-label="Przesuń pakiet wyżej"
                       className="rounded px-2 py-1 text-xs text-neutral-400 hover:bg-white/10 disabled:opacity-30"
                     >
                       ↑
                     </button>
                     <button
                       type="button"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        movePackage(pkg.id, 1)
-                      }}
+                      onClick={() => movePackage(pkg.id, 1)}
                       disabled={index === visiblePackages.length - 1}
+                      aria-label="Przesuń pakiet niżej"
                       className="rounded px-2 py-1 text-xs text-neutral-400 hover:bg-white/10 disabled:opacity-30"
                     >
                       ↓
                     </button>
-                    <span className="text-xs text-neutral-500">{open ? '▲' : '▼'}</span>
+                    <span className="px-1 text-xs text-neutral-500" aria-hidden>
+                      {open ? '▲' : '▼'}
+                    </span>
                   </div>
-                </button>
+                </div>
 
                 {open ? (
                   <div className="space-y-4 border-t border-white/10 px-4 py-4">

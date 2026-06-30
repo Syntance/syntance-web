@@ -81,7 +81,7 @@ export function getBundleBaseWorkHours(projectTypeId: string, config: PricingCon
   return typeof n === 'number' && Number.isFinite(n) && n > 0 ? n : 0
 }
 
-/** Cena katalogowa pozycji nie wchodzi do sumy, gdy jest gratis lub pokryta pakietem / ceną bazową typu projektu. */
+/** Cena katalogowa pozycji nie wchodzi do sumy, gdy jest w bazie projektu lub pokryta pakietem / ceną bazową typu. */
 function isGratisCatalogLine(
   item: PricingItem,
   baseCat: string,
@@ -92,15 +92,31 @@ function isGratisCatalogLine(
   const forType = item.projectTypes?.includes(projectTypeId) ?? false
   if (!forType) return false
   const isBase = item.category === baseCat
-  /** Pakiet z CMS: bez sumy katalogu dla pozycji z kategorii bazy (slug per typ) i dla obowiązkowych (ochrona przy rozjechanym slug). */
-  const coveredByBundle = bundleNet > 0 && (isBase || item.required === true)
+  /** Wszystkie pozycje z kategorii bazy projektu — cena wliczona w pakiet bazowy. */
+  if (isBase) return true
+  /** Pakiet z CMS: obowiązkowe poza bazą nadal gratis przy ustawionym bundleNet. */
+  const coveredByBundle = bundleNet > 0 && item.required === true
   if (coveredByBundle) return true
-  /** `basePrice` typu projektu (bez pola pakietu): obowiązkowe pozycje wchodzą w skład tej kwoty, nie do sumy katalogowej. */
+  /** `basePrice` typu projektu: obowiązkowe poza bazą wchodzą w type floor. */
   const coveredByTypeFloor = bundleNet === 0 && typeFloorNet > 0 && item.required === true
   if (coveredByTypeFloor) return true
-  if (item.includedInBase === true) return true
-  if (item.required === true && isBase) return true
   return false
+}
+
+/** Czy cena katalogowa pozycji jest wliczona w bazę (UI, PDF, kalkulator). */
+export function isCatalogLineIncludedInBasePrice(
+  item: PricingItem,
+  projectTypeId: string,
+  config: PricingConfig | undefined,
+  projectTypeBasePrice = 0,
+): boolean {
+  const baseCat = getBaseProjectCategoryId(config, projectTypeId)
+  const bundleNet = getBaseBundlePriceNet(projectTypeId, config)
+  const typeFloorNet =
+    typeof projectTypeBasePrice === 'number' && Number.isFinite(projectTypeBasePrice) && projectTypeBasePrice > 0
+      ? projectTypeBasePrice
+      : 0
+  return isGratisCatalogLine(item, baseCat, projectTypeId, bundleNet, typeFloorNet)
 }
 
 export type ConfiguratorPricingResult = {
