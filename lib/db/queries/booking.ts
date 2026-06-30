@@ -1,4 +1,4 @@
-import { count, desc, eq, gte, lt, lte, and } from 'drizzle-orm'
+import { count, desc, eq, gte, lt, and } from 'drizzle-orm'
 import { getDb, hasDb } from '@/lib/db'
 import {
   bookingRules,

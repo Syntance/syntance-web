@@ -66,6 +66,7 @@ export function PricingFAQ({ items }: PricingFAQProps = {}) {
     ? faqItems.filter(item => item.category === activeCategory)
     : faqItems
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for future category grouping feature
   const groupedByCategory = faqItems.reduce((acc, item) => {
     if (!acc[item.category]) acc[item.category] = []
     acc[item.category].push(item)

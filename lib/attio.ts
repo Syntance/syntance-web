@@ -85,9 +85,7 @@ interface AttioRecordResponse {
 async function attioRequest(
   endpoint: string,
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' = 'GET',
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body?: any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
   const apiKey = process.env.ATTIO_API_KEY
   if (!apiKey) {
@@ -300,12 +298,10 @@ export async function createProject(project: AttioProject): Promise<AttioRecordR
   return dealData?.data
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function pickValue(values: Record<string, any[]> | undefined, slug: string): unknown {
   return values?.[slug]?.[0]?.value
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function pickSelectFirstTitle(values: Record<string, any[]> | undefined, slug: string): string | undefined {
   const row = values?.[slug]?.[0]
   if (!row) return undefined
@@ -333,7 +329,6 @@ function resolveBookingIdFromDealValues(values: Record<string, any[]> | undefine
  */
 export async function fetchCurrentDealBookingId(dealId: string): Promise<string | null> {
   const deal = await attioRequest(`/objects/deals/records/${dealId}`, 'GET')
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const values = deal?.data?.values as Record<string, any[]> | undefined
   const id = resolveBookingIdFromDealValues(values)
   return id ?? null
@@ -422,7 +417,6 @@ export async function ensureDealHasBookingNumber(
   dealId: string
 ): Promise<{ bookingId: string; values: Record<string, any[]>; wasNew: boolean } | null> {
   const deal = await attioRequest(`/objects/deals/records/${dealId}`, 'GET')
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const values = (deal?.data?.values as Record<string, any[]>) ?? null
   if (!values) {
     console.error(`[attio] ensureDealHasBookingNumber: brak deala ${dealId}`)
@@ -473,7 +467,6 @@ export async function ensureDealHasBookingNumber(
  */
 export async function getDealNativeStageTitle(dealId: string): Promise<string | undefined> {
   const deal = await attioRequest(`/objects/deals/records/${dealId}`, 'GET')
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const row = (deal?.data?.values as Record<string, any[]> | undefined)?.stage?.[0]
   const title = (row?.status as { title?: string } | undefined)?.title
   if (typeof title !== 'string') return undefined
@@ -486,7 +479,6 @@ export async function getDealSelectOptionTitle(
   attributeSlug: string,
 ): Promise<string | undefined> {
   const deal = await attioRequest(`/objects/deals/records/${dealId}`, 'GET')
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const values = deal?.data?.values as Record<string, any[]> | undefined
   const t = pickSelectFirstTitle(values, attributeSlug)
   return t?.normalize('NFC').trim()
@@ -515,7 +507,6 @@ export async function getClientDataByDealId(dealId: string): Promise<AttioClient
   const { bookingId, values } = ensured
 
   // ── Powiązana osoba (klient) ─────────────────────────────────────────────
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const personRef = (values.associated_people as any[])?.[0]
   const personId = personRef?.target_record_id
   if (!personId) {
@@ -524,7 +515,6 @@ export async function getClientDataByDealId(dealId: string): Promise<AttioClient
   }
 
   const person = await attioRequest(`/objects/people/records/${personId}`, 'GET')
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const personValues = (person?.data?.values as Record<string, any[]>) ?? {}
 
   const email = personValues.email_addresses?.[0]?.email_address as string | undefined

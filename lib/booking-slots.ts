@@ -66,7 +66,7 @@ function overlaps(aStart: Date, aEnd: Date, bStart: Date, bEnd: Date): boolean {
   return aStart < bEnd && aEnd > bStart
 }
 
-function generateCandidateSlots(rules: BookingRules, dateYmd: string): string[] {
+function generateCandidateSlots(rules: BookingRules): string[] {
   if (rules.slotPresets && rules.slotPresets.length > 0) {
     return [...new Set(rules.slotPresets)].filter((s) => /^([01]\d|2[0-3]):[0-5]\d$/.test(s))
   }
@@ -127,7 +127,7 @@ export async function getAvailableSlotsForDate(dateYmd: string): Promise<DayAvai
   const minNoticeMs = rules.minNoticeHours * 60 * 60 * 1000
   const earliest = new Date(now.getTime() + minNoticeMs)
 
-  const candidates = generateCandidateSlots(rules, dateYmd)
+  const candidates = generateCandidateSlots(rules)
   const result: AvailableSlot[] = []
 
   for (const time of candidates) {
@@ -203,7 +203,7 @@ export async function getAvailableDates(opts?: { from?: Date; days?: number }): 
     const weekday = weekdayWarsaw(ymd)
     if (!rules.workingDays.includes(weekday)) continue
 
-    const candidates = generateCandidateSlots(rules, ymd)
+    const candidates = generateCandidateSlots(rules)
     let hasFree = false
 
     for (const time of candidates) {

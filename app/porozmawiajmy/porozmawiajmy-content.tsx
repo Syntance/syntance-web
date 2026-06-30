@@ -16,7 +16,6 @@ import {
   ArrowDown,
   ChevronDown,
   Loader2,
-  XCircle,
   LayoutTemplate,
   ShoppingCart,
   BadgeCheck,
@@ -26,7 +25,7 @@ import { WebsiteProblemsGrid } from '@/components/sections/website-problems-grid
 import TiltCard from '@/components/tilt-card'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
 import StickyCtaFloat from '@/components/StickyCtaFloat'
-import { trackEvent } from '@/lib/tracking'
+import { AnalyticsEvent, trackAnalyticsEvent } from '@/lib/analytics'
 
 /* ─────────────────────────────────────────────────────────
    DANE STATYCZNE
@@ -224,7 +223,7 @@ export default function PorozmawiajmyContent() {
   useEffect(() => {
     if (viewTrackedRef.current) return
     viewTrackedRef.current = true
-    trackEvent('lead_landing_view', {
+    trackAnalyticsEvent(AnalyticsEvent.LeadLandingView, {
       ...utm,
       device: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
     })
@@ -240,7 +239,7 @@ export default function PorozmawiajmyContent() {
         const name = e.target.getAttribute('data-ph-section')
         if (!name || seen.has(name) || !e.isIntersecting) continue
         seen.add(name)
-        trackEvent('lead_section_viewed', { section_name: name })
+        trackAnalyticsEvent(AnalyticsEvent.LeadSectionView, { section_name: name })
       }
     }, { threshold: 0.35 })
     sections.forEach(s => io.observe(s))
@@ -252,7 +251,7 @@ export default function PorozmawiajmyContent() {
   }
 
   const handleCta = (position: 'hero' | 'post-3-obszary' | 'post-audyt') => {
-    trackEvent('lead_cta_clicked', { position })
+    trackAnalyticsEvent(AnalyticsEvent.LeadCtaClick, { position })
     scrollToForm()
   }
 
@@ -317,7 +316,11 @@ export default function PorozmawiajmyContent() {
         const body = (await res.json().catch(() => null)) as { error?: string } | null
         throw new Error(body?.error ?? 'Coś poszło nie tak.')
       }
-      trackEvent('lead_form_submitted', { budget_range: form.budget, timeline: form.timeline, industry: form.industry })
+      trackAnalyticsEvent(AnalyticsEvent.LeadFormSubmit, {
+        budget_range: form.budget,
+        timeline: form.timeline,
+        industry: form.industry,
+      })
       setSubmitted(true)
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : 'Błąd wysyłki.')
@@ -480,7 +483,7 @@ export default function PorozmawiajmyContent() {
                         <Link
                           href={item.href}
                           onClick={() =>
-                            trackEvent('lead_subpage_clicked', { target: item.trackTarget })
+                            trackAnalyticsEvent(AnalyticsEvent.LeadSubpageClick, { target: item.trackTarget })
                           }
                           className="group/link mt-auto inline-flex items-center gap-2 text-[15px] font-medium text-white/70 transition-colors hover:text-white"
                         >

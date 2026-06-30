@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { AnalyticsEvent, trackAnalyticsEvent } from '@/lib/analytics'
 
 interface ContactFormProps {
   /** Unikalny prefix dla ID formularza (dla multiple forms na jednej stronie) */
@@ -47,6 +48,7 @@ export function ContactForm({
     
     setFormStatus('loading')
     setErrorMessage('')
+    trackAnalyticsEvent(AnalyticsEvent.ContactFormSubmit, { source })
 
     // Client-side validation
     if (formData.name.length < 2) {
@@ -95,6 +97,7 @@ export function ContactForm({
       setFormStatus('success')
       setFormData({ name: '', email: '', phone: '', message: '', hp: '' })
       setConsentChecked(false)
+      trackAnalyticsEvent(AnalyticsEvent.ContactFormSuccess, { source })
     } catch (error) {
       setFormStatus('error')
       if (error instanceof DOMException && error.name === 'TimeoutError') {

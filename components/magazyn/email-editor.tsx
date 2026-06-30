@@ -51,6 +51,7 @@ const FIELD_LABELS: Record<string, string> = {
   footerLine: 'Linia stopki',
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- base class shared across editor inputs
 const INPUT_BASE =
   'w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm text-white placeholder:text-neutral-600 outline-none focus-visible:border-purple-500/60 focus-visible:ring-2 focus-visible:ring-purple-500/30'
 

@@ -121,7 +121,7 @@ export default async function KontaktPage() {
                     </a>
                     
                     {/* Calendar */}
-                    <a 
+                    <Link 
                       href="/#contact" 
                       className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-xl hover:border-purple-500/30 transition-colors group"
                     >
@@ -132,7 +132,7 @@ export default async function KontaktPage() {
                         <div className="text-sm text-gray-400">Kalendarz</div>
                         <div className="text-white group-hover:text-purple-400 transition-colors">Umów 30-min rozmowę</div>
                       </div>
-                    </a>
+                    </Link>
                   </div>
                 </div>
                 

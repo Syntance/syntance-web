@@ -106,7 +106,7 @@ export function ProgressBar() {
     document.body.appendChild(loader)
     
     // Wymuś reflow i rozpocznij animację fade-in
-    loader.offsetHeight
+    void loader.offsetHeight
     loader.style.opacity = '1'
     
     loadingStartTime.current = Date.now()

@@ -115,6 +115,7 @@ export default function NavbarStudio() {
 
   // Auto-close on pathname change (przy nawigacji między stronami)
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sync menu close to route change is intentional
     setMobileMenuOpen(false);
     setMobileOfertaOpen(false);
     setMobileProduktyOpen(false);

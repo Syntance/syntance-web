@@ -10,6 +10,7 @@ import { PricingData, PricingItem } from '@/lib/data/pricing'
 import { ConfirmDialog } from './ConfirmDialog'
 import { MiniSummaryBar } from './MiniSummaryBar'
 import { BookingModal } from './BookingModal'
+import { AnalyticsEvent, trackAnalyticsEvent } from '@/lib/analytics'
 import { useHideStickyOnVisible } from '@/hooks/useHideStickyOnVisible'
 import { generatePricingPDF, PDFData, PDFItem } from '@/lib/generatePDF'
 import {
@@ -132,6 +133,7 @@ export function PricingConfigurator({ data }: Props) {
   useEffect(() => {
     if (isConfiguratorProjectTypeId(state.projectType)) return
     const next = configuratorProjectTypes[0]?.id ?? 'website'
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- guard fallback when external data changes
     setState((prev) => ({
       ...prev,
       projectType: next,
@@ -494,12 +496,18 @@ export function PricingConfigurator({ data }: Props) {
                 <button
                   key={type.id}
                   disabled={isDisabledType}
-                  onClick={() => !isDisabledType && setState(prev => ({ 
-                    ...prev, 
-                    projectType: type.id,
-                    selectedItems: getDefaultSelectedItems(type.id),
-                    quantities: {}
-                  }))}
+                  onClick={() => {
+                    if (isDisabledType) return
+                    setState(prev => ({
+                      ...prev,
+                      projectType: type.id,
+                      selectedItems: getDefaultSelectedItems(type.id),
+                      quantities: {},
+                    }))
+                    trackAnalyticsEvent(AnalyticsEvent.PricingTypeSelect, {
+                      project_type: type.id,
+                    })
+                  }}
                   className={`relative p-5 rounded-xl border-2 transition-all duration-300 text-left group ${
                     isDisabledType
                       ? 'opacity-30 cursor-not-allowed border-white/5 bg-gray-900/30'
@@ -798,7 +806,13 @@ export function PricingConfigurator({ data }: Props) {
               {/* CTAs */}
               <div className="space-y-2 sm:space-y-3 pt-2">
                 <button
-                  onClick={() => setIsInquiryModalOpen(true)}
+                  onClick={() => {
+                    setIsInquiryModalOpen(true)
+                    trackAnalyticsEvent(AnalyticsEvent.PricingInquiryOpen, {
+                      project_type: state.projectType,
+                      items_count: state.selectedItems.length,
+                    })
+                  }}
                   className="flex items-center justify-center gap-2 w-full py-3 sm:py-4 px-4 sm:px-6 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white text-sm sm:text-base font-medium rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40"
                 >
                   <Send size={16} className="flex-shrink-0" />

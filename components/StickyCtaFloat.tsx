@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useCallback, type MouseEvent } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
+import { AnalyticsEvent, trackAnalyticsEvent } from '@/lib/analytics'
 
 const CTA_CLASS =
   'px-8 py-3 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-opacity-90 glow-box cursor-pointer inline-flex items-center justify-center text-center whitespace-nowrap shadow-lg shadow-white/10'
@@ -34,9 +35,14 @@ function StickyCtaFloatInner({
   const handleClick = useCallback(
     (e: MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault()
+      trackAnalyticsEvent(AnalyticsEvent.SiteCtaClick, {
+        label,
+        location: typeof window !== 'undefined' ? window.location.pathname : 'unknown',
+        href,
+      })
       router.push(href)
     },
-    [href, router],
+    [href, label, router],
   )
 
   const flipToFixed = useCallback(() => {

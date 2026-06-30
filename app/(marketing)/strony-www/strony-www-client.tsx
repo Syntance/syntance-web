@@ -10,7 +10,6 @@ import {
   Lightbulb,
   Home,
   ChevronDown,
-  TrendingUp,
 } from 'lucide-react'
 import Link from 'next/link'
 import GradientText from '@/components/GradientText'
@@ -139,7 +138,8 @@ export default function StronyWWWContent({
   const [heroVisible, setHeroVisible] = useState(false)
 
   useEffect(() => {
-    setHeroVisible(true)
+    const id = requestAnimationFrame(() => setHeroVisible(true))
+    return () => cancelAnimationFrame(id)
   }, [])
 
   return (

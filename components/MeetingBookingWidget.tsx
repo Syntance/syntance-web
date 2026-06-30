@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ChevronLeft, ChevronRight, Loader2, AlertCircle, CheckCircle2, Calendar, Clock, ArrowRight } from 'lucide-react'
-import { trackEvent } from '@/lib/tracking'
+import { AnalyticsEvent, trackAnalyticsEvent } from '@/lib/analytics'
 
 interface RangeResponse {
   from: string
@@ -189,7 +189,7 @@ export default function MeetingBookingWidget({ source }: MeetingBookingWidgetPro
     (iso: string) => {
       setSelectedDate(iso)
       setSelectedSlot(null)
-      trackEvent('bizcard_slot_selected', { slot_date: iso, source })
+      trackAnalyticsEvent(AnalyticsEvent.BookingSlotSelect, { slot_date: iso, source })
     },
     [source]
   )
@@ -197,7 +197,11 @@ export default function MeetingBookingWidget({ source }: MeetingBookingWidgetPro
   const handlePickSlot = useCallback(
     (slot: string) => {
       setSelectedSlot(slot)
-      trackEvent('bizcard_slot_selected', { slot_date: selectedDate ?? '', slot_time: slot, source })
+      trackAnalyticsEvent(AnalyticsEvent.BookingSlotSelect, {
+        slot_date: selectedDate ?? '',
+        slot_time: slot,
+        source,
+      })
     },
     [selectedDate, source]
   )
@@ -241,10 +245,9 @@ export default function MeetingBookingWidget({ source }: MeetingBookingWidgetPro
           const body = (await res.json().catch(() => null)) as { error?: string } | null
           throw new Error(body?.error || 'Nie udało się zarezerwować terminu.')
         }
-        trackEvent('bizcard_booking_completed', {
+        trackAnalyticsEvent(AnalyticsEvent.BookingComplete, {
           slot_date: selectedDate,
           slot_time: selectedSlot,
-          email_domain: email.split('@')[1],
           source,
         })
         setStep('success')

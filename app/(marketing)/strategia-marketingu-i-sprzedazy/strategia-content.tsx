@@ -135,7 +135,8 @@ export default function StrategiaContent({ discoveryPrice, websiteMinNet, faqIte
   const websiteMinFormatted = formatPrice(websiteMinNet)
 
   useEffect(() => {
-    setHeroVisible(true)
+    const id = requestAnimationFrame(() => setHeroVisible(true))
+    return () => cancelAnimationFrame(id)
   }, [])
 
   return (

@@ -18,7 +18,6 @@ import {
   Server,
   Layout,
   Database,
-  ShoppingCart,
   Percent,
   Lock,
   Layers
@@ -247,7 +246,8 @@ export default function SklepyInternetoweContent({
   const [heroVisible, setHeroVisible] = useState(false)
 
   useEffect(() => {
-    setHeroVisible(true)
+    const id = requestAnimationFrame(() => setHeroVisible(true))
+    return () => cancelAnimationFrame(id)
   }, [])
 
   return (

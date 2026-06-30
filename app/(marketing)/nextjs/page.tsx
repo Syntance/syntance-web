@@ -11,7 +11,6 @@ import {
   ArrowRight, 
   CheckCircle2, 
   AlertCircle,
-  ChevronDown
 } from 'lucide-react'
 import Link from 'next/link'
 import GradientText from '@/components/GradientText'
@@ -167,7 +166,8 @@ export default function NextjsPage() {
   const [heroVisible, setHeroVisible] = useState(false)
 
   useEffect(() => {
-    setHeroVisible(true)
+    const id = requestAnimationFrame(() => setHeroVisible(true))
+    return () => cancelAnimationFrame(id)
   }, [])
 
   return (
@@ -274,8 +274,6 @@ export default function NextjsPage() {
           <div className="space-y-8">
             {techBenefits.map((benefit, index) => {
               const Icon = benefit.icon
-              const isEven = index % 2 === 0
-              
               return (
                 <AnimatedSection key={index} delay={index * 100}>
                   <TiltCard className="w-full">

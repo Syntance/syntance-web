@@ -64,7 +64,7 @@ export function CmsClient({ faqSettings, portfolioRows, dbConnected }: Props) {
 
   const faqPage = !isPortfolio ? activePage : null
   const faqKey = faqPage?.faqKey
-  const allFaqEntries = faqKey ? (faq[faqKey] ?? []) : []
+  const allFaqEntries = useMemo(() => (faqKey ? (faq[faqKey] ?? []) : []), [faqKey, faq])
 
   const visibleFaqEntries = useMemo(() => {
     if (!faqPage) return []

@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect } from 'react'
 
 interface ErrorPageProps {
@@ -38,12 +39,12 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
           >
             Spróbuj ponownie
           </button>
-          <a
+          <Link
             href="/"
             className="px-6 py-3 rounded-full border border-gray-700 text-white font-medium tracking-wider hover:bg-gray-900/60 transition-colors"
           >
             Strona główna
-          </a>
+          </Link>
         </div>
         {error.digest && (
           <p className="mt-10 text-xs text-gray-500 font-mono">

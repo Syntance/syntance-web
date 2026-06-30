@@ -10,7 +10,7 @@ import { Resend } from 'resend'
  * - Rate limit memory-only (po IP)
  *
  * Brief: docs Notion „/porozmawiajmy”.
- * Webhook do PostHog jest po stronie klienta (lead_form_submitted).
+ * Webhook do PostHog / GA4 jest po stronie klienta (lead_flow:form_submit).
  * --------------------------------------------------------------------*/
 
 const schema = z.object({

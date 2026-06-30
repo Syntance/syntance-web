@@ -6,6 +6,7 @@ import {
   X, Send, Clock, CreditCard, Layers,
   CheckCircle2, Mail, Loader2, Globe,
 } from 'lucide-react'
+import { AnalyticsEvent, trackAnalyticsEvent } from '@/lib/analytics'
 
 interface BookingDetails {
   projectType: string
@@ -143,6 +144,11 @@ export function BookingModal({
       }
 
       setStep('success')
+      trackAnalyticsEvent(AnalyticsEvent.PricingInquirySubmit, {
+        project_type: booking.projectType,
+        price_netto: booking.priceNetto,
+        items_count: booking.itemsCount,
+      })
     } catch (err) {
       console.error('Inquiry failed:', err)
       if (err instanceof DOMException && err.name === 'TimeoutError') {

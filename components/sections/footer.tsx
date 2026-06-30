@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import Container from "../container";
 
 export default function Footer() {
@@ -8,9 +9,9 @@ export default function Footer() {
           <span className="text-zinc-400">© {new Date().getFullYear()} Syntance</span>
         </div>
         <div className="flex gap-4">
-          <a href="/#o-nas" className="hover:text-white transition-colors">O nas</a>
-          <a href="/polityka-prywatnosci" className="hover:text-white transition-colors">Polityka Prywatności</a>
-          <a href="/regulamin" className="hover:text-white transition-colors">Regulamin</a>
+          <Link href="/#o-nas" className="hover:text-white transition-colors">O nas</Link>
+          <Link href="/polityka-prywatnosci" className="hover:text-white transition-colors">Polityka Prywatności</Link>
+          <Link href="/regulamin" className="hover:text-white transition-colors">Regulamin</Link>
         </div>
       </Container>
     </footer>

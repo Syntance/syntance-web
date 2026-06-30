@@ -1,4 +1,4 @@
-import { boolean, integer, jsonb, pgTable, real, text, uuid } from 'drizzle-orm/pg-core'
+import { boolean, integer, jsonb, pgTable, real, text } from 'drizzle-orm/pg-core'
 
 export const pricingConfig = pgTable('pricing_config', {
   id: text('id').primaryKey().default('default'),

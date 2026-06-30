@@ -8,7 +8,9 @@ import { generateSeoMetadata, getSeoSettings } from "@/lib/seo";
 import NavbarStudio from "@/components/navbar-studio";
 import { ProgressBar } from "@/components/progress-bar";
 import { CookieBanner } from "@/components/CookieBanner";
-import { PostHogProvider } from "@/components/posthog-provider";
+import { AnalyticsProvider } from "@/components/analytics/analytics-provider";
+import { GoogleConsentDefaultScript } from "@/components/analytics/google-consent-default";
+import { isGa4Configured } from "@/lib/analytics/ga4";
 import { Suspense } from "react";
 
 const spaceGrotesk = Space_Grotesk({
@@ -58,6 +60,13 @@ export default async function RootLayout({
             <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_POSTHOG_HOST} />
           </>
         ) : null}
+        {isGa4Configured() ? (
+          <>
+            <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="anonymous" />
+            <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+          </>
+        ) : null}
+        <GoogleConsentDefaultScript />
       </head>
       <body className="font-sans antialiased bg-black text-[#F5F3FF]">
         {/* Skip link (WCAG 2.2) — niewidoczny do momentu fokusu klawiaturą */}
@@ -72,7 +81,7 @@ export default async function RootLayout({
         </Suspense>
         <AllSchemasDynamic seo={seo} />
         <NavbarStudio />
-        <PostHogProvider>{children}</PostHogProvider>
+        <AnalyticsProvider>{children}</AnalyticsProvider>
         <CookieBanner />
         <Analytics />
         <SpeedInsights />
