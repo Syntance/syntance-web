@@ -250,6 +250,13 @@ export function PricingConfigurator({ data }: Props) {
 
     setState(prev => {
       const isCurrentlySelected = prev.selectedItems.includes(id)
+
+      trackAnalyticsEvent(AnalyticsEvent.PricingItemToggle, {
+        item_id: id,
+        item_name: item.name,
+        action: isCurrentlySelected ? 'remove' : 'add',
+        project_type: prev.projectType,
+      })
       
       if (isCurrentlySelected) {
         // USUWANIE elementu

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import { AnalyticsEvent, trackAnalyticsEvent } from '@/lib/analytics'
 import { 
   Target, 
   Users, 
@@ -162,6 +163,7 @@ export default function StrategiaContent({ discoveryPrice, websiteMinNet, faqIte
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
               href="/cennik"
+              onClick={() => trackAnalyticsEvent(AnalyticsEvent.SiteCtaClick, { label: 'Zamów stronę ze strategią', location: '/strategia-marketingu-i-sprzedazy', href: '/cennik' })}
               className="px-8 py-4 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-full font-medium tracking-wider hover:shadow-lg hover:shadow-purple-500/30 transition-all"
             >
               Zamów stronę ze strategią
@@ -651,6 +653,7 @@ export default function StrategiaContent({ discoveryPrice, websiteMinNet, faqIte
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Link 
                   href="/cennik" 
+                  onClick={() => trackAnalyticsEvent(AnalyticsEvent.SiteCtaClick, { label: 'Sprawdź cennik', location: '/strategia-marketingu-i-sprzedazy', href: '/cennik' })}
                   className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-105"
                 >
                   <span>Sprawdź cennik</span>

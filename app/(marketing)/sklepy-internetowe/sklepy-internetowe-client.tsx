@@ -28,6 +28,7 @@ import TiltCard from '@/components/tilt-card'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
 import StickyCtaFloat from '@/components/StickyCtaFloat'
 import type { SimpleFaqQA } from '@/lib/data/faq'
+import { AnalyticsEvent, trackAnalyticsEvent } from '@/lib/analytics'
 
 // Sekcje dla scrollbar
 const scrollbarSections = [
@@ -528,6 +529,7 @@ export default function SklepyInternetoweContent({
           <AnimatedSection delay={100}>
             <Link 
               href="/cennik" 
+              onClick={() => trackAnalyticsEvent(AnalyticsEvent.SiteCtaClick, { label: 'Sprawdź konfigurator cennika', location: '/sklepy-internetowe', href: '/cennik' })}
               className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-105"
             >
               <span>Sprawdź konfigurator cennika</span>
@@ -584,6 +586,7 @@ export default function SklepyInternetoweContent({
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Link 
                   href="/cennik" 
+                  onClick={() => trackAnalyticsEvent(AnalyticsEvent.SiteCtaClick, { label: 'Wycena sklepu', location: '/sklepy-internetowe', href: '/cennik' })}
                   className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-105"
                 >
                   <span>Wycena sklepu</span>

@@ -16,6 +16,7 @@ import Link from 'next/link'
 import GradientText from '@/components/GradientText'
 import TiltCard from '@/components/tilt-card'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
+import { AnalyticsEvent, trackAnalyticsEvent } from '@/lib/analytics'
 import StickyCtaFloat from '@/components/StickyCtaFloat'
 
 // Sekcje dla scrollbar
@@ -379,6 +380,7 @@ export default function NextjsPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Link 
                   href="/cennik" 
+                  onClick={() => trackAnalyticsEvent(AnalyticsEvent.SiteCtaClick, { label: 'Sprawdź cennik', location: '/nextjs', href: '/cennik' })}
                   className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30 hover:scale-105"
                 >
                   <span>Sprawdź cennik</span>

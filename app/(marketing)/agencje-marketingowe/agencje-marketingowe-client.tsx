@@ -18,12 +18,18 @@ import GradientText from '@/components/GradientText'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
 import { ContactForm } from '@/components/contact-form'
 import type { SimpleFaqQA } from '@/lib/data/faq'
+import { AnalyticsEvent, trackAnalyticsEvent } from '@/lib/analytics'
 
 const LINKEDIN_COMPANY = 'https://www.linkedin.com/company/syntance'
 
 const FORM_SECTION_ID = 'form-partnerski'
 
 function scrollToPartnerForm() {
+  trackAnalyticsEvent(AnalyticsEvent.SiteCtaClick, {
+    label: 'Zapytanie partnerskie',
+    location: '/agencje-marketingowe',
+    href: `#${FORM_SECTION_ID}`,
+  })
   document.getElementById(FORM_SECTION_ID)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 

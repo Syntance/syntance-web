@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { ArrowRight, Calendar, X } from 'lucide-react'
 import { ContactForm } from './contact-form'
+import { AnalyticsEvent, trackAnalyticsEvent } from '@/lib/analytics'
 
 export function StrategyCTA() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -33,7 +34,13 @@ export function StrategyCTA() {
                 </Link>
                 
                 <button
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={() => {
+                    setIsModalOpen(true)
+                    trackAnalyticsEvent(AnalyticsEvent.SiteCtaClick, {
+                      label: 'Bezpłatna konsultacja',
+                      location: typeof window !== 'undefined' ? window.location.pathname : 'strategy',
+                    })
+                  }}
                   className="inline-flex items-center gap-3 px-8 py-4 rounded-full border border-white/10 text-white font-medium transition-all duration-300 hover:bg-white/5"
                 >
                   <Calendar className="w-5 h-5" />
