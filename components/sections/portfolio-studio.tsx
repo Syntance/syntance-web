@@ -5,13 +5,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
-import { PORTFOLIO_CASE_STUDIES, toPortfolioGridItems } from "@/lib/portfolio-content";
+import { PORTFOLIO_CASE_STUDIES, toPortfolioGridItems, getPortfolioSeedFlags } from "@/lib/portfolio-content";
 import { PortfolioItem } from "@/lib/data/portfolio-types";
 
-const staticGridItems = toPortfolioGridItems(PORTFOLIO_CASE_STUDIES);
+const staticGridItems = toPortfolioGridItems(PORTFOLIO_CASE_STUDIES).map((item) => ({
+  ...item,
+  caseStudyEnabled: getPortfolioSeedFlags(item.id).caseStudyEnabled,
+}));
 
 const caseStudyByUrl = new Map(
-  PORTFOLIO_CASE_STUDIES.map((item) => [item.url.replace(/\/$/, "").toLowerCase(), `/portfolio/${item.id}`]),
+  PORTFOLIO_CASE_STUDIES.filter((item) => getPortfolioSeedFlags(item.id).caseStudyEnabled).map((item) => [
+    item.url.replace(/\/$/, "").toLowerCase(),
+    `/portfolio/${item.id}`,
+  ]),
 );
 
 export default function PortfolioStudio() {
@@ -37,6 +43,7 @@ export default function PortfolioStudio() {
             ...existing,
             ...cmsItem,
             logoAlt: cmsItem.logoAlt || existing?.logoAlt || cmsItem.name,
+            caseStudyEnabled: cmsItem.caseStudyEnabled ?? existing?.caseStudyEnabled ?? true,
           });
         }
 
@@ -86,7 +93,9 @@ export default function PortfolioStudio() {
         <AnimatedSection delay={100}>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-8 md:mb-10">
             {items.map((item) => {
-              const caseStudyHref = caseStudyByUrl.get(item.url.replace(/\/$/, "").toLowerCase());
+              const caseStudyHref = item.caseStudyEnabled !== false
+                ? caseStudyByUrl.get(item.url.replace(/\/$/, "").toLowerCase())
+                : undefined;
               const CardTag = caseStudyHref ? Link : "a";
               const cardProps = caseStudyHref
                 ? { href: caseStudyHref }

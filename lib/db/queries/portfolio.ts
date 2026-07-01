@@ -1,4 +1,4 @@
-import { asc, eq } from 'drizzle-orm'
+import { asc, and, eq } from 'drizzle-orm'
 import { getDb, hasDb } from '@/lib/db'
 import { portfolioItems } from '@/lib/db/schema'
 import type { PortfolioProjectType } from '@/lib/portfolio-content'
@@ -25,6 +25,8 @@ export type PortfolioItemRecord = {
   logoAlt: string
   performance?: PortfolioPerformanceReport | null
   order: number
+  caseStudyEnabled: boolean
+  adminGalleryEnabled: boolean
 }
 
 function rowToRecord(row: PortfolioDbRow): PortfolioItemRecord {
@@ -47,6 +49,8 @@ function rowToRecord(row: PortfolioDbRow): PortfolioItemRecord {
     logoAlt: row.logoAlt ?? row.name,
     performance: row.performance ?? null,
     order: row.sortOrder,
+    caseStudyEnabled: row.caseStudyEnabled,
+    adminGalleryEnabled: row.adminGalleryEnabled,
   }
 }
 
@@ -86,6 +90,17 @@ export async function listPortfolioSlugsFromDb(): Promise<string[]> {
   return rows.map((row) => row.slug)
 }
 
+export async function listCaseStudySlugsFromDb(): Promise<string[]> {
+  if (!hasDb()) return []
+  const db = getDb()
+  const rows = await db
+    .select({ slug: portfolioItems.slug })
+    .from(portfolioItems)
+    .where(and(eq(portfolioItems.disabled, false), eq(portfolioItems.caseStudyEnabled, true)))
+    .orderBy(asc(portfolioItems.sortOrder))
+  return rows.map((row) => row.slug)
+}
+
 export async function listPortfolioItemsAdmin() {
   if (!hasDb()) return []
   const db = getDb()
@@ -112,6 +127,8 @@ export async function replaceAllPortfolioItems(
     performance?: PortfolioPerformanceReport | null
     sortOrder?: number
     disabled?: boolean
+    caseStudyEnabled?: boolean
+    adminGalleryEnabled?: boolean
   }>,
 ): Promise<void> {
   const db = getDb()
@@ -137,6 +154,8 @@ export async function replaceAllPortfolioItems(
       performance: item.performance ?? null,
       sortOrder: item.sortOrder ?? index,
       disabled: item.disabled ?? false,
+      caseStudyEnabled: item.caseStudyEnabled ?? true,
+      adminGalleryEnabled: item.adminGalleryEnabled ?? false,
     })),
   )
 }

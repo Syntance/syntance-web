@@ -31,4 +31,6 @@ export const portfolioItems = pgTable('portfolio_items', {
   performance: jsonb('performance').$type<PortfolioPerformanceReport | null>(),
   sortOrder: integer('sort_order').notNull().default(0),
   disabled: boolean('disabled').notNull().default(false),
+  caseStudyEnabled: boolean('case_study_enabled').notNull().default(true),
+  adminGalleryEnabled: boolean('admin_gallery_enabled').notNull().default(false),
 })

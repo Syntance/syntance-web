@@ -16,9 +16,19 @@ export function getPortfolioTypeDotColor(type: PortfolioProjectType): string {
   return type === 'ecommerce' ? 'oklch(0.72 0.17 162)' : 'oklch(0.72 0.14 250)'
 }
 
-export type PortfolioCaseStudyInput = Omit<PortfolioCaseStudy, 'previewImage'> & {
+export type PortfolioCaseStudyInput = Omit<
+  PortfolioCaseStudy,
+  'previewImage' | 'caseStudyEnabled' | 'adminGalleryEnabled'
+> & {
   previewImage?: string
   previewImageFallback?: string
+  caseStudyEnabled?: boolean
+  adminGalleryEnabled?: boolean
+}
+
+export type PortfolioCaseStudyFlags = {
+  caseStudyEnabled: boolean
+  adminGalleryEnabled: boolean
 }
 
 export type PortfolioCaseStudy = {
@@ -41,6 +51,17 @@ export type PortfolioCaseStudy = {
   rebuildContext?: string
   performance?: PortfolioPerformanceReport
   adminGallery?: PortfolioAdminGallery
+  caseStudyEnabled: boolean
+  adminGalleryEnabled: boolean
+}
+
+const PORTFOLIO_SEED_FLAGS: Record<string, PortfolioCaseStudyFlags> = {
+  'lumine-concept': { caseStudyEnabled: true, adminGalleryEnabled: false },
+  retrohouse: { caseStudyEnabled: false, adminGalleryEnabled: false },
+}
+
+export function getPortfolioSeedFlags(id: string): PortfolioCaseStudyFlags {
+  return PORTFOLIO_SEED_FLAGS[id] ?? { caseStudyEnabled: true, adminGalleryEnabled: false }
 }
 
 const LUMINE_PERFORMANCE: PortfolioPerformanceReport = {
@@ -238,7 +259,9 @@ export function getPortfolioCaseStudyInput(id: string): PortfolioCaseStudyInput 
 }
 
 export function listPortfolioCaseStudyIds(): string[] {
-  return PORTFOLIO_CASE_STUDIES.map((item) => item.id)
+  return PORTFOLIO_CASE_STUDIES.filter((item) => getPortfolioSeedFlags(item.id).caseStudyEnabled).map(
+    (item) => item.id,
+  )
 }
 
 export function toPortfolioGridItems(

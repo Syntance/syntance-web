@@ -64,45 +64,79 @@ function ProjectCard({
   delay?: number
 }) {
   const dotColor = getPortfolioTypeDotColor(project.type)
-  const caseStudyHref = `/portfolio/${project.id}`
+  const caseStudyHref = project.caseStudyEnabled ? `/portfolio/${project.id}` : null
 
   return (
     <AnimatedSection delay={delay}>
       <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] transition-colors hover:border-white/20 hover:bg-white/[0.04]">
-        <Link
-          href={caseStudyHref}
-          className="relative block aspect-[1200/630] overflow-hidden border-b border-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-purple-400"
-        >
-          <Image
-            src={project.previewImage}
-            alt={project.previewImageAlt}
-            fill
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-          />
-          <div
-            className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[oklch(0.12_0.01_260/0.85)] via-[oklch(0.12_0.01_260/0.15)] to-transparent"
-            aria-hidden="true"
-          />
-          <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
-            <div className="mb-3 flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/35 px-3 py-1 text-[11px] font-medium tracking-wide text-gray-200 backdrop-blur-sm">
-                <span
-                  className="size-1.5 shrink-0 rounded-full"
-                  style={{ backgroundColor: dotColor }}
-                  aria-hidden="true"
-                />
-                {project.typeLabel}
-              </span>
-              <span className="rounded-full border border-white/10 bg-black/25 px-3 py-1 text-[11px] text-gray-400 backdrop-blur-sm">
-                {project.domain}
-              </span>
+        {caseStudyHref ? (
+          <Link
+            href={caseStudyHref}
+            className="relative block aspect-[1200/630] overflow-hidden border-b border-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-purple-400"
+          >
+            <Image
+              src={project.previewImage}
+              alt={project.previewImageAlt}
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+            />
+            <div
+              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[oklch(0.12_0.01_260/0.85)] via-[oklch(0.12_0.01_260/0.15)] to-transparent"
+              aria-hidden="true"
+            />
+            <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
+              <div className="mb-3 flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/35 px-3 py-1 text-[11px] font-medium tracking-wide text-gray-200 backdrop-blur-sm">
+                  <span
+                    className="size-1.5 shrink-0 rounded-full"
+                    style={{ backgroundColor: dotColor }}
+                    aria-hidden="true"
+                  />
+                  {project.typeLabel}
+                </span>
+                <span className="rounded-full border border-white/10 bg-black/25 px-3 py-1 text-[11px] text-gray-400 backdrop-blur-sm">
+                  {project.domain}
+                </span>
+              </div>
+              <h2 className="text-2xl font-light tracking-wide text-white md:text-3xl">
+                {project.name}
+              </h2>
             </div>
-            <h2 className="text-2xl font-light tracking-wide text-white md:text-3xl">
-              {project.name}
-            </h2>
+          </Link>
+        ) : (
+          <div className="relative block aspect-[1200/630] overflow-hidden border-b border-white/10">
+            <Image
+              src={project.previewImage}
+              alt={project.previewImageAlt}
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover object-top"
+            />
+            <div
+              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[oklch(0.12_0.01_260/0.85)] via-[oklch(0.12_0.01_260/0.15)] to-transparent"
+              aria-hidden="true"
+            />
+            <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
+              <div className="mb-3 flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/35 px-3 py-1 text-[11px] font-medium tracking-wide text-gray-200 backdrop-blur-sm">
+                  <span
+                    className="size-1.5 shrink-0 rounded-full"
+                    style={{ backgroundColor: dotColor }}
+                    aria-hidden="true"
+                  />
+                  {project.typeLabel}
+                </span>
+                <span className="rounded-full border border-white/10 bg-black/25 px-3 py-1 text-[11px] text-gray-400 backdrop-blur-sm">
+                  {project.domain}
+                </span>
+              </div>
+              <h2 className="text-2xl font-light tracking-wide text-white md:text-3xl">
+                {project.name}
+              </h2>
+            </div>
           </div>
-        </Link>
+        )}
 
         <div className="flex flex-1 flex-col p-6 md:p-8">
           {project.performance ? (
@@ -127,13 +161,15 @@ function ProjectCard({
           </div>
 
           <div className="mt-auto flex flex-wrap gap-3">
-            <Link
-              href={caseStudyHref}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-medium tracking-wide text-black transition hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
-            >
-              Case study
-              <ArrowUpRight size={16} aria-hidden="true" />
-            </Link>
+            {caseStudyHref ? (
+              <Link
+                href={caseStudyHref}
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-medium tracking-wide text-black transition hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
+              >
+                Case study
+                <ArrowUpRight size={16} aria-hidden="true" />
+              </Link>
+            ) : null}
             <a
               href={project.url}
               target="_blank"

@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowLeft, ArrowUpRight, ExternalLink } from 'lucide-react'
@@ -13,16 +14,24 @@ import {
   type PortfolioCaseStudy,
 } from '@/lib/portfolio-content'
 
-const sections = [
-  { id: 'case-hero', label: 'Projekt' },
-  { id: 'case-performance', label: 'PageSpeed' },
-  { id: 'case-admin', label: 'Panel' },
-  { id: 'case-details', label: 'Szczegóły' },
-  { id: 'case-cta', label: 'Kontakt' },
-]
-
 export default function CaseStudyClient({ project }: { project: PortfolioCaseStudy }) {
   const dotColor = getPortfolioTypeDotColor(project.type)
+
+  const sections = useMemo(() => {
+    const items = [{ id: 'case-hero', label: 'Projekt' }]
+    if (project.problemStatement) {
+      items.push({ id: 'case-challenge', label: 'Wyzwanie' })
+    }
+    if (project.performance) {
+      items.push({ id: 'case-performance', label: 'PageSpeed' })
+    }
+    if (project.adminGallery) {
+      items.push({ id: 'case-admin', label: 'Panel' })
+    }
+    items.push({ id: 'case-details', label: 'Szczegóły' })
+    items.push({ id: 'case-cta', label: 'Kontakt' })
+    return items
+  }, [project.adminGallery, project.performance, project.problemStatement])
 
   return (
     <div className="min-h-screen w-full" style={{ overflowX: 'clip' }}>
@@ -113,7 +122,7 @@ export default function CaseStudyClient({ project }: { project: PortfolioCaseStu
       </section>
 
       {project.problemStatement ? (
-        <section className="relative z-10 border-t border-white/5 px-6 py-14 lg:px-12">
+        <section id="case-challenge" className="relative z-10 border-t border-white/5 px-6 py-14 lg:px-12">
           <div className="mx-auto max-w-3xl">
             <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.2em] text-purple-300/70">
               Wyzwanie
