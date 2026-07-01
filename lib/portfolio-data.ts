@@ -1,6 +1,7 @@
 import {
   PORTFOLIO_CASE_STUDIES,
   getPortfolioCaseStudyInput,
+  getPortfolioSeedFlags,
   getPortfolioTypeLabel,
   type PortfolioCaseStudy,
   type PortfolioCaseStudyInput,
@@ -9,7 +10,7 @@ import {
 import {
   fetchPortfolioItemsFromDb,
   getPortfolioItemBySlug,
-  listPortfolioSlugsFromDb,
+  listPortfolioItemsAdmin,
   type PortfolioItemRecord,
 } from '@/lib/db/queries/portfolio'
 import { hasPerformanceContent } from '@/lib/magazyn/portfolio-performance-cms'
@@ -27,7 +28,21 @@ function extractDomain(url: string): string {
   }
 }
 
+function resolveCaseStudyFlags(input: Pick<PortfolioCaseStudyInput, 'id' | 'caseStudyEnabled' | 'adminGalleryEnabled'>) {
+  const seed = getPortfolioSeedFlags(input.id)
+  return {
+    caseStudyEnabled: input.caseStudyEnabled ?? seed.caseStudyEnabled,
+    adminGalleryEnabled: input.adminGalleryEnabled ?? seed.adminGalleryEnabled,
+  }
+}
+
 function recordToCaseStudyInput(record: PortfolioItemRecord): PortfolioCaseStudyInput {
+  const flags = resolveCaseStudyFlags({
+    id: record.slug,
+    caseStudyEnabled: record.caseStudyEnabled,
+    adminGalleryEnabled: record.adminGalleryEnabled,
+  })
+
   return {
     id: record.slug,
     name: record.name,
@@ -46,6 +61,17 @@ function recordToCaseStudyInput(record: PortfolioItemRecord): PortfolioCaseStudy
     problemStatement: record.problemStatement,
     rebuildContext: record.rebuildContext,
     performance: record.performance ?? undefined,
+    caseStudyEnabled: flags.caseStudyEnabled,
+    adminGalleryEnabled: flags.adminGalleryEnabled,
+  }
+}
+
+function applySeedFlags(input: PortfolioCaseStudyInput): PortfolioCaseStudyInput {
+  const flags = resolveCaseStudyFlags(input)
+  return {
+    ...input,
+    caseStudyEnabled: flags.caseStudyEnabled,
+    adminGalleryEnabled: flags.adminGalleryEnabled,
   }
 }
 
@@ -54,7 +80,9 @@ function enrichFromHardcoded(input: PortfolioCaseStudyInput): PortfolioCaseStudy
     (item) =>
       item.id === input.id || normalizeUrl(item.url) === normalizeUrl(input.url),
   )
-  if (!base) return input
+  if (!base) return applySeedFlags(input)
+
+  const flags = resolveCaseStudyFlags(input)
 
   return {
     ...base,
@@ -63,7 +91,7 @@ function enrichFromHardcoded(input: PortfolioCaseStudyInput): PortfolioCaseStudy
       input.performance && hasPerformanceContent(input.performance)
         ? input.performance
         : base.performance,
-    adminGallery: base.adminGallery,
+    adminGallery: flags.adminGalleryEnabled ? base.adminGallery : undefined,
     description: input.description || base.description,
     highlights: input.highlights.length ? input.highlights : base.highlights,
     stack: input.stack.length ? input.stack : base.stack,
@@ -73,6 +101,19 @@ function enrichFromHardcoded(input: PortfolioCaseStudyInput): PortfolioCaseStudy
     previewImageAlt: input.previewImageAlt || base.previewImageAlt,
     type: input.type ?? base.type,
     typeLabel: input.typeLabel || base.typeLabel,
+    caseStudyEnabled: flags.caseStudyEnabled,
+    adminGalleryEnabled: flags.adminGalleryEnabled,
+  }
+}
+
+function seedCaseStudyInput(base: PortfolioCaseStudyInput): PortfolioCaseStudyInput {
+  const enriched = enrichFromHardcoded(applySeedFlags(base))
+  const flags = resolveCaseStudyFlags(enriched)
+  return {
+    ...enriched,
+    adminGallery: flags.adminGalleryEnabled ? enriched.adminGallery : undefined,
+    caseStudyEnabled: flags.caseStudyEnabled,
+    adminGalleryEnabled: flags.adminGalleryEnabled,
   }
 }
 
@@ -80,13 +121,19 @@ async function withResolvedPreviewImages(
   items: PortfolioCaseStudyInput[],
 ): Promise<PortfolioCaseStudy[]> {
   return Promise.all(
-    items.map(async (item) => ({
-      ...item,
-      previewImage: await resolvePortfolioPreviewImage({
-        url: item.url,
-        previewImageFallback: item.previewImageFallback,
-      }),
-    })),
+    items.map(async (item) => {
+      const flags = resolveCaseStudyFlags(item)
+      return {
+        ...item,
+        caseStudyEnabled: flags.caseStudyEnabled,
+        adminGalleryEnabled: flags.adminGalleryEnabled,
+        adminGallery: flags.adminGalleryEnabled ? item.adminGallery : undefined,
+        previewImage: await resolvePortfolioPreviewImage({
+          url: item.url,
+          previewImageFallback: item.previewImageFallback,
+        }),
+      }
+    }),
   )
 }
 
@@ -95,7 +142,7 @@ export async function fetchPortfolioItems(): Promise<PortfolioCaseStudy[]> {
     const dbItems = await fetchPortfolioItemsFromDb()
 
     if (!dbItems.length) {
-      return withResolvedPreviewImages([...PORTFOLIO_CASE_STUDIES])
+      return withResolvedPreviewImages(PORTFOLIO_CASE_STUDIES.map(seedCaseStudyInput))
     }
 
     const byUrl = new Map<string, PortfolioCaseStudyInput>()
@@ -108,7 +155,7 @@ export async function fetchPortfolioItems(): Promise<PortfolioCaseStudy[]> {
     for (const base of PORTFOLIO_CASE_STUDIES) {
       const key = normalizeUrl(base.url)
       if (!byUrl.has(key)) {
-        byUrl.set(key, { ...base })
+        byUrl.set(key, seedCaseStudyInput(base))
       }
     }
 
@@ -116,7 +163,7 @@ export async function fetchPortfolioItems(): Promise<PortfolioCaseStudy[]> {
     return withResolvedPreviewImages(inputs)
   } catch (error) {
     console.error('Error fetching portfolio items:', error)
-    return withResolvedPreviewImages([...PORTFOLIO_CASE_STUDIES])
+    return withResolvedPreviewImages(PORTFOLIO_CASE_STUDIES.map(seedCaseStudyInput))
   }
 }
 
@@ -125,6 +172,7 @@ export async function fetchPortfolioCaseStudy(slug: string): Promise<PortfolioCa
     const dbItem = await getPortfolioItemBySlug(slug)
     if (dbItem) {
       const input = enrichFromHardcoded(recordToCaseStudyInput(dbItem))
+      if (!input.caseStudyEnabled) return null
       const [resolved] = await withResolvedPreviewImages([input])
       return resolved ?? null
     }
@@ -135,21 +183,40 @@ export async function fetchPortfolioCaseStudy(slug: string): Promise<PortfolioCa
   const base = getPortfolioCaseStudyInput(slug)
   if (!base) return null
 
-  const [resolved] = await withResolvedPreviewImages([base])
+  const input = seedCaseStudyInput(base)
+  if (!input.caseStudyEnabled) return null
+
+  const [resolved] = await withResolvedPreviewImages([input])
   return resolved ?? null
 }
 
 export async function listPortfolioSlugs(): Promise<string[]> {
   try {
-    const dbSlugs = await listPortfolioSlugsFromDb()
-    const hardcodedSlugs = PORTFOLIO_CASE_STUDIES.map((item) => item.id)
-    if (dbSlugs.length) {
-      return [...new Set([...dbSlugs, ...hardcodedSlugs])]
+    const adminRows = await listPortfolioItemsAdmin()
+
+    if (adminRows.length) {
+      const slugs = new Set(
+        adminRows
+          .filter((row) => !row.disabled && row.caseStudyEnabled)
+          .map((row) => row.slug),
+      )
+
+      for (const item of PORTFOLIO_CASE_STUDIES) {
+        const inDb = adminRows.some((row) => row.slug === item.id)
+        if (!inDb && getPortfolioSeedFlags(item.id).caseStudyEnabled) {
+          slugs.add(item.id)
+        }
+      }
+
+      return [...slugs]
     }
   } catch (error) {
     console.error('Error listing portfolio slugs:', error)
   }
-  return PORTFOLIO_CASE_STUDIES.map((item) => item.id)
+
+  return PORTFOLIO_CASE_STUDIES.filter((item) => getPortfolioSeedFlags(item.id).caseStudyEnabled).map(
+    (item) => item.id,
+  )
 }
 
 export type { PortfolioProjectType }

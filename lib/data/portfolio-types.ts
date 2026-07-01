@@ -5,4 +5,5 @@ export interface PortfolioItem {
   logoUrl: string
   logoAlt: string
   order?: number
+  caseStudyEnabled?: boolean
 }

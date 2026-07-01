@@ -30,6 +30,8 @@ export async function PUT(request: Request) {
       performance?: PortfolioPerformanceReport | null
       sortOrder?: number
       disabled?: boolean
+      caseStudyEnabled?: boolean
+      adminGalleryEnabled?: boolean
     }>
   }
   await replaceAllPortfolioItems(
@@ -52,6 +54,8 @@ export async function PUT(request: Request) {
       performance: item.performance ?? null,
       sortOrder: item.sortOrder,
       disabled: item.disabled,
+      caseStudyEnabled: item.caseStudyEnabled,
+      adminGalleryEnabled: item.adminGalleryEnabled,
     })),
   )
   return NextResponse.json({ ok: true })

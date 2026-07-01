@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto'
 import {
   PORTFOLIO_CASE_STUDIES,
+  getPortfolioSeedFlags,
   type PortfolioCaseStudyInput,
 } from '@/lib/portfolio-content'
 import type { PortfolioDbRow } from '@/lib/db/queries/portfolio'
@@ -36,6 +37,7 @@ function mergeDbRowWithCaseStudy(
   dbRow: PortfolioDbRow,
   item: PortfolioCaseStudyInput,
 ): PortfolioDbRow {
+  const seedFlags = getPortfolioSeedFlags(item.id)
   return {
     ...dbRow,
     slug: dbRow.slug || item.id,
@@ -53,10 +55,13 @@ function mergeDbRowWithCaseStudy(
     logoAlt: dbRow.logoAlt ?? item.logoAlt ?? item.name,
     performance: dbRow.performance ?? item.performance ?? null,
     sortOrder: dbRow.sortOrder ?? item.order,
+    caseStudyEnabled: dbRow.caseStudyEnabled ?? seedFlags.caseStudyEnabled,
+    adminGalleryEnabled: dbRow.adminGalleryEnabled ?? seedFlags.adminGalleryEnabled,
   }
 }
 
 function caseStudyToSeedRow(item: PortfolioCaseStudyInput): PortfolioDbRow {
+  const seedFlags = getPortfolioSeedFlags(item.id)
   return {
     id: seedPortfolioId(item.id),
     sanityId: null,
@@ -76,6 +81,8 @@ function caseStudyToSeedRow(item: PortfolioCaseStudyInput): PortfolioDbRow {
     performance: item.performance ?? null,
     sortOrder: item.order,
     disabled: false,
+    caseStudyEnabled: seedFlags.caseStudyEnabled,
+    adminGalleryEnabled: seedFlags.adminGalleryEnabled,
   }
 }
 
@@ -109,4 +116,10 @@ export function mergePortfolioRowsForAdmin(dbRows: PortfolioDbRow[]): PortfolioD
 export function portfolioAdminNeedsInitialSave(dbRows: PortfolioDbRow[]): boolean {
   if (!PORTFOLIO_CASE_STUDIES.length) return false
   return dbRows.length === 0
+}
+
+export function portfolioHasAdminGallerySeed(slug: string): boolean {
+  return PORTFOLIO_CASE_STUDIES.some(
+    (item) => item.id === slug && item.adminGallery !== undefined,
+  )
 }

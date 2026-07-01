@@ -20,6 +20,7 @@ import {
 import { PORTFOLIO_PROJECT_TYPE_OPTIONS, slugifyPortfolioName } from '@/lib/magazyn/portfolio-cms'
 import { PortfolioPerformanceEditor } from '@/components/magazyn/portfolio-performance-editor'
 import { PortfolioListPicker } from '@/components/magazyn/portfolio-list-picker'
+import { portfolioHasAdminGallerySeed } from '@/lib/magazyn/portfolio-admin-merge'
 import type { PortfolioProjectType } from '@/lib/portfolio-content'
 import {
   DbBanner,
@@ -45,6 +46,8 @@ function normalizePortfolioRow(row: PortfolioRow): PortfolioRow {
     highlights: row.highlights ?? [],
     stack: row.stack ?? [],
     performance: row.performance ?? null,
+    caseStudyEnabled: row.caseStudyEnabled ?? true,
+    adminGalleryEnabled: row.adminGalleryEnabled ?? false,
   }
 }
 
@@ -293,6 +296,8 @@ export function CmsClient({
         performance: null,
         sortOrder: prev.length,
         disabled: false,
+        caseStudyEnabled: true,
+        adminGalleryEnabled: false,
       },
     ])
     setActivePortfolioId(id)
@@ -482,14 +487,42 @@ export function CmsClient({
               onChange={(performance) => updatePortfolio(activePortfolio.id, { performance })}
             />
 
-            <label className="flex items-center gap-2 text-sm text-neutral-400">
-              <input
-                type="checkbox"
-                checked={activePortfolio.disabled}
-                onChange={(e) => updatePortfolio(activePortfolio.id, { disabled: e.target.checked })}
-              />
-              Ukryj na stronie
-            </label>
+            <div className="space-y-2 rounded-xl border border-white/10 bg-white/[0.02] p-4">
+              <p className="text-sm font-medium text-neutral-200">Widoczność na stronie</p>
+              <label className="flex items-center gap-2 text-sm text-neutral-400">
+                <input
+                  type="checkbox"
+                  checked={activePortfolio.caseStudyEnabled}
+                  onChange={(e) =>
+                    updatePortfolio(activePortfolio.id, { caseStudyEnabled: e.target.checked })
+                  }
+                  className="rounded border-white/20"
+                />
+                Włącz stronę case study (/portfolio/{activePortfolio.slug || 'slug'})
+              </label>
+              {portfolioHasAdminGallerySeed(activePortfolio.slug) ? (
+                <label className="flex items-center gap-2 text-sm text-neutral-400">
+                  <input
+                    type="checkbox"
+                    checked={activePortfolio.adminGalleryEnabled}
+                    onChange={(e) =>
+                      updatePortfolio(activePortfolio.id, { adminGalleryEnabled: e.target.checked })
+                    }
+                    className="rounded border-white/20"
+                  />
+                  Włącz sekcję panelu (Magazyn + CMS)
+                </label>
+              ) : null}
+              <label className="flex items-center gap-2 text-sm text-neutral-400">
+                <input
+                  type="checkbox"
+                  checked={activePortfolio.disabled}
+                  onChange={(e) => updatePortfolio(activePortfolio.id, { disabled: e.target.checked })}
+                  className="rounded border-white/20"
+                />
+                Ukryj realizację na stronie (portfolio + grid na homepage)
+              </label>
+            </div>
           </Fieldset>
         )}
         <SaveButton pending={pending} label="Zapisz portfolio" onClick={savePortfolio} />
@@ -636,6 +669,7 @@ export function CmsClient({
                   id: item.id,
                   name: item.name,
                   disabled: item.disabled,
+                  caseStudyEnabled: item.caseStudyEnabled,
                 }))}
                 activeId={activePortfolioId}
                 onSelect={setActivePortfolioId}

@@ -6,6 +6,7 @@ type PortfolioListItem = {
   id: string
   name: string
   disabled?: boolean
+  caseStudyEnabled?: boolean
 }
 
 type Props = {
@@ -87,6 +88,11 @@ export function PortfolioListPicker({ items, activeId, onSelect, onAdd }: Props)
                   {item.disabled ? (
                     <span className="shrink-0 rounded-full border border-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-neutral-500">
                       ukryta
+                    </span>
+                  ) : null}
+                  {!item.disabled && item.caseStudyEnabled === false ? (
+                    <span className="shrink-0 rounded-full border border-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-neutral-500">
+                      bez CS
                     </span>
                   ) : null}
                   <ChevronRight

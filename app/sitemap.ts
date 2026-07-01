@@ -1,9 +1,10 @@
 import { MetadataRoute } from "next";
-import { listPortfolioCaseStudyIds } from "@/lib/portfolio-content";
+import { listPortfolioSlugs } from "@/lib/portfolio-data";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://syntance.com";
-  const portfolioCaseStudies = listPortfolioCaseStudyIds().map((slug) => ({
+  const caseStudySlugs = await listPortfolioSlugs();
+  const portfolioCaseStudies = caseStudySlugs.map((slug) => ({
     url: `${baseUrl}/portfolio/${slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
