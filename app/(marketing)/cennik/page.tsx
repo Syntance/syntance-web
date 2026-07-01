@@ -2,7 +2,6 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { PricingConfigurator } from '@/components/PricingConfigurator'
 import PricingFAQ from '@/components/sections/pricing-faq'
-import { Twitter, Linkedin, Github } from '@/components/icons/social'
 import { fetchPricingData } from '@/lib/pricing-data'
 import { discoveryPriceNetFromConfig } from '@/lib/pricing-calculator'
 import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
@@ -99,23 +98,10 @@ export default async function CennikPage() {
       {/* Footer */}
       <footer className="relative z-10 border-t border-gray-900 pt-16 pb-12 px-6 lg:px-12">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-6 md:mb-0">
-              <Link href="/" className="text-gray-400 hover:text-white transition-colors font-medium">
-                ← Powrót do strony głównej
-              </Link>
-            </div>
-            <div className="flex space-x-6">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Twitter/X">
-                <Twitter size={20} />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="LinkedIn">
-                <Linkedin size={20} />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="GitHub">
-                <Github size={20} />
-              </a>
-            </div>
+          <div className="flex justify-center">
+            <Link href="/" className="text-gray-400 hover:text-white transition-colors font-medium">
+              ← Powrót do strony głównej
+            </Link>
           </div>
           <div className="mt-12 pt-8 border-t border-gray-900">
             <p className="text-center text-sm font-light tracking-wider text-gray-400">

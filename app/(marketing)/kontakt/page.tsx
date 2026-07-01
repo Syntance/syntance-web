@@ -153,29 +153,6 @@ export default async function KontaktPage() {
                     </div>
                   </div>
                 </div>
-                
-                {/* Social Media */}
-                <div>
-                  <h3 className="text-lg font-medium text-white mb-4">Social media</h3>
-                  <div className="flex gap-3">
-                    <a 
-                      href="https://twitter.com/syntance" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-white hover:border-purple-500/30 transition-colors text-sm"
-                    >
-                      Twitter / X
-                    </a>
-                    <a 
-                      href="https://linkedin.com/company/syntance" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-white hover:border-purple-500/30 transition-colors text-sm"
-                    >
-                      LinkedIn
-                    </a>
-                  </div>
-                </div>
               </div>
               
               {/* Right Column - Form */}

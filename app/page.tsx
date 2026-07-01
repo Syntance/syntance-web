@@ -6,8 +6,6 @@ import SectionScrollbar from "@/components/SectionScrollbar";
 
 import AnimatedSection from "@/components/AnimatedSection";
 import { ContactForm } from "@/components/contact-form";
-import { Twitter, Linkedin, Github } from "@/components/icons/social";
-
 // Import sections - bez lazy loadingu dla hero, żeby uniknąć flashowania kontaktu
 import HeroStudio from "@/components/sections/hero-studio";
 const AnatomyStudio = dynamic(() => import("@/components/sections/anatomy-studio"), { ssr: true });
@@ -96,20 +94,6 @@ export default function HomePage() {
                   </a>
                   </div>
 
-                  <div>
-                    <h3 className="text-xl font-medium tracking-wider mb-4">Social Media</h3>
-                    <nav aria-label="Social media" className="flex space-x-4">
-                      <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Twitter/X">
-                        <Twitter size={24} aria-hidden="true" />
-                      </a>
-                      <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="LinkedIn">
-                        <Linkedin size={24} aria-hidden="true" />
-                      </a>
-                      <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="GitHub">
-                        <Github size={24} aria-hidden="true" />
-                      </a>
-                    </nav>
-                  </div>
                 </address>
 
                 <ContactForm idPrefix="home" source="homepage" showFullRodo={true} />
@@ -122,20 +106,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="relative z-10 border-t border-gray-900 pt-16 pb-12 px-6 lg:px-12">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <nav aria-label="Social media w stopce" className="flex space-x-6 ml-auto md:ml-0">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Twitter/X">
-                <Twitter size={20} aria-hidden="true" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="LinkedIn">
-                <Linkedin size={20} aria-hidden="true" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="GitHub">
-                <Github size={20} aria-hidden="true" />
-              </a>
-            </nav>
-          </div>
-          <div className="mt-12 pt-8 border-t border-gray-900">
+          <div className="pt-8 border-t border-gray-900">
             <p className="text-center text-sm font-light tracking-wider text-gray-400">
               © Syntance — Strony i sklepy, które działają.
             </p>

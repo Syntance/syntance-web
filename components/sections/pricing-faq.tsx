@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { ChevronDown, DollarSign, Clock, Shield, Scale } from 'lucide-react'
-import { Twitter, Linkedin, Github } from '@/components/icons/social'
 import { ContactForm } from '@/components/contact-form'
 import { PricingFaqItem, defaultFaqItems } from '@/lib/data/faq'
 
@@ -166,21 +165,6 @@ export function PricingFAQ({ items }: PricingFAQProps = {}) {
                 <a href="tel:+48537110170" className="text-gray-400 hover:text-white transition-colors text-lg">
                   +48 537 110 170
                 </a>
-              </div>
-              
-              <div>
-                <h3 className="text-xl font-medium tracking-wider mb-4">Social Media</h3>
-                <nav aria-label="Social media" className="flex space-x-4">
-                  <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Twitter/X">
-                    <Twitter size={24} aria-hidden="true" />
-                  </a>
-                  <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="LinkedIn">
-                    <Linkedin size={24} aria-hidden="true" />
-                  </a>
-                  <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="GitHub">
-                    <Github size={24} aria-hidden="true" />
-                  </a>
-                </nav>
               </div>
             </address>
             

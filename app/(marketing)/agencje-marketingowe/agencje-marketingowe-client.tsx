@@ -11,7 +11,6 @@ import {
   Shield,
   FileLock,
   MessageSquare,
-  ExternalLink,
   ClipboardList,
 } from 'lucide-react'
 import GradientText from '@/components/GradientText'
@@ -19,8 +18,6 @@ import SubpageScrollbar from '@/components/SubpageScrollbar'
 import { ContactForm } from '@/components/contact-form'
 import type { SimpleFaqQA } from '@/lib/data/faq'
 import { AnalyticsEvent, trackAnalyticsEvent } from '@/lib/analytics'
-
-const LINKEDIN_COMPANY = 'https://www.linkedin.com/company/syntance'
 
 const FORM_SECTION_ID = 'form-partnerski'
 
@@ -607,19 +604,6 @@ export default function AgencjeMarketingoweClient({ faqItems }: { faqItems: Simp
             Wyślij zapytanie partnerskie — przedstawimy model, cennik i proces. Odezwiemy się,
             żeby umówić krótką rozmowę. Zero zobowiązań.
           </p>
-          <p className="text-sm text-gray-500 mb-10">
-            Wolisz DM?{' '}
-            <a
-              href={LINKEDIN_COMPANY}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-violet-300 hover:text-violet-200 underline underline-offset-2 inline-flex items-center gap-1"
-            >
-              Napisz na LinkedIn
-              <ExternalLink className="w-3.5 h-3.5" aria-hidden />
-            </a>
-          </p>
-
           <div
             id={FORM_SECTION_ID}
             className="mt-4 text-left rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8"
