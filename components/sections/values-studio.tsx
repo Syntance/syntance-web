@@ -159,7 +159,7 @@ export default function ValuesStudio() {
               Dlaczego My?
             </h2>
             <p className="text-lg font-light tracking-wide text-gray-300">
-              Jakość agencji w tempie freelancera
+              Udowadniamy, że jakość można dostarczyć szybko i w uczciwej cenie.
             </p>
             <TechStackBadges className="mt-8" />
           </header>

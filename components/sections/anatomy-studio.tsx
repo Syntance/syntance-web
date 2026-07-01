@@ -253,7 +253,7 @@ export default function AnatomyStudio() {
             href="/strategia-marketingu-i-sprzedazy"
             className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-105"
           >
-            <span>Strategia marketingu i sprzedaży — więcej</span>
+            <span>Poznaj strategię krok po kroku</span>
             <svg
               className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
               fill="none"

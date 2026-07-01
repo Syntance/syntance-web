@@ -1,8 +1,8 @@
 # Syntance
 
-> Agencja interaktywna i software house z Polski. Tworzymy szybkie strony WWW i sklepy e-commerce na Next.js z gwarancją PageSpeed 90+. Strony w 2–4 tygodnie, sklepy w 4–8 tygodni. Pełna własność kodu, zero vendor lock-in.
+> Studio stron i sklepów na Next.js z Polski. Projektujemy szybkie, skuteczne strony WWW i sklepy e-commerce z gwarancją PageSpeed 90+. Strony w 2–4 tygodnie, sklepy w 4–8 tygodni. Fixed price, pełna własność kodu, zero vendor lock-in.
 
-Jakość agencji w tempie freelancera. Strategia marketingu i sprzedaży przed kodem. Technologie: Next.js, React, TypeScript, Sanity CMS, MedusaJS. Lokalizacja: Polska (praca zdalna, klienci z EU).
+Zaczynamy od strategii marketingu i sprzedaży, nie od grafiki. Udowadniamy, że jakość można dostarczyć szybko i w uczciwej cenie — jakość software house'u bez agencyjnego narzutu. Dla firm usługowych, sklepów i marek premium. Technologie: Next.js, React, TypeScript, Sanity CMS, MedusaJS. Lokalizacja: Polska (praca zdalna, klienci z EU).
 
 ## Usługi
 
