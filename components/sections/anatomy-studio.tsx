@@ -108,9 +108,6 @@ export default function AnatomyStudio() {
                     <span className={`bg-gradient-to-r ${layer.gradient} bg-clip-text text-transparent`}>
                       {layer.title}
                     </span>
-                    {'subtitle' in layer && layer.subtitle ? (
-                      <span className="text-gray-400 text-sm font-light"> · {layer.subtitle}</span>
-                    ) : null}
                   </h3>
                 </div>
                 <p className="text-sm text-gray-400 leading-relaxed mb-4 italic">
@@ -205,9 +202,6 @@ export default function AnatomyStudio() {
                           <span className={`bg-gradient-to-r ${layer.gradient} bg-clip-text text-transparent`}>
                             {layer.title}
                           </span>
-                          {'subtitle' in layer && layer.subtitle ? (
-                            <span className="text-gray-400"> — {layer.subtitle}</span>
-                          ) : null}
                         </h3>
 
                         {/* Tagline */}
