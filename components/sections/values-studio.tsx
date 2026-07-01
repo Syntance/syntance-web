@@ -7,12 +7,12 @@ const values = [
   {
     title: "Szybciej",
     description: "Strony w 2-4 tygodnie, sklepy w 4-8 tygodni",
-    proof: "AI + architektura senior level",
+    proof: "Sprawdzony proces i gotowe komponenty",
     accentColor: "text-cyan-400",
     lineColor: "from-cyan-400/80 to-cyan-400/0",
   },
   {
-    title: "Fixed price",
+    title: "Bez ryzyka",
     description: "Stała cena ustalona jeszcze przed startem",
     proof: "Zaczynasz od 30% zadatku — resztę płacisz dopiero przy odbiorze",
     accentColor: "text-rose-400",
@@ -136,16 +136,16 @@ export default function ValuesStudio() {
       {/* ─────────────────────  MOBILE  ───────────────────── */}
       <div className="md:hidden">
         <header className="mx-auto mb-14 max-w-md text-center">
-          <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.2em] text-purple-300/70">
-            Dlaczego my
-          </p>
           <h2
             id="values-heading"
-            className="mb-3 text-3xl font-light leading-[1.15] tracking-tight text-white"
+            className="glow-text mb-4 text-3xl font-light leading-[1.15] tracking-tight text-white"
           >
-            Jakość agencji <span className="text-gray-400">w tempie</span> freelancera
+            Dlaczego My?
           </h2>
-          <TechStackBadges className="mt-4" />
+          <p className="text-base font-light leading-relaxed tracking-wide text-gray-300">
+            Udowadniamy, że jakość można dostarczyć szybko i w uczciwej cenie.
+          </p>
+          <TechStackBadges className="mt-6" />
         </header>
 
         <ValuesGrid />

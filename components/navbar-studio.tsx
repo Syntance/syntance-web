@@ -161,9 +161,8 @@ export default function NavbarStudio() {
         }`}
       />
 
-      <nav className="fixed top-0 left-0 right-0 z-50 py-4 px-4 sm:py-6 sm:px-6 lg:px-12 bg-black/30 transition-all duration-300 safe-pt isolate">
-        <div className="pointer-events-none absolute inset-0 -z-10 backdrop-blur-md" aria-hidden="true" />
-        <div className="relative flex justify-between items-center">
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-black/55 py-4 px-4 backdrop-blur-xl backdrop-saturate-150 transition-all duration-300 safe-pt supports-[backdrop-filter]:bg-black/40 sm:py-6 sm:px-6 lg:px-12">
+        <div className="relative isolate flex justify-between items-center">
           {pathname === '/' ? (
             <button
               onClick={() => {

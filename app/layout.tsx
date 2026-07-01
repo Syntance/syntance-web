@@ -7,6 +7,7 @@ import { AllSchemasDynamic } from "@/components/schema-org-dynamic";
 import { generateSeoMetadata, getSeoSettings } from "@/lib/seo";
 import NavbarStudio from "@/components/navbar-studio";
 import { ProgressBar } from "@/components/progress-bar";
+import { NavigationScrollRestore } from "@/components/navigation-scroll-restore";
 import { CookieBanner } from "@/components/CookieBanner";
 import { AnalyticsProvider } from "@/components/analytics/analytics-provider";
 import { GoogleConsentDefaultScript } from "@/components/analytics/google-consent-default";
@@ -78,6 +79,7 @@ export default async function RootLayout({
         </a>
         <Suspense fallback={null}>
           <ProgressBar />
+          <NavigationScrollRestore />
         </Suspense>
         <AllSchemasDynamic seo={seo} />
         <NavbarStudio />

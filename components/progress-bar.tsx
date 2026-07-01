@@ -3,6 +3,11 @@
 import { useEffect, useRef, useCallback } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/navigation'
+import {
+  clearScrollRestore,
+  isNavbarNavigationSource,
+  saveScrollForRestore,
+} from '@/lib/navigation/scroll-restore'
 
 // ID elementu loadera w DOM
 const LOADER_ID = 'page-transition-loader'
@@ -79,9 +84,16 @@ export function ProgressBar() {
   }, [isValidBg])
 
   // Pokaż loader z płynną animacją, wykonaj nawigację PO zakończeniu fade-in
-  const showLoaderAndNavigate = useCallback((bgColor: string, href: string) => {
+  const showLoaderAndNavigate = useCallback((bgColor: string, href: string, fromNavbar: boolean) => {
     // Sprawdź czy loader już istnieje
     if (document.getElementById(LOADER_ID)) return
+
+    const currentPath = window.location.pathname
+    if (fromNavbar) {
+      clearScrollRestore(currentPath)
+    } else {
+      saveScrollForRestore(currentPath, window.scrollY)
+    }
     
     // Zapisz docelowy URL
     pendingNavigation.current = href
@@ -178,17 +190,19 @@ export function ProgressBar() {
         
         // Pokaż loader z animacją, nawiguj PO jej zakończeniu
         const color = currentPageBgColor.current || detectPageBgColor()
-        showLoaderAndNavigate(color, href)
+        const fromNavbar = isNavbarNavigationSource(target)
+        showLoaderAndNavigate(color, href, fromNavbar)
       }
     }
 
     // Listener dla custom eventu z GooeyNav
     const handleNavigationStart = (e: Event) => {
-      const customEvent = e as CustomEvent
+      const customEvent = e as CustomEvent<{ href?: string; fromNavbar?: boolean }>
       const href = customEvent.detail?.href
       if (href && !href.includes('#')) {
         const color = currentPageBgColor.current || detectPageBgColor()
-        showLoaderAndNavigate(color, href)
+        const fromNavbar = customEvent.detail?.fromNavbar ?? true
+        showLoaderAndNavigate(color, href, fromNavbar)
       }
     }
 

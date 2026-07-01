@@ -10,14 +10,6 @@ export function HeroTransition({ children }: HeroTransitionProps) {
   const [isVisible, setIsVisible] = useState(false)
 
   useLayoutEffect(() => {
-    if (typeof window === 'undefined') return
-    if ('scrollRestoration' in history) {
-      history.scrollRestoration = 'manual'
-    }
-    if (!window.location.hash) {
-      window.scrollTo({ top: 0, behavior: 'auto' })
-    }
-    
     // Opóźnienie 550ms - czeka aż animacja ładowania się zakończy (500ms) + 50ms bufora
     const timer = setTimeout(() => setIsVisible(true), 550)
     return () => clearTimeout(timer)

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useCallback, type MouseEvent } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { AnalyticsEvent, trackAnalyticsEvent } from '@/lib/analytics'
 
 const CTA_CLASS =
@@ -25,7 +25,6 @@ function StickyCtaFloatInner({
   href = '/cennik',
   label = 'Sprawdź cenę',
 }: StickyCtaFloatProps) {
-  const router = useRouter()
   const wrapRef = useRef<HTMLDivElement>(null)
   const elRef = useRef<HTMLAnchorElement>(null)
   const isFixedRef = useRef(false)
@@ -40,9 +39,11 @@ function StickyCtaFloatInner({
         location: typeof window !== 'undefined' ? window.location.pathname : 'unknown',
         href,
       })
-      router.push(href)
+      window.dispatchEvent(
+        new CustomEvent('navigation-start', { detail: { href, fromNavbar: false } }),
+      )
     },
-    [href, label, router],
+    [href, label],
   )
 
   const flipToFixed = useCallback(() => {
