@@ -123,7 +123,13 @@ export default function NavbarStudio() {
   }, [pathname]);
 
   const activeNavIndex = useMemo(() => {
-    return pathToNavIndex[pathname] ?? -1;
+    if (pathToNavIndex[pathname] !== undefined) {
+      return pathToNavIndex[pathname];
+    }
+    if (pathname.startsWith('/portfolio/')) {
+      return 3;
+    }
+    return -1;
   }, [pathname]);
 
   const isOfertaActive =
@@ -133,7 +139,10 @@ export default function NavbarStudio() {
 
   const isProduktyActive = pathname === '/panel';
 
-  const isPortfolioActive = pathname === '/portfolio' || pathname === '/realizacje';
+  const isPortfolioActive =
+    pathname === '/portfolio' ||
+    pathname === '/realizacje' ||
+    pathname.startsWith('/portfolio/');
 
   const isBlogActive = pathname === '/strategia-marketingu-i-sprzedazy' || pathname === '/nextjs';
 

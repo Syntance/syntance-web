@@ -150,9 +150,20 @@ const GooeyNav = ({
     const labelText = element.querySelector('a')?.childNodes[0]?.textContent || element.innerText;
     textRef.current.innerText = labelText.trim();
   };
+
+  const scheduleEffectPositionUpdate = (element: HTMLElement | null | undefined) => {
+    if (!element) return;
+    // Podwójny rAF: React musi najpierw nałożyć klasę .active (font-weight 600
+    // na <a>), dopiero potem getBoundingClientRect zwraca poprawną szerokość pigułki.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        updateEffectPosition(element);
+      });
+    });
+  };
   const movePill = (liEl: HTMLElement, index: number) => {
     setActiveIndex(index);
-    updateEffectPosition(liEl);
+    scheduleEffectPositionUpdate(liEl);
     if (filterRef.current) {
       const particles = filterRef.current.querySelectorAll('.particle');
       particles.forEach(p => filterRef.current!.removeChild(p));
@@ -256,12 +267,13 @@ const GooeyNav = ({
       if (textRef.current) {
         textRef.current.classList.remove('active');
         textRef.current.style.width = '0px';
+        textRef.current.innerText = '';
       }
     } else if (externalActiveIndex !== undefined && externalActiveIndex >= 0) {
       const newActiveLi = navRef.current?.querySelectorAll('li')[externalActiveIndex] as HTMLElement;
       if (newActiveLi && externalActiveIndex !== activeIndex) {
         setActiveIndex(externalActiveIndex);
-        updateEffectPosition(newActiveLi);
+        scheduleEffectPositionUpdate(newActiveLi);
         
         if (filterRef.current) {
           const particles = filterRef.current.querySelectorAll('.particle');
@@ -275,8 +287,8 @@ const GooeyNav = ({
           textRef.current.classList.add('active');
         }
       } else if (newActiveLi && externalActiveIndex === activeIndex) {
-        // Jeśli indeks się nie zmienił, ale pathname tak - zaktualizuj pozycję
-        updateEffectPosition(newActiveLi);
+        // Ten sam indeks, inna trasa (np. /portfolio → /portfolio/slug) — przelicz po layoucie
+        scheduleEffectPositionUpdate(newActiveLi);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -302,20 +314,42 @@ const GooeyNav = ({
 
   useEffect(() => {
     if (!navRef.current || !containerRef.current) return;
-    const activeLi = navRef.current.querySelectorAll('li')[activeIndex];
+    const activeLi = navRef.current.querySelectorAll('li')[activeIndex] as HTMLElement | undefined;
     if (activeLi) {
-      updateEffectPosition(activeLi as HTMLElement);
+      scheduleEffectPositionUpdate(activeLi);
       textRef.current?.classList.add('active');
     }
     const resizeObserver = new ResizeObserver(() => {
-      const currentActiveLi = navRef.current?.querySelectorAll('li')[activeIndex];
+      const currentActiveLi = navRef.current?.querySelectorAll('li')[activeIndex] as HTMLElement | undefined;
       if (currentActiveLi) {
-        updateEffectPosition(currentActiveLi as HTMLElement);
+        updateEffectPosition(currentActiveLi);
       }
     });
     resizeObserver.observe(containerRef.current);
+    if (navRef.current) resizeObserver.observe(navRef.current);
     return () => resizeObserver.disconnect();
   }, [activeIndex]);
+
+  // Web fonty (font-display: swap) potrafią zmienić szerokość etykiet PO pierwszym
+  // obliczeniu pozycji pigułki/tekstu — przelicz po załadowaniu fontów i po zmianie trasy.
+  useEffect(() => {
+    const recalc = () => {
+      const currentActiveLi = navRef.current?.querySelectorAll('li')[activeIndex] as HTMLElement | undefined;
+      if (currentActiveLi) updateEffectPosition(currentActiveLi);
+    };
+
+    if (typeof document !== 'undefined' && 'fonts' in document) {
+      document.fonts.ready.then(recalc).catch(() => {});
+    }
+    const fallbackTimer = setTimeout(recalc, 350);
+    window.addEventListener('resize', recalc);
+
+    return () => {
+      clearTimeout(fallbackTimer);
+      window.removeEventListener('resize', recalc);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeIndex, pathname]);
 
   return (
     <>
@@ -340,6 +374,8 @@ const GooeyNav = ({
           font-size: 0.75rem;
           font-weight: 300;
           letter-spacing: 0.05em;
+          overflow: hidden;
+          white-space: nowrap;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
         }
@@ -440,6 +476,7 @@ const GooeyNav = ({
         }
         .gooey-nav-item.active a {
           color: transparent;
+          font-weight: 600;
         }
         .gooey-nav-item.active::after {
           opacity: 1;
