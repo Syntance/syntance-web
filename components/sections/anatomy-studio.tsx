@@ -8,21 +8,19 @@ import AnimatedSection from "@/components/AnimatedSection";
 const layers = [
   {
     level: 1,
-    title: "Fundament",
-    subtitle: "Strategia marketingu i sprzedaży",
+    title: "Strategia marketingu i sprzedaży",
     tagline: "Bez tego strona jest tylko ładnym obrazkiem.",
     gradient: "from-purple-500 to-blue-500",
     textColor: "text-purple-400",
     items: [
-      { icon: Target, label: "Cel Biznesowy", desc: "Co strona ma osiągnąć?" },
-      { icon: Users, label: "Buyer Persony", desc: "Do kogo mówimy?" },
+      { icon: Target, label: "Cel biznesowy", desc: "Co strona ma osiągnąć?" },
+      { icon: Users, label: "Buyer persony", desc: "Do kogo mówimy?" },
       { icon: Zap, label: "UVP", desc: "Dlaczego Ty, nie konkurencja?" },
     ],
   },
   {
     level: 2,
-    title: "Projektowanie",
-    subtitle: "Doświadczenie",
+    title: "Projektowanie doświadczenia",
     tagline: "Każdy ekran, tekst i przycisk ma swoje zadanie.",
     gradient: "from-blue-500 to-cyan-500",
     textColor: "text-blue-400",
@@ -34,8 +32,7 @@ const layers = [
   },
   {
     level: 3,
-    title: "Development",
-    subtitle: "Technologia",
+    title: "Development i technologia",
     tagline: "Szybka, bezpieczna, Twoja.",
     gradient: "from-cyan-500 to-teal-500",
     textColor: "text-cyan-400",
@@ -104,14 +101,16 @@ export default function AnatomyStudio() {
             >
               <article className="relative bg-white/[0.03] border border-white/10 rounded-2xl p-5">
                 <div className="flex items-center gap-3 mb-3">
-                  <span className={`shrink-0 w-9 h-9 rounded-full bg-gradient-to-br ${layer.gradient} flex items-center justify-center text-white text-sm font-semibold`}>
+                  <span className={`anatomy-gradient-surface shrink-0 w-9 h-9 rounded-full bg-gradient-to-br ${layer.gradient} flex items-center justify-center text-white text-sm font-semibold`}>
                     {layer.level}
                   </span>
                   <h3 className="text-base font-medium text-white">
                     <span className={`bg-gradient-to-r ${layer.gradient} bg-clip-text text-transparent`}>
                       {layer.title}
                     </span>
-                    <span className="text-gray-400 text-sm font-light"> · {layer.subtitle}</span>
+                    {'subtitle' in layer && layer.subtitle ? (
+                      <span className="text-gray-400 text-sm font-light"> · {layer.subtitle}</span>
+                    ) : null}
                   </h3>
                 </div>
                 <p className="text-sm text-gray-400 leading-relaxed mb-4 italic">
@@ -180,7 +179,7 @@ export default function AnatomyStudio() {
                   style={{ transitionDelay: `${index * 100}ms` }}
                 >
                   {/* Timeline dot */}
-                  <div className={`absolute left-8 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-gradient-to-br ${layer.gradient} shadow-lg z-10`} />
+                  <div className={`anatomy-gradient-surface absolute left-8 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-gradient-to-br ${layer.gradient} shadow-lg z-10`} />
 
                   {/* Card */}
                   <div className={`ml-20 md:ml-0 md:w-[calc(50%-40px)] ${isLeft ? 'md:mr-auto md:pr-8' : 'md:ml-auto md:pl-8'}`}>
@@ -193,7 +192,9 @@ export default function AnatomyStudio() {
                       {/* Content */}
                       <div className="relative bg-gray-900/80 backdrop-blur-sm border border-white/10 rounded-2xl p-6 md:p-8">
                         {/* Level badge */}
-                        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r ${layer.gradient} border border-white/10 mb-4`}>
+                        <div
+                          className={`anatomy-gradient-surface inline-flex items-center px-3 py-1 rounded-full bg-gradient-to-r ${layer.gradient} mb-4 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)]`}
+                        >
                           <span className="text-xs font-medium text-white tracking-wider uppercase">
                             Etap {layer.level}
                           </span>
@@ -204,7 +205,9 @@ export default function AnatomyStudio() {
                           <span className={`bg-gradient-to-r ${layer.gradient} bg-clip-text text-transparent`}>
                             {layer.title}
                           </span>
-                          <span className="text-gray-400"> — {layer.subtitle}</span>
+                          {'subtitle' in layer && layer.subtitle ? (
+                            <span className="text-gray-400"> — {layer.subtitle}</span>
+                          ) : null}
                         </h3>
 
                         {/* Tagline */}
@@ -218,7 +221,7 @@ export default function AnatomyStudio() {
                             const Icon = item.icon;
                             return (
                               <div key={i} className="flex items-center gap-4 group/item">
-                                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${layer.gradient} flex items-center justify-center flex-shrink-0 transition-transform duration-300 ${
+                                <div className={`anatomy-gradient-surface w-10 h-10 rounded-lg bg-gradient-to-br ${layer.gradient} flex items-center justify-center flex-shrink-0 transition-transform duration-300 ${
                                   isMobile ? '' : 'group-hover/item:scale-110'
                                 }`}>
                                   <Icon size={18} className="text-white" />
@@ -267,6 +270,16 @@ export default function AnatomyStudio() {
         .anatomy-card.card-visible {
           opacity: 1;
           transform: translateY(0);
+        }
+
+        /* Gradient + border-radius: bez overflow/isolation w rogach widać przeswit tła karty */
+        :global(.anatomy-gradient-surface) {
+          overflow: hidden;
+          isolation: isolate;
+          transform: translateZ(0);
+          -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+          background-clip: padding-box;
         }
       `}</style>
     </section>
