@@ -25,6 +25,7 @@ import {
   projectTypesForConfigurator,
 } from '@/lib/configurator-project-types'
 import { comparePricingItemsForConfigurator } from '@/lib/pricing-item-order'
+import { sortCategoriesForConfigurator } from '@/lib/pricing-category-order'
 
 // Mapa ikon - używamy typu LucideIcon
 const iconMap: Record<string, typeof Layout> = {
@@ -156,18 +157,23 @@ export function PricingConfigurator({ data }: Props) {
     )
   }, [availableItems, state.projectType])
 
-  // Elementy opcjonalne pogrupowane według kategorii
+  const sortedCategories = useMemo(
+    () => sortCategoriesForConfigurator(categories),
+    [categories],
+  )
+
+  // Elementy opcjonalne pogrupowane według kategorii (kolejność sekcji z Magazynu)
   const optionalItemsByCategory = useMemo(() => {
-    const optional = availableItems.filter(item => !item.required)
-    return categories.map(cat => ({
-      ...cat,
-      items: optional
-        .filter(item => item.category === cat.id)
-        .sort((a, b) =>
-          comparePricingItemsForConfigurator(a, b, state.projectType),
-        )
-    })).filter(cat => cat.items.length > 0)
-  }, [availableItems, categories, state.projectType])
+    const optional = availableItems.filter((item) => !item.required)
+    return sortedCategories
+      .map((cat) => ({
+        ...cat,
+        items: optional
+          .filter((item) => item.category === cat.id)
+          .sort((a, b) => comparePricingItemsForConfigurator(a, b, state.projectType)),
+      }))
+      .filter((cat) => cat.items.length > 0)
+  }, [availableItems, sortedCategories, state.projectType])
 
   // Kalkulacja ceny (wspólna z minimumami / FAQ — uwzględnia pakiet bazy z CMS)
   const calculation = useMemo(() => {

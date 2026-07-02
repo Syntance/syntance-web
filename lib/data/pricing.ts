@@ -5,6 +5,8 @@ export interface PricingCategory {
   description?: string
   icon?: string
   disabled?: boolean
+  /** Kolejność sekcji w konfiguratorze /cennik (niższa = wyżej, po bloku „W cenie bazowej”). */
+  sortOrder?: number
 }
 
 export interface ProjectType {
@@ -156,13 +158,14 @@ export interface PricingData {
 // Domyślne dane (fallback gdy Sanity nie jest skonfigurowane)
 export const defaultPricingData: PricingData = {
   categories: [
-    { id: 'base', name: 'Baza projektu', icon: 'Layout' },
-    { id: 'pages', name: 'Podstrony', icon: 'FileText' },
-    { id: 'sections', name: 'Sekcje', icon: 'Layers' },
-    { id: 'features', name: 'Funkcje', icon: 'Zap' },
-    { id: 'integrations', name: 'Integracje', icon: 'Plug' },
-    { id: 'payments', name: 'Płatności', icon: 'CreditCard' },
-    { id: 'shipping', name: 'Dostawa', icon: 'Truck' },
+    { id: 'base', name: 'Baza projektu', icon: 'Layout', sortOrder: 0 },
+    { id: 'strategia', name: 'Strategia', icon: 'Target', description: 'Strategia marketingu i sprzedaży przed wdrożeniem', sortOrder: 1 },
+    { id: 'pages', name: 'Podstrony', icon: 'FileText', sortOrder: 2 },
+    { id: 'sections', name: 'Sekcje', icon: 'Layers', sortOrder: 3 },
+    { id: 'features', name: 'Funkcje', icon: 'Zap', sortOrder: 4 },
+    { id: 'integrations', name: 'Integracje', icon: 'Plug', sortOrder: 5 },
+    { id: 'payments', name: 'Płatności', icon: 'CreditCard', sortOrder: 6 },
+    { id: 'shipping', name: 'Dostawa', icon: 'Truck', sortOrder: 7 },
   ],
   projectTypes: [
     { id: 'website', name: 'Strona WWW', basePrice: 5000, icon: 'Globe' },
@@ -170,6 +173,18 @@ export const defaultPricingData: PricingData = {
     { id: 'webapp', name: 'Aplikacja webowa', basePrice: 30000, icon: 'Smartphone' },
   ],
   items: [
+    {
+      id: 'strategia-marketing',
+      name: 'Strategia marketingu i sprzedaży',
+      description:
+        'Cel biznesowy, buyer persony, UVP, user flows, SEO i architektura informacji. Zaliczana na poczet projektu.',
+      price: 4500,
+      hours: 15,
+      rateType: 'consulting',
+      category: 'strategia',
+      projectTypes: ['website', 'ecommerce', 'webapp'],
+      popular: true,
+    },
     // BAZA - WEBSITE
     { id: 'web-setup', name: 'Setup projektu', description: 'Next.js, Vercel, DNS, SSL', price: 1600, hours: 8, category: 'base', projectTypes: ['website'], required: true },
     { id: 'web-design-system', name: 'Design System', description: 'Style, typografia, komponenty', price: 600, hours: 3, category: 'base', projectTypes: ['website'], required: true },

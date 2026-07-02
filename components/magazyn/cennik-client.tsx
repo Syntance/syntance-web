@@ -25,6 +25,7 @@ type Props = {
   itemCount: number
   categoryCount: number
   dbConnected: boolean
+  catalogNeedsSave?: boolean
 }
 
 function str(value: string | null | undefined) {
@@ -79,6 +80,7 @@ export function CennikClient({
   itemCount,
   categoryCount,
   dbConnected,
+  catalogNeedsSave = false,
 }: Props) {
   const [section, setSection] = useState<CennikSection>('layout')
   const [configForm, setConfigForm] = useState(() => normalizeConfig(config))
@@ -186,6 +188,34 @@ export function CennikClient({
     }
   }
 
+  async function saveLayout() {
+    setPending(true)
+    setStatus(null)
+    setError(false)
+    try {
+      const [itemsRes, categoriesRes] = await Promise.all([
+        fetch('/api/magazyn/cennik/items', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: itemsForm }),
+        }),
+        fetch('/api/magazyn/cennik/categories', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ categories: categoriesForm }),
+        }),
+      ])
+      if (!itemsRes.ok) throw new Error('Zapis pozycji nie powiódł się')
+      if (!categoriesRes.ok) throw new Error('Zapis kolejności sekcji nie powiódł się')
+      setStatus('Układ cennika, kolejność sekcji i pozycje zapisane.')
+    } catch (e) {
+      setError(true)
+      setStatus(e instanceof Error ? e.message : 'Błąd')
+    } finally {
+      setPending(false)
+    }
+  }
+
   async function saveItems() {
     setPending(true)
     setStatus(null)
@@ -215,6 +245,17 @@ export function CennikClient({
         description={`${itemCount} pozycji · ${categoryCount} kategorii · ${packagesForm.length} pakietów · ${projectTypesForm.length} typów projektu`}
       />
       <DbBanner connected={dbConnected} />
+
+      {dbConnected && catalogNeedsSave ? (
+        <div
+          role="status"
+          className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100/90"
+        >
+          Wykryto brakującą sekcję <strong>Strategia</strong> lub pozycje spoza układu. Zapisz kategorie i układ
+          cennika, aby zaktualizować produkcję — albo uruchom <code className="text-amber-50">pnpm patch:pricing</code>{' '}
+          z connection stringiem Neon.
+        </div>
+      ) : null}
 
       <div className="flex flex-col gap-6 lg:flex-row">
         <nav className="flex shrink-0 flex-row flex-wrap gap-1 lg:w-52 lg:flex-col lg:gap-0.5">
@@ -258,10 +299,11 @@ export function CennikClient({
               {...shared}
               projectTypes={projectTypesForm}
               categories={categoriesForm}
+              setCategories={setCategoriesForm}
               items={itemsForm}
               setItems={setItemsForm}
               config={configForm}
-              onSave={saveItems}
+              onSave={saveLayout}
             />
           ) : null}
 

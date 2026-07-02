@@ -94,11 +94,9 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="relative z-10 border-t border-gray-900 pt-16 pb-12 px-6 lg:px-12">
         <div className="max-w-6xl mx-auto">
-          <div className="pt-8 border-t border-gray-900">
-            <p className="text-center text-sm font-light tracking-wider text-gray-400">
-              © Syntance — Strony i sklepy, które działają.
-            </p>
-          </div>
+          <p className="text-center text-sm font-light tracking-wider text-gray-400">
+            © Syntance — Strony i sklepy, które działają.
+          </p>
         </div>
       </footer>
     </div>

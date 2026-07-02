@@ -13,10 +13,47 @@ import {
   type PricingItem,
   type ProjectType,
 } from '@/lib/data/pricing'
+import { mergePricingCategoriesForAdmin } from '@/lib/magazyn/pricing-catalog-reference'
+import { sortCategoriesForConfigurator } from '@/lib/pricing-category-order'
+
+const CONFIGURATOR_PROJECT_TYPE_IDS = new Set(['website', 'ecommerce', 'webapp'])
 
 export type PricingCategoryAdmin = PricingCategory & {
   sortOrder: number
   showInConfigurator: boolean
+}
+
+function categoriesForPublicConfigurator(
+  adminCategories: PricingCategoryAdmin[],
+  catalogItems: PricingItem[],
+): PricingCategory[] {
+  const merged = mergePricingCategoriesForAdmin(adminCategories)
+  const categoryIdsWithConfiguratorItems = new Set(
+    catalogItems
+      .filter(
+        (item) =>
+          !item.disabled &&
+          item.projectTypes.some((typeId) => CONFIGURATOR_PROJECT_TYPE_IDS.has(typeId)),
+      )
+      .map((item) => item.category),
+  )
+
+  return sortCategoriesForConfigurator(
+    merged
+      .filter(
+        (category) =>
+          !category.disabled &&
+          (category.showInConfigurator || categoryIdsWithConfiguratorItems.has(category.id)),
+      )
+      .map((category) => ({
+        id: category.id,
+        name: category.name,
+        description: category.description ?? undefined,
+        icon: category.icon ?? undefined,
+        disabled: category.disabled,
+        sortOrder: category.sortOrder,
+      })),
+  )
 }
 
 export type ProjectTypeAdmin = ProjectType & {
@@ -64,7 +101,7 @@ export async function listAllPricingCategoriesAdmin(): Promise<PricingCategoryAd
   if (!hasDb()) {
     return defaultPricingData.categories.map((c, index) => ({
       ...c,
-      sortOrder: index,
+      sortOrder: c.sortOrder ?? index,
       showInConfigurator: true,
     }))
   }
@@ -153,16 +190,19 @@ export async function fetchPricingData(): Promise<PricingData> {
       ...((configRow?.data as unknown as PricingData['config']) ?? {}),
     }
 
+    const catalogItems = items.filter((i) => !i.disabled).map(mapItem)
+    const adminCategories: PricingCategoryAdmin[] = categories.map((c) => ({
+      id: c.id,
+      name: c.name,
+      description: c.description ?? undefined,
+      icon: c.icon ?? undefined,
+      disabled: c.disabled,
+      sortOrder: c.sortOrder,
+      showInConfigurator: c.showInConfigurator,
+    }))
+
     return {
-      categories: categories
-        .filter((c) => c.showInConfigurator && !c.disabled)
-        .map((c) => ({
-          id: c.id,
-          name: c.name,
-          description: c.description ?? undefined,
-          icon: c.icon ?? undefined,
-          disabled: c.disabled,
-        })),
+      categories: categoriesForPublicConfigurator(adminCategories, catalogItems),
       projectTypes: types.map((t) => ({
         id: t.id,
         name: t.name,
@@ -171,7 +211,7 @@ export async function fetchPricingData(): Promise<PricingData> {
         icon: t.icon ?? undefined,
         disabled: t.disabled,
       })),
-      items: items.filter((i) => !i.disabled).map(mapItem),
+      items: catalogItems,
       config,
     }
   } catch (error) {

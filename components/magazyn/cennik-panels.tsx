@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { DragDropContext, Draggable, Droppable, type DropResult } from '@hello-pangea/dnd'
-import { CircleMinus, GripVertical, ListPlus, Pencil, Plus, Trash2 } from 'lucide-react'
+import { CircleMinus, ChevronDown, ChevronUp, GripVertical, ListPlus, Pencil, Plus, Trash2 } from 'lucide-react'
 import type { PricingCategoryAdmin, ProjectTypeAdmin } from '@/lib/db/queries/pricing'
 import type { PricingConfig, PricingItem } from '@/lib/data/pricing'
 import { getBaseProjectCategoryId } from '@/lib/pricing-calculator'
@@ -310,6 +310,7 @@ export function CategoriesPanel({
 export function LayoutPanel({
   projectTypes,
   categories,
+  setCategories,
   items,
   setItems,
   config,
@@ -318,6 +319,7 @@ export function LayoutPanel({
 }: SharedProps & {
   projectTypes: ProjectTypeAdmin[]
   categories: PricingCategoryAdmin[]
+  setCategories: (value: PricingCategoryAdmin[]) => void
   items: PricingItem[]
   setItems: (value: PricingItem[]) => void
   config: PricingConfig
@@ -413,6 +415,19 @@ export function LayoutPanel({
     setItems(patchPricingItemInList(items, itemId, patch))
   }
 
+  function moveCategorySection(categoryId: string, direction: -1 | 1) {
+    const list = [...categories].sort((a, b) => a.sortOrder - b.sortOrder)
+    const index = list.findIndex((category) => category.id === categoryId)
+    const target = index + direction
+    if (index < 0 || target < 0 || target >= list.length) return
+
+    const next = [...list]
+    const swapped = next[index]
+    next[index] = next[target]
+    next[target] = swapped
+    setCategories(next.map((row, orderIndex) => ({ ...row, sortOrder: orderIndex })))
+  }
+
   function onDragEnd(result: DropResult) {
     const { destination, source } = result
     if (!destination || destination.droppableId !== source.droppableId) return
@@ -445,9 +460,10 @@ export function LayoutPanel({
   return (
     <div className="space-y-5">
       <p className="text-sm text-neutral-400">
-        Ułóż pozycje w konfiguratorze: wybierz typ projektu, przeciągnij w ramach kategorii, kliknij
-        pozycję aby edytować — dodaj nową pozycję lub wybierz istniejącą z listy. Ikona minus usuwa
-        pozycję tylko z bieżącego układu; całkowite usunięcie jest w edycji pozycji.
+        Ułóż pozycje w konfiguratorze: wybierz typ projektu, strzałkami ustaw kolejność sekcji (np.
+        Strategia tuż pod „W cenie bazowej”), przeciągnij pozycje w ramach sekcji. Kliknij pozycję,
+        aby edytować — dodaj nową lub wybierz istniejącą z listy. Minus usuwa pozycję tylko z bieżącego
+        układu.
       </p>
 
       <div className="flex flex-wrap gap-1 rounded-full border border-white/10 bg-white/[0.02] p-1">
@@ -474,12 +490,34 @@ export function LayoutPanel({
 
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="space-y-4">
-          {sortedCategories.map((cat) => {
+          {sortedCategories.map((cat, categoryIndex) => {
             const list = itemsForProjectTypeCategory(items, projectTypeId, cat.id)
             const droppableId = `cat-${cat.id}`
             return (
               <Fieldset key={cat.id} legend={`${cat.name} (${list.length})`}>
-                <div className="mb-3 flex flex-wrap justify-end gap-2">
+                <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-1">
+                    <span className="mr-1 text-xs text-neutral-500">Sekcja {categoryIndex + 1}</span>
+                    <button
+                      type="button"
+                      onClick={() => moveCategorySection(cat.id, -1)}
+                      disabled={categoryIndex === 0}
+                      className="rounded p-1 text-neutral-400 hover:bg-white/10 hover:text-white disabled:opacity-30"
+                      aria-label={`Przesuń sekcję ${cat.name} wyżej`}
+                    >
+                      <ChevronUp className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => moveCategorySection(cat.id, 1)}
+                      disabled={categoryIndex === sortedCategories.length - 1}
+                      className="rounded p-1 text-neutral-400 hover:bg-white/10 hover:text-white disabled:opacity-30"
+                      aria-label={`Przesuń sekcję ${cat.name} niżej`}
+                    >
+                      <ChevronDown className="h-4 w-4" />
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
                   <button
                     type="button"
                     onClick={() => setExistingPickerCategoryId(cat.id)}
@@ -496,6 +534,7 @@ export function LayoutPanel({
                     <Plus className="h-3.5 w-3.5" aria-hidden />
                     Nowa pozycja
                   </button>
+                  </div>
                 </div>
                 <Droppable droppableId={droppableId}>
                   {(provided) => (
@@ -573,7 +612,7 @@ export function LayoutPanel({
         <button type="button" onClick={normalizeRanks} className="rounded-full border border-white/10 px-4 py-2 text-sm text-neutral-300 hover:bg-white/5">
           Normalizuj kolejność (wszystkie typy)
         </button>
-        <SaveButton pending={pending} label="Zapisz układ i pozycje" onClick={onSave} />
+        <SaveButton pending={pending} label="Zapisz układ, sekcje i pozycje" onClick={onSave} />
       </div>
 
       {existingPickerCategory ? (

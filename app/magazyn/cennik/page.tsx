@@ -6,6 +6,11 @@ import {
 } from '@/lib/db/queries/pricing'
 import { hasDb } from '@/lib/db'
 import { CennikClient } from '@/components/magazyn/cennik-client'
+import {
+  mergePricingCategoriesForAdmin,
+  mergePricingItemsForAdmin,
+  pricingCatalogNeedsMerge,
+} from '@/lib/magazyn/pricing-catalog-reference'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,15 +22,20 @@ export default async function CennikPage() {
     listAllProjectTypesAdmin(),
   ])
 
+  const mergedCategories = mergePricingCategoriesForAdmin(categories)
+  const mergedItems = mergePricingItemsForAdmin(items)
+  const catalogNeedsSave = pricingCatalogNeedsMerge(categories, items)
+
   return (
     <CennikClient
       config={data.config}
-      items={items}
-      categories={categories}
+      items={mergedItems}
+      categories={mergedCategories}
       projectTypes={projectTypes}
-      itemCount={items.length}
-      categoryCount={categories.length}
+      itemCount={mergedItems.length}
+      categoryCount={mergedCategories.length}
       dbConnected={hasDb()}
+      catalogNeedsSave={catalogNeedsSave}
     />
   )
 }
