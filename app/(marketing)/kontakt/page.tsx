@@ -7,7 +7,7 @@ import { fetchPricingData } from '@/lib/pricing-data'
 import { discoveryPriceNetFromConfig } from '@/lib/pricing-calculator'
 import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
 import { fetchFaqSettings, resolveKontaktFaq } from '@/lib/faq-data'
-import { legalAdministratorName, legalEntityLabel, legalTradeName } from '@/lib/data/legal-entity'
+import { legalAdministratorName, legalEntityLabel, legalNip, legalTradeName } from '@/lib/data/legal-entity'
 
 export const metadata: Metadata = {
   title: 'Kontakt — Syntance | Strony i sklepy Next.js',
@@ -147,10 +147,10 @@ export default async function KontaktPage() {
                       </div>
                       <div className="text-gray-300 text-sm space-y-1">
                         <div className="text-white font-medium">{legalAdministratorName}</div>
-                        <div className="text-gray-400">firma {legalTradeName}</div>
+                        <div className="text-gray-400">{legalTradeName}</div>
                         <div>Czerniec 72</div>
                         <div>33-390 Łącko</div>
-                        <div className="text-gray-400 pt-2">NIP: 7343608647</div>
+                        <div className="text-gray-400 pt-2">NIP: {legalNip}</div>
                       </div>
                     </div>
                   </div>
