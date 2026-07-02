@@ -24,7 +24,6 @@ export const footerCompanyLinks: FooterLink[] = [
 export const footerLegalLinks: FooterLink[] = [
   { label: 'Polityka prywatności', href: '/polityka-prywatnosci' },
   { label: 'Regulamin', href: '/regulamin' },
-  { label: 'Reklamacje', href: '/regulamin#reklamacje' },
   {
     label: 'Zgłoś problem z dostępnością',
     href: 'mailto:kontakt@syntance.com?subject=Zg%C5%82oszenie%20problemu%20z%20dost%C4%99pno%C5%9Bci%C4%85',
