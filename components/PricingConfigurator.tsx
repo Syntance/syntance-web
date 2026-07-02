@@ -824,7 +824,7 @@ export function PricingConfigurator({ data }: Props) {
                   <span className="text-gray-400 whitespace-nowrap">{calculation.priceBrutto.toLocaleString('pl-PL')} PLN</span>
                 </div>
                 <div className="flex justify-between text-xs sm:text-sm gap-1 sm:gap-2 min-w-0">
-                  <span className="text-gray-400 truncate">Zaliczka ({config?.depositPercent || 20}%)</span>
+                  <span className="text-gray-400 truncate">Zadatek ({config?.depositPercent || 20}%)</span>
                   <span className="text-purple-400 font-medium whitespace-nowrap">{calculation.deposit.toLocaleString('pl-PL')} PLN</span>
                 </div>
               </div>
