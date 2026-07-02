@@ -83,7 +83,6 @@ export function StrategyCTA() {
 
             <ContactForm 
               idPrefix="strategy-cta"
-              showFullRodo={false}
               source="strategy-page-cta"
             />
 
