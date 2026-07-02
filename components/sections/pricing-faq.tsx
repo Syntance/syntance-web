@@ -172,7 +172,6 @@ export function PricingFAQ({ items }: PricingFAQProps = {}) {
             <div>
               <ContactForm 
                 idPrefix="faq" 
-                showFullRodo={true} 
                 source="pricing-faq"
               />
             </div>

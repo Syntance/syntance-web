@@ -194,7 +194,7 @@ export default function TermsOfServicePage() {
               </section>
 
               {/* Sekcja 9 */}
-              <section>
+              <section id="reklamacje">
                 <h2 className="text-2xl font-semibold mb-4 text-white">§ 9. Reklamacje</h2>
                 <p className="text-gray-400 leading-relaxed mb-3">
                   <strong>9.1.</strong> Użytkownik może składać reklamacje dotyczące funkcjonowania Serwisu lub jakości świadczonych Usług Elektronicznych.

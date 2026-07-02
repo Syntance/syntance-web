@@ -7,6 +7,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import { ContactForm } from "@/components/contact-form";
 // Import sections - bez lazy loadingu dla hero, żeby uniknąć flashowania kontaktu
 import HeroStudio from "@/components/sections/hero-studio";
+import Footer from "@/components/sections/footer";
 const AnatomyStudio = dynamic(() => import("@/components/sections/anatomy-studio"), { ssr: true });
 const ValuesStudio = dynamic(() => import("@/components/sections/values-studio"), { ssr: true });
 const TechComparison = dynamic(() => import("@/components/sections/tech-comparison"), { ssr: true });
@@ -84,21 +85,14 @@ export default function HomePage() {
 
                 </address>
 
-                <ContactForm idPrefix="home" source="homepage" showFullRodo={true} />
+                <ContactForm idPrefix="home" source="homepage" />
               </div>
             </AnimatedSection>
           </div>
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-gray-900 pt-16 pb-12 px-6 lg:px-12">
-        <div className="max-w-6xl mx-auto">
-          <p className="text-center text-sm font-light tracking-wider text-gray-400">
-            © Syntance — Strony i sklepy, które działają.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowLeft, ArrowUpRight, ExternalLink } from 'lucide-react'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
+import Footer from '@/components/sections/footer'
 import { AdminPanelShowcase } from '@/components/sections/portfolio/admin-panel-showcase'
 import {
   PerformanceBeforeAfter,
@@ -206,6 +207,7 @@ export default function CaseStudyClient({ project }: { project: PortfolioCaseStu
           </Link>
         </div>
       </section>
+      <Footer />
     </div>
   )
 }

@@ -18,6 +18,7 @@ import SubpageScrollbar from '@/components/SubpageScrollbar'
 import { ContactForm } from '@/components/contact-form'
 import type { SimpleFaqQA } from '@/lib/data/faq'
 import { AnalyticsEvent, trackAnalyticsEvent } from '@/lib/analytics'
+import Footer from '@/components/sections/footer'
 
 const FORM_SECTION_ID = 'form-partnerski'
 
@@ -614,7 +615,6 @@ export default function AgencjeMarketingoweClient({ faqItems }: { faqItems: Simp
             <ContactForm
               idPrefix="agencje-wl"
               source="agencje-marketingowe"
-              showFullRodo
             />
           </div>
 
@@ -629,6 +629,7 @@ export default function AgencjeMarketingoweClient({ faqItems }: { faqItems: Simp
           </p>
         </AnimatedSection>
       </section>
+      <Footer />
     </div>
   )
 }

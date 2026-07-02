@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowUpRight, ExternalLink } from 'lucide-react'
 import StickyCtaFloat from '@/components/StickyCtaFloat'
+import Footer from '@/components/sections/footer'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
 import { PerformanceTeaser } from '@/components/sections/portfolio/performance-before-after'
 import {
@@ -250,6 +251,7 @@ export default function PortfolioPageClient({
           </div>
         </AnimatedSection>
       </section>
+      <Footer />
     </div>
   )
 }

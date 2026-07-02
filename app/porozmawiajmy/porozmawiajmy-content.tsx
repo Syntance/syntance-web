@@ -26,6 +26,7 @@ import TiltCard from '@/components/tilt-card'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
 import StickyCtaFloat from '@/components/StickyCtaFloat'
 import { AnalyticsEvent, trackAnalyticsEvent } from '@/lib/analytics'
+import Footer from '@/components/sections/footer'
 
 /* ─────────────────────────────────────────────────────────
    DANE STATYCZNE
@@ -834,25 +835,7 @@ export default function PorozmawiajmyContent() {
         </div>
       </section>
 
-      {/* ─── FOOTER ───────────────────────────────────────────────── */}
-      <footer className="relative z-10 border-t border-gray-900 px-6 py-12 lg:px-12">
-        <div className="mx-auto max-w-5xl">
-          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-            <Link href="/" className="text-sm font-medium text-gray-400 transition-colors hover:text-white">
-              Syntance — strategia, strony, sklepy
-            </Link>
-            <div className="flex items-center gap-6 text-sm text-gray-500">
-              <span>© {new Date().getFullYear()}</span>
-              <Link href="/polityka-prywatnosci" className="transition-colors hover:text-gray-300">
-                Polityka prywatności
-              </Link>
-              <a href="mailto:kamil@syntance.com" className="transition-colors hover:text-gray-300">
-                kamil@syntance.com
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }

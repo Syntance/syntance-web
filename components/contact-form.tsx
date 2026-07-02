@@ -2,13 +2,10 @@
 
 import { useState } from 'react'
 import { AnalyticsEvent, trackAnalyticsEvent } from '@/lib/analytics'
-import { legalAdministratorName, legalContactEmail, legalNip, legalTradeName } from '@/lib/data/legal-entity'
 
 interface ContactFormProps {
   /** Unikalny prefix dla ID formularza (dla multiple forms na jednej stronie) */
   idPrefix?: string
-  /** Czy pokazać pełną klauzulę RODO */
-  showFullRodo?: boolean
   /** Źródło formularza (do śledzenia w analytics) */
   source?: string
   /** Klasy CSS dla kontenera */
@@ -17,7 +14,6 @@ interface ContactFormProps {
 
 export function ContactForm({ 
   idPrefix = 'contact', 
-  showFullRodo = true,
   source = 'website',
   className = ''
 }: ContactFormProps) {
@@ -227,36 +223,19 @@ export function ContactForm({
           className="mt-1 h-4 w-4 rounded border-gray-700 bg-white/5 text-purple-500 focus:ring-purple-500 focus:ring-offset-gray-900"
           required
         />
-        <label htmlFor={`${idPrefix}-consent`} className="text-sm text-gray-400 leading-relaxed">
-          Akceptuję <a href="/polityka-prywatnosci" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-400 underline">Politykę Prywatności</a>
+        <label htmlFor={`${idPrefix}-consent`} className="text-sm text-gray-300 leading-relaxed">
+          Akceptuję{' '}
+          <a
+            href="/polityka-prywatnosci"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-300 underline underline-offset-4 hover:text-white"
+          >
+            Politykę Prywatności
+          </a>
           <span className="text-red-400 ml-1">*</span>
         </label>
       </div>
-      
-      {/* Klauzula informacyjna RODO */}
-      {showFullRodo && (
-        <div className="text-xs text-gray-400 space-y-1">
-          <p>
-            Administratorem Twoich danych osobowych jest <strong>{legalAdministratorName}</strong>, prowadzący jednoosobową działalność gospodarczą pod firmą <strong>{legalTradeName}</strong>, z siedzibą w Czerniec 72, 33-390 Łącko, NIP: {legalNip}, e-mail:{" "}
-            <a href={`mailto:${legalContactEmail}`} className="text-gray-400 hover:text-gray-400 underline">
-              {legalContactEmail}
-            </a>
-            .
-          </p>
-          <p>
-            Dane podane w formularzu będą przetwarzane wyłącznie w celu udzielenia odpowiedzi na Twoje zapytanie lub przedstawienia oferty, na podstawie art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes administratora).
-          </p>
-          <p>
-            Twoje dane nie będą udostępniane innym podmiotom, z wyjątkiem podmiotów świadczących usługi hostingowe i techniczne na rzecz administratora.
-          </p>
-          <p>
-            Masz prawo dostępu do swoich danych, ich sprostowania, usunięcia, ograniczenia przetwarzania oraz wniesienia sprzeciwu.
-          </p>
-          <p>
-            Więcej informacji znajdziesz w <a href="/polityka-prywatnosci" className="text-gray-400 hover:text-gray-400 underline font-medium">Polityce Prywatności</a> na naszej stronie.
-          </p>
-        </div>
-      )}
       
       {formStatus === 'success' && (
         <div

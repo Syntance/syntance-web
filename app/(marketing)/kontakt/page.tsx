@@ -8,6 +8,7 @@ import { discoveryPriceNetFromConfig } from '@/lib/pricing-calculator'
 import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
 import { fetchFaqSettings, resolveKontaktFaq } from '@/lib/faq-data'
 import { legalAdministratorName, legalEntityLabel, legalNip, legalTradeName } from '@/lib/data/legal-entity'
+import Footer from '@/components/sections/footer'
 
 export const metadata: Metadata = {
   title: 'Kontakt — Syntance | Strony i sklepy Next.js',
@@ -170,7 +171,6 @@ export default async function KontaktPage() {
                   <ContactForm 
                     idPrefix="kontakt-page" 
                     source="kontakt-page"
-                    showFullRodo={true}
                   />
                 </div>
               </div>
@@ -234,32 +234,7 @@ export default async function KontaktPage() {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="relative z-10 border-t border-gray-900 pt-16 pb-12 px-6 lg:px-12">
-          <div className="max-w-6xl mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-              <Link href="/" className="text-gray-400 hover:text-white transition-colors font-medium">
-                ← Powrót do strony głównej
-              </Link>
-              <div className="flex gap-6">
-                <Link href="/o-nas" className="text-gray-400 hover:text-white transition-colors">
-                  O nas
-                </Link>
-                <Link href="/cennik" className="text-gray-400 hover:text-white transition-colors">
-                  Cennik
-                </Link>
-                <Link href="/polityka-prywatnosci" className="text-gray-400 hover:text-white transition-colors">
-                  Prywatność
-                </Link>
-              </div>
-            </div>
-            <div className="mt-12 pt-8 border-t border-gray-900">
-              <p className="text-center text-sm font-light tracking-wider text-gray-400">
-                © Syntance — Strony i sklepy, które działają.
-              </p>
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </div>
     </>
   )

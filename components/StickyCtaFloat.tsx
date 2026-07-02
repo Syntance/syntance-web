@@ -221,6 +221,28 @@ function StickyCtaFloatInner({
   }, [hideSectionId])
 
   useEffect(() => {
+    const footer = document.getElementById('site-footer')
+    if (!footer) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const el = elRef.current
+        if (!el || !isFixedRef.current) return
+        if (entry.isIntersecting) {
+          el.style.opacity = '0'
+          el.style.pointerEvents = 'none'
+        } else {
+          el.style.opacity = ''
+          el.style.pointerEvents = ''
+        }
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -64px 0px' },
+    )
+    observer.observe(footer)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
     const checkMenuState = () => {
       const el = elRef.current
       if (!el) return

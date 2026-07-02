@@ -6,6 +6,7 @@ import { fetchPricingData } from '@/lib/pricing-data'
 import { discoveryPriceNetFromConfig } from '@/lib/pricing-calculator'
 import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
 import { fetchFaqSettings, resolveCennikFaqItems } from '@/lib/faq-data'
+import Footer from '@/components/sections/footer'
 
 // Wymusza dynamiczne renderowanie - dane zawsze świeże z Sanity
 export const dynamic = 'force-dynamic'
@@ -95,21 +96,7 @@ export default async function CennikPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-gray-900 pt-16 pb-12 px-6 lg:px-12">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex justify-center">
-            <Link href="/" className="text-gray-400 hover:text-white transition-colors font-medium">
-              ← Powrót do strony głównej
-            </Link>
-          </div>
-          <div className="mt-12 pt-8 border-t border-gray-900">
-            <p className="text-center text-sm font-light tracking-wider text-gray-400">
-              © Syntance — Strony i sklepy, które działają.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }

@@ -5,6 +5,7 @@ import { Cookie, X, Settings, Shield, BarChart3, CheckCircle2 } from 'lucide-rea
 import {
   type CookiePreferences,
   COOKIE_CONSENT_KEY,
+  COOKIE_SETTINGS_OPEN_EVENT,
   notifyCookieConsentUpdated,
 } from '@/lib/consent'
 
@@ -67,6 +68,16 @@ export function CookieBanner() {
       window.removeEventListener('load', arm)
       cleanup()
     }
+  }, [])
+
+  useEffect(() => {
+    const handleOpenSettings = () => {
+      setShowSettings(true)
+      setIsVisible(true)
+    }
+
+    window.addEventListener(COOKIE_SETTINGS_OPEN_EVENT, handleOpenSettings)
+    return () => window.removeEventListener(COOKIE_SETTINGS_OPEN_EVENT, handleOpenSettings)
   }, [])
 
   const savePreferences = (prefs: CookiePreferences) => {

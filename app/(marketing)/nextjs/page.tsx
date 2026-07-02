@@ -18,6 +18,7 @@ import TiltCard from '@/components/tilt-card'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
 import { AnalyticsEvent, trackAnalyticsEvent } from '@/lib/analytics'
 import StickyCtaFloat from '@/components/StickyCtaFloat'
+import Footer from '@/components/sections/footer'
 
 // Sekcje dla scrollbar
 const scrollbarSections = [
@@ -399,29 +400,7 @@ export default function NextjsPage() {
         </AnimatedSection>
       </section>
 
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-gray-900 pt-16 pb-12 px-6 lg:px-12">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <Link href="/" className="text-gray-400 hover:text-white transition-colors font-medium">
-              ← Powrót do strony głównej
-            </Link>
-            <div className="flex gap-6">
-              <Link href="/cennik" className="text-gray-400 hover:text-white transition-colors">
-                Cennik
-              </Link>
-              <Link href="/strategia-marketingu-i-sprzedazy" className="text-gray-400 hover:text-white transition-colors">
-                Strategia
-              </Link>
-            </div>
-          </div>
-          <div className="mt-12 pt-8 border-t border-gray-900">
-            <p className="text-center text-sm font-light tracking-wider text-gray-400">
-              © Syntance — Strony i sklepy, które działają.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }

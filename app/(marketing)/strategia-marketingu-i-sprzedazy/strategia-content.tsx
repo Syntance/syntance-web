@@ -21,6 +21,7 @@ import Link from 'next/link'
 import TiltCard from '@/components/tilt-card'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
 import type { SimpleFaqQA } from '@/lib/data/faq'
+import Footer from '@/components/sections/footer'
 
 const scrollbarSections = [
   { id: "hero-strategia", label: "Start" },
@@ -672,29 +673,7 @@ export default function StrategiaContent({ discoveryPrice, websiteMinNet, faqIte
         </AnimatedSection>
       </section>
 
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-gray-900 pt-16 pb-12 px-6 lg:px-12">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <Link href="/" className="text-gray-400 hover:text-white transition-colors font-medium">
-              ← Powrót do strony głównej
-            </Link>
-            <div className="flex gap-6">
-              <Link href="/cennik" className="text-gray-400 hover:text-white transition-colors">
-                Cennik
-              </Link>
-              <Link href="/nextjs" className="text-gray-400 hover:text-white transition-colors">
-                Technologia
-              </Link>
-            </div>
-          </div>
-          <div className="mt-12 pt-8 border-t border-gray-900">
-            <p className="text-center text-sm font-light tracking-wider text-gray-400">
-              © Syntance — Strony i sklepy, które działają.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }

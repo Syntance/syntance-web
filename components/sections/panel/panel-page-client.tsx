@@ -9,6 +9,7 @@ import SubpageScrollbar from '@/components/SubpageScrollbar'
 import StickyCtaFloat from '@/components/StickyCtaFloat'
 import PanelMock from '@/components/sections/panel/panel-mock'
 import PricingStudioNew from '@/components/sections/pricing-studio-new'
+import Footer from '@/components/sections/footer'
 import {
   ANALYTICS_BULLETS,
   PANEL_FAQ,
@@ -386,14 +387,7 @@ export default function PanelPageClient() {
       {/* 9. Cennik — ta sama sekcja co na stronie głównej */}
       <PricingStudioNew sectionId="panel-cta" headingId="panel-cta-heading" />
 
-      <footer className="relative z-10 border-t border-gray-900 pt-12 pb-10 px-5 md:px-6 lg:px-12">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <Link href="/" className="text-gray-400 hover:text-white transition-colors text-sm">
-            ← Powrót do strony głównej
-          </Link>
-          <p className="text-xs text-gray-500">Panel do zarządzania sklepem internetowym · Syntance</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }
