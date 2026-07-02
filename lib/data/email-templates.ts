@@ -519,7 +519,7 @@ export const DEFAULT_EMAIL_TEMPLATES: EmailTemplates = {
     footerSecondaryLinkColor: C.footerSmall,
     footerSiteLabel: 'syntance.com',
     footerSiteUrl: 'https://syntance.com',
-    footerEmail: 'biuro@syntance.com',
+    footerEmail: 'kontakt@syntance.com',
     legalNote:
       'Ten email został wysłany automatycznie w odpowiedzi na Twoje zapytanie przez formularz kontaktowy na stronie syntance.com.',
     legalNoteColor: C.subtle,

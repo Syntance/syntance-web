@@ -3,10 +3,11 @@ import NavbarSimple from "@/components/navbar-simple";
 import Footer from "@/components/sections/footer";
 import Container from "@/components/container";
 import VantaBackground from "@/components/vanta-background";
+import { legalAdministratorName, legalEntityLabel, legalTradeName } from "@/lib/data/legal-entity";
 
 export const metadata: Metadata = {
   title: "Polityka Prywatności | Syntance - Ochrona Danych Osobowych",
-  description: "Polityka prywatności Syntance P.S.A. Dowiedz się, jak przetwarzamy i chronimy Twoje dane osobowe zgodnie z RODO. Transparentna ochrona prywatności użytkowników.",
+  description: "Polityka prywatności Syntance. Dowiedz się, jak przetwarzamy i chronimy Twoje dane osobowe zgodnie z RODO. Transparentna ochrona prywatności użytkowników.",
   keywords: ["polityka prywatności", "RODO", "ochrona danych osobowych", "prywatność", "Syntance", "przetwarzanie danych"],
   openGraph: {
     title: "Polityka Prywatności | Syntance",
@@ -36,13 +37,13 @@ export default function PrivacyPolicyPage() {
               <section>
                 <h2 className="text-2xl font-semibold mb-4 text-white">1. Administrator danych osobowych</h2>
                 <p className="text-gray-400 leading-relaxed">
-                  Administratorem Twoich danych osobowych jest <strong>Syntance P.S.A.</strong> (Prosta Spółka Akcyjna), 
+                  Administratorem Twoich danych osobowych jest <strong>{legalAdministratorName}</strong>, prowadzący działalność gospodarczą pod firmą <strong>{legalTradeName}</strong>,
                   z siedzibą w Czerniec 72, 33-390 Łącko, Polska.
                 </p>
                 <p className="text-gray-400 leading-relaxed mt-2">
                   <strong>Kontakt:</strong>
                   <br />
-                  E-mail: <a href="mailto:biuro@syntance.com" className="text-brand hover:underline">biuro@syntance.com</a>
+                  E-mail: <a href="mailto:kontakt@syntance.com" className="text-brand hover:underline">kontakt@syntance.com</a>
                   <br />
                   Telefon: <a href="tel:+48537110170" className="text-brand hover:underline">+48 537 110 170</a>
                 </p>
@@ -174,7 +175,7 @@ export default function PrivacyPolicyPage() {
                   <li><strong>Prawo do skargi</strong> – możesz złożyć skargę do Prezesa Urzędu Ochrony Danych Osobowych (PUODO)</li>
                 </ul>
                 <p className="text-gray-400 leading-relaxed mt-4">
-                  Aby skorzystać z powyższych praw, skontaktuj się z nami: <a href="mailto:biuro@syntance.com" className="text-brand hover:underline">biuro@syntance.com</a>
+                  Aby skorzystać z powyższych praw, skontaktuj się z nami: <a href="mailto:kontakt@syntance.com" className="text-brand hover:underline">kontakt@syntance.com</a>
                 </p>
               </section>
 
@@ -229,11 +230,13 @@ export default function PrivacyPolicyPage() {
                 </p>
                 <div className="mt-3 p-4 bg-white/10 backdrop-blur-sm rounded-lg">
                   <p className="text-gray-400">
-                    <strong>Syntance P.S.A.</strong>
+                    <strong>{legalAdministratorName}</strong>
+                    <br />
+                    firma {legalTradeName}
                     <br />
                     Czerniec 72, 33-390 Łącko
                     <br />
-                    E-mail: <a href="mailto:biuro@syntance.com" className="text-brand hover:underline">biuro@syntance.com</a>
+                    E-mail: <a href="mailto:kontakt@syntance.com" className="text-brand hover:underline">kontakt@syntance.com</a>
                     <br />
                     Telefon: <a href="tel:+48537110170" className="text-brand hover:underline">+48 537 110 170</a>
                   </p>
@@ -253,7 +256,7 @@ export default function PrivacyPolicyPage() {
             "@context": "https://schema.org",
             "@type": "WebPage",
             "name": "Polityka Prywatności",
-            "description": "Polityka prywatności i ochrony danych osobowych Syntance P.S.A. zgodna z RODO",
+            "description": "Polityka prywatności i ochrony danych osobowych Syntance zgodna z RODO",
             "url": "https://syntance.com/polityka-prywatnosci",
             "inLanguage": "pl-PL",
             "isPartOf": {
@@ -263,7 +266,7 @@ export default function PrivacyPolicyPage() {
             },
             "publisher": {
               "@type": "Organization",
-              "name": "Syntance P.S.A.",
+              "name": legalEntityLabel,
               "address": {
                 "@type": "PostalAddress",
                 "streetAddress": "Czerniec 72",
@@ -271,7 +274,7 @@ export default function PrivacyPolicyPage() {
                 "postalCode": "33-390",
                 "addressCountry": "PL"
               },
-              "email": "biuro@syntance.com",
+              "email": "kontakt@syntance.com",
               "telephone": "+48537110170"
             },
             "dateModified": new Date().toISOString(),

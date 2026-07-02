@@ -5,6 +5,7 @@ import {
   mergeSeoSettings,
 } from '@/lib/db/queries/seo'
 import { defaultSeo } from '@/lib/data/seo-defaults'
+import { legalEntityLabel } from '@/lib/data/legal-entity'
 import type { PageSeo, SeoSettings } from '@/lib/data/seo-types'
 
 export type { PageSeo, SeoSettings }
@@ -38,7 +39,7 @@ export async function generateSeoMetadata(pathname?: string): Promise<Metadata> 
     keywords: seo.keywords,
     authors: [{ name: seo.organizationName, url: seo.canonicalUrl }],
     creator: seo.organizationName,
-    publisher: `${seo.organizationName} P.S.A.`,
+    publisher: legalEntityLabel,
     robots: {
       index: true,
       follow: true,

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { AnalyticsEvent, trackAnalyticsEvent } from '@/lib/analytics'
+import { legalAdministratorName, legalContactEmail, legalTradeName } from '@/lib/data/legal-entity'
 
 interface ContactFormProps {
   /** Unikalny prefix dla ID formularza (dla multiple forms na jednej stronie) */
@@ -236,9 +237,9 @@ export function ContactForm({
       {showFullRodo && (
         <div className="text-xs text-gray-400 space-y-1">
           <p>
-            Administratorem Twoich danych osobowych jest <strong>Syntance P.S.A.</strong>, z siedzibą w Czerniec 72, 33-390 Łącko, e-mail:{" "}
-            <a href="mailto:biuro@syntance.com" className="text-gray-400 hover:text-gray-400 underline">
-              biuro@syntance.com
+            Administratorem Twoich danych osobowych jest <strong>{legalAdministratorName}</strong>, prowadzący działalność gospodarczą pod firmą <strong>{legalTradeName}</strong>, z siedzibą w Czerniec 72, 33-390 Łącko, e-mail:{" "}
+            <a href={`mailto:${legalContactEmail}`} className="text-gray-400 hover:text-gray-400 underline">
+              {legalContactEmail}
             </a>
             .
           </p>

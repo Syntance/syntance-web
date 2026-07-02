@@ -80,7 +80,7 @@ export default async function ONasPage() {
             "@context": "https://schema.org",
             "@type": "Organization",
             "name": "Syntance",
-            "alternateName": ["Syntance P.S.A.", "Agencja Syntance"],
+            "alternateName": ["Syntance", "Agencja Syntance"],
             "description": "Agencja interaktywna i software house z Polski specjalizujący się w Next.js, headless CMS i e-commerce.",
             "url": "https://syntance.com",
             "foundingDate": "2024",

@@ -3,10 +3,11 @@ import NavbarSimple from "@/components/navbar-simple";
 import Footer from "@/components/sections/footer";
 import Container from "@/components/container";
 import VantaBackground from "@/components/vanta-background";
+import { legalAdministratorName, legalEntityLabel, legalTradeName } from "@/lib/data/legal-entity";
 
 export const metadata: Metadata = {
   title: "Regulamin Świadczenia Usług Drogą Elektroniczną | Syntance",
-  description: "Regulamin świadczenia usług drogą elektroniczną przez Syntance P.S.A. Zasady korzystania z serwisu, warunki umów, prawa i obowiązki użytkowników.",
+  description: "Regulamin świadczenia usług drogą elektroniczną przez Syntance. Zasady korzystania z serwisu, warunki umów, prawa i obowiązki użytkowników.",
   keywords: ["regulamin", "warunki korzystania", "usługi elektroniczne", "Syntance", "terms of service"],
   openGraph: {
     title: "Regulamin Świadczenia Usług Drogą Elektroniczną | Syntance",
@@ -36,13 +37,13 @@ export default function TermsOfServicePage() {
               <section>
                 <h2 className="text-2xl font-semibold mb-4 text-white">§ 1. Postanowienia ogólne i definicje</h2>
                 <p className="text-gray-400 leading-relaxed mb-3">
-                  <strong>1.1.</strong> Niniejszy Regulamin określa zasady korzystania z serwisu internetowego dostępnego pod adresem <strong>syntance.com</strong> oraz świadczenia usług drogą elektroniczną przez Syntance P.S.A.
+                  <strong>1.1.</strong> Niniejszy Regulamin określa zasady korzystania z serwisu internetowego dostępnego pod adresem <strong>syntance.com</strong> oraz świadczenia usług drogą elektroniczną przez {legalTradeName}.
                 </p>
                 <p className="text-gray-400 leading-relaxed mb-3">
                   <strong>1.2.</strong> Definicje:
                 </p>
                 <ul className="list-disc pl-6 space-y-2 text-gray-400">
-                  <li><strong>Usługodawca</strong> – Syntance P.S.A. (Prosta Spółka Akcyjna), z siedzibą w Czerniec 72, 33-390 Łącko, Polska</li>
+                  <li><strong>Usługodawca</strong> – {legalEntityLabel}, z siedzibą w Czerniec 72, 33-390 Łącko, Polska</li>
                   <li><strong>Serwis</strong> – strona internetowa syntance.com wraz ze wszystkimi podstronami</li>
                   <li><strong>Użytkownik</strong> – osoba fizyczna, osoba prawna lub jednostka organizacyjna nieposiadająca osobowości prawnej, korzystająca z Serwisu</li>
                   <li><strong>Usługi Elektroniczne</strong> – usługi świadczone drogą elektroniczną za pośrednictwem Serwisu, w tym formularz kontaktowy, newsletter, prezentacja oferty</li>
@@ -56,11 +57,13 @@ export default function TermsOfServicePage() {
                 <h2 className="text-2xl font-semibold mb-4 text-white">§ 2. Informacje o Usługodawcy</h2>
                 <div className="p-4 bg-white/10 backdrop-blur-sm rounded-lg">
                   <p className="text-gray-400">
-                    <strong>Syntance P.S.A.</strong>
+                    <strong>{legalAdministratorName}</strong>
+                    <br />
+                    firma {legalTradeName}
                     <br />
                     Czerniec 72, 33-390 Łącko, Polska
                     <br />
-                    E-mail: <a href="mailto:biuro@syntance.com" className="text-brand hover:underline">biuro@syntance.com</a>
+                    E-mail: <a href="mailto:kontakt@syntance.com" className="text-brand hover:underline">kontakt@syntance.com</a>
                     <br />
                     Telefon: <a href="tel:+48537110170" className="text-brand hover:underline">+48 537 110 170</a>
                     <br />
@@ -197,7 +200,7 @@ export default function TermsOfServicePage() {
                   <strong>9.1.</strong> Użytkownik może składać reklamacje dotyczące funkcjonowania Serwisu lub jakości świadczonych Usług Elektronicznych.
                 </p>
                 <p className="text-gray-400 leading-relaxed mb-3">
-                  <strong>9.2.</strong> Reklamację należy przesłać na adres e-mail: <a href="mailto:biuro@syntance.com" className="text-brand hover:underline">biuro@syntance.com</a> z tematem &quot;REKLAMACJA&quot;.
+                  <strong>9.2.</strong> Reklamację należy przesłać na adres e-mail: <a href="mailto:kontakt@syntance.com" className="text-brand hover:underline">kontakt@syntance.com</a> z tematem &quot;REKLAMACJA&quot;.
                 </p>
                 <p className="text-gray-400 leading-relaxed mb-3">
                   <strong>9.3.</strong> Reklamacja powinna zawierać:
@@ -220,7 +223,7 @@ export default function TermsOfServicePage() {
               <section>
                 <h2 className="text-2xl font-semibold mb-4 text-white">§ 10. Ochrona danych osobowych</h2>
                 <p className="text-gray-400 leading-relaxed mb-3">
-                  <strong>10.1.</strong> Administratorem danych osobowych przetwarzanych w związku z korzystaniem z Serwisu jest Syntance P.S.A.
+                  <strong>10.1.</strong> Administratorem danych osobowych przetwarzanych w związku z korzystaniem z Serwisu jest {legalEntityLabel}.
                 </p>
                 <p className="text-gray-400 leading-relaxed mb-3">
                   <strong>10.2.</strong> Szczegółowe informacje o przetwarzaniu danych osobowych, w tym podstawie prawnej, celach, okresie przechowywania oraz prawach Użytkowników, znajdują się w <a href="/polityka-prywatnosci" className="text-brand hover:underline font-medium">Polityce Prywatności</a>.
@@ -283,11 +286,13 @@ export default function TermsOfServicePage() {
                 </p>
                 <div className="p-4 bg-white/10 backdrop-blur-sm rounded-lg">
                   <p className="text-gray-400">
-                    <strong>Syntance P.S.A.</strong>
+                    <strong>{legalAdministratorName}</strong>
+                    <br />
+                    firma {legalTradeName}
                     <br />
                     Czerniec 72, 33-390 Łącko, Polska
                     <br />
-                    E-mail: <a href="mailto:biuro@syntance.com" className="text-brand hover:underline">biuro@syntance.com</a>
+                    E-mail: <a href="mailto:kontakt@syntance.com" className="text-brand hover:underline">kontakt@syntance.com</a>
                     <br />
                     Telefon: <a href="tel:+48537110170" className="text-brand hover:underline">+48 537 110 170</a>
                     <br />
@@ -309,7 +314,7 @@ export default function TermsOfServicePage() {
             "@context": "https://schema.org",
             "@type": "WebPage",
             "name": "Regulamin Świadczenia Usług Drogą Elektroniczną",
-            "description": "Regulamin świadczenia usług drogą elektroniczną przez Syntance P.S.A. - warunki korzystania z serwisu",
+            "description": "Regulamin świadczenia usług drogą elektroniczną przez Syntance — warunki korzystania z serwisu",
             "url": "https://syntance.com/regulamin",
             "inLanguage": "pl-PL",
             "isPartOf": {
@@ -319,7 +324,7 @@ export default function TermsOfServicePage() {
             },
             "publisher": {
               "@type": "Organization",
-              "name": "Syntance P.S.A.",
+              "name": legalEntityLabel,
               "address": {
                 "@type": "PostalAddress",
                 "streetAddress": "Czerniec 72",
@@ -327,7 +332,7 @@ export default function TermsOfServicePage() {
                 "postalCode": "33-390",
                 "addressCountry": "PL"
               },
-              "email": "biuro@syntance.com",
+              "email": "kontakt@syntance.com",
               "telephone": "+48537110170"
             },
             "dateModified": new Date().toISOString(),
