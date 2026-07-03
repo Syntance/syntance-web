@@ -3,7 +3,14 @@
 import { useRef, useState } from 'react'
 import Image from 'next/image'
 import { Loader2, Upload } from 'lucide-react'
-import type { PerformanceDevice, PortfolioPerformanceReport, PsiCoreMetrics } from '@/lib/portfolio-performance'
+import {
+  DEFAULT_PERFORMANCE_INTRO,
+  PSI_SCORE_METRIC_FIELDS,
+  PSI_TIMING_METRIC_FIELDS,
+  type PerformanceDevice,
+  type PortfolioPerformanceReport,
+  type PsiCoreMetrics,
+} from '@/lib/portfolio-performance'
 import {
   PAGESPEED_SCREENSHOT_SLOTS,
   createEmptyPerformanceReport,
@@ -11,7 +18,7 @@ import {
   patchDeviceReport,
   type PageSpeedScreenshotSlot,
 } from '@/lib/magazyn/portfolio-performance-cms'
-import { Field, StringListEditor, magazynInputClass } from '@/components/magazyn/ui'
+import { Field, StringListEditor, magazynInputClass, magazynTextareaClass } from '@/components/magazyn/ui'
 
 type Props = {
   slug: string
@@ -37,13 +44,10 @@ function MetricFields({
   const deviceReport = getDeviceReport(report, phase, device)
 
   function patchMetrics(field: keyof PsiCoreMetrics, value: string) {
-    const numericFields: Array<keyof PsiCoreMetrics> = [
-      'performance',
-      'accessibility',
-      'bestPractices',
-      'seo',
-    ]
-    const parsed = numericFields.includes(field) ? Number.parseInt(value, 10) || 0 : value
+    const numericFields = PSI_SCORE_METRIC_FIELDS.map((item) => item.key)
+    const parsed = numericFields.includes(field as (typeof numericFields)[number])
+      ? Number.parseInt(value, 10) || 0
+      : value
     onChange(
       patchDeviceReport(report, phase, device, {
         metrics: { ...deviceReport.metrics, [field]: parsed },
@@ -54,7 +58,7 @@ function MetricFields({
   return (
     <div className="rounded-xl border border-white/10 bg-black/20 p-4">
       <p className="mb-3 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">{label}</p>
-      <div className="grid gap-2 sm:grid-cols-2">
+      <div className="space-y-4">
         <label className="block space-y-1">
           <span className="text-xs text-neutral-400">Data pomiaru</span>
           <input
@@ -66,37 +70,51 @@ function MetricFields({
             }
           />
         </label>
+
+        <div>
+          <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.12em] text-neutral-500">
+            Wyniki audytu (0–100)
+          </p>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {PSI_SCORE_METRIC_FIELDS.map(({ key, label: metricLabel, hint }) => (
+              <label key={key} className="block space-y-1">
+                <span className="text-xs text-neutral-400">
+                  {metricLabel} ({hint})
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  className={magazynInputClass}
+                  value={deviceReport.metrics[key] || ''}
+                  onChange={(e) => patchMetrics(key, e.target.value)}
+                />
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.12em] text-neutral-500">
+            Core Web Vitals
+          </p>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {PSI_TIMING_METRIC_FIELDS.map(({ key, label: metricLabel, hint }) => (
+              <label key={key} className="block space-y-1">
+                <span className="text-xs text-neutral-400">{metricLabel}</span>
+                <input
+                  className={magazynInputClass}
+                  value={deviceReport.metrics[key]}
+                  placeholder={hint}
+                  onChange={(e) => patchMetrics(key, e.target.value)}
+                />
+              </label>
+            ))}
+          </div>
+        </div>
+
         <label className="block space-y-1">
-          <span className="text-xs text-neutral-400">Performance (0–100)</span>
-          <input
-            type="number"
-            min={0}
-            max={100}
-            className={magazynInputClass}
-            value={deviceReport.metrics.performance || ''}
-            onChange={(e) => patchMetrics('performance', e.target.value)}
-          />
-        </label>
-        <label className="block space-y-1">
-          <span className="text-xs text-neutral-400">LCP</span>
-          <input
-            className={magazynInputClass}
-            value={deviceReport.metrics.lcp}
-            placeholder="2,5 s"
-            onChange={(e) => patchMetrics('lcp', e.target.value)}
-          />
-        </label>
-        <label className="block space-y-1">
-          <span className="text-xs text-neutral-400">FCP</span>
-          <input
-            className={magazynInputClass}
-            value={deviceReport.metrics.fcp}
-            placeholder="1,1 s"
-            onChange={(e) => patchMetrics('fcp', e.target.value)}
-          />
-        </label>
-        <label className="block space-y-1">
-          <span className="text-xs text-neutral-400">Alt zrzutu</span>
+          <span className="text-xs text-neutral-400">Alt zrzutu ekranu</span>
           <input
             className={magazynInputClass}
             value={deviceReport.screenshotAlt}
@@ -298,11 +316,23 @@ export function PortfolioPerformanceEditor({
 
       {enabled ? (
         <>
-          <Field label="Źródło pomiaru">
+          <Field label="Źródło pomiaru" hint="Np. Google PageSpeed Insights">
             <input
               className={magazynInputClass}
               value={activeReport.source}
               onChange={(e) => updateReport({ ...activeReport, source: e.target.value })}
+            />
+          </Field>
+
+          <Field
+            label="Opis sekcji PageSpeed"
+            hint="Akapit pod nagłówkiem „Jak było → jak jest”. Na stronie: „Pomiary [źródło] — [ten tekst]”."
+          >
+            <textarea
+              className={magazynTextareaClass}
+              value={activeReport.intro ?? ''}
+              placeholder={DEFAULT_PERFORMANCE_INTRO}
+              onChange={(e) => updateReport({ ...activeReport, intro: e.target.value })}
             />
           </Field>
 

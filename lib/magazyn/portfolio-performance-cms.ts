@@ -47,6 +47,7 @@ function emptyDeviceReport(): PsiDeviceReport {
 export function createEmptyPerformanceReport(): PortfolioPerformanceReport {
   return {
     source: 'Google PageSpeed Insights',
+    intro: '',
     before: {
       mobile: emptyDeviceReport(),
       desktop: emptyDeviceReport(),

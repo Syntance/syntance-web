@@ -10,6 +10,33 @@ export type PsiCoreMetrics = {
   cls: string
 }
 
+export const PSI_SCORE_METRIC_FIELDS = [
+  { key: 'performance', label: 'Performance', hint: '0–100' },
+  { key: 'accessibility', label: 'Dostępność', hint: '0–100' },
+  { key: 'bestPractices', label: 'Best Practices', hint: '0–100' },
+  { key: 'seo', label: 'SEO', hint: '0–100' },
+] as const satisfies ReadonlyArray<{
+  key: keyof Pick<PsiCoreMetrics, 'performance' | 'accessibility' | 'bestPractices' | 'seo'>
+  label: string
+  hint: string
+}>
+
+export const PSI_TIMING_METRIC_FIELDS = [
+  { key: 'fcp', label: 'FCP', displayLabel: 'First Contentful Paint', hint: 'np. 1,1 s' },
+  { key: 'lcp', label: 'LCP', displayLabel: 'Largest Contentful Paint', hint: 'np. 2,5 s' },
+  { key: 'tbt', label: 'TBT', displayLabel: 'Total Blocking Time', hint: 'np. 40 ms' },
+  { key: 'speedIndex', label: 'Speed Index', displayLabel: 'Speed Index', hint: 'np. 2,8 s' },
+  { key: 'cls', label: 'CLS', displayLabel: 'Cumulative Layout Shift', hint: 'np. 0,083' },
+] as const satisfies ReadonlyArray<{
+  key: keyof Pick<PsiCoreMetrics, 'fcp' | 'lcp' | 'tbt' | 'speedIndex' | 'cls'>
+  label: string
+  displayLabel: string
+  hint: string
+}>
+
+export const DEFAULT_PERFORMANCE_INTRO =
+  'stan po migracji z WordPress na headless (Next.js + Medusa). Porównanie przed wdrożeniem optymalizacji i po publikacji nowego stacku.'
+
 export type PsiDeviceReport = {
   measuredAt: string
   metrics: PsiCoreMetrics
@@ -19,6 +46,8 @@ export type PsiDeviceReport = {
 
 export type PortfolioPerformanceReport = {
   source: string
+  /** Akapit pod nagłówkiem sekcji PageSpeed na case study. */
+  intro?: string
   before: {
     mobile: PsiDeviceReport
     desktop: PsiDeviceReport

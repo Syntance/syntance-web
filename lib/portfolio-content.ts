@@ -66,6 +66,8 @@ export function getPortfolioSeedFlags(id: string): PortfolioCaseStudyFlags {
 
 const LUMINE_PERFORMANCE: PortfolioPerformanceReport = {
   source: 'Google PageSpeed Insights',
+  intro:
+    'stan po migracji z WordPress na headless (Next.js + Medusa). Porównanie przed wdrożeniem optymalizacji i po publikacji nowego stacku.',
   before: {
     mobile: {
       measuredAt: '7 cze 2026',

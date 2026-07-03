@@ -3,26 +3,23 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import {
+  DEFAULT_PERFORMANCE_INTRO,
+  PSI_SCORE_METRIC_FIELDS,
+  PSI_TIMING_METRIC_FIELDS,
   scoreColorClass,
   scoreRingClass,
   type PerformanceDevice,
   type PortfolioPerformanceReport,
-  type PsiCoreMetrics,
 } from '@/lib/portfolio-performance'
 
-const METRIC_LABELS: Array<{ key: keyof PsiCoreMetrics; label: string }> = [
-  { key: 'fcp', label: 'First Contentful Paint' },
-  { key: 'lcp', label: 'Largest Contentful Paint' },
-  { key: 'tbt', label: 'Total Blocking Time' },
-  { key: 'speedIndex', label: 'Speed Index' },
-  { key: 'cls', label: 'Cumulative Layout Shift' },
-]
+const METRIC_LABELS = PSI_TIMING_METRIC_FIELDS.map(({ key, displayLabel }) => ({
+  key,
+  label: displayLabel,
+}))
 
-const AUDIT_LABELS: Array<{ key: keyof Pick<PsiCoreMetrics, 'accessibility' | 'bestPractices' | 'seo'>; label: string }> = [
-  { key: 'accessibility', label: 'Dostępność' },
-  { key: 'bestPractices', label: 'Best Practices' },
-  { key: 'seo', label: 'SEO' },
-]
+const AUDIT_LABELS = PSI_SCORE_METRIC_FIELDS.filter(({ key }) => key !== 'performance').map(
+  ({ key, label }) => ({ key, label }),
+)
 
 function ScoreBadge({ score, label }: { score: number; label: string }) {
   return (
@@ -143,8 +140,7 @@ export function PerformanceBeforeAfter({ report }: { report: PortfolioPerformanc
             Jak było → jak jest
           </h2>
           <p className="mt-2 max-w-xl text-sm leading-relaxed text-neutral-400">
-            Pomiary {report.source} — stan po migracji z WordPress na headless (Next.js + Medusa).
-            Porównanie przed wdrożeniem optymalizacji i po publikacji nowego stacku.
+            Pomiary {report.source} — {report.intro?.trim() || DEFAULT_PERFORMANCE_INTRO}
           </p>
         </div>
 
