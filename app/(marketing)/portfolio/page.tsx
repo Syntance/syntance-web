@@ -3,6 +3,8 @@ import { fetchPortfolioItems } from '@/lib/portfolio-data'
 
 const canonical = 'https://syntance.com/portfolio'
 
+export const revalidate = 300
+
 export default async function PortfolioPage() {
   const projects = await fetchPortfolioItems()
 

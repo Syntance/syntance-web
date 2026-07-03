@@ -132,6 +132,7 @@ function ScreenshotUploadField({
   const inputRef = useRef<HTMLInputElement>(null)
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [notice, setNotice] = useState<string | null>(null)
 
   async function handleFile(file: File) {
     if (!slug.trim()) {
@@ -141,6 +142,7 @@ function ScreenshotUploadField({
 
     setPending(true)
     setError(null)
+    setNotice(null)
     try {
       const body = new FormData()
       body.set('slug', slug)
@@ -151,11 +153,21 @@ function ScreenshotUploadField({
         method: 'POST',
         body,
       })
-      const data = (await res.json()) as { url?: string; error?: string }
+      const data = (await res.json()) as {
+        url?: string
+        error?: string
+        warning?: string
+        persisted?: boolean
+      }
       if (!res.ok || !data.url) {
         throw new Error(data.error ?? 'Upload nie powiódł się.')
       }
       onUploaded(data.url)
+      setNotice(
+        data.persisted
+          ? 'Zrzut zapisany w bazie — podgląd odświeżony.'
+          : (data.warning ?? 'Zrzut wgrany — kliknij „Zapisz portfolio”, żeby utrwalić URL.'),
+      )
     } catch (uploadError) {
       setError(uploadError instanceof Error ? uploadError.message : 'Upload nie powiódł się.')
     } finally {
@@ -170,7 +182,15 @@ function ScreenshotUploadField({
 
       {url ? (
         <div className="relative mb-3 aspect-[390/520] overflow-hidden rounded-lg border border-white/10 bg-neutral-950">
-          <Image src={url} alt={alt || label} fill sizes="200px" className="object-cover object-top" />
+          <Image
+            key={url}
+            src={url}
+            alt={alt || label}
+            fill
+            sizes="200px"
+            className="object-cover object-top"
+            unoptimized={url.includes('blob.vercel-storage.com')}
+          />
         </div>
       ) : (
         <div className="mb-3 flex aspect-[390/520] items-center justify-center rounded-lg border border-dashed border-white/10 bg-neutral-950/50 text-xs text-neutral-500">
@@ -216,6 +236,7 @@ function ScreenshotUploadField({
         </div>
 
         {error ? <p className="text-xs text-red-400">{error}</p> : null}
+        {notice ? <p className="text-xs text-emerald-400">{notice}</p> : null}
       </div>
     </div>
   )

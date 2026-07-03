@@ -230,11 +230,13 @@ export function PerformanceBeforeAfter({ report }: { report: PortfolioPerformanc
           </div>
           <div className="relative aspect-[390/520] w-full bg-neutral-950">
             <Image
+              key={before.screenshot}
               src={before.screenshot}
               alt={before.screenshotAlt}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover object-top"
+              unoptimized={before.screenshot.includes('blob.vercel-storage.com')}
             />
           </div>
         </figure>
@@ -244,11 +246,13 @@ export function PerformanceBeforeAfter({ report }: { report: PortfolioPerformanc
           </div>
           <div className="relative aspect-[390/520] w-full bg-neutral-950">
             <Image
+              key={after.screenshot}
               src={after.screenshot}
               alt={after.screenshotAlt}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover object-top"
+              unoptimized={after.screenshot.includes('blob.vercel-storage.com')}
             />
           </div>
         </figure>

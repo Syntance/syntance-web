@@ -7,6 +7,8 @@ type Props = {
   params: Promise<{ slug: string }>
 }
 
+export const revalidate = 300
+
 export async function generateStaticParams() {
   const slugs = await listPortfolioSlugs()
   return slugs.map((slug) => ({ slug }))

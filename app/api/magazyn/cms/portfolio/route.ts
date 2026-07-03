@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache'
 import { NextResponse } from 'next/server'
 import { requireAdminSession } from '@/lib/admin-auth'
 import { replaceAllPortfolioItems } from '@/lib/db/queries/portfolio'
@@ -34,8 +35,7 @@ export async function PUT(request: Request) {
       adminGalleryEnabled?: boolean
     }>
   }
-  await replaceAllPortfolioItems(
-    body.items.map((item) => ({
+  const items = body.items.map((item) => ({
       id: item.id,
       sanityId: item.sanityId ?? undefined,
       slug: item.slug,
@@ -56,7 +56,16 @@ export async function PUT(request: Request) {
       disabled: item.disabled,
       caseStudyEnabled: item.caseStudyEnabled,
       adminGalleryEnabled: item.adminGalleryEnabled,
-    })),
-  )
+    }))
+
+  await replaceAllPortfolioItems(items)
+
+  for (const item of items) {
+    if (item.slug.trim()) {
+      revalidatePath(`/portfolio/${item.slug}`)
+    }
+  }
+  revalidatePath('/portfolio')
+
   return NextResponse.json({ ok: true })
 }

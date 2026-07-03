@@ -249,17 +249,19 @@ export function CmsClient({
             ...item,
             highlights: (item.highlights ?? []).filter((line) => line.trim()),
             stack: (item.stack ?? []).filter((line) => line.trim()),
-            performance:
-              item.performance && item.performance.improvements
-                ? {
-                    ...item.performance,
-                    improvements: item.performance.improvements.filter((line) => line.trim()),
-                  }
-                : item.performance,
+            performance: item.performance
+              ? {
+                  ...item.performance,
+                  improvements: (item.performance.improvements ?? []).filter((line) => line.trim()),
+                }
+              : item.performance,
           })),
         }),
       })
-      if (!res.ok) throw new Error('Zapis portfolio nie powiódł się')
+      if (!res.ok) {
+        const payload = (await res.json().catch(() => null)) as { error?: string } | null
+        throw new Error(payload?.error ?? 'Zapis portfolio nie powiódł się')
+      }
       setStatus('Portfolio zapisane.')
     } catch (e) {
       setError(true)

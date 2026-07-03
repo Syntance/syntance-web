@@ -11,6 +11,27 @@ import {
 const MAX_BYTES = 5 * 1024 * 1024
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 
+/** Po nadpisaniu pliku w Blob/CDN URL się nie zmienia — bust cache dla podglądu CMS i frontu. */
+export function withAssetCacheBust(url: string, version = Date.now()): string {
+  if (!url.trim()) return url
+
+  if (url.startsWith('/')) {
+    const [pathname, query = ''] = url.split('?', 2)
+    const params = new URLSearchParams(query)
+    params.set('v', String(version))
+    const nextQuery = params.toString()
+    return nextQuery ? `${pathname}?${nextQuery}` : pathname
+  }
+
+  try {
+    const parsed = new URL(url)
+    parsed.searchParams.set('v', String(version))
+    return parsed.toString()
+  } catch {
+    return url
+  }
+}
+
 export function isValidPortfolioSlug(slug: string): boolean {
   return SLUG_PATTERN.test(slug)
 }
@@ -50,7 +71,7 @@ export async function savePortfolioPageSpeedScreenshot(
       addRandomSuffix: false,
       allowOverwrite: true,
     })
-    return { url: blob.url }
+    return { url: withAssetCacheBust(blob.url) }
   }
 
   if (process.env.VERCEL === '1') {
@@ -64,5 +85,5 @@ export async function savePortfolioPageSpeedScreenshot(
   await mkdir(absoluteDir, { recursive: true })
   await writeFile(path.join(absoluteDir, filename), webpBuffer)
 
-  return { url: publicPathForPageSpeedScreenshot(slug, slot) }
+  return { url: withAssetCacheBust(publicPathForPageSpeedScreenshot(slug, slot)) }
 }

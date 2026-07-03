@@ -1,6 +1,8 @@
+import { revalidatePath } from 'next/cache'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { requireAdminSession } from '@/lib/admin-auth'
+import { patchPortfolioPerformanceScreenshotBySlug } from '@/lib/db/queries/portfolio'
 import type { PageSpeedScreenshotSlot } from '@/lib/magazyn/portfolio-performance-cms'
 import { isValidPortfolioSlug, savePortfolioPageSpeedScreenshot } from '@/lib/magazyn/portfolio-upload'
 
@@ -50,7 +52,28 @@ export async function POST(request: Request) {
       parsed.data.slug,
       parsed.data.slot,
     )
-    return NextResponse.json({ url })
+
+    const persisted = await patchPortfolioPerformanceScreenshotBySlug(
+      parsed.data.slug,
+      parsed.data.slot,
+      url,
+    )
+
+    if (persisted) {
+      revalidatePath(`/portfolio/${parsed.data.slug}`)
+      revalidatePath('/portfolio')
+    }
+
+    return NextResponse.json({
+      url,
+      persisted,
+      ...(persisted
+        ? {}
+        : {
+            warning:
+              'Plik wgrany, ale brak wpisu w bazie — kliknij „Zapisz portfolio”, żeby utrwalić URL.',
+          }),
+    })
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Upload nie powiódł się.'
     return NextResponse.json({ error: message }, { status: 400 })

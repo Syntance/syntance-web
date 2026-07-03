@@ -4,6 +4,11 @@ import { portfolioItems } from '@/lib/db/schema'
 import type { PortfolioProjectType } from '@/lib/portfolio-content'
 import { getPortfolioTypeLabel } from '@/lib/portfolio-content'
 import type { PortfolioPerformanceReport } from '@/lib/portfolio-performance'
+import {
+  createEmptyPerformanceReport,
+  patchPerformanceScreenshot,
+  type PageSpeedScreenshotSlot,
+} from '@/lib/magazyn/portfolio-performance-cms'
 
 export type PortfolioDbRow = typeof portfolioItems.$inferSelect
 
@@ -158,6 +163,34 @@ export async function replaceAllPortfolioItems(
       adminGalleryEnabled: item.adminGalleryEnabled ?? false,
     })),
   )
+}
+
+export async function patchPortfolioPerformanceScreenshotBySlug(
+  slug: string,
+  slot: PageSpeedScreenshotSlot,
+  screenshot: string,
+  screenshotAlt?: string,
+): Promise<boolean> {
+  if (!hasDb()) return false
+
+  const db = getDb()
+  const rows = await db
+    .select()
+    .from(portfolioItems)
+    .where(eq(portfolioItems.slug, slug))
+    .limit(1)
+  const row = rows[0]
+  if (!row) return false
+
+  const report = row.performance ?? createEmptyPerformanceReport()
+  const updated = patchPerformanceScreenshot(report, slot, screenshot, screenshotAlt)
+
+  await db
+    .update(portfolioItems)
+    .set({ performance: updated })
+    .where(eq(portfolioItems.id, row.id))
+
+  return true
 }
 
 export type { PortfolioItemRecord as PortfolioItem }
