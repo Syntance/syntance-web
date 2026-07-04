@@ -224,14 +224,15 @@ export function PerformanceBeforeAfter({ report }: { report: PortfolioPerformanc
           <div className="border-b border-white/10 px-4 py-2 text-xs text-neutral-500">
             Przed · {before.measuredAt}
           </div>
-          <div className="relative aspect-[390/520] w-full bg-neutral-950">
+          <div className="w-full bg-neutral-950">
             <Image
               key={before.screenshot}
               src={before.screenshot}
               alt={before.screenshotAlt}
-              fill
+              width={0}
+              height={0}
               sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover object-top"
+              className="h-auto w-full"
               unoptimized={before.screenshot.includes('blob.vercel-storage.com')}
             />
           </div>
@@ -240,14 +241,15 @@ export function PerformanceBeforeAfter({ report }: { report: PortfolioPerformanc
           <div className="border-b border-white/10 px-4 py-2 text-xs text-neutral-500">
             Po · {after.measuredAt}
           </div>
-          <div className="relative aspect-[390/520] w-full bg-neutral-950">
+          <div className="w-full bg-neutral-950">
             <Image
               key={after.screenshot}
               src={after.screenshot}
               alt={after.screenshotAlt}
-              fill
+              width={0}
+              height={0}
               sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover object-top"
+              className="h-auto w-full"
               unoptimized={after.screenshot.includes('blob.vercel-storage.com')}
             />
           </div>
