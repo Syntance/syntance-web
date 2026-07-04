@@ -11,7 +11,7 @@ import {
   type FooterLink,
 } from '@/lib/data/footer-navigation'
 import {
-  legalAdministratorName,
+  legalFormLabel,
   legalContactEmail,
   legalContactPhone,
   legalNip,
@@ -95,7 +95,7 @@ export default function Footer({ className }: FooterProps) {
               Strony i sklepy Next.js z naciskiem na strategię, wydajność i konwersję.
             </p>
             <address className="mt-6 not-italic text-sm font-light leading-relaxed text-zinc-400 space-y-1">
-              <span className="block text-zinc-200">{legalAdministratorName}</span>
+              <span className="block text-zinc-200">{legalFormLabel}</span>
               <span className="block text-zinc-300">{legalTradeName}</span>
               <span className="block">Czerniec 72, 33-390 Łącko</span>
               <span className="block">

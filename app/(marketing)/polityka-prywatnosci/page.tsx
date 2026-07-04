@@ -4,7 +4,7 @@ import Footer from "@/components/sections/footer";
 import Container from "@/components/container";
 import VantaBackground from "@/components/vanta-background";
 import {
-  legalAdministratorName,
+  legalFormLabel,
   legalContactEmail,
   legalContactPhone,
   legalEntityLabel,
@@ -97,7 +97,7 @@ export default function PrivacyPolicyPage() {
               <section>
                 <h2 className="text-2xl font-semibold mb-4 text-white">1. Administrator danych osobowych</h2>
                 <p className="text-gray-400 leading-relaxed">
-                  Administratorem Twoich danych osobowych jest <strong>{legalAdministratorName}</strong>, prowadzący
+                  Administratorem Twoich danych osobowych jest <strong>{legalFormLabel}</strong>, prowadzący
                   jednoosobową działalność gospodarczą pod firmą <strong>{legalTradeName}</strong>, Czerniec 72,
                   33-390 Łącko, NIP: {legalNip}, REGON: {legalRegon} (dalej „Administrator”, „my”).
                 </p>
@@ -367,7 +367,7 @@ export default function PrivacyPolicyPage() {
                 </p>
                 <div className="p-4 bg-white/10 backdrop-blur-sm rounded-lg">
                   <p className="text-gray-400 leading-relaxed">
-                    <strong>{legalAdministratorName}</strong>
+                    <strong>{legalFormLabel}</strong>
                     <br />
                     {legalTradeName}
                     <br />

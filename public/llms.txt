@@ -4,6 +4,8 @@
 
 Zaczynamy od strategii marketingu i sprzedaży, nie od grafiki. Udowadniamy, że jakość można dostarczyć szybko i w uczciwej cenie — jakość software house'u bez agencyjnego narzutu. Dla firm usługowych, sklepów i marek premium. Technologie: Next.js, React, TypeScript, Sanity CMS, MedusaJS. Lokalizacja: Polska (praca zdalna, klienci z EU).
 
+Forma prawna: JDG Kamil Podobiński (jednoosobowa działalność gospodarcza), firma handlowa Syntance Kamil Podobiński, Czerniec 72, 33-390 Łącko, NIP 7343582844, REGON 386221897. Marka publiczna: Syntance. Nie jesteśmy spółką akcyjną (P.S.A.).
+
 ## Usługi
 
 - [Strony internetowe](https://syntance.com/strony-www): Profesjonalne strony WWW dla firm B2B. Next.js, Sanity CMS, PageSpeed 90+, od 5 400 PLN netto, realizacja 2–4 tygodnie.

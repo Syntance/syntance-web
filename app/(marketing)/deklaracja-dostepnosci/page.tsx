@@ -6,7 +6,7 @@ import VantaBackground from '@/components/vanta-background'
 import {
   accessibilityCoordinatorEmail,
   accessibilityStatementLastUpdated,
-  legalAdministratorName,
+  legalFormLabel,
   legalContactEmail,
   legalContactPhone,
   legalEntityLabel,
@@ -122,7 +122,7 @@ export default function AccessibilityStatementPage() {
                 <h2 className="text-2xl font-semibold mb-4 text-white">6. Koordynator dostępności</h2>
                 <div className="p-4 bg-white/10 backdrop-blur-sm rounded-lg">
                   <p className="text-gray-400 leading-relaxed">
-                    <strong>{legalAdministratorName}</strong>
+                    <strong>{legalFormLabel}</strong>
                     <br />
                     {legalTradeName}
                     <br />

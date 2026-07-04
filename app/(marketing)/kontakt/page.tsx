@@ -7,7 +7,7 @@ import { fetchPricingData } from '@/lib/pricing-data'
 import { discoveryPriceNetFromConfig } from '@/lib/pricing-calculator'
 import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
 import { fetchFaqSettings, resolveKontaktFaq } from '@/lib/faq-data'
-import { legalAdministratorName, legalEntityLabel, legalNip, legalTradeName } from '@/lib/data/legal-entity'
+import { legalEntityLabel, legalFormLabel, legalNip, legalTradeName } from '@/lib/data/legal-entity'
 import Footer from '@/components/sections/footer'
 
 export const metadata: Metadata = {
@@ -147,8 +147,8 @@ export default async function KontaktPage() {
                         <MapPin className="w-4 h-4 text-purple-400" />
                       </div>
                       <div className="text-gray-300 text-sm space-y-1">
-                        <div className="text-white font-medium">{legalAdministratorName}</div>
-                        <div className="text-gray-400">{legalTradeName}</div>
+                        <div className="text-white font-medium">{legalFormLabel}</div>
+                        <div className="text-gray-400">firma {legalTradeName}</div>
                         <div>Czerniec 72</div>
                         <div>33-390 Łącko</div>
                         <div className="text-gray-400 pt-2">NIP: {legalNip}</div>

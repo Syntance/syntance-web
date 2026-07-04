@@ -1,3 +1,4 @@
+import { legalEntityLabel, legalFormLabel, legalTradeName } from '@/lib/data/legal-entity'
 import { SeoSettings } from '@/lib/data/seo-types'
 
 interface SchemaProps {
@@ -14,6 +15,8 @@ export function OrganizationSchemaDynamic({ seo }: SchemaProps) {
           "@type": "Organization",
           "@id": `${seo.canonicalUrl}/#organization`,
           name: seo.organizationName,
+          legalName: legalEntityLabel,
+          alternateName: [seo.organizationName, legalFormLabel, legalTradeName],
           url: seo.canonicalUrl,
           logo: `${seo.canonicalUrl}/logo.png`,
           description: seo.organizationDescription,

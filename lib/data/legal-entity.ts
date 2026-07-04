@@ -1,7 +1,8 @@
-/** Administrator danych / usługodawca — forma prawna bez skrótu w copy. */
+/** Administrator danych / usługodawca — forma prawna widoczna w impressum i dla crawlerów AI. */
 export const legalAdministratorName = 'Kamil Podobiński'
+export const legalFormLabel = 'JDG Kamil Podobiński'
 export const legalTradeName = 'Syntance Kamil Podobiński'
-export const legalEntityLabel = `${legalAdministratorName}, prowadzący jednoosobową działalność gospodarczą pod firmą ${legalTradeName}`
+export const legalEntityLabel = `${legalFormLabel}, prowadzący jednoosobową działalność gospodarczą pod firmą ${legalTradeName}`
 export const legalAddressLine = 'Czerniec 72, 33-390 Łącko'
 export const legalNip = '7343582844'
 export const legalRegon = '386221897'
