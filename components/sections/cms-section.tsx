@@ -18,7 +18,7 @@ export default function CMSSection() {
       aria-labelledby="cms-heading"
       className="relative z-10 py-20 md:py-24 px-5 md:px-6 lg:px-12"
     >
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <AnimatedSection>
           <header className="text-center mb-8 md:mb-10">
             <p className="text-[11px] md:text-xs font-medium uppercase tracking-[0.2em] text-purple-300/70 mb-3">
