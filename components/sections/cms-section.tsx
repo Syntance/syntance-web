@@ -1,14 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import GradientText from '@/components/GradientText'
 import AnimatedSection from '@/components/AnimatedSection'
 import PanelOverviewMock from '@/components/sections/panel-overview-mock'
 
 const proofItems = [
   'PageSpeed 90+',
-  'GA4 + PostHog w środku',
-  'RODO w standardzie',
+  'Autorski CMS w standardzie',
+  'RODO',
   '100% Twoje dane',
 ]
 
@@ -23,22 +22,17 @@ export default function CMSSection() {
         <AnimatedSection>
           <header className="text-center mb-8 md:mb-10">
             <p className="text-[11px] md:text-xs font-medium uppercase tracking-[0.2em] text-purple-300/70 mb-3">
-              Panel sklepu Syntance
+              Syntance Panel
             </p>
             <h2
               id="cms-heading"
               className="text-3xl md:text-5xl font-light tracking-tight md:tracking-widest text-white mb-4 md:mb-5 max-w-3xl mx-auto leading-[1.15]"
             >
-              Jeden panel zamiast{' '}
-              <GradientText className="font-medium">pięciu narzędzi</GradientText>.
+              Jeden panel zamiast pięciu narzędzi.
             </h2>
-            <p className="text-sm md:text-lg font-light text-gray-400 max-w-2xl mx-auto leading-relaxed mb-4">
+            <p className="text-sm md:text-lg font-light text-gray-400 max-w-2xl mx-auto leading-relaxed">
               Strona, treści, produkty, zamówienia i analityka — wszystkim zarządzasz z jednego miejsca.
-              Bez Shopify, bez Sanity, bez pięciu logowań.
-            </p>
-            <p className="text-sm md:text-base text-gray-500 max-w-2xl mx-auto leading-relaxed">
-              Nasz CMS eliminuje klasyczny problem wydajności — lekkie treści edytujesz na żywo, a ciężkie
-              elementy kompilowane są w build.
+              Bez Shopify, bez wtyczek, bez pięciu logowań.
             </p>
           </header>
         </AnimatedSection>
@@ -67,7 +61,7 @@ export default function CMSSection() {
               href="/panel"
               className="inline-flex items-center justify-center gap-2 min-h-[48px] px-6 md:px-8 py-3.5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white text-sm md:text-base font-medium tracking-wide transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/25 hover:scale-[1.02] active:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
-              Dowiedz się więcej
+              Zobacz interaktywne demo
               <span aria-hidden="true">→</span>
             </Link>
             <Link
