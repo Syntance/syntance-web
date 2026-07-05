@@ -20,7 +20,7 @@ export function MagazynShell({
         <aside className="hidden w-56 shrink-0 border-r border-white/10 md:block">
           <div className="sticky top-[100px] flex h-[calc(100dvh-100px)] flex-col p-4">
             <Link href="/magazyn" className="mb-6 px-2 text-sm font-semibold tracking-wide text-white">
-              Syntance · Magazyn
+              Syntance · Shop
             </Link>
             <nav className="flex flex-1 flex-col gap-1">
               {MAGAZYN_NAV.map((item) => {
@@ -48,7 +48,7 @@ export function MagazynShell({
           <header className="border-b border-white/10 p-4 md:hidden">
             <div className="mb-3 flex items-center justify-between">
               <Link href="/magazyn" className="font-medium">
-                Magazyn
+                Shop
               </Link>
               <LogoutButton />
             </div>

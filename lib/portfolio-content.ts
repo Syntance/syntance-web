@@ -137,7 +137,7 @@ const LUMINE_PERFORMANCE: PortfolioPerformanceReport = {
     },
   },
   improvements: [
-    'Przebudowa ze sklepu WordPress (WooCommerce) na headless: Next.js + Medusa + własny CMS i moduł Magazyn do zarządzania sklepem.',
+    'Przebudowa ze sklepu WordPress (WooCommerce) na headless: Next.js + Medusa + własny CMS i Syntance Shop do zarządzania sklepem.',
     'Priorytetyzacja LCP — hero i obrazy produktów ładują się od razu, bez 16 s oczekiwania na mobile.',
     'Headless front + optymalizacja assetów — mniejszy JS, formaty WebP/AVIF, lazy load poza viewportem.',
     'Fonty i third-party pod kontrolą — mniej blokowania wątku głównego, stabilny layout (CLS ≈ 0).',
@@ -203,14 +203,14 @@ export const PORTFOLIO_CASE_STUDIES: readonly PortfolioCaseStudyInput[] = [
     description:
       'Przebudowa sklepu z WordPress na Next.js + Medusa — salon beauty z logo 3D, tabliczkami z plexi i sprzedażą online w spójnej, premium identyfikacji marki.',
     rebuildContext:
-      'Migracja z WordPress (WooCommerce) na stack headless: Next.js, Medusa, własny CMS treści oraz moduł Magazyn — panel do zarządzania produktami, treściami i sklepem bez wtyczek.',
+      'Migracja z WordPress (WooCommerce) na stack headless: Next.js, Medusa, własny CMS treści oraz Syntance Shop — panel do zarządzania produktami, treściami i sklepem bez wtyczek.',
     problemStatement:
       'Sklep działał na WordPressie — wolny mobile (LCP 16 s, PageSpeed 59), ciężki front wtyczkowy i ograniczenia WooCommerce przy rozwoju marki premium. Celem była pełna przebudowa na Next.js + Medusa z własnym CMS i modułem zarządzania sklepem, bez utraty estetyki salonu.',
     performance: LUMINE_PERFORMANCE,
     adminGallery: LUMINE_ADMIN_GALLERY,
     highlights: [
       'Przebudowa WordPress → Next.js + Medusa (headless e-commerce)',
-      'Własny CMS treści + moduł Magazyn (produkty, zamówienia, content)',
+      'Własny CMS treści + Syntance Shop (produkty, zamówienia, content)',
       'Sklep w estetyce marki salonu — layout pod konwersję',
       'Spójna identyfikacja wizualna (logo 3D, plexi)',
     ],
@@ -218,7 +218,7 @@ export const PORTFOLIO_CASE_STUDIES: readonly PortfolioCaseStudyInput[] = [
       'Next.js',
       'Medusa',
       'Własny CMS',
-      'Moduł Magazyn',
+      'Syntance Shop',
       'Vercel',
       'R2',
     ],
@@ -244,7 +244,7 @@ export const PORTFOLIO_CASE_STUDIES: readonly PortfolioCaseStudyInput[] = [
     stack: [
       'Next.js',
       'Medusa',
-      'CMS / Magazyn',
+      'Syntance CMS / Shop',
       'Zarządzanie produktami',
       'Vercel',
       'R2',

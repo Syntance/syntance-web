@@ -512,7 +512,7 @@ export function CmsClient({
                     }
                     className="rounded border-white/20"
                   />
-                  Włącz sekcję panelu (Magazyn + CMS)
+                  Włącz sekcję panelu (Shop + CMS)
                 </label>
               ) : null}
               <label className="flex items-center gap-2 text-sm text-neutral-400">

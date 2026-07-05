@@ -46,7 +46,7 @@ export default async function MagazynDashboard() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-medium">Magazyn</h1>
+        <h1 className="text-3xl font-medium">Syntance Shop</h1>
         <p className="mt-1 text-neutral-400">CMS, SEO, cennik, maile i rezerwacje w jednym panelu.</p>
         {!hasDb() && (
           <p className="mt-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">

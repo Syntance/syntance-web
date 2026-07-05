@@ -4,7 +4,7 @@ import { ADMIN_COOKIE_NAME, verifySession } from '@/lib/admin-auth'
 import { MagazynShell } from '@/components/magazyn/shell'
 
 export const metadata: Metadata = {
-  title: 'Magazyn — Syntance',
+  title: 'Syntance Shop',
   robots: { index: false, follow: false, nocache: true },
 }
 

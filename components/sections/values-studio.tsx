@@ -38,7 +38,7 @@ const TECH_STACK_BADGES = [
   { name: "Next.js", dotColor: "oklch(0.92 0 0)" },
   { name: "Medusa", dotColor: "oklch(0.72 0.17 162)" },
   { name: "Syntance CMS", dotColor: "oklch(0.72 0.18 290)" },
-  { name: "Syntance Magazyn", dotColor: "oklch(0.72 0.14 230)" },
+  { name: "Syntance Shop", dotColor: "oklch(0.72 0.14 230)" },
   { name: "Sanity", dotColor: "oklch(0.65 0.22 25)" },
   { name: "Vercel", dotColor: "oklch(0.78 0 0)" },
   { name: "R2", dotColor: "oklch(0.72 0.18 55)" },

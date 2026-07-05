@@ -2,19 +2,20 @@
 
 import { useEffect, useRef } from "react";
 import { Check } from "lucide-react";
-import { useIsMobile } from "@/hooks/useIsMobile";
 
 type PricingStudioNewProps = {
   sectionId?: string;
   headingId?: string;
 };
 
+const CONFIGURATOR_DESCRIPTION =
+  "Interaktywny konfigurator pokaże koszt i orientacyjny czas realizacji.";
+
 export default function PricingStudioNew({
   sectionId = "pricing-studio",
   headingId = "pricing-heading",
 }: PricingStudioNewProps = {}) {
   const sectionRef = useRef<HTMLElement>(null);
-  const isMobile = useIsMobile();
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -55,37 +56,17 @@ export default function PricingStudioNew({
           <h2 id={headingId} className="text-3xl font-light tracking-tight leading-[1.15] text-white mb-3">
             Sprawdź cenę <span className="bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">w 2 minuty</span>
           </h2>
-          <p className="text-sm text-gray-400 leading-relaxed">
-            Interaktywny konfigurator pokaże <span className="text-white">koszt i czas</span> realizacji.
+          <p className="text-sm text-gray-400 leading-relaxed mb-6">
+            {CONFIGURATOR_DESCRIPTION}
           </p>
+          <a
+            href="/cennik"
+            className="flex items-center justify-center gap-2 w-full px-6 py-4 min-h-[52px] rounded-full bg-white text-gray-900 text-base font-semibold tracking-wide active:bg-white/90 transition-colors shadow-xl shadow-purple-500/20"
+          >
+            Sprawdź cenę strony
+            <span aria-hidden="true">→</span>
+          </a>
         </header>
-
-        {/* Mocna karta CTA — najważniejsza akcja na stronie */}
-        <div className="relative mb-6">
-          <div
-            className="absolute -inset-1 rounded-3xl opacity-30 blur-xl -z-10"
-            style={{
-              backgroundImage:
-                "linear-gradient(to right, #a855f7, #3b82f6, #ec4899)",
-            }}
-            aria-hidden="true"
-          />
-          <div className="relative bg-gradient-to-br from-white/[0.05] to-white/[0.02] border border-white/10 rounded-3xl p-6 text-center">
-            <h3 className="text-xl font-medium text-white mb-2">
-              Gotowy zacząć?
-            </h3>
-            <p className="text-sm text-gray-400 font-light mb-5 leading-relaxed">
-              Skonfiguruj projekt, zobacz cenę i czas. Wyślij formularz — termin ustalimy indywidualnie.
-            </p>
-            <a
-              href="/cennik"
-              className="flex items-center justify-center gap-2 w-full px-6 py-4 min-h-[52px] rounded-full bg-white text-gray-900 text-base font-semibold tracking-wide active:bg-white/90 transition-colors shadow-xl shadow-purple-500/20"
-            >
-              Sprawdź cenę strony
-              <span aria-hidden="true">→</span>
-            </a>
-          </div>
-        </div>
 
         {/* Mini value props - 3 quick wins */}
         <ul className="grid grid-cols-3 gap-2 mb-5" aria-label="Gwarancje">
@@ -115,54 +96,33 @@ export default function PricingStudioNew({
 
       {/* ─────────────────────  DESKTOP  ───────────────────── */}
       <div className="hidden md:block max-w-4xl mx-auto text-center">
-        {/* Header */}
         <header className="mb-16">
-          <h2 id={headingId} className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
-            Cennik i wycena
-          </h2>
-          <p className="text-lg font-light tracking-wide text-gray-400 max-w-2xl mx-auto">
-            Każdy projekt jest unikalny — dlatego zaprojektowaliśmy interaktywny konfigurator, który pomoże Ci oszacować koszt i czas realizacji w kilka minut.
+          <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-purple-300/70 mb-3">
+            Cennik
           </p>
+          <h2 className="text-4xl md:text-5xl font-light tracking-widest glow-text mb-6">
+            Sprawdź cenę{' '}
+            <span className="bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">
+              w 2 minuty
+            </span>
+          </h2>
+          <p className="text-lg font-light tracking-wide text-gray-400 max-w-2xl mx-auto mb-8">
+            {CONFIGURATOR_DESCRIPTION}
+          </p>
+          <a
+            href="/cennik"
+            className="group inline-flex items-center gap-2 px-10 py-4 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-white/90 transition-all glow-box cursor-pointer"
+          >
+            Sprawdź cenę strony
+            <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
+          </a>
         </header>
 
-        {/* CTA Box */}
-        <div className="relative group">
-          {/* Gradient border effect */}
-          <div className={`absolute -inset-0.5 bg-gradient-to-r from-purple-400 via-blue-400 to-pink-400 rounded-3xl opacity-20 transition-opacity duration-500 blur-sm ${
-            isMobile ? '' : 'group-hover:opacity-40'
-          }`}></div>
-          
-          <div className="relative product-card rounded-3xl p-12 backdrop-blur-sm">
-            <h3 className="text-3xl md:text-4xl font-light tracking-wide mb-4 glow-text">
-              Gotowy stworzyć coś wspaniałego?
-            </h3>
-            <p className="text-gray-400 font-light tracking-wide mb-8 max-w-lg mx-auto">
-              Skonfiguruj projekt i poznaj szacunkową cenę. Wyślij formularz — termin ustalimy indywidualnie.
-            </p>
-            
-            <a 
-              href="/cennik"
-              className="px-10 py-4 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-white/90 transition-all glow-box cursor-pointer group inline-flex items-center gap-2"
-            >
-              Sprawdź cenę strony
-              <span className={`inline-block transition-transform ${
-                isMobile ? '' : 'group-hover:translate-x-1'
-              }`}>→</span>
-            </a>
-
-            {/* Decorative elements */}
-            <div className="absolute top-6 right-6 w-20 h-20 border border-white/5 rounded-full"></div>
-            <div className="absolute bottom-6 left-6 w-16 h-16 border border-white/5 rounded-full"></div>
-          </div>
-        </div>
-
-        {/* Additional info */}
-        <div className="mt-12 text-sm text-gray-400 font-light text-center">
+        <div className="text-sm text-gray-400 font-light text-center">
           <p>Gwarancja 30 dni</p>
           <p className="mt-2">Po tym czasie opcjonalna opieka w ramach abonamentu</p>
         </div>
       </div>
-      {/* /Desktop */}
 
       <style jsx>{`
         .section-visible {
@@ -173,4 +133,3 @@ export default function PricingStudioNew({
     </section>
   );
 }
-

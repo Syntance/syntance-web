@@ -138,10 +138,18 @@ export default function AnatomyStudio() {
           </p>
           <a
             href="/strategia-marketingu-i-sprzedazy"
-            className="inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 min-h-[48px] rounded-full bg-white/[0.04] border border-white/10 text-gray-200 text-sm font-medium tracking-wide active:bg-white/[0.08] transition-colors"
+            className="group inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 min-h-[48px] rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white text-sm font-medium tracking-wide transition-all duration-300 active:scale-[0.98]"
           >
-            Strategia marketingu i sprzedaży
-            <span aria-hidden="true">→</span>
+            <span>Poznaj strategię krok po kroku</span>
+            <svg
+              className="w-4 h-4 transition-transform duration-300 group-active:translate-x-0.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
           </a>
         </div>
       </div>
