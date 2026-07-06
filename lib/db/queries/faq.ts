@@ -8,6 +8,7 @@ import type {
 } from '@/lib/data/faq'
 
 const SECTION_MAP: Record<string, keyof FaqSettingsDocument> = {
+  home: 'faqHome',
   cennik: 'faqCennik',
   stronyWww: 'faqStronyWww',
   sklepy: 'faqSklepy',
@@ -93,6 +94,7 @@ export async function listFaqEntriesBySection(section: string) {
 }
 
 const DOC_SECTION_MAP: Array<{ key: keyof FaqSettingsDocument; section: string }> = [
+  { key: 'faqHome', section: 'home' },
   { key: 'faqCennik', section: 'cennik' },
   { key: 'faqStronyWww', section: 'stronyWww' },
   { key: 'faqSklepy', section: 'sklepy' },

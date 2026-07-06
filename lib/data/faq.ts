@@ -27,6 +27,7 @@ export interface FaqSettingsDocument {
   faqONas?: FaqSimpleEntrySanity[] | null
   faqKontakt?: FaqSimpleEntrySanity[] | null
   faqAgencje?: FaqSimpleEntrySanity[] | null
+  faqHome?: FaqSimpleEntrySanity[] | null
 }
 
 export interface PricingFaqItem {
@@ -60,6 +61,20 @@ export function normalizeSimpleFaq(entries: FaqSimpleEntrySanity[] | null | unde
   return list.map((e) => ({
     question: e.question,
     answer: e.answer,
+  }))
+}
+
+/** Konwersja domyślnych wpisów FAQ → format edytora CMS (Magazyn). */
+export function simpleFaqToCmsEntries(
+  items: SimpleFaqQA[],
+  keyPrefix: string,
+): FaqSimpleEntrySanity[] {
+  return items.map((item, index) => ({
+    _key: `${keyPrefix}-${index + 1}`,
+    question: item.question,
+    answer: item.answer,
+    order: index,
+    isActive: true,
   }))
 }
 
@@ -191,9 +206,9 @@ export const defaultFaqSklepy: SimpleFaqQA[] = [
     answer: 'Sklep standard (katalog, koszyk, płatności): 4-8 tygodni. Sklep pro z integracjami: 8-12 tygodni.',
   },
   {
-    question: 'Czy MedusaJS to sprawdzona technologia?',
+    question: 'Czy Medusa to sprawdzona technologia?',
     answer:
-      'Tak! MedusaJS to open-source backed by $9M VC funding. Używany przez firmy jak Tekla, Summer Health i setki innych.',
+      'Tak! Medusa to open-source backed by $9M VC funding. Używany przez firmy jak Tekla, Summer Health i setki innych.',
   },
   {
     question: 'Czy mogę migrować z WooCommerce/Shopify?',
@@ -283,6 +298,38 @@ export const defaultFaqKontakt: SimpleFaqQA[] = [
     question: 'Jaki jest minimalny budżet na projekt?',
     answer:
       'Strony od {{WEBSITE_NET}} PLN netto (pakiet startowy), sklepy od {{ECOMMERCE_NET}} PLN netto. Dokładna wycena po rozmowie o zakresie.',
+  },
+]
+
+export const defaultFaqHome: SimpleFaqQA[] = [
+  {
+    question: 'Ile kosztuje strona lub sklep internetowy?',
+    answer:
+      'Strony zaczynają się od {{WEBSITE_NET}} PLN netto, sklepy e-commerce od {{ECOMMERCE_NET}} PLN netto (baza projektu w konfiguratorze). Dokładną wycenę pod Twój zakres poznasz w interaktywnym konfiguratorze cennika.',
+  },
+  {
+    question: 'Czym jest Syntance Panel?',
+    answer:
+      'To nasz autorski panel administracyjny — jeden interfejs do zarządzania stroną, treściami (Syntance CMS), sklepem i analityką GA4 + PostHog. W standardzie, bez dodatkowej subskrypcji. Wolisz Sanity? Wdrożymy je jako opcję.',
+  },
+  {
+    question: 'Ile trwa realizacja projektu?',
+    answer: 'Strona internetowa: 2-4 tygodnie. Sklep e-commerce: 4-8 tygodni. Postęp widzisz na bieżąco na podglądzie (preview link).',
+  },
+  {
+    question: 'Czy dostanę pełną własność kodu?',
+    answer:
+      'Tak. Kod jest w 100% Twój — bez vendor lock-inu. Możesz zmienić wykonawcę w dowolnym momencie, bez utraty danych ani konieczności migracji.',
+  },
+  {
+    question: 'Czy mogę sam edytować treści bez programisty?',
+    answer:
+      'Tak. W Syntance CMS (część Syntance Panel) edytujesz teksty, zdjęcia i produkty samodzielnie, na żywo — bez znajomości kodu i bez czekania na programistę.',
+  },
+  {
+    question: 'A co jeśli efekt mi się nie spodoba?',
+    answer:
+      'Widzisz postęp co tydzień na podglądzie (preview link) i zgłaszasz poprawki na bieżąco. Każdy projekt objęty jest też 30-dniową gwarancją po wdrożeniu.',
   },
 ]
 

@@ -119,7 +119,7 @@ export const SECURITY_PILLARS = [
 
 export const STACK_BADGES = [
   { name: 'Next.js', description: 'Fundament każdego projektu (wydajność, SEO).' },
-  { name: 'MedusaJS', description: 'Headless commerce dla sklepów.' },
+  { name: 'Medusa', description: 'Headless commerce dla sklepów.' },
   { name: 'Sanity', description: 'Opcjonalny CMS, jeśli wolisz znany standard.' },
   { name: 'PostHog', description: 'Analityka produktowa i lejek (EU).' },
   { name: 'GA4', description: 'Ruch i atrybucja.' },

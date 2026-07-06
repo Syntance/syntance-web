@@ -196,7 +196,7 @@ const targetAudiences = [
 const techStack = [
   {
     layer: "Backend",
-    tech: "MedusaJS",
+    tech: "Medusa",
     why: "Open-source, modułowy, bez prowizji",
     icon: Server,
     gradient: "from-purple-500 to-pink-500",
@@ -276,7 +276,7 @@ export default function SklepyInternetoweContent({
           </p>
           <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed mb-12">
             Budujemy szybkie sklepy e-commerce w architekturze headless. 
-            MedusaJS + Next.js = pełna kontrola i nieograniczona skalowalność.
+            Medusa + Next.js = pełna kontrola i nieograniczona skalowalność.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -365,7 +365,7 @@ export default function SklepyInternetoweContent({
               <strong className="text-white">Frontend</strong> (to, co widzi klient) jest{' '}
               <strong className="text-white">oddzielony od backendu</strong>{' '}
               (logika, baza, płatności). Dzięki temu masz ultra-szybki frontend w Next.js 
-              połączony z potężnym silnikiem e-commerce MedusaJS.
+              połączony z potężnym silnikiem e-commerce Medusa.
             </p>
           </div>
         </AnimatedSection>
@@ -447,7 +447,7 @@ export default function SklepyInternetoweContent({
               Stack technologiczny
             </h2>
             <p className="text-xl text-gray-400">
-              MedusaJS + Next.js — enterprise-grade bez prowizji
+              Medusa + Next.js — enterprise-grade bez prowizji
             </p>
           </AnimatedSection>
           

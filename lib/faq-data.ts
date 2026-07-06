@@ -9,6 +9,7 @@ export {
   resolveONasFaq,
   resolveKontaktFaq,
   resolveAgencjeFaq,
+  resolveHomeFaq,
 } from './faq-resolvers'
 
 export async function fetchFaqSettings() {

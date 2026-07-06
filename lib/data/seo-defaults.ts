@@ -11,7 +11,7 @@ export const defaultSeo: SeoSettings = {
     'sklepy Next.js',
     'strony internetowe Next.js',
     'sklep e-commerce Next.js',
-    'MedusaJS sklep',
+    'Medusa sklep',
     'Headless CMS',
     'PageSpeed 90+',
     'strony dla firm',
@@ -57,9 +57,16 @@ export const defaultSeo: SeoSettings = {
     },
     {
       name: 'Sklepy E-commerce Next.js',
-      description: 'Headless e-commerce na MedusaJS i Next.js. Szybkie, skalowalne sklepy bez prowizji.',
+      description: 'Headless e-commerce na Medusa i Next.js. Szybkie, skalowalne sklepy bez prowizji.',
       serviceType: 'E-commerce Development',
       priceRange: 'od 20000 PLN',
+    },
+    {
+      name: 'Syntance Panel',
+      description:
+        'Autorski panel do zarządzania stroną, treściami (Syntance CMS), sklepem i analityką GA4 + PostHog — w standardzie, bez wtyczek. Sanity dostępny opcjonalnie.',
+      serviceType: 'Software Development',
+      priceRange: 'W standardzie w projekcie',
     },
     {
       name: 'Strategia marketingu i sprzedaży',

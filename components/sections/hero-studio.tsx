@@ -6,7 +6,7 @@ import StickyCtaFloat from "../StickyCtaFloat";
 
 const HERO_STACK_BADGES = [
   { name: "Next.js", dotColor: "oklch(0.92 0 0)" },
-  { name: "Medusa.js", dotColor: "oklch(0.72 0.17 162)" },
+  { name: "Medusa", dotColor: "oklch(0.72 0.17 162)" },
   { name: "Sanity CMS", dotColor: "oklch(0.65 0.22 25)" },
 ] as const;
 

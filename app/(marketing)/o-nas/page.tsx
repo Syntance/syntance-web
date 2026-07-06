@@ -54,7 +54,7 @@ const technologies = [
   { name: "Tailwind CSS", color: "bg-teal-400" },
   { name: "Sanity CMS", color: "bg-red-500" },
   { name: "Vercel", color: "bg-white" },
-  { name: "MedusaJS", color: "bg-purple-500" },
+  { name: "Medusa", color: "bg-purple-500" },
   { name: "Stripe", color: "bg-indigo-500" },
 ]
 
@@ -87,7 +87,7 @@ export default async function ONasPage() {
             "url": "https://syntance.com",
             "foundingDate": "2024",
             "areaServed": ["PL", "EU"],
-            "knowsAbout": ["Next.js", "React", "TypeScript", "Sanity CMS", "MedusaJS", "E-commerce", "Web Development"],
+            "knowsAbout": ["Next.js", "React", "TypeScript", "Syntance CMS", "Medusa", "E-commerce", "Web Development"],
             "slogan": "Strategia marketingu i sprzedaży",
             "email": "kontakt@syntance.com",
             "telephone": "+48537110170"

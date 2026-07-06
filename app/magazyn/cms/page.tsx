@@ -6,6 +6,7 @@ import {
   mergePortfolioRowsForAdmin,
   portfolioAdminNeedsInitialSave,
 } from '@/lib/magazyn/portfolio-admin-merge'
+import { mergeFaqSettingsForAdmin } from '@/lib/magazyn/faq-admin-merge'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,7 +18,7 @@ export default async function CmsPage() {
   const portfolioRows = mergePortfolioRowsForAdmin(dbPortfolioRows)
   return (
     <CmsClient
-      faqSettings={faqSettings ?? {}}
+      faqSettings={mergeFaqSettingsForAdmin(faqSettings)}
       portfolioRows={portfolioRows}
       dbConnected={hasDb()}
       portfolioNeedsInitialSave={portfolioAdminNeedsInitialSave(dbPortfolioRows)}

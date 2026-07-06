@@ -1,6 +1,7 @@
 import type { FaqPricingCategory, FaqSettingsDocument } from '@/lib/data/faq'
 
 export type CmsFaqPageId =
+  | 'home'
   | 'cennik'
   | 'strony-www'
   | 'sklepy'
@@ -32,6 +33,7 @@ export function isPortfolioPage(page: CmsPageDef): page is CmsPortfolioPageDef {
 }
 
 export const CMS_PAGES: CmsPageDef[] = [
+  { id: 'home', label: 'Strona główna', path: '/', faqKey: 'faqHome' },
   { id: 'cennik', label: 'Cennik', path: '/cennik', faqKey: 'faqCennik', pricing: true },
   { id: 'strony-www', label: 'Strony WWW', path: '/strony-www', faqKey: 'faqStronyWww' },
   { id: 'sklepy', label: 'Sklepy internetowe', path: '/sklepy-internetowe', faqKey: 'faqSklepy' },

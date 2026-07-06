@@ -11,8 +11,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const { ecommerceNet } = getConfiguratorMinimumPricesNet(data)
   const priceStr = formatP(ecommerceNet)
   return {
-    title: 'Sklepy internetowe headless | MedusaJS & Next.js | Syntance',
-    description: `Budujemy sklepy internetowe w architekturze headless. MedusaJS, Next.js, zero prowizji. Sklepy od ${priceStr} PLN netto (pakiet startowy). Wycena w 24h →`,
+    title: 'Sklepy internetowe headless | Medusa & Next.js | Syntance',
+    description: `Budujemy sklepy internetowe w architekturze headless. Medusa, Next.js, zero prowizji. Sklepy od ${priceStr} PLN netto (pakiet startowy). Wycena w 24h →`,
     keywords: [
       'ile kosztuje sklep internetowy',
       'sklep internetowy dla firmy',
@@ -29,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
       'agencja e-commerce Małopolska',
     ],
     openGraph: {
-      title: 'Sklepy internetowe headless | MedusaJS & Next.js | Syntance',
+      title: 'Sklepy internetowe headless | Medusa & Next.js | Syntance',
       description: `Budujemy sklepy e-commerce w architekturze headless. Zero prowizji, pełna kontrola. Sklepy od ${priceStr} PLN netto.`,
       url: 'https://syntance.com/sklepy-internetowe',
     },

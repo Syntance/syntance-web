@@ -147,7 +147,7 @@ export default function OfferCards() {
                 </span>
               </div>
               <p className="text-sm text-gray-300 leading-relaxed mb-2">
-                Headless e-commerce na MedusaJS.
+                Headless e-commerce na Medusa.
               </p>
               <p className="text-xs text-gray-400 leading-relaxed mb-4">
                 Dla butików, marek D2C, niszowych sprzedawców.
@@ -243,7 +243,7 @@ export default function OfferCards() {
                 </h3>
                 
                 <p className="mb-4 leading-relaxed text-gray-200">
-                  Headless e-commerce na MedusaJS
+                  Headless e-commerce na Medusa
                 </p>
                 
                 <p className="mb-6 text-sm text-gray-300">

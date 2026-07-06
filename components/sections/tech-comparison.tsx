@@ -25,7 +25,7 @@ const benefits = [
   },
   {
     icon: Rocket,
-    title: 'Nie ogranicza skalowania',
+    title: 'Skalowalny',
     description: 'Od startu do dużego ruchu — bez przebudowy strony.',
     color: 'from-indigo-500 to-purple-500',
   },

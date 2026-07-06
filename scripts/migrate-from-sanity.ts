@@ -86,7 +86,8 @@ async function main() {
       faqStrategia[]{ _key, question, answer, order, isActive },
       faqONas[]{ _key, question, answer, order, isActive },
       faqKontakt[]{ _key, question, answer, order, isActive },
-      faqAgencje[]{ _key, question, answer, order, isActive }
+      faqAgencje[]{ _key, question, answer, order, isActive },
+      faqHome[]{ _key, question, answer, order, isActive }
     }`,
   )
   if (faq) {
