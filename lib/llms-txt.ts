@@ -1,4 +1,15 @@
-# Syntance
+import type { ConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
+
+function formatPln(n: number): string {
+  return Math.round(n).toLocaleString('pl-PL')
+}
+
+/** Treść llms.txt — ceny strony i sklepu z tego samego źródła co /cennik (getConfiguratorMinimumPricesNet). */
+export function buildLlmsTxt(mins: ConfiguratorMinimumPricesNet): string {
+  const websitePrice = formatPln(mins.websiteNet)
+  const ecommercePrice = formatPln(mins.ecommerceNet)
+
+  return `# Syntance
 
 > Studio stron i sklepów na Next.js z Polski. Projektujemy szybkie, skuteczne strony WWW i sklepy e-commerce z gwarancją PageSpeed 90+. Strony w 2–4 tygodnie, sklepy w 4–8 tygodni. Fixed price, pełna własność kodu, zero vendor lock-in.
 
@@ -8,8 +19,8 @@ Forma prawna: JDG Kamil Podobiński (jednoosobowa działalność gospodarcza), f
 
 ## Usługi
 
-- [Strony internetowe](https://syntance.com/strony-www): Profesjonalne strony WWW dla firm B2B. Next.js, Syntance Panel, PageSpeed 90+, od 5 400 PLN netto, realizacja 2–4 tygodnie.
-- [Sklepy internetowe headless](https://syntance.com/sklepy-internetowe): E-commerce na Medusa i Next.js. Zero prowizji, Stripe i Przelewy24, od 12 000 PLN, realizacja 4–8 tygodni.
+- [Strony internetowe](https://syntance.com/strony-www): Profesjonalne strony WWW dla firm B2B. Next.js, Syntance Panel, PageSpeed 90+, od ${websitePrice} PLN netto, realizacja 2–4 tygodnie.
+- [Sklepy internetowe headless](https://syntance.com/sklepy-internetowe): E-commerce na Medusa i Next.js. Zero prowizji, Stripe i Przelewy24, od ${ecommercePrice} PLN netto, realizacja 4–8 tygodni.
 - [Strategia marketingu i sprzedaży](https://syntance.com/strategia-marketingu-i-sprzedazy): Faza przedwdrożeniowa — segmentacja, UVP, buyer persony, lejek, plan SEO. Gotowy dokument strategiczny, 4 500 PLN.
 - [Cennik i konfigurator](https://syntance.com/cennik): Interaktywny kalkulator wyceny stron i sklepów internetowych.
 - [Syntance Panel](https://syntance.com/panel): Autorski panel do zarządzania stroną, sklepem i analityką — treści edytujesz w Syntance CMS (Sanity opcjonalnie jako alternatywa). W standardzie, bez dodatkowej subskrypcji.
@@ -38,3 +49,5 @@ Forma prawna: JDG Kamil Podobiński (jednoosobowa działalność gospodarcza), f
 - [OZE Asystent](https://oze-asystent.pl): Własny produkt SaaS — automatyzacja dla branży OZE.
 - [GitHub](https://github.com/Syntance): Repozytoria open source.
 - [LinkedIn](https://linkedin.com/company/syntance): Profil firmy w LinkedIn.
+`
+}
