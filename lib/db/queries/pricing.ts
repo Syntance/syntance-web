@@ -228,14 +228,6 @@ export async function savePricingConfig(data: PricingData['config']): Promise<vo
     .insert(pricingConfig)
     .values({ id: 'default', data: payload })
     .onConflictDoUpdate({ target: pricingConfig.id, set: { data: payload } })
-
-  const workshopPrice = data.discoveryWorkshopPrice
-  if (typeof workshopPrice === 'number' && Number.isFinite(workshopPrice) && workshopPrice > 0) {
-    await db
-      .update(pricingItems)
-      .set({ price: workshopPrice })
-      .where(eq(pricingItems.id, STRATEGIA_MARKETING_ITEM_ID))
-  }
 }
 
 export async function listAllPricingItems(): Promise<PricingItem[]> {

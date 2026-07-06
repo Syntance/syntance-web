@@ -140,7 +140,7 @@ export interface StartingPrices {
 
 // Domyślne ceny startowe (fallback)
 export const defaultStartingPrices: StartingPrices = {
-  discoveryWorkshopPrice: 4500,
+  discoveryWorkshopPrice: 8000,
   websiteStartPrice: 5400,
   websiteAdvancedStartPrice: 12000,
   ecommerceStandardStartPrice: 12000,
@@ -178,7 +178,7 @@ export const defaultPricingData: PricingData = {
       name: 'Strategia marketingu i sprzedaży',
       description:
         'Cel biznesowy, buyer persony, UVP, user flows, SEO i architektura informacji. Zaliczana na poczet projektu.',
-      price: 4500,
+      price: 8000,
       hours: 15,
       rateType: 'consulting',
       category: 'strategia',
@@ -248,7 +248,7 @@ export const defaultPricingData: PricingData = {
       { projectTypeId: 'webapp', baseCategorySlug: 'base', bundlePriceNet: 0, bundleBaseHours: 0 },
     ],
     // Ceny startowe
-    discoveryWorkshopPrice: 4500,
+    discoveryWorkshopPrice: 8000,
     websiteStartPrice: 5400,
     websiteAdvancedStartPrice: 12000,
     ecommerceStandardStartPrice: 12000,
