@@ -4,10 +4,16 @@ function formatPln(n: number): string {
   return Math.round(n).toLocaleString('pl-PL')
 }
 
-/** Treść llms.txt — ceny strony i sklepu z tego samego źródła co /cennik (getConfiguratorMinimumPricesNet). */
-export function buildLlmsTxt(mins: ConfiguratorMinimumPricesNet): string {
-  const websitePrice = formatPln(mins.websiteNet)
-  const ecommercePrice = formatPln(mins.ecommerceNet)
+export type LlmsTxtPrices = ConfiguratorMinimumPricesNet & {
+  /** discoveryWorkshopPrice z konfiguratora — ta sama wartość co {{DISCOVERY_NET}} w FAQ /cennik. */
+  discoveryNet: number
+}
+
+/** Treść llms.txt — ceny z tego samego źródła co /cennik (minima + warsztat strategiczny). */
+export function buildLlmsTxt(prices: LlmsTxtPrices): string {
+  const websitePrice = formatPln(prices.websiteNet)
+  const ecommercePrice = formatPln(prices.ecommerceNet)
+  const discoveryPrice = formatPln(prices.discoveryNet)
 
   return `# Syntance
 
@@ -21,7 +27,7 @@ Forma prawna: JDG Kamil Podobiński (jednoosobowa działalność gospodarcza), f
 
 - [Strony internetowe](https://syntance.com/strony-www): Profesjonalne strony WWW dla firm B2B. Next.js, Syntance Panel, PageSpeed 90+, od ${websitePrice} PLN netto, realizacja 2–4 tygodnie.
 - [Sklepy internetowe headless](https://syntance.com/sklepy-internetowe): E-commerce na Medusa i Next.js. Zero prowizji, Stripe i Przelewy24, od ${ecommercePrice} PLN netto, realizacja 4–8 tygodni.
-- [Strategia marketingu i sprzedaży](https://syntance.com/strategia-marketingu-i-sprzedazy): Faza przedwdrożeniowa — segmentacja, UVP, buyer persony, lejek, plan SEO. Gotowy dokument strategiczny, 4 500 PLN.
+- [Strategia marketingu i sprzedaży](https://syntance.com/strategia-marketingu-i-sprzedazy): Faza przedwdrożeniowa — segmentacja, UVP, buyer persony, lejek, plan SEO. Gotowy dokument strategiczny, ${discoveryPrice} PLN netto.
 - [Cennik i konfigurator](https://syntance.com/cennik): Interaktywny kalkulator wyceny stron i sklepów internetowych.
 - [Syntance Panel](https://syntance.com/panel): Autorski panel do zarządzania stroną, sklepem i analityką — treści edytujesz w Syntance CMS (Sanity opcjonalnie jako alternatywa). W standardzie, bez dodatkowej subskrypcji.
 - [Next.js dla firm](https://syntance.com/nextjs): Dlaczego Next.js — wydajność, SEO i skalowalność.
@@ -35,7 +41,7 @@ Forma prawna: JDG Kamil Podobiński (jednoosobowa działalność gospodarcza), f
 ## Firma
 
 - [Strona główna](https://syntance.com): Syntance — strony i sklepy Next.js z gwarancją PageSpeed 90+.
-- [O nas](https://syntance.com/o-nas): Zespół, wartości i podejście do projektów.
+- [O nas](https://syntance.com/o-nas): Wartości, podejście i sposób pracy przy projektach.
 - [Portfolio](https://syntance.com/portfolio): Realizacje stron WWW i sklepów e-commerce.
 - [Realizacje](https://syntance.com/realizacje): Case studies i przykłady wdrożeń.
 - [Dla agencji marketingowych](https://syntance.com/agencje-marketingowe): Współpraca white-label i partnerska.

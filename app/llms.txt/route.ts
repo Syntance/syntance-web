@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { fetchPricingData } from '@/lib/pricing-data'
+import { discoveryPriceNetFromConfig } from '@/lib/pricing-calculator'
 import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
 import { buildLlmsTxt } from '@/lib/llms-txt'
 
@@ -9,7 +10,8 @@ export const revalidate = 300
 export async function GET() {
   const data = await fetchPricingData()
   const mins = getConfiguratorMinimumPricesNet(data)
-  const body = buildLlmsTxt(mins)
+  const discoveryNet = discoveryPriceNetFromConfig(data.config)
+  const body = buildLlmsTxt({ ...mins, discoveryNet })
 
   return new NextResponse(body, {
     headers: {
