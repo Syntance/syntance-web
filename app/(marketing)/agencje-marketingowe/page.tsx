@@ -1,6 +1,6 @@
 import AgencjeMarketingoweClient from './agencje-marketingowe-client'
 import { fetchPricingData } from '@/lib/pricing-data'
-import { discoveryPriceNetFromConfig } from '@/lib/pricing-calculator'
+import { strategiaWorkshopPriceNet } from '@/lib/pricing-calculator'
 import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
 import { fetchFaqSettings, resolveAgencjeFaq } from '@/lib/faq-data'
 
@@ -9,7 +9,7 @@ const canonical = 'https://syntance.com/agencje-marketingowe'
 export default async function AgencjeMarketingowePage() {
   const [pricingData, faqDoc] = await Promise.all([fetchPricingData(), fetchFaqSettings()])
   const mins = getConfiguratorMinimumPricesNet(pricingData)
-  const discoveryNet = discoveryPriceNetFromConfig(pricingData.config)
+  const discoveryNet = strategiaWorkshopPriceNet(pricingData)
   const faqItems = resolveAgencjeFaq(faqDoc, mins, discoveryNet)
 
   const jsonLd = {

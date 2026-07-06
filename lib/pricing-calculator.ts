@@ -1,4 +1,4 @@
-import type { PricingConfig, PricingItem, ProjectTypeBundleRow } from '@/lib/data/pricing'
+import type { PricingConfig, PricingData, PricingItem, ProjectTypeBundleRow } from '@/lib/data/pricing'
 import { defaultStartingPrices } from '@/lib/data/pricing'
 
 /** Domyślny `id` kategorii „Baza projektu” (musi zgadzać się z `pricingCategory.id`). */
@@ -231,10 +231,22 @@ export function computeConfiguratorPricing(
   }
 }
 
+export const STRATEGIA_MARKETING_ITEM_ID = 'strategia-marketing'
+
 export function discoveryPriceNetFromConfig(config: PricingConfig | undefined): number {
   const raw = config?.discoveryWorkshopPrice
   if (typeof raw === 'number' && Number.isFinite(raw) && raw > 0) {
     return raw
   }
   return defaultStartingPrices.discoveryWorkshopPrice
+}
+
+/** Cena strategii — pozycja katalogu `strategia-marketing` (jak w konfiguratorze), potem `discoveryWorkshopPrice`. */
+export function strategiaWorkshopPriceNet(data: PricingData): number {
+  const item = data.items?.find((i) => i.id === STRATEGIA_MARKETING_ITEM_ID)
+  const fromItem = item?.price
+  if (typeof fromItem === 'number' && Number.isFinite(fromItem) && fromItem > 0) {
+    return fromItem
+  }
+  return discoveryPriceNetFromConfig(data.config)
 }

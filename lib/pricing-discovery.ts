@@ -1,8 +1,8 @@
-import { discoveryPriceNetFromConfig } from '@/lib/pricing-calculator'
+import { strategiaWorkshopPriceNet } from '@/lib/pricing-calculator'
 import { fetchPricingData } from '@/lib/pricing-data'
 
-/** Cena warsztatu strategii z konfiguratora cennika. */
+/** Cena warsztatu strategii — ta sama pozycja co checkbox w konfiguratorze (`strategia-marketing`). */
 export async function getDiscoveryWorkshopPrice(): Promise<number> {
   const data = await fetchPricingData()
-  return discoveryPriceNetFromConfig(data.config)
+  return strategiaWorkshopPriceNet(data)
 }

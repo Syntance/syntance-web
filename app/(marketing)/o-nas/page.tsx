@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { HeroTransition } from '@/components/page-transition'
 import GradientText from '@/components/GradientText'
 import { fetchPricingData } from '@/lib/pricing-data'
-import { discoveryPriceNetFromConfig } from '@/lib/pricing-calculator'
+import { strategiaWorkshopPriceNet } from '@/lib/pricing-calculator'
 import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
 import { fetchFaqSettings, resolveONasFaq } from '@/lib/faq-data'
 import Footer from '@/components/sections/footer'
@@ -68,7 +68,7 @@ const stats = [
 export default async function ONasPage() {
   const [pricingData, faqDoc] = await Promise.all([fetchPricingData(), fetchFaqSettings()])
   const mins = getConfiguratorMinimumPricesNet(pricingData)
-  const discoveryNet = discoveryPriceNetFromConfig(pricingData.config)
+  const discoveryNet = strategiaWorkshopPriceNet(pricingData)
   const faqs = resolveONasFaq(faqDoc, mins, discoveryNet)
   
   return (

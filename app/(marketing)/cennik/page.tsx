@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { PricingConfigurator } from '@/components/PricingConfigurator'
 import PricingFAQ from '@/components/sections/pricing-faq'
 import { fetchPricingData } from '@/lib/pricing-data'
-import { discoveryPriceNetFromConfig } from '@/lib/pricing-calculator'
+import { strategiaWorkshopPriceNet } from '@/lib/pricing-calculator'
 import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
 import { fetchFaqSettings, resolveCennikFaqItems } from '@/lib/faq-data'
 import Footer from '@/components/sections/footer'
@@ -36,7 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function CennikPage() {
   const [data, faqDoc] = await Promise.all([fetchPricingData(), fetchFaqSettings()])
   const mins = getConfiguratorMinimumPricesNet(data)
-  const discoveryNet = discoveryPriceNetFromConfig(data.config)
+  const discoveryNet = strategiaWorkshopPriceNet(data)
   const faqData = resolveCennikFaqItems(faqDoc, mins, discoveryNet)
 
   return (

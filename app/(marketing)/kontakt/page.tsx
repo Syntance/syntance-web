@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { ContactForm } from '@/components/contact-form'
 import { HeroTransition } from '@/components/page-transition'
 import { fetchPricingData } from '@/lib/pricing-data'
-import { discoveryPriceNetFromConfig } from '@/lib/pricing-calculator'
+import { strategiaWorkshopPriceNet } from '@/lib/pricing-calculator'
 import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
 import { fetchFaqSettings, resolveKontaktFaq } from '@/lib/faq-data'
 import { legalEntityLabel, legalFormLabel, legalNip, legalTradeName } from '@/lib/data/legal-entity'
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 export default async function KontaktPage() {
   const [pricingData, faqDoc] = await Promise.all([fetchPricingData(), fetchFaqSettings()])
   const mins = getConfiguratorMinimumPricesNet(pricingData)
-  const discoveryNet = discoveryPriceNetFromConfig(pricingData.config)
+  const discoveryNet = strategiaWorkshopPriceNet(pricingData)
   const faqs = resolveKontaktFaq(faqDoc, mins, discoveryNet)
   
   return (
