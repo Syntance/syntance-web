@@ -13,7 +13,7 @@ import {
   type PricingItem,
   type ProjectType,
 } from '@/lib/data/pricing'
-import { STRATEGIA_MARKETING_ITEM_ID } from '@/lib/pricing-calculator'
+import { findStrategiaWorkshopItem } from '@/lib/pricing-calculator'
 import { mergePricingCategoriesForAdmin } from '@/lib/magazyn/pricing-catalog-reference'
 import { sortCategoriesForConfigurator } from '@/lib/pricing-category-order'
 
@@ -337,7 +337,7 @@ export async function replaceAllPricingItems(items: PricingItem[]): Promise<void
     await upsertPricingItem(item)
   }
 
-  const strategia = items.find((i) => i.id === STRATEGIA_MARKETING_ITEM_ID)
+  const strategia = findStrategiaWorkshopItem(items)
   const strategiaPrice = strategia?.price
   if (typeof strategiaPrice !== 'number' || !Number.isFinite(strategiaPrice) || strategiaPrice <= 0) {
     return

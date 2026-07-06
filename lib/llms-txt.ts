@@ -5,7 +5,7 @@ function formatPln(n: number): string {
 }
 
 export type LlmsTxtPrices = ConfiguratorMinimumPricesNet & {
-  /** Pozycja `strategia-marketing` z katalogu — ta sama wartość co {{DISCOVERY_NET}} w FAQ /cennik. */
+  /** Pozycja strategii w katalogu (kategoria strategia) — ta sama wartość co {{DISCOVERY_NET}} w FAQ /cennik. */
   discoveryNet: number
 }
 

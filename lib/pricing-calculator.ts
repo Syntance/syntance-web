@@ -233,6 +233,32 @@ export function computeConfiguratorPricing(
 
 export const STRATEGIA_MARKETING_ITEM_ID = 'strategia-marketing'
 
+/** Znane aliasy ID pozycji strategii (admin może zmienić slug w Magazynie). */
+const STRATEGIA_WORKSHOP_ITEM_IDS = [
+  STRATEGIA_MARKETING_ITEM_ID,
+  'strategia-marketingu-i-sprzedazy',
+] as const
+
+/** Pozycja warsztatu strategii w katalogu — jak checkbox w konfiguratorze (nie po sztywnym id). */
+export function findStrategiaWorkshopItem(items: PricingItem[] | undefined): PricingItem | undefined {
+  if (!items?.length) return undefined
+  const active = items.filter((i) => !i.disabled)
+  const inCategory = active.filter((i) => i.category === 'strategia')
+
+  const byName = inCategory.find((i) =>
+    i.name.toLowerCase().includes('strategia marketingu'),
+  )
+  if (byName) return byName
+
+  for (const id of STRATEGIA_WORKSHOP_ITEM_IDS) {
+    const byId = active.find((i) => i.id === id)
+    if (byId) return byId
+  }
+
+  if (inCategory.length === 1) return inCategory[0]
+  return undefined
+}
+
 export function discoveryPriceNetFromConfig(config: PricingConfig | undefined): number {
   const raw = config?.discoveryWorkshopPrice
   if (typeof raw === 'number' && Number.isFinite(raw) && raw > 0) {
@@ -241,9 +267,9 @@ export function discoveryPriceNetFromConfig(config: PricingConfig | undefined): 
   return defaultStartingPrices.discoveryWorkshopPrice
 }
 
-/** Cena strategii — wyłącznie pozycja `strategia-marketing` (jak checkbox w konfiguratorze). */
+/** Cena strategii — pozycja z kategorii strategia (jak checkbox w konfiguratorze). */
 export function strategiaWorkshopPriceNet(data: PricingData): number {
-  const item = data.items?.find((i) => i.id === STRATEGIA_MARKETING_ITEM_ID && !i.disabled)
+  const item = findStrategiaWorkshopItem(data.items)
   const fromItem = item?.price
   if (typeof fromItem === 'number' && Number.isFinite(fromItem) && fromItem > 0) {
     return fromItem
