@@ -13,6 +13,7 @@ import {
   type PricingItem,
   type ProjectType,
 } from '@/lib/data/pricing'
+import { STRATEGIA_MARKETING_ITEM_ID } from '@/lib/pricing-calculator'
 import { mergePricingCategoriesForAdmin } from '@/lib/magazyn/pricing-catalog-reference'
 import { sortCategoriesForConfigurator } from '@/lib/pricing-category-order'
 
@@ -227,6 +228,14 @@ export async function savePricingConfig(data: PricingData['config']): Promise<vo
     .insert(pricingConfig)
     .values({ id: 'default', data: payload })
     .onConflictDoUpdate({ target: pricingConfig.id, set: { data: payload } })
+
+  const workshopPrice = data.discoveryWorkshopPrice
+  if (typeof workshopPrice === 'number' && Number.isFinite(workshopPrice) && workshopPrice > 0) {
+    await db
+      .update(pricingItems)
+      .set({ price: workshopPrice })
+      .where(eq(pricingItems.id, STRATEGIA_MARKETING_ITEM_ID))
+  }
 }
 
 export async function listAllPricingItems(): Promise<PricingItem[]> {
@@ -335,6 +344,22 @@ export async function replaceAllPricingItems(items: PricingItem[]): Promise<void
   for (const item of items) {
     await upsertPricingItem(item)
   }
+
+  const strategia = items.find((i) => i.id === STRATEGIA_MARKETING_ITEM_ID)
+  const strategiaPrice = strategia?.price
+  if (typeof strategiaPrice !== 'number' || !Number.isFinite(strategiaPrice) || strategiaPrice <= 0) {
+    return
+  }
+
+  const configRow = await db.query.pricingConfig.findFirst({ where: eq(pricingConfig.id, 'default') })
+  const prev = (configRow?.data as unknown as PricingData['config']) ?? defaultPricingData.config
+  if (prev.discoveryWorkshopPrice === strategiaPrice) return
+
+  const nextConfig = { ...prev, discoveryWorkshopPrice: strategiaPrice }
+  await db
+    .insert(pricingConfig)
+    .values({ id: 'default', data: nextConfig as unknown as Record<string, unknown> })
+    .onConflictDoUpdate({ target: pricingConfig.id, set: { data: nextConfig as unknown as Record<string, unknown> } })
 }
 
 export async function importPricingCatalog(data: {

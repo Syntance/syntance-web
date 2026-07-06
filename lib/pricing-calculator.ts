@@ -241,12 +241,22 @@ export function discoveryPriceNetFromConfig(config: PricingConfig | undefined): 
   return defaultStartingPrices.discoveryWorkshopPrice
 }
 
-/** Cena strategii — pozycja katalogu `strategia-marketing` (jak w konfiguratorze), potem `discoveryWorkshopPrice`. */
+/** Cena strategii — pozycja katalogu + discoveryWorkshopPrice (max obu; konfigurator używa pozycji). */
 export function strategiaWorkshopPriceNet(data: PricingData): number {
-  const item = data.items?.find((i) => i.id === STRATEGIA_MARKETING_ITEM_ID)
+  const item = data.items?.find((i) => i.id === STRATEGIA_MARKETING_ITEM_ID && !i.disabled)
   const fromItem = item?.price
+  const fromConfig = discoveryPriceNetFromConfig(data.config)
+
+  const candidates: number[] = []
   if (typeof fromItem === 'number' && Number.isFinite(fromItem) && fromItem > 0) {
-    return fromItem
+    candidates.push(fromItem)
   }
-  return discoveryPriceNetFromConfig(data.config)
+  if (fromConfig > 0) {
+    candidates.push(fromConfig)
+  }
+
+  if (candidates.length === 0) {
+    return defaultStartingPrices.discoveryWorkshopPrice
+  }
+  return Math.max(...candidates)
 }
