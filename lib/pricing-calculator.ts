@@ -262,14 +262,16 @@ export function findStrategiaWorkshopItem(items: PricingItem[] | undefined): Pri
   const active = items.filter((i) => !i.disabled)
   const inCategory = active.filter((i) => i.category === 'strategia')
 
-  const byName = inCategory.find((i) =>
+  for (const id of STRATEGIA_WORKSHOP_ITEM_IDS) {
+    const byId = inCategory.find((i) => i.id === id)
+    if (byId) return byId
+  }
+
+  const byName = inCategory.filter((i) =>
     i.name.toLowerCase().includes('strategia marketingu'),
   )
-  if (byName) return byName
-
-  for (const id of STRATEGIA_WORKSHOP_ITEM_IDS) {
-    const byId = active.find((i) => i.id === id)
-    if (byId) return byId
+  if (byName.length > 0) {
+    return [...byName].sort((a, b) => b.price - a.price)[0]
   }
 
   if (inCategory.length === 1) return inCategory[0]

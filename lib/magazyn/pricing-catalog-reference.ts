@@ -2,7 +2,7 @@ import type { PricingCategoryAdmin } from '@/lib/db/queries/pricing'
 import type { PricingItem } from '@/lib/data/pricing'
 import { defaultPricingData } from '@/lib/data/pricing'
 
-/** Kanoniczny katalog — źródło prawdy dla brakujących kategorii / przypisań układu. */
+/** Kanoniczny katalog — tylko do wykrywania braków w bazie (`pricingCatalogNeedsMerge`), nie do nadpisywania edytora. */
 export const referencePricingCategories: PricingCategoryAdmin[] = [
   {
     id: 'base',

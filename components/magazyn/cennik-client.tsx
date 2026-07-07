@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import type { PricingCategoryAdmin, ProjectTypeAdmin } from '@/lib/db/queries/pricing'
 import type { PricingConfig, PricingItem } from '@/lib/data/pricing'
 import {
@@ -16,6 +17,8 @@ import { PackagesPanel } from '@/components/magazyn/cennik-packages-panel'
 import { mergePricingPackagesForAdmin } from '@/lib/magazyn/pricing-packages-defaults'
 import type { PricingPackage } from '@/lib/data/pricing'
 import { DbBanner, PageHeader, StatusMessage } from '@/components/magazyn/ui'
+import { UndoRedoToolbar } from '@/components/magazyn/undo-redo-toolbar'
+import { useMagazynHistory } from '@/hooks/use-magazyn-history'
 
 type Props = {
   config: PricingConfig
@@ -72,6 +75,30 @@ function normalizeItem(item: PricingItem): PricingItem {
   }
 }
 
+type CennikDraft = {
+  configForm: PricingConfig
+  packagesForm: PricingPackage[]
+  categoriesForm: PricingCategoryAdmin[]
+  projectTypesForm: ProjectTypeAdmin[]
+  itemsForm: PricingItem[]
+}
+
+function buildCennikDraft(params: {
+  config: PricingConfig
+  items: PricingItem[]
+  categories: PricingCategoryAdmin[]
+  projectTypes: ProjectTypeAdmin[]
+}): CennikDraft {
+  const configForm = normalizeConfig(params.config)
+  return {
+    configForm,
+    packagesForm: mergePricingPackagesForAdmin(configForm.packages, configForm),
+    categoriesForm: params.categories,
+    projectTypesForm: params.projectTypes,
+    itemsForm: params.items.map(normalizeItem),
+  }
+}
+
 export function CennikClient({
   config,
   items,
@@ -82,14 +109,61 @@ export function CennikClient({
   dbConnected,
   catalogNeedsSave = false,
 }: Props) {
+  const router = useRouter()
   const [section, setSection] = useState<CennikSection>('layout')
-  const [configForm, setConfigForm] = useState(() => normalizeConfig(config))
-  const [packagesForm, setPackagesForm] = useState<PricingPackage[]>(() =>
-    mergePricingPackagesForAdmin(config.packages, config),
+  const history = useMagazynHistory(
+    buildCennikDraft({ config, items, categories, projectTypes }),
   )
-  const [categoriesForm, setCategoriesForm] = useState(categories)
-  const [projectTypesForm, setProjectTypesForm] = useState(projectTypes)
-  const [itemsForm, setItemsForm] = useState(() => items.map(normalizeItem))
+  const { configForm, packagesForm, categoriesForm, projectTypesForm, itemsForm } = history.state
+
+  const setConfigForm = (value: PricingConfig | ((prev: PricingConfig) => PricingConfig)) => {
+    history.setState((draft) => ({
+      ...draft,
+      configForm: typeof value === 'function' ? value(draft.configForm) : value,
+    }))
+  }
+
+  const setPackagesForm = (value: PricingPackage[] | ((prev: PricingPackage[]) => PricingPackage[])) => {
+    history.setState((draft) => ({
+      ...draft,
+      packagesForm: typeof value === 'function' ? value(draft.packagesForm) : value,
+    }))
+  }
+
+  const setCategoriesForm = (
+    value: PricingCategoryAdmin[] | ((prev: PricingCategoryAdmin[]) => PricingCategoryAdmin[]),
+  ) => {
+    history.setState((draft) => ({
+      ...draft,
+      categoriesForm: typeof value === 'function' ? value(draft.categoriesForm) : value,
+    }))
+  }
+
+  const setProjectTypesForm = (
+    value: ProjectTypeAdmin[] | ((prev: ProjectTypeAdmin[]) => ProjectTypeAdmin[]),
+  ) => {
+    history.setState((draft) => ({
+      ...draft,
+      projectTypesForm: typeof value === 'function' ? value(draft.projectTypesForm) : value,
+    }))
+  }
+
+  const setItemsForm = (value: PricingItem[] | ((prev: PricingItem[]) => PricingItem[])) => {
+    history.setState((draft) => ({
+      ...draft,
+      itemsForm: typeof value === 'function' ? value(draft.itemsForm) : value,
+    }))
+  }
+
+  const afterSave = () => {
+    router.refresh()
+  }
+
+  useEffect(() => {
+    history.commitSaved(buildCennikDraft({ config, items, categories, projectTypes }))
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- sync po router.refresh()
+  }, [config, items, categories, projectTypes])
+
   const [status, setStatus] = useState<string | null>(null)
   const [error, setError] = useState(false)
   const [pending, setPending] = useState(false)
@@ -108,8 +182,8 @@ export function CennikClient({
         body: JSON.stringify(payload),
       })
       if (!res.ok) throw new Error('Zapis konfiguracji nie powiódł się')
-      setConfigForm(payload)
       setStatus('Konfiguracja zapisana.')
+      afterSave()
     } catch (e) {
       setError(true)
       setStatus(e instanceof Error ? e.message : 'Błąd')
@@ -138,8 +212,8 @@ export function CennikClient({
       ])
       if (!configRes.ok) throw new Error('Zapis pakietów nie powiódł się')
       if (!itemsRes.ok) throw new Error('Zapis pozycji katalogu nie powiódł się')
-      setConfigForm(configPayload)
       setStatus('Pakiety i pozycje katalogu zapisane.')
+      afterSave()
     } catch (e) {
       setError(true)
       setStatus(e instanceof Error ? e.message : 'Błąd')
@@ -160,6 +234,7 @@ export function CennikClient({
       })
       if (!res.ok) throw new Error('Zapis kategorii nie powiódł się')
       setStatus('Kategorie zapisane.')
+      afterSave()
     } catch (e) {
       setError(true)
       setStatus(e instanceof Error ? e.message : 'Błąd')
@@ -180,6 +255,7 @@ export function CennikClient({
       })
       if (!res.ok) throw new Error('Zapis typów projektu nie powiódł się')
       setStatus('Typy projektu zapisane.')
+      afterSave()
     } catch (e) {
       setError(true)
       setStatus(e instanceof Error ? e.message : 'Błąd')
@@ -208,6 +284,7 @@ export function CennikClient({
       if (!itemsRes.ok) throw new Error('Zapis pozycji nie powiódł się')
       if (!categoriesRes.ok) throw new Error('Zapis kolejności sekcji nie powiódł się')
       setStatus('Układ cennika, kolejność sekcji i pozycje zapisane.')
+      afterSave()
     } catch (e) {
       setError(true)
       setStatus(e instanceof Error ? e.message : 'Błąd')
@@ -228,6 +305,7 @@ export function CennikClient({
       })
       if (!res.ok) throw new Error('Zapis pozycji nie powiódł się')
       setStatus('Pozycje zapisane.')
+      afterSave()
     } catch (e) {
       setError(true)
       setStatus(e instanceof Error ? e.message : 'Błąd')
@@ -244,6 +322,13 @@ export function CennikClient({
         title="Cennik"
         description={`${itemCount} pozycji · ${categoryCount} kategorii · ${packagesForm.length} pakietów · ${projectTypesForm.length} typów projektu`}
       />
+      <UndoRedoToolbar
+        canUndo={history.canUndo}
+        canRedo={history.canRedo}
+        isDirty={history.isDirty}
+        onUndo={history.undo}
+        onRedo={history.redo}
+      />
       <DbBanner connected={dbConnected} />
 
       {dbConnected && catalogNeedsSave ? (
@@ -251,9 +336,9 @@ export function CennikClient({
           role="status"
           className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100/90"
         >
-          Wykryto brakującą sekcję <strong>Strategia</strong> lub pozycje spoza układu. Zapisz kategorie i układ
-          cennika, aby zaktualizować produkcję — albo uruchom <code className="text-amber-50">pnpm patch:pricing</code>{' '}
-          z connection stringiem Neon.
+          Wykryto brakującą sekcję <strong>Strategia</strong> lub pozycje spoza układu w bazie. Zapisz
+          kategorie i układ cennika, aby dopisać je do bazy — albo uruchom{' '}
+          <code className="text-amber-50">pnpm patch:pricing</code> z connection stringiem Neon.
         </div>
       ) : null}
 

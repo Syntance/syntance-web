@@ -1,6 +1,7 @@
 'use client'
 
-import { useMemo, useState, type ReactNode } from 'react'
+import { useMemo, useState, useEffect, type ReactNode } from 'react'
+import { useRouter } from 'next/navigation'
 import { ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react'
 import type {
   FaqPricingCategory,
@@ -34,6 +35,8 @@ import {
   magazynInputClass,
   magazynTextareaClass,
 } from '@/components/magazyn/ui'
+import { UndoRedoToolbar } from '@/components/magazyn/undo-redo-toolbar'
+import { useMagazynHistory } from '@/hooks/use-magazyn-history'
 
 type PortfolioRow = typeof portfolioItems.$inferSelect
 
@@ -68,14 +71,52 @@ function navButtonClass(active: boolean) {
   }`
 }
 
+type CmsDraft = {
+  faq: FaqSettingsDocument
+  portfolio: PortfolioRow[]
+}
+
 export function CmsClient({
   faqSettings,
   portfolioRows,
   dbConnected,
   portfolioNeedsInitialSave = false,
 }: Props) {
-  const [faq, setFaq] = useState(faqSettings)
-  const [portfolio, setPortfolio] = useState(() => portfolioRows.map(normalizePortfolioRow))
+  const router = useRouter()
+  const history = useMagazynHistory<CmsDraft>({
+    faq: faqSettings,
+    portfolio: portfolioRows.map(normalizePortfolioRow),
+  })
+  const { faq, portfolio } = history.state
+
+  const setFaq = (
+    value: FaqSettingsDocument | ((prev: FaqSettingsDocument) => FaqSettingsDocument),
+  ) => {
+    history.setState((draft) => ({
+      ...draft,
+      faq: typeof value === 'function' ? value(draft.faq) : value,
+    }))
+  }
+
+  const setPortfolio = (value: PortfolioRow[] | ((prev: PortfolioRow[]) => PortfolioRow[])) => {
+    history.setState((draft) => ({
+      ...draft,
+      portfolio: typeof value === 'function' ? value(draft.portfolio) : value,
+    }))
+  }
+
+  const afterSave = () => {
+    router.refresh()
+  }
+
+  useEffect(() => {
+    history.commitSaved({
+      faq: faqSettings,
+      portfolio: portfolioRows.map(normalizePortfolioRow),
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- sync po router.refresh()
+  }, [faqSettings, portfolioRows])
+
   const [activePageId, setActivePageId] = useState<CmsPageId>('cennik')
   const [activeSectionId, setActiveSectionId] = useState<string>('pricing')
   const [activePortfolioId, setActivePortfolioId] = useState<string | null>(
@@ -221,6 +262,7 @@ export function CmsClient({
       })
       if (!res.ok) throw new Error('Zapis FAQ nie powiódł się')
       setStatus('Treści FAQ zapisane.')
+      afterSave()
     } catch (e) {
       setError(true)
       setStatus(e instanceof Error ? e.message : 'Błąd')
@@ -263,6 +305,7 @@ export function CmsClient({
         throw new Error(payload?.error ?? 'Zapis portfolio nie powiódł się')
       }
       setStatus('Portfolio zapisane.')
+      afterSave()
     } catch (e) {
       setError(true)
       setStatus(e instanceof Error ? e.message : 'Błąd')
@@ -622,6 +665,13 @@ export function CmsClient({
   return (
     <div className="space-y-6">
       <PageHeader title="CMS" description={`FAQ (${faqCount} wpisów) · Portfolio (${portfolio.length})`} />
+      <UndoRedoToolbar
+        canUndo={history.canUndo}
+        canRedo={history.canRedo}
+        isDirty={history.isDirty}
+        onUndo={history.undo}
+        onRedo={history.redo}
+      />
       <DbBanner connected={dbConnected} />
 
       <div className="flex flex-col gap-6 xl:flex-row xl:items-start">

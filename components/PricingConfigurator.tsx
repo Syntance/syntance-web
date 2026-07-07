@@ -91,16 +91,42 @@ export function PricingConfigurator({ data }: Props) {
     return () => clearTimeout(t1)
   }, [])
 
-  // Pobierz domyślnie zaznaczone elementy dla typu projektu
+  // Pobierz domyślnie zaznaczone elementy dla typu projektu (max. jedna pozycja strategii)
   const getDefaultSelectedItems = useCallback((projectTypeId: string) => {
+    let strategiaDefaultUsed = false
     return items
-      .filter(item => 
-        item.projectTypes?.includes(projectTypeId) && 
-        item.defaultSelected && 
-        !item.required
-      )
-      .map(item => item.id)
+      .filter((item) => {
+        if (!item.projectTypes?.includes(projectTypeId) || !item.defaultSelected || item.required) {
+          return false
+        }
+        const isStrategiaDuplicate =
+          item.category === 'strategia' &&
+          item.name.toLowerCase().includes('strategia marketingu')
+        if (isStrategiaDuplicate) {
+          if (strategiaDefaultUsed) return false
+          strategiaDefaultUsed = true
+        }
+        return true
+      })
+      .map((item) => item.id)
   }, [items])
+
+  const mergeSelectionsForProjectType = useCallback(
+    (projectTypeId: string, previousSelected: string[]) => {
+      const defaults = getDefaultSelectedItems(projectTypeId)
+      const carried = previousSelected.filter((id) => {
+        const item = items.find((i) => i.id === id)
+        return (
+          item &&
+          !item.disabled &&
+          !item.required &&
+          item.projectTypes?.includes(projectTypeId)
+        )
+      })
+      return [...new Set([...defaults, ...carried])]
+    },
+    [getDefaultSelectedItems, items],
+  )
 
   const [state, setState] = useState<ConfiguratorState>(() => {
     const initialProjectType =
@@ -139,10 +165,10 @@ export function PricingConfigurator({ data }: Props) {
     setState((prev) => ({
       ...prev,
       projectType: next,
-      selectedItems: getDefaultSelectedItems(next),
+      selectedItems: mergeSelectionsForProjectType(next, prev.selectedItems),
       quantities: {},
     }))
-  }, [state.projectType, configuratorProjectTypes, getDefaultSelectedItems])
+  }, [state.projectType, configuratorProjectTypes, mergeSelectionsForProjectType])
   const availableItems = useMemo(() => {
     return items.filter(item => 
       item.projectTypes?.includes(state.projectType)
@@ -162,13 +188,12 @@ export function PricingConfigurator({ data }: Props) {
     [categories],
   )
 
-  // Elementy opcjonalne pogrupowane według kategorii (kolejność sekcji z Magazynu)
-  const optionalItemsByCategory = useMemo(() => {
-    const optional = availableItems.filter((item) => !item.required)
+  // Wszystkie pozycje pogrupowane według kategorii — ta sama kolejność co w Magazynie (Układ cennika)
+  const itemsByCategory = useMemo(() => {
     return sortedCategories
       .map((cat) => ({
         ...cat,
-        items: optional
+        items: availableItems
           .filter((item) => item.category === cat.id)
           .sort((a, b) => comparePricingItemsForConfigurator(a, b, state.projectType)),
       }))
@@ -511,10 +536,10 @@ export function PricingConfigurator({ data }: Props) {
                   disabled={isDisabledType}
                   onClick={() => {
                     if (isDisabledType) return
-                    setState(prev => ({
+                    setState((prev) => ({
                       ...prev,
                       projectType: type.id,
-                      selectedItems: getDefaultSelectedItems(type.id),
+                      selectedItems: mergeSelectionsForProjectType(type.id, prev.selectedItems),
                       quantities: {},
                     }))
                     trackAnalyticsEvent(AnalyticsEvent.PricingTypeSelect, {
@@ -576,91 +601,51 @@ export function PricingConfigurator({ data }: Props) {
           </div>
         </div>
 
-        {/* Elementy wymagane */}
-        {requiredItems.length > 0 && (
-          <div>
-            <h3 className="text-lg font-medium tracking-wide mb-4 text-gray-200 flex items-center gap-2">
-              <Layout size={18} className="text-purple-400" />
-              W cenie bazowej
-            </h3>
-            <div className="space-y-2">
-              {requiredItems.map(item => (
-                  <div 
-                    key={item.id} 
-                    className="flex items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-900/30 rounded-xl border border-gray-800"
-                  >
-                  <div className="w-5 h-5 rounded bg-purple-500/30 flex items-center justify-center flex-shrink-0">
-                    <Check size={14} className="text-purple-400" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-gray-400 font-medium">{item.name}</span>
-                    {item.description && (
-                      <ItemDescriptionText className="text-sm text-gray-400">
-                        {item.description}
-                      </ItemDescriptionText>
-                    )}
-                  </div>
-                  {!item.hidePrice && (
-                    <span className="text-gray-400 text-sm flex-shrink-0">
-                      {(() => {
-                        const included = isCatalogLineIncludedInBasePrice(
-                          item,
-                          state.projectType,
-                          config,
-                          currentProjectType?.basePrice ?? 0,
-                        )
-                        if (included && showIncludedInPackageLabel) {
-                          return baseBundleNet > 0 ? 'w pakiecie' : 'w cenie pakietu'
-                        }
-                        return `${item.price.toLocaleString('pl-PL')} PLN netto`
-                      })()}
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Elementy opcjonalne */}
-        {optionalItemsByCategory.map(category => (
+        {/* Pozycje wg kategorii — jak w Magazynie → Układ cennika */}
+        {itemsByCategory.map((category) => (
           <div key={category.id}>
             <h3 className="text-lg font-medium tracking-wide mb-4 text-gray-200 flex items-center gap-2">
               {getIcon(category.icon)}
               {category.name}
             </h3>
             <div className="space-y-2">
-              {category.items.map(item => {
+              {category.items.map((item) => {
                 const disabled = isDisabled(item)
-                const selected = state.selectedItems.includes(item.id)
+                const locked = item.required === true
+                const selected = locked || state.selectedItems.includes(item.id)
                 const qty = state.quantities[item.id] || 1
 
                 const isHighlighted = highlightedItem === item.id
 
                 return (
-                  <div 
+                  <div
                     key={item.id}
                     data-item-id={item.id}
-                    onClick={() => !disabled && toggleItem(item.id)}
+                    onClick={() => !disabled && !locked && toggleItem(item.id)}
                     className={`flex items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border ${
                       isHighlighted ? '' : 'transition-all duration-200'
                     } ${
-                      isHighlighted
-                        ? 'border-purple-500 bg-purple-500/20 cursor-pointer animate-highlight-pulse'
-                        : disabled 
-                          ? 'opacity-40 cursor-not-allowed border-gray-800 bg-gray-900/30' 
-                          : selected 
-                            ? 'border-purple-500/50 bg-purple-500/15 cursor-pointer'
-                            : 'border-gray-800 bg-gray-900/40 hover:border-gray-700 hover:bg-gray-900/60 cursor-pointer'
+                      locked
+                        ? 'border-gray-800 bg-gray-900/30'
+                        : isHighlighted
+                          ? 'border-purple-500 bg-purple-500/20 cursor-pointer animate-highlight-pulse'
+                          : disabled
+                            ? 'opacity-40 cursor-not-allowed border-gray-800 bg-gray-900/30'
+                            : selected
+                              ? 'border-purple-500/50 bg-purple-500/15 cursor-pointer'
+                              : 'border-gray-800 bg-gray-900/40 hover:border-gray-700 hover:bg-gray-900/60 cursor-pointer'
                     }`}
                   >
-                    {/* Checkbox */}
-                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-all ${
-                      selected 
-                        ? 'bg-purple-500 border-purple-500' 
-                        : 'border-gray-600 hover:border-gray-500'
-                    }`}>
-                      {selected && <Check size={12} className="text-white" />}
+                    <div
+                      className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 transition-all ${
+                        locked
+                          ? 'bg-purple-500/30'
+                          : selected
+                            ? 'bg-purple-500 border-2 border-purple-500'
+                            : 'border-2 border-gray-600 hover:border-gray-500'
+                      }`}
+                    >
+                      {selected && <Check size={locked ? 14 : 12} className="text-purple-400" />}
                     </div>
 
                     {/* Content */}
@@ -669,6 +654,11 @@ export function PricingConfigurator({ data }: Props) {
                         <span className={`font-medium ${selected ? 'text-white' : 'text-gray-400'}`}>
                           {item.name}
                         </span>
+                        {locked && (
+                          <span className="px-2 py-0.5 text-xs rounded-full bg-white/10 text-gray-400 font-medium">
+                            W cenie bazowej
+                          </span>
+                        )}
                         {showIncludedInPackageLabel &&
                           isCatalogLineIncludedInBasePrice(
                             item,
@@ -725,7 +715,7 @@ export function PricingConfigurator({ data }: Props) {
                         </ItemDescriptionText>
                       )}
                       {/* Info dla elementów z ilością */}
-                      {item.maxQuantity && item.maxQuantity > 1 && selected && (
+                      {item.maxQuantity && item.maxQuantity > 1 && selected && !locked && (
                         <p className="text-xs text-amber-400/80 mt-1 flex items-center gap-1">
                           <span className="inline-block w-1 h-1 rounded-full bg-amber-400/60" />
                           Cena {item.price.toLocaleString('pl-PL')} PLN dotyczy każdej {item.name.toLowerCase().includes('podstron') ? 'podstrony' : 'sztuki'} osobno
@@ -741,7 +731,7 @@ export function PricingConfigurator({ data }: Props) {
                     </div>
 
                     {/* Quantity selector */}
-                    {item.maxQuantity && item.maxQuantity > 1 && selected && (
+                    {item.maxQuantity && item.maxQuantity > 1 && selected && !locked && (
                       <select
                         value={qty}
                         onChange={(e) => {
