@@ -5,13 +5,14 @@ export default function PorozmawiajmyPage() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ContactPage',
-    name: 'Skuteczne strony i sklepy, które sprzedają — Syntance',
+    name: 'Porozmawiajmy o projekcie — Syntance',
     url: 'https://syntance.com/porozmawiajmy',
     mainEntity: {
       '@type': 'Organization',
       name: 'Syntance',
       url: 'https://syntance.com',
-      email: 'kamil@syntance.com',
+      email: 'kontakt@syntance.com',
+      telephone: '+48537110170',
     },
   }
 
