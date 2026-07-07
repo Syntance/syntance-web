@@ -5,8 +5,8 @@ import AnimatedSection from '@/components/AnimatedSection'
 import PanelOverviewMock from '@/components/sections/panel-overview-mock'
 
 const proofItems = [
-  'PageSpeed 90+',
-  'Autorski CMS w standardzie',
+  '0 zł / miesiąc',
+  'Podgląd na GA4 + PostHog',
   'RODO',
   '100% Twoje dane',
 ]
@@ -22,7 +22,7 @@ export default function CMSSection() {
         <AnimatedSection>
           <header className="text-center mb-8 md:mb-10">
             <p className="text-[11px] md:text-xs font-medium uppercase tracking-[0.2em] text-purple-300/70 mb-3">
-              Syntance Panel
+              SYNTANCE CMS & SYNTANCE SHOP
             </p>
             <h2
               id="cms-heading"
@@ -31,8 +31,8 @@ export default function CMSSection() {
               Jeden panel zamiast pięciu narzędzi.
             </h2>
             <p className="text-sm md:text-lg font-light text-gray-400 max-w-2xl mx-auto leading-relaxed">
-              Strona, treści, produkty, zamówienia i analityka — wszystkim zarządzasz z jednego miejsca.
-              Bez Shopify, bez wtyczek, bez pięciu logowań.
+              Syntance CMS zarządza stroną, treścią i SEO. Syntance Shop — produktami, zamówieniami i płatnościami.
+              Wszystko zamknięte w jednym panelu.
             </p>
           </header>
         </AnimatedSection>
@@ -75,12 +75,6 @@ export default function CMSSection() {
 
         <AnimatedSection>
           <PanelOverviewMock />
-          <p className="mt-4 text-center text-xs text-gray-500">
-            Pełny interaktywny showcase panelu — na{' '}
-            <Link href="/panel" className="text-gray-400 underline underline-offset-4 hover:text-white">
-              syntance.com/panel
-            </Link>
-          </p>
         </AnimatedSection>
       </div>
     </section>

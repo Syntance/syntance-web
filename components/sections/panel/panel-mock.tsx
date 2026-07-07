@@ -360,7 +360,7 @@ export default function PanelMock({
           {!compact && (
             <div className="hidden border-r border-white/10 bg-black/40 p-3 md:block">
               <p className="mb-3 px-2 text-[10px] font-medium uppercase tracking-wider text-gray-500">
-                Syntance Panel
+                Syntance
               </p>
               <ul className="space-y-1">
                 {PANEL_NAV.map((item) => {
