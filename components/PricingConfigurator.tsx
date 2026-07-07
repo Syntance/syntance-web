@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 import { 
   Layout, FileText, Layers, Zap, Plug, CreditCard, Truck, 
   Globe, ShoppingCart, Smartphone, Check, Sparkles, Clock,
-  Send, Download, ChevronRight, Link2, Gift, Star, Target, Lightbulb, Timer
+  Send, Download, ChevronRight, Link2, Gift, Star, Target, Lightbulb
 } from 'lucide-react'
 import { PricingData, PricingItem } from '@/lib/data/pricing'
 import { ConfirmDialog } from './ConfirmDialog'
@@ -836,18 +836,11 @@ export function PricingConfigurator({ data }: Props) {
 
               <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
     
-              {/* Time estimates */}
-              <div className="grid grid-cols-2 gap-2 sm:gap-4">
-                <div className="text-center p-2 sm:p-3 rounded-lg bg-white/5">
-                  <Clock size={16} className="mx-auto mb-1 text-blue-400" aria-hidden />
-                  <div className="text-base sm:text-lg font-semibold text-white">{calculation.days}</div>
-                  <div className="text-xs text-gray-400">dni roboczych</div>
-                </div>
-                <div className="text-center p-2 sm:p-3 rounded-lg bg-white/5">
-                  <Timer size={16} className="mx-auto mb-1 text-emerald-400/90" aria-hidden />
-                  <div className="text-base sm:text-lg font-semibold text-white">{calculation.hours}</div>
-                  <div className="text-xs text-gray-400">roboczogodzin (szac.)</div>
-                </div>
+              {/* Czas realizacji */}
+              <div className="text-center rounded-lg bg-white/5 p-3 sm:p-4">
+                <Clock size={16} className="mx-auto mb-1 text-blue-400" aria-hidden />
+                <div className="text-base font-semibold text-white sm:text-lg">{calculation.days}</div>
+                <div className="text-xs text-gray-400">dni roboczych</div>
               </div>
 
               {/* CTAs */}
