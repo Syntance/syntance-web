@@ -2,6 +2,7 @@ import { eq } from 'drizzle-orm'
 import { getDb, hasDb } from '@/lib/db'
 import { seoGlobal, seoPages } from '@/lib/db/schema'
 import { defaultSeo } from '@/lib/data/seo-defaults'
+import { SEO_PAGE_CATALOG, sortSeoPagesByCatalog } from '@/lib/data/seo-page-catalog'
 import type { PageSeo, SeoSettings } from '@/lib/data/seo-types'
 
 export type { PageSeo, SeoSettings } from '@/lib/data/seo-types'
@@ -105,11 +106,27 @@ export async function saveSeoSettings(data: Partial<SeoSettings>): Promise<void>
     })
 }
 
+export async function ensureSeoPages(): Promise<void> {
+  if (!hasDb()) return
+  const db = getDb()
+  const existing = await db.select({ slug: seoPages.slug }).from(seoPages)
+  const existingSlugs = new Set(existing.map((row) => row.slug))
+
+  for (const entry of SEO_PAGE_CATALOG) {
+    if (existingSlugs.has(entry.slug)) continue
+    const { order: _order, ...page } = entry
+    await db.insert(seoPages).values({
+      ...page,
+      lastUpdated: new Date(),
+    })
+  }
+}
+
 export async function listSeoPages(): Promise<PageSeo[]> {
   if (!hasDb()) return []
   const db = getDb()
-  const rows = await db.select().from(seoPages).orderBy(seoPages.pageName)
-  return rows.map(rowToPageSeo)
+  const rows = await db.select().from(seoPages)
+  return sortSeoPagesByCatalog(rows.map(rowToPageSeo))
 }
 
 export async function getPageSeo(slug: string): Promise<PageSeo | null> {
