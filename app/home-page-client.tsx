@@ -7,6 +7,7 @@ import SectionScrollbar from "@/components/SectionScrollbar";
 import AnimatedSection from "@/components/AnimatedSection";
 import { ContactForm } from "@/components/contact-form";
 import type { SimpleFaqQA } from "@/lib/data/faq";
+import type { StackBadgeRecord } from "@/lib/data/stack-badges";
 // Import sections - bez lazy loadingu dla hero, żeby uniknąć flashowania kontaktu
 import HeroStudio from "@/components/sections/hero-studio";
 import Footer from "@/components/sections/footer";
@@ -19,9 +20,10 @@ const PricingStudioNew = dynamic(() => import("@/components/sections/pricing-stu
 
 interface HomePageClientProps {
   faqItems: SimpleFaqQA[];
+  stackBadges: StackBadgeRecord[];
 }
 
-export default function HomePageClient({ faqItems }: HomePageClientProps) {
+export default function HomePageClient({ faqItems, stackBadges }: HomePageClientProps) {
   return (
     <div className="min-h-screen">
       <SectionScrollbar />
@@ -47,9 +49,9 @@ export default function HomePageClient({ faqItems }: HomePageClientProps) {
       />
 
       <main id="main-content">
-        <HeroStudio />
+        <HeroStudio stackBadges={stackBadges} />
         <AnatomyStudio />
-        <ValuesStudio />
+        <ValuesStudio stackBadges={stackBadges} />
         <TechComparison />
         <CMSSection />
         <PortfolioStudio />

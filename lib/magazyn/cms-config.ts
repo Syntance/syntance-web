@@ -12,7 +12,7 @@ export type CmsFaqPageId =
 
 export type CmsModuleId = 'faq' | 'tresci'
 
-export type CmsContentPageId = 'portfolio'
+export type CmsContentPageId = 'portfolio' | 'stack-badges'
 
 export type CmsPageId = CmsFaqPageId | CmsContentPageId
 
@@ -56,6 +56,7 @@ export const CMS_FAQ_PAGES: CmsFaqPageDef[] = [
 
 export const CMS_CONTENT_PAGES: CmsContentPageDef[] = [
   { id: 'portfolio', label: 'Portfolio', path: '/portfolio' },
+  { id: 'stack-badges', label: 'Badge technologii', path: '/' },
 ]
 
 /** @deprecated Użyj CMS_FAQ_PAGES lub CMS_CONTENT_PAGES */

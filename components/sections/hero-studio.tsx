@@ -3,14 +3,18 @@
 import { ArrowDown } from "lucide-react";
 import GradientText from "../GradientText";
 import StickyCtaFloat from "../StickyCtaFloat";
+import { TechStackBadgeList } from "@/components/sections/tech-stack-badge";
+import type { StackBadgeRecord } from "@/lib/data/stack-badges";
 
-const HERO_STACK_BADGES = [
-  { name: "Next.js", dotColor: "oklch(0.92 0 0)" },
-  { name: "Medusa", dotColor: "oklch(0.72 0.17 162)" },
-  { name: "Sanity CMS", dotColor: "oklch(0.65 0.22 25)" },
-] as const;
+type HeroStudioProps = {
+  stackBadges: StackBadgeRecord[];
+};
 
-export default function HeroStudio() {
+export default function HeroStudio({ stackBadges }: HeroStudioProps) {
+  const heroBadges = stackBadges
+    .filter((badge) => badge.showInHero)
+    .sort((a, b) => a.sortOrder - b.sortOrder);
+
   const scrollToNext = () => {
     const element = document.getElementById("anatomy-studio");
     if (element) {
@@ -44,23 +48,7 @@ export default function HeroStudio() {
         <p className="text-lg md:text-xl font-light tracking-wider text-gray-400 mb-6 max-w-3xl mx-auto">
           Budujemy w oparciu o strategię marketingu i sprzedaży.
         </p>
-        <ul
-          className="mb-12 flex flex-wrap justify-center gap-2"
-          aria-label="Technologie, z których korzystamy"
-        >
-          {HERO_STACK_BADGES.map((tech) => (
-            <li key={tech.name}>
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-gray-900/60 px-3.5 py-1.5 text-[11px] font-medium tracking-wide text-gray-200 md:text-xs">
-                <span
-                  className="size-1.5 shrink-0 rounded-full"
-                  style={{ backgroundColor: tech.dotColor }}
-                  aria-hidden="true"
-                />
-                {tech.name}
-              </span>
-            </li>
-          ))}
-        </ul>
+        <TechStackBadgeList badges={heroBadges} className="mb-12" />
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <div className="relative group w-fit max-w-full shrink-0">
             <div

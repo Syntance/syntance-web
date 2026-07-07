@@ -12,6 +12,16 @@ export const faqEntries = pgTable('faq_entries', {
   isActive: boolean('is_active').notNull().default(true),
 })
 
+export const stackBadges = pgTable('stack_badges', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  definition: text('definition').notNull().default(''),
+  dotColor: text('dot_color').notNull().default('oklch(0.78 0 0)'),
+  showInHero: boolean('show_in_hero').notNull().default(false),
+  showInValues: boolean('show_in_values').notNull().default(true),
+  sortOrder: integer('sort_order').notNull().default(0),
+})
+
 export const portfolioItems = pgTable('portfolio_items', {
   id: uuid('id').primaryKey().defaultRandom(),
   sanityId: text('sanity_id'),

@@ -2,6 +2,8 @@
 
 import { useEffect } from "react";
 import AnimatedSection from "@/components/AnimatedSection";
+import { TechStackBadgeList } from "@/components/sections/tech-stack-badge";
+import type { StackBadgeRecord } from "@/lib/data/stack-badges";
 
 const values = [
   {
@@ -34,37 +36,22 @@ const values = [
   },
 ] as const;
 
-const TECH_STACK_BADGES = [
-  { name: "Next.js", dotColor: "oklch(0.92 0 0)" },
-  { name: "Medusa", dotColor: "oklch(0.72 0.17 162)" },
-  { name: "Syntance CMS", dotColor: "oklch(0.72 0.18 290)" },
-  { name: "Syntance Shop", dotColor: "oklch(0.72 0.14 230)" },
-  { name: "Sanity", dotColor: "oklch(0.65 0.22 25)" },
-  { name: "Vercel", dotColor: "oklch(0.78 0 0)" },
-  { name: "R2", dotColor: "oklch(0.72 0.18 55)" },
-  { name: "GitHub", dotColor: "oklch(0.75 0.05 300)" },
-] as const;
+type ValuesStudioProps = {
+  stackBadges: StackBadgeRecord[];
+};
 
-function TechStackBadges({ className = "" }: { className?: string }) {
-  return (
-    <ul
-      className={`flex flex-wrap justify-center gap-2 ${className}`}
-      aria-label="Technologie, z których korzystamy"
-    >
-      {TECH_STACK_BADGES.map((tech) => (
-        <li key={tech.name}>
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-gray-900/60 px-3.5 py-1.5 text-[11px] font-medium tracking-wide text-gray-200 md:text-xs">
-            <span
-              className="size-1.5 shrink-0 rounded-full"
-              style={{ backgroundColor: tech.dotColor }}
-              aria-hidden="true"
-            />
-            {tech.name}
-          </span>
-        </li>
-      ))}
-    </ul>
-  );
+function TechStackBadges({
+  badges,
+  className = "",
+}: {
+  badges: StackBadgeRecord[];
+  className?: string;
+}) {
+  const visibleBadges = badges
+    .filter((badge) => badge.showInValues)
+    .sort((a, b) => a.sortOrder - b.sortOrder);
+
+  return <TechStackBadgeList badges={visibleBadges} className={className} />;
 }
 
 function ValuesGrid({ className = "" }: { className?: string }) {
@@ -107,7 +94,7 @@ function ValuesGrid({ className = "" }: { className?: string }) {
   );
 }
 
-export default function ValuesStudio() {
+export default function ValuesStudio({ stackBadges }: ValuesStudioProps) {
   useEffect(() => {
     const rows = document.querySelectorAll(".value-row-studio");
     const observer = new IntersectionObserver(
@@ -147,7 +134,7 @@ export default function ValuesStudio() {
           <p className="text-base font-light leading-relaxed tracking-wide text-gray-300">
             Udowadniamy, że jakość można dostarczyć szybko i w uczciwej cenie.
           </p>
-          <TechStackBadges className="mt-6" />
+          <TechStackBadges badges={stackBadges} className="mt-6" />
         </header>
 
         <ValuesGrid />
@@ -163,7 +150,7 @@ export default function ValuesStudio() {
             <p className="text-lg font-light tracking-wide text-gray-300">
               Udowadniamy, że jakość można dostarczyć szybko i w uczciwej cenie.
             </p>
-            <TechStackBadges className="mt-8" />
+            <TechStackBadges badges={stackBadges} className="mt-8" />
           </header>
         </AnimatedSection>
 

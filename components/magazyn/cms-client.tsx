@@ -24,6 +24,8 @@ import { PORTFOLIO_PROJECT_TYPE_OPTIONS, slugifyPortfolioName } from '@/lib/maga
 import { PortfolioPerformanceEditor } from '@/components/magazyn/portfolio-performance-editor'
 import { PortfolioListPicker } from '@/components/magazyn/portfolio-list-picker'
 import { portfolioHasAdminGallerySeed } from '@/lib/magazyn/portfolio-admin-merge'
+import type { StackBadgeRecord } from '@/lib/data/stack-badges'
+import { StackBadgesEditor } from '@/components/magazyn/stack-badges-editor'
 import type { PortfolioProjectType } from '@/lib/portfolio-content'
 import {
   DbBanner,
@@ -59,8 +61,10 @@ function normalizePortfolioRow(row: PortfolioRow): PortfolioRow {
 type Props = {
   faqSettings: FaqSettingsDocument
   portfolioRows: PortfolioRow[]
+  stackBadgeRows: StackBadgeRecord[]
   dbConnected: boolean
   portfolioNeedsInitialSave?: boolean
+  stackBadgesNeedsInitialSave?: boolean
 }
 
 function newKey(prefix: string) {
@@ -76,20 +80,24 @@ function navButtonClass(active: boolean) {
 type CmsDraft = {
   faq: FaqSettingsDocument
   portfolio: PortfolioRow[]
+  stackBadges: StackBadgeRecord[]
 }
 
 export function CmsClient({
   faqSettings,
   portfolioRows,
+  stackBadgeRows,
   dbConnected,
   portfolioNeedsInitialSave = false,
+  stackBadgesNeedsInitialSave = false,
 }: Props) {
   const router = useRouter()
   const history = useMagazynHistory<CmsDraft>({
     faq: faqSettings,
     portfolio: portfolioRows.map(normalizePortfolioRow),
+    stackBadges: stackBadgeRows,
   })
-  const { faq, portfolio } = history.state
+  const { faq, portfolio, stackBadges } = history.state
 
   const setFaq = (
     value: FaqSettingsDocument | ((prev: FaqSettingsDocument) => FaqSettingsDocument),
@@ -107,6 +115,15 @@ export function CmsClient({
     }))
   }
 
+  const setStackBadges = (
+    value: StackBadgeRecord[] | ((prev: StackBadgeRecord[]) => StackBadgeRecord[]),
+  ) => {
+    history.setState((draft) => ({
+      ...draft,
+      stackBadges: typeof value === 'function' ? value(draft.stackBadges) : value,
+    }))
+  }
+
   const afterSave = () => {
     router.refresh()
   }
@@ -115,9 +132,10 @@ export function CmsClient({
     history.commitSaved({
       faq: faqSettings,
       portfolio: portfolioRows.map(normalizePortfolioRow),
+      stackBadges: stackBadgeRows,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps -- sync po router.refresh()
-  }, [faqSettings, portfolioRows])
+  }, [faqSettings, portfolioRows, stackBadgeRows])
 
   const [activeModule, setActiveModule] = useState<CmsModuleId>('faq')
   const [activeFaqPageId, setActiveFaqPageId] = useState<CmsFaqPageId>('cennik')
@@ -134,6 +152,7 @@ export function CmsClient({
   const activeContentPage =
     CMS_CONTENT_PAGES.find((p) => p.id === activeContentPageId) ?? CMS_CONTENT_PAGES[0]
   const isPortfolio = activeModule === 'tresci' && activeContentPageId === 'portfolio'
+  const isStackBadges = activeModule === 'tresci' && activeContentPageId === 'stack-badges'
 
   const faqKey = activeModule === 'faq' ? activeFaqPage.faqKey : undefined
   const allFaqEntries = useMemo(() => (faqKey ? (faq[faqKey] ?? []) : []), [faqKey, faq])
@@ -322,6 +341,37 @@ export function CmsClient({
     }
   }
 
+  async function saveStackBadges() {
+    const invalid = stackBadges.find((item) => !item.id.trim() || !item.name.trim())
+    if (invalid) {
+      setError(true)
+      setStatus('Każdy badge wymaga id i nazwy.')
+      return
+    }
+
+    setPending(true)
+    setStatus(null)
+    setError(false)
+    try {
+      const res = await fetch('/api/magazyn/cms/stack-badges', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: stackBadges }),
+      })
+      if (!res.ok) {
+        const payload = (await res.json().catch(() => null)) as { error?: string } | null
+        throw new Error(payload?.error ?? 'Zapis badge nie powiódł się')
+      }
+      setStatus('Badge technologii zapisane.')
+      afterSave()
+    } catch (e) {
+      setError(true)
+      setStatus(e instanceof Error ? e.message : 'Błąd')
+    } finally {
+      setPending(false)
+    }
+  }
+
   function updatePortfolio(id: string, patch: Partial<PortfolioRow>) {
     setPortfolio((prev) => prev.map((row) => (row.id === id ? { ...row, ...patch } : row)))
   }
@@ -370,16 +420,20 @@ export function CmsClient({
 
   const sectionLabel = isPortfolio
     ? 'Realizacja'
-    : activeFaqPage.pricing
-      ? (PRICING_FAQ_SECTIONS.find((s) => s.id === activeSectionId)?.label ?? activeSectionId)
-      : SIMPLE_FAQ_SECTION.label
+    : isStackBadges
+      ? 'Badge technologii'
+      : activeFaqPage.pricing
+        ? (PRICING_FAQ_SECTIONS.find((s) => s.id === activeSectionId)?.label ?? activeSectionId)
+        : SIMPLE_FAQ_SECTION.label
+
+  const contentCount = portfolio.length + stackBadges.length
 
   const moduleTabs = CMS_MODULES.map((module) => ({
     id: module.id,
     label:
       module.id === 'faq'
         ? `${module.label} (${faqCount})`
-        : `${module.label} (${portfolio.length})`,
+        : `${module.label} (${contentCount})`,
   }))
 
   const pricingTabs = PRICING_FAQ_SECTIONS.map((section) => {
@@ -589,6 +643,16 @@ export function CmsClient({
         <SaveButton pending={pending} label="Zapisz portfolio" onClick={savePortfolio} />
       </>
     )
+  } else if (isStackBadges) {
+    editorContent = (
+      <StackBadgesEditor
+        badges={stackBadges}
+        pending={pending}
+        needsInitialSave={stackBadgesNeedsInitialSave}
+        onChange={setStackBadges}
+        onSave={saveStackBadges}
+      />
+    )
   } else {
     editorContent = (
       <>
@@ -680,7 +744,7 @@ export function CmsClient({
 
   return (
     <div className="space-y-6">
-      <PageHeader title="CMS" description={`FAQ (${faqCount} wpisów) · Treści (${portfolio.length})`} />
+      <PageHeader title="CMS" description={`FAQ (${faqCount} wpisów) · Treści (${contentCount})`} />
       <UndoRedoToolbar
         canUndo={history.canUndo}
         canRedo={history.canRedo}
@@ -710,7 +774,12 @@ export function CmsClient({
                 </button>
               ))
             : CMS_CONTENT_PAGES.map((page) => {
-                const count = page.id === 'portfolio' ? portfolio.length : 0
+                const count =
+                  page.id === 'portfolio'
+                    ? portfolio.length
+                    : page.id === 'stack-badges'
+                      ? stackBadges.length
+                      : 0
                 return (
                   <button
                     key={page.id}
