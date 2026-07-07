@@ -67,6 +67,41 @@ export function reorderItemsInCategory(
   })
 }
 
+/** Przenosi pozycję między sekcjami układu (zmiana `category` + kolejność w docelowej sekcji). */
+export function moveItemBetweenCategories(
+  items: PricingItem[],
+  projectTypeId: string,
+  itemId: string,
+  fromCategoryId: string,
+  toCategoryId: string,
+  toIndex: number,
+): PricingItem[] {
+  const item = items.find((i) => i.id === itemId)
+  if (!item || fromCategoryId === toCategoryId) return items
+
+  const projectTypes = item.projectTypes.includes(projectTypeId)
+    ? item.projectTypes
+    : [...item.projectTypes, projectTypeId]
+
+  let next = items.map((row) =>
+    row.id === itemId ? { ...row, category: toCategoryId, projectTypes } : row,
+  )
+
+  const destIds = itemsForProjectTypeCategory(next, projectTypeId, toCategoryId)
+    .map((row) => row.id)
+    .filter((id) => id !== itemId)
+  const safeIndex = Math.max(0, Math.min(toIndex, destIds.length))
+  destIds.splice(safeIndex, 0, itemId)
+  next = reorderItemsInCategory(next, projectTypeId, toCategoryId, destIds)
+
+  const sourceIds = itemsForProjectTypeCategory(next, projectTypeId, fromCategoryId).map((row) => row.id)
+  if (sourceIds.length > 0) {
+    next = reorderItemsInCategory(next, projectTypeId, fromCategoryId, sourceIds)
+  }
+
+  return next
+}
+
 export function createPricingItemForLayout(params: {
   projectTypeId: string
   categoryId: string

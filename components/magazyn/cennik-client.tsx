@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import type { PricingCategoryAdmin, ProjectTypeAdmin } from '@/lib/db/queries/pricing'
 import type { PricingConfig, PricingItem } from '@/lib/data/pricing'
@@ -159,9 +159,13 @@ export function CennikClient({
     router.refresh()
   }
 
+  const serverDraftKeyRef = useRef<string | null>(null)
+
   useEffect(() => {
+    const key = JSON.stringify({ config, items, categories, projectTypes })
+    if (serverDraftKeyRef.current === key) return
+    serverDraftKeyRef.current = key
     history.commitSaved(buildCennikDraft({ config, items, categories, projectTypes }))
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- sync po router.refresh()
   }, [config, items, categories, projectTypes])
 
   const [status, setStatus] = useState<string | null>(null)

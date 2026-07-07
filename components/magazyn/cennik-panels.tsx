@@ -22,6 +22,7 @@ import {
   createPricingItemForLayout,
   itemsAvailableForLayout,
   assignExistingItemToLayout,
+  moveItemBetweenCategories,
 } from '@/lib/magazyn/pricing-order'
 import {
   basicItemsInProjectTypeLayout,
@@ -503,20 +504,36 @@ export function LayoutPanel({
   }
 
   function onDragEnd(result: DropResult) {
-    const { destination, source } = result
-    if (!destination || destination.droppableId !== source.droppableId) return
+    const { destination, source, draggableId } = result
+    if (!destination) return
 
-    const categoryId = source.droppableId.replace(/^cat-/, '')
-    const list = itemsForProjectTypeCategory(items, projectTypeId, categoryId)
-    const ids = list.map((i) => i.id)
-    const from = source.index
-    const to = destination.index
-    if (from === to) return
+    const sourceCategoryId = source.droppableId.replace(/^cat-/, '')
+    const destCategoryId = destination.droppableId.replace(/^cat-/, '')
 
-    const nextIds = [...ids]
-    const [moved] = nextIds.splice(from, 1)
-    nextIds.splice(to, 0, moved)
-    setItems(reorderItemsInCategory(items, projectTypeId, categoryId, nextIds))
+    if (sourceCategoryId === destCategoryId) {
+      const list = itemsForProjectTypeCategory(items, projectTypeId, sourceCategoryId)
+      const ids = list.map((i) => i.id)
+      const from = source.index
+      const to = destination.index
+      if (from === to) return
+
+      const nextIds = [...ids]
+      const [moved] = nextIds.splice(from, 1)
+      nextIds.splice(to, 0, moved)
+      setItems(reorderItemsInCategory(items, projectTypeId, sourceCategoryId, nextIds))
+      return
+    }
+
+    setItems(
+      moveItemBetweenCategories(
+        items,
+        projectTypeId,
+        draggableId,
+        sourceCategoryId,
+        destCategoryId,
+        destination.index,
+      ),
+    )
   }
 
   function normalizeRanks() {
@@ -535,9 +552,10 @@ export function LayoutPanel({
     <div className="space-y-5">
       <p className="text-sm text-neutral-400">
         Ułóż pozycje w konfiguratorze: wybierz typ projektu, strzałkami ustaw kolejność sekcji (np.
-        Strategia tuż pod „W cenie bazowej”), przeciągnij pozycje w ramach sekcji. Kliknij pozycję,
+        Strategia tuż pod „W cenie bazowej”). Przeciągnij pozycję <strong className="text-neutral-300">między sekcjami</strong>{' '}
+        lub w ramach jednej sekcji — zmienia to kategorię w konfiguratorze publicznym. Kliknij pozycję,
         aby edytować — dodaj nową lub wybierz istniejącą z listy. Minus usuwa pozycję tylko z bieżącego
-        układu.
+        układu. Po przeniesieniu kliknij <strong className="text-neutral-300">Zapisz układ</strong>.
       </p>
 
       <div className="flex flex-wrap gap-1 rounded-full border border-white/10 bg-white/[0.02] p-1">
