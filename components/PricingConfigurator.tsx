@@ -200,6 +200,7 @@ export function PricingConfigurator({ data }: Props) {
 
   const baseCategoryId = getBaseProjectCategoryId(config, state.projectType)
   const baseBundleNet = getBaseBundlePriceNet(state.projectType, config)
+  const showIncludedInPackageLabel = config.showIncludedInPackageLabel === true
 
   // Znajdź wszystkie produkty, które mają ten element w bundledWith
   const getParentBundles = useCallback((itemId: string) => {
@@ -601,16 +602,18 @@ export function PricingConfigurator({ data }: Props) {
                   </div>
                   {!item.hidePrice && (
                     <span className="text-gray-400 text-sm flex-shrink-0">
-                      {isCatalogLineIncludedInBasePrice(
-                        item,
-                        state.projectType,
-                        config,
-                        currentProjectType?.basePrice ?? 0,
-                      )
-                        ? baseBundleNet > 0
-                          ? 'w pakiecie'
-                          : 'w cenie pakietu'
-                        : `${item.price.toLocaleString('pl-PL')} PLN netto`}
+                      {(() => {
+                        const included = isCatalogLineIncludedInBasePrice(
+                          item,
+                          state.projectType,
+                          config,
+                          currentProjectType?.basePrice ?? 0,
+                        )
+                        if (included && showIncludedInPackageLabel) {
+                          return baseBundleNet > 0 ? 'w pakiecie' : 'w cenie pakietu'
+                        }
+                        return `${item.price.toLocaleString('pl-PL')} PLN netto`
+                      })()}
                     </span>
                   )}
                 </div>
@@ -666,12 +669,13 @@ export function PricingConfigurator({ data }: Props) {
                         <span className={`font-medium ${selected ? 'text-white' : 'text-gray-400'}`}>
                           {item.name}
                         </span>
-                        {isCatalogLineIncludedInBasePrice(
-                          item,
-                          state.projectType,
-                          config,
-                          currentProjectType?.basePrice ?? 0,
-                        ) && (
+                        {showIncludedInPackageLabel &&
+                          isCatalogLineIncludedInBasePrice(
+                            item,
+                            state.projectType,
+                            config,
+                            currentProjectType?.basePrice ?? 0,
+                          ) && (
                           <span className="px-2 py-0.5 text-xs rounded-full bg-gradient-to-r from-emerald-500 to-green-500 text-white font-medium flex items-center gap-1">
                             <Gift size={10} /> W cenie
                           </span>
@@ -756,6 +760,7 @@ export function PricingConfigurator({ data }: Props) {
                     {/* Price */}
                     {!item.hidePrice && (
                       <span className={`text-sm flex-shrink-0 text-right ${
+                        showIncludedInPackageLabel &&
                         isCatalogLineIncludedInBasePrice(
                           item,
                           state.projectType,
@@ -765,17 +770,17 @@ export function PricingConfigurator({ data }: Props) {
                           ? 'text-emerald-400 font-medium'
                           : selected ? 'text-purple-400' : 'text-gray-400'
                       }`}>
-                        {isCatalogLineIncludedInBasePrice(
-                          item,
-                          state.projectType,
-                          config,
-                          currentProjectType?.basePrice ?? 0,
-                        )
-                          ? 'Gratis'
-                          : item.percentageAdd 
-                            ? `+${item.percentageAdd}%`
-                            : `${(item.price * qty).toLocaleString('pl-PL')} PLN netto`
-                        }
+                        {(() => {
+                          const included = isCatalogLineIncludedInBasePrice(
+                            item,
+                            state.projectType,
+                            config,
+                            currentProjectType?.basePrice ?? 0,
+                          )
+                          if (included && showIncludedInPackageLabel) return 'Gratis'
+                          if (item.percentageAdd) return `+${item.percentageAdd}%`
+                          return `${(item.price * qty).toLocaleString('pl-PL')} PLN netto`
+                        })()}
                       </span>
                     )}
                   </div>

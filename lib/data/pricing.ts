@@ -124,6 +124,8 @@ export interface PricingConfig {
   hourlyRateDev: number
   hourlyRateConsulting: number
   workHoursPerDay: number
+  /** Etykiety „w pakiecie” / „Gratis” przy pozycjach wliczonych w bazę w konfiguratorze publicznym. */
+  showIncludedInPackageLabel?: boolean
   /** Gotowe pakiety stron / sklepów (cena, czas, pozycje). */
   packages?: PricingPackage[]
 }
@@ -258,5 +260,6 @@ export const defaultPricingData: PricingData = {
     hourlyRateDev: 200,
     hourlyRateConsulting: 300,
     workHoursPerDay: 6,
+    showIncludedInPackageLabel: false,
   },
 }

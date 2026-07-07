@@ -149,6 +149,26 @@ export function ConfigPanel({
         </div>
       </Fieldset>
 
+      <Fieldset legend="Konfigurator publiczny">
+        <label className="flex cursor-pointer items-start gap-3 text-sm text-neutral-300">
+          <input
+            type="checkbox"
+            className="mt-0.5 h-4 w-4 rounded border-neutral-600"
+            checked={configForm.showIncludedInPackageLabel === true}
+            onChange={(e) =>
+              setConfigForm({ ...configForm, showIncludedInPackageLabel: e.target.checked })
+            }
+          />
+          <span>
+            <span className="font-medium text-neutral-200">Pokaż etykietę „w pakiecie”</span>
+            <span className="mt-1 block text-xs text-neutral-500">
+              Przy pozycjach wliczonych w bazę (sekcja „W cenie bazowej” i „Gratis” w opcjach). Wyłączone =
+              zamiast tego widać cenę katalogową.
+            </span>
+          </span>
+        </label>
+      </Fieldset>
+
       <SaveButton pending={pending} label="Zapisz konfigurację" onClick={onSave} />
     </div>
   )
