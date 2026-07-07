@@ -11,12 +11,14 @@ import type {
 } from '@/lib/data/faq'
 import type { portfolioItems } from '@/lib/db/schema'
 import {
-  CMS_PAGES,
+  CMS_CONTENT_PAGES,
+  CMS_FAQ_PAGES,
+  CMS_MODULES,
   PRICING_FAQ_SECTIONS,
   SIMPLE_FAQ_SECTION,
-  type CmsFaqPageDef,
-  type CmsPageId,
-  isPortfolioPage,
+  type CmsContentPageId,
+  type CmsFaqPageId,
+  type CmsModuleId,
 } from '@/lib/magazyn/cms-config'
 import { PORTFOLIO_PROJECT_TYPE_OPTIONS, slugifyPortfolioName } from '@/lib/magazyn/portfolio-cms'
 import { PortfolioPerformanceEditor } from '@/components/magazyn/portfolio-performance-editor'
@@ -117,7 +119,9 @@ export function CmsClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- sync po router.refresh()
   }, [faqSettings, portfolioRows])
 
-  const [activePageId, setActivePageId] = useState<CmsPageId>('cennik')
+  const [activeModule, setActiveModule] = useState<CmsModuleId>('faq')
+  const [activeFaqPageId, setActiveFaqPageId] = useState<CmsFaqPageId>('cennik')
+  const [activeContentPageId, setActiveContentPageId] = useState<CmsContentPageId>('portfolio')
   const [activeSectionId, setActiveSectionId] = useState<string>('pricing')
   const [activePortfolioId, setActivePortfolioId] = useState<string | null>(
     portfolioRows[0]?.id ?? null,
@@ -126,40 +130,44 @@ export function CmsClient({
   const [error, setError] = useState(false)
   const [pending, setPending] = useState(false)
 
-  const activePage = CMS_PAGES.find((p) => p.id === activePageId) ?? CMS_PAGES[0]
-  const isPortfolio = isPortfolioPage(activePage)
+  const activeFaqPage = CMS_FAQ_PAGES.find((p) => p.id === activeFaqPageId) ?? CMS_FAQ_PAGES[0]
+  const activeContentPage =
+    CMS_CONTENT_PAGES.find((p) => p.id === activeContentPageId) ?? CMS_CONTENT_PAGES[0]
+  const isPortfolio = activeModule === 'tresci' && activeContentPageId === 'portfolio'
 
-  const faqPage = !isPortfolio ? activePage : null
-  const faqKey = faqPage?.faqKey
+  const faqKey = activeModule === 'faq' ? activeFaqPage.faqKey : undefined
   const allFaqEntries = useMemo(() => (faqKey ? (faq[faqKey] ?? []) : []), [faqKey, faq])
 
   const visibleFaqEntries = useMemo(() => {
-    if (!faqPage) return []
-    if (faqPage.pricing) {
+    if (activeModule !== 'faq') return []
+    if (activeFaqPage.pricing) {
       return allFaqEntries.filter(
         (entry) => (entry as FaqPricingEntrySanity).category === activeSectionId,
       )
     }
     return allFaqEntries
-  }, [allFaqEntries, faqPage, activeSectionId])
+  }, [allFaqEntries, activeFaqPage, activeModule, activeSectionId])
 
-  const faqCount = CMS_PAGES.filter((p) => !isPortfolioPage(p)).reduce(
-    (n, p) => n + (faq[(p as CmsFaqPageDef).faqKey]?.length ?? 0),
+  const faqCount = CMS_FAQ_PAGES.reduce(
+    (n, p) => n + (faq[p.faqKey]?.length ?? 0),
     0,
   )
 
-  function selectPage(pageId: CmsPageId) {
-    setActivePageId(pageId)
-    const page = CMS_PAGES.find((p) => p.id === pageId)
+  function selectFaqPage(pageId: CmsFaqPageId) {
+    setActiveFaqPageId(pageId)
+    const page = CMS_FAQ_PAGES.find((p) => p.id === pageId)
     if (!page) return
-    if (isPortfolioPage(page)) {
-      setActivePortfolioId(portfolio[0]?.id ?? null)
-      return
-    }
     if (page.pricing) {
       setActiveSectionId('pricing')
     } else {
       setActiveSectionId(SIMPLE_FAQ_SECTION.id)
+    }
+  }
+
+  function selectContentPage(pageId: CmsContentPageId) {
+    setActiveContentPageId(pageId)
+    if (pageId === 'portfolio') {
+      setActivePortfolioId(portfolio[0]?.id ?? null)
     }
   }
 
@@ -178,7 +186,7 @@ export function CmsClient({
   }
 
   function addFaqEntry() {
-    if (!faqPage || !faqKey) return
+    if (activeModule !== 'faq' || !faqKey) return
 
     setFaq((prev) => {
       const list = [...(prev[faqKey] ?? [])]
@@ -189,7 +197,7 @@ export function CmsClient({
         order: list.length,
         isActive: true,
       }
-      if (faqPage.pricing) {
+      if (activeFaqPage.pricing) {
         const entry: FaqPricingEntrySanity = {
           ...base,
           category: activeSectionId as FaqPricingCategory,
@@ -217,7 +225,7 @@ export function CmsClient({
   }
 
   function moveFaqEntry(indexInSection: number, dir: -1 | 1) {
-    if (!faqKey || !faqPage) return
+    if (!faqKey || activeModule !== 'faq') return
     const entry = visibleFaqEntries[indexInSection]
     const swapEntry = visibleFaqEntries[indexInSection + dir]
     if (!entry || !swapEntry) return
@@ -233,7 +241,7 @@ export function CmsClient({
       list[indexA] = { ...list[indexA], order: orderB }
       list[indexB] = { ...list[indexB], order: orderA }
 
-      if (faqPage.pricing) {
+      if (activeFaqPage.pricing) {
         const category = activeSectionId as FaqPricingCategory
         const inCategory = list
           .filter((row) => (row as FaqPricingEntrySanity).category === category)
@@ -362,9 +370,17 @@ export function CmsClient({
 
   const sectionLabel = isPortfolio
     ? 'Realizacja'
-    : faqPage?.pricing
+    : activeFaqPage.pricing
       ? (PRICING_FAQ_SECTIONS.find((s) => s.id === activeSectionId)?.label ?? activeSectionId)
       : SIMPLE_FAQ_SECTION.label
+
+  const moduleTabs = CMS_MODULES.map((module) => ({
+    id: module.id,
+    label:
+      module.id === 'faq'
+        ? `${module.label} (${faqCount})`
+        : `${module.label} (${portfolio.length})`,
+  }))
 
   const pricingTabs = PRICING_FAQ_SECTIONS.map((section) => {
     const count = allFaqEntries.filter(
@@ -664,7 +680,7 @@ export function CmsClient({
 
   return (
     <div className="space-y-6">
-      <PageHeader title="CMS" description={`FAQ (${faqCount} wpisów) · Portfolio (${portfolio.length})`} />
+      <PageHeader title="CMS" description={`FAQ (${faqCount} wpisów) · Treści (${portfolio.length})`} />
       <UndoRedoToolbar
         canUndo={history.canUndo}
         canRedo={history.canRedo}
@@ -674,33 +690,52 @@ export function CmsClient({
       />
       <DbBanner connected={dbConnected} />
 
+      <TabPills tabs={moduleTabs} active={activeModule} onChange={setActiveModule} />
+
       <div className="flex flex-col gap-6 xl:flex-row xl:items-start">
-        <nav aria-label="Podstrony CMS" className="flex shrink-0 flex-row flex-wrap gap-1 xl:w-48 xl:flex-col xl:gap-0.5">
-          {CMS_PAGES.map((page) => {
-            const count = isPortfolioPage(page)
-              ? portfolio.length
-              : (faq[(page as CmsFaqPageDef).faqKey]?.length ?? 0)
-            return (
-              <button
-                key={page.id}
-                type="button"
-                onClick={() => selectPage(page.id)}
-                className={navButtonClass(activePageId === page.id)}
-              >
-                {page.label}
-                <span className="ml-1 text-neutral-500">({count})</span>
-              </button>
-            )
-          })}
+        <nav
+          aria-label={activeModule === 'faq' ? 'Podstrony FAQ' : 'Typy treści'}
+          className="flex shrink-0 flex-row flex-wrap gap-1 xl:w-48 xl:flex-col xl:gap-0.5"
+        >
+          {activeModule === 'faq'
+            ? CMS_FAQ_PAGES.map((page) => (
+                <button
+                  key={page.id}
+                  type="button"
+                  onClick={() => selectFaqPage(page.id)}
+                  className={navButtonClass(activeFaqPageId === page.id)}
+                >
+                  {page.label}
+                  <span className="ml-1 text-neutral-500">({faq[page.faqKey]?.length ?? 0})</span>
+                </button>
+              ))
+            : CMS_CONTENT_PAGES.map((page) => {
+                const count = page.id === 'portfolio' ? portfolio.length : 0
+                return (
+                  <button
+                    key={page.id}
+                    type="button"
+                    onClick={() => selectContentPage(page.id)}
+                    className={navButtonClass(activeContentPageId === page.id)}
+                  >
+                    {page.label}
+                    <span className="ml-1 text-neutral-500">({count})</span>
+                  </button>
+                )
+              })}
         </nav>
 
         <div className="min-w-0 flex-1 space-y-5">
           <div>
-            <h2 className="text-lg font-medium">CMS — {activePage.label}</h2>
-            <p className="text-sm text-neutral-500">{activePage.path}</p>
+            <h2 className="text-lg font-medium">
+              {activeModule === 'faq' ? `FAQ — ${activeFaqPage.label}` : `Treści — ${activeContentPage.label}`}
+            </h2>
+            <p className="text-sm text-neutral-500">
+              {activeModule === 'faq' ? activeFaqPage.path : activeContentPage.path}
+            </p>
           </div>
 
-          {faqPage?.pricing ? (
+          {activeModule === 'faq' && activeFaqPage.pricing ? (
             <TabPills
               tabs={pricingTabs}
               active={activeSectionId as FaqPricingCategory}

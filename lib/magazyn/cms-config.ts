@@ -10,7 +10,11 @@ export type CmsFaqPageId =
   | 'kontakt'
   | 'agencje'
 
-export type CmsPageId = CmsFaqPageId | 'portfolio'
+export type CmsModuleId = 'faq' | 'tresci'
+
+export type CmsContentPageId = 'portfolio'
+
+export type CmsPageId = CmsFaqPageId | CmsContentPageId
 
 export type CmsFaqPageDef = {
   id: CmsFaqPageId
@@ -20,19 +24,26 @@ export type CmsFaqPageDef = {
   pricing?: boolean
 }
 
-export type CmsPortfolioPageDef = {
-  id: 'portfolio'
+export type CmsContentPageDef = {
+  id: CmsContentPageId
   label: string
   path: string
 }
 
-export type CmsPageDef = CmsFaqPageDef | CmsPortfolioPageDef
+export type CmsPortfolioPageDef = CmsContentPageDef & { id: 'portfolio' }
+
+export type CmsPageDef = CmsFaqPageDef | CmsContentPageDef
 
 export function isPortfolioPage(page: CmsPageDef): page is CmsPortfolioPageDef {
   return page.id === 'portfolio'
 }
 
-export const CMS_PAGES: CmsPageDef[] = [
+export const CMS_MODULES: Array<{ id: CmsModuleId; label: string }> = [
+  { id: 'faq', label: 'FAQ' },
+  { id: 'tresci', label: 'Treści' },
+]
+
+export const CMS_FAQ_PAGES: CmsFaqPageDef[] = [
   { id: 'home', label: 'Strona główna', path: '/', faqKey: 'faqHome' },
   { id: 'cennik', label: 'Cennik', path: '/cennik', faqKey: 'faqCennik', pricing: true },
   { id: 'strony-www', label: 'Strony WWW', path: '/strony-www', faqKey: 'faqStronyWww' },
@@ -41,8 +52,14 @@ export const CMS_PAGES: CmsPageDef[] = [
   { id: 'o-nas', label: 'O nas', path: '/o-nas', faqKey: 'faqONas' },
   { id: 'kontakt', label: 'Kontakt', path: '/kontakt', faqKey: 'faqKontakt' },
   { id: 'agencje', label: 'Agencje', path: '/agencje-marketingowe', faqKey: 'faqAgencje' },
+]
+
+export const CMS_CONTENT_PAGES: CmsContentPageDef[] = [
   { id: 'portfolio', label: 'Portfolio', path: '/portfolio' },
 ]
+
+/** @deprecated Użyj CMS_FAQ_PAGES lub CMS_CONTENT_PAGES */
+export const CMS_PAGES: CmsPageDef[] = [...CMS_FAQ_PAGES, ...CMS_CONTENT_PAGES]
 
 export const PRICING_FAQ_SECTIONS: Array<{ id: FaqPricingCategory; label: string }> = [
   { id: 'pricing', label: 'Cennik' },
