@@ -6,7 +6,7 @@ import PanelOverviewMock from '@/components/sections/panel-overview-mock'
 
 const proofItems = [
   '0 zł / miesiąc',
-  'Podgląd na GA4 + PostHog',
+  'Kluczowe metryki GA4 + PostHog',
   'RODO',
   '100% Twoje dane',
 ]

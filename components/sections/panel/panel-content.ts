@@ -29,7 +29,7 @@ export const PROOF_BAR = [
 export const PROBLEM_CARDS = [
   {
     emoji: '💸',
-    title: 'Pięć subskrypcji miesięcznie zamiast jednego rozwiązania.',
+    title: 'Kilkaset złotych miesięcznie w subskrypcjach — każdego miesiąca, bez końca.',
   },
   {
     emoji: '🔑',

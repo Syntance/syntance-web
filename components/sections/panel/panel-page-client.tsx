@@ -94,32 +94,34 @@ export default function PanelPageClient() {
           <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
             <div>
               <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.2em] text-purple-300/70 md:text-xs">
-                Panel sklepu Syntance
+              SYNTANCE CMS & SYNTANCE SHOP
               </p>
               <h1
                 id="panel-hero-heading"
                 className="mb-5 text-3xl font-light leading-[1.12] tracking-tight text-white sm:text-4xl md:text-5xl"
               >
-                Cały sklep z jednego panelu.{' '}
+                Jeden panel do sklepu, treści i SEO{' '}
                 <span className="text-gray-400">
-                  Bez Shopify, bez Sanity, bez pięciu logowań.
+                  — zamiast pięciu narzędzi.
                 </span>
               </h1>
-              <p className="mb-4 text-sm leading-relaxed text-gray-400 md:text-lg">
-                Strona, produkty, zamówienia, treści, SEO i analityka — wszystkim zarządzasz w jednym,
-                autorskim panelu zbudowanym pod Twój biznes.
-              </p>
-              <p className="mb-8 text-sm leading-relaxed text-gray-500">
-                Prosto i intuicyjnie. Zmianę tekstu czy ceny widzisz na stronie w kilka sekund.
+              <p className="mb-8 text-sm leading-relaxed text-gray-400 md:text-lg">
+                Syntance CMS i Syntance Shop to autorski panel do zarządzania stroną i sklepem internetowym zbudowanymi w Next.js. 
+                Produkty, zamówienia i płatności prowadzisz w Syntance Shop; treści, stronę i SEO — w Syntance CMS. 
+                Jeden panel, jedno logowanie — zmianę ceny czy tekstu widzisz na stronie w kilka sekund, bez wtyczek i abonamentów.
               </p>
 
               <div className="flex flex-col flex-wrap items-stretch gap-3 sm:flex-row sm:items-center">
                 <button
                   type="button"
                   onClick={scrollToNext}
-                  className="inline-flex min-h-[48px] cursor-pointer items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-6 py-3.5 text-sm font-light tracking-wide text-gray-300 transition-colors hover:border-white/25 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black md:text-base"
+                  className="group inline-flex min-h-[48px] cursor-pointer items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-6 py-3.5 text-sm font-light tracking-wide text-gray-300 transition-colors hover:border-white/25 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black md:text-base"
                 >
-                  Dowiedz się więcej
+                  Zobacz panel w akcji
+                  <ChevronDown
+                    className="h-4 w-4 shrink-0 transition-transform group-hover:translate-y-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0"
+                    aria-hidden="true"
+                  />
                 </button>
                 <StickyCtaFloat heroId="panel-hero" hideSectionId="panel-cta" />
               </div>
@@ -157,11 +159,10 @@ export default function PanelPageClient() {
               id="panel-problem-heading"
               className="mb-4 text-2xl font-light leading-snug tracking-tight text-white md:text-4xl"
             >
-              Sklep w Shopify. Treści w Sanity. Maile w osobnym narzędziu. Analityka w trzech zakładkach.
+              Sklep w Shopify. Treści w osobnym CMS. Zmiana maila do klienta — u programisty. Analityka w trzech zakładkach.
             </h2>
             <p className="mx-auto mb-10 max-w-3xl text-sm leading-relaxed text-gray-400 md:text-lg">
-              Każde narzędzie to osobna subskrypcja, osobne logowanie i osobny rachunek. A dane nigdzie
-              się nie spotykają.
+            Każde narzędzie to osobne logowanie, osobny rachunek i osobny panel do nauczenia. A dane nigdzie się nie spotykają.
             </p>
           </AnimatedSection>
 
@@ -182,7 +183,7 @@ export default function PanelPageClient() {
             <p className="text-base md:text-lg text-white font-light">
               Zebraliśmy to w{' '}
               <GradientText className="font-medium">jednym panelu</GradientText>, zbudowanym pod Twój
-              sklep.
+              biznes.
             </p>
           </AnimatedSection>
         </div>
