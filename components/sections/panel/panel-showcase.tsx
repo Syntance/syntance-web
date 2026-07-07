@@ -89,7 +89,7 @@ export default function PanelShowcase() {
     <section
       id="panel-showcase"
       aria-labelledby="panel-showcase-heading"
-      className="relative z-10 scroll-mt-24 px-5 pb-20 pt-32 md:px-6 md:pb-28 md:pt-44 lg:px-12"
+      className="relative z-10 scroll-mt-24 px-5 pb-20 pt-20 md:px-6 md:pb-28 md:pt-28 lg:px-12"
     >
       <RevealOnScroll reducedMotion={reducedMotion}>
         <div className="mx-auto max-w-6xl">
@@ -107,13 +107,13 @@ export default function PanelShowcase() {
 
         {!reducedMotion && (
           <div className="hidden lg:grid lg:grid-cols-2 lg:gap-12 xl:gap-16">
-            <div className="relative">
-              <div className="sticky top-28">
+            <div className="relative pt-[clamp(8rem,20vh,14rem)]">
+              <div className="sticky top-[50vh] -translate-y-1/2">
                 <PanelMock view={activeView} animate />
               </div>
             </div>
 
-            <div className="space-y-[55vh] pb-[30vh]">
+            <div className="space-y-[55vh] pb-[30vh] pt-[10vh]">
               {SHOWCASE_STEPS.map((step, index) => (
                 <article
                   key={step.id}

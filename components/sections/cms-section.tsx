@@ -61,7 +61,7 @@ export default function CMSSection() {
               href="/panel"
               className="inline-flex items-center justify-center gap-2 min-h-[48px] px-6 md:px-8 py-3.5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white text-sm md:text-base font-medium tracking-wide transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/25 hover:scale-[1.02] active:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
-              Zobacz interaktywne demo
+              Zobacz panel w akcji
               <span aria-hidden="true">→</span>
             </Link>
             <Link
