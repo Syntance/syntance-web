@@ -12,6 +12,7 @@
     "format": "prettier --write .",
     "analyze": "cross-env ANALYZE=true NODE_OPTIONS=--max-old-space-size=8192 next build",
     "capture:homepage": "node scripts/capture-homepage.cjs",
+    "generate:og": "node scripts/generate-og-images.mjs",
     "db:push": "drizzle-kit push",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",

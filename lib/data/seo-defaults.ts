@@ -22,7 +22,8 @@ export const defaultSeo: SeoSettings = {
   ogTitle: 'Syntance — Strony i sklepy Next.js | PageSpeed 90+',
   ogDescription:
     'Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od 5k PLN. Strony w 2-4 tygodnie, sklepy w 4-8 tygodni.',
-  ogImageUrl: 'https://syntance.com/og/og-home-1200x630.png',
+  // Kwadratowy sygnet — Facebook/LinkedIn kadrują miniaturę do 1:1 (jak Vantaframe)
+  ogImageUrl: 'https://syntance.com/og/og-sygnet-1200x1200.png',
   twitterTitle: 'Syntance — Strony i sklepy Next.js | PageSpeed 90+',
   twitterDescription:
     'Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od 5k PLN. Strony w 2-4 tygodnie, sklepy w 4-8 tygodni.',

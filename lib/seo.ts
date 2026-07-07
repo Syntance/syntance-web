@@ -28,6 +28,9 @@ export async function generateSeoMetadata(pathname?: string): Promise<Metadata> 
 
   const seo = mergeSeoSettings(globalSeo, pageSeo)
   const ogImageUrl = seo.ogImage?.asset?.url || seo.ogImageUrl || defaultSeo.ogImageUrl
+  const isSquareOgImage = /sygnet|logo/i.test(ogImageUrl ?? '')
+  const ogImageWidth = seo.ogImage?.asset?.metadata?.dimensions?.width ?? 1200
+  const ogImageHeight = seo.ogImage?.asset?.metadata?.dimensions?.height ?? (isSquareOgImage ? 1200 : 630)
 
   return {
     metadataBase: new URL(seo.canonicalUrl || 'https://syntance.com'),
@@ -59,8 +62,8 @@ export async function generateSeoMetadata(pathname?: string): Promise<Metadata> 
       images: [
         {
           url: ogImageUrl!,
-          width: seo.ogImage?.asset?.metadata?.dimensions?.width || 1200,
-          height: seo.ogImage?.asset?.metadata?.dimensions?.height || 630,
+          width: ogImageWidth,
+          height: ogImageHeight,
           alt: seo.ogImage?.alt || seo.ogTitle || seo.metaTitle,
         },
       ],
