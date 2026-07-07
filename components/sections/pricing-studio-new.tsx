@@ -1,20 +1,71 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { Check } from "lucide-react";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useCallback, useEffect, useRef } from "react";
+import { ArrowDown, Check } from "lucide-react";
+
+const CONTACT_CTA_GLOW_STYLE = {
+  backgroundImage: "linear-gradient(to right, #ffaa40, #9c40ff, #ffaa40)",
+  backgroundSize: "300% 100%",
+} as const;
+
+function ContactScrollCta({ onClick }: { onClick: () => void }) {
+  return (
+    <div className="relative group w-fit max-w-full shrink-0">
+      <div
+        className="absolute -inset-1 rounded-full blur-md opacity-25 group-hover:opacity-40 transition-opacity animate-gradient -z-10"
+        style={CONTACT_CTA_GLOW_STYLE}
+        aria-hidden="true"
+      />
+      <button
+        type="button"
+        onClick={onClick}
+        className="relative z-10 inline-flex items-center gap-2 px-8 py-3 bg-gray-900/80 backdrop-blur-sm border border-gray-700 text-white rounded-full font-medium tracking-wider hover:bg-gray-800/80 transition-all cursor-pointer"
+      >
+        Napisz do nas
+        <ArrowDown
+          className="h-4 w-4 shrink-0 transition-transform group-hover:translate-y-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0"
+          aria-hidden="true"
+        />
+      </button>
+    </div>
+  );
+}
 
 type PricingStudioNewProps = {
   sectionId?: string;
   headingId?: string;
+  /** Anchor sekcji kontaktu pod CTA (domyślnie #contact na stronie głównej). */
+  contactHref?: string;
 };
 
 export default function PricingStudioNew({
   sectionId = "pricing-studio",
   headingId = "pricing-heading",
+  contactHref = "#contact",
 }: PricingStudioNewProps = {}) {
   const sectionRef = useRef<HTMLElement>(null);
-  const isMobile = useIsMobile();
+
+  const scrollToContact = useCallback(() => {
+    const targetId = contactHref.startsWith("#") ? contactHref.slice(1) : null;
+    if (!targetId) {
+      if (contactHref.startsWith("/") || contactHref.startsWith("http")) {
+        window.location.href = contactHref;
+      }
+      return;
+    }
+
+    const element = document.getElementById(targetId);
+    if (!element) return;
+
+    const navbarHeight = 100;
+    const elementTop = element.getBoundingClientRect().top + window.scrollY;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    window.scrollTo({
+      top: elementTop - navbarHeight,
+      behavior: reducedMotion ? "auto" : "smooth",
+    });
+  }, [contactHref]);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -60,31 +111,15 @@ export default function PricingStudioNew({
           </p>
         </header>
 
-        {/* Mocna karta CTA — najważniejsza akcja na stronie */}
-        <div className="relative mb-6">
-          <div
-            className="absolute -inset-1 rounded-3xl opacity-30 blur-xl -z-10"
-            style={{
-              backgroundImage:
-                "linear-gradient(to right, #a855f7, #3b82f6, #ec4899)",
-            }}
-            aria-hidden="true"
-          />
-          <div className="relative bg-gradient-to-br from-white/[0.05] to-white/[0.02] border border-white/10 rounded-3xl p-6 text-center">
-            <h3 className="text-xl font-medium text-white mb-2">
-              Gotowy zacząć?
-            </h3>
-            <p className="text-sm text-gray-400 font-light mb-5 leading-relaxed">
-              Skonfiguruj projekt, zobacz cenę i czas. Wyślij formularz — termin ustalimy indywidualnie.
-            </p>
-            <a
-              href="/cennik"
-              className="flex items-center justify-center gap-2 w-full px-6 py-4 min-h-[52px] rounded-full bg-white text-gray-900 text-base font-semibold tracking-wide active:bg-white/90 transition-colors shadow-xl shadow-purple-500/20"
-            >
-              Sprawdź cenę strony
-              <span aria-hidden="true">→</span>
-            </a>
-          </div>
+        {/* CTA — bez calloutu, dwa przyciski */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-6">
+          <ContactScrollCta onClick={scrollToContact} />
+          <a
+            href="/cennik"
+            className="inline-flex w-fit max-w-full shrink-0 items-center justify-center px-8 py-3 min-h-[48px] rounded-full bg-white text-gray-900 font-semibold tracking-wider active:bg-white/90 transition-colors shadow-xl shadow-purple-500/20"
+          >
+            Sprawdź cenę
+          </a>
         </div>
 
         {/* Mini value props - 3 quick wins */}
@@ -131,35 +166,15 @@ export default function PricingStudioNew({
           </p>
         </header>
 
-        {/* CTA Box */}
-        <div className="relative group">
-          {/* Gradient border effect */}
-          <div className={`absolute -inset-0.5 bg-gradient-to-r from-purple-400 via-blue-400 to-pink-400 rounded-3xl opacity-20 transition-opacity duration-500 blur-sm ${
-            isMobile ? '' : 'group-hover:opacity-40'
-          }`}></div>
-          
-          <div className="relative product-card rounded-3xl p-12 backdrop-blur-sm">
-            <h3 className="text-3xl md:text-4xl font-light tracking-wide mb-4 glow-text">
-              Gotowy zacząć?
-            </h3>
-            <p className="text-gray-400 font-light tracking-wide mb-8 max-w-lg mx-auto">
-              Skonfiguruj projekt, zobacz cenę i czas. Wyślij formularz — termin ustalimy indywidualnie.
-            </p>
-            
-            <a 
-              href="/cennik"
-              className="px-10 py-4 bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-white/90 transition-all glow-box cursor-pointer group inline-flex items-center gap-2"
-            >
-              Sprawdź cenę strony
-              <span className={`inline-block transition-transform ${
-                isMobile ? '' : 'group-hover:translate-x-1'
-              }`}>→</span>
-            </a>
-
-            {/* Decorative elements */}
-            <div className="absolute top-6 right-6 w-20 h-20 border border-white/5 rounded-full"></div>
-            <div className="absolute bottom-6 left-6 w-16 h-16 border border-white/5 rounded-full"></div>
-          </div>
+        {/* CTA — bez calloutu */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <ContactScrollCta onClick={scrollToContact} />
+          <a
+            href="/cennik"
+            className="inline-flex w-fit max-w-full shrink-0 items-center justify-center px-10 py-4 min-h-[52px] bg-white text-gray-900 rounded-full font-medium tracking-wider hover:bg-white/90 transition-all glow-box cursor-pointer"
+          >
+            Sprawdź cenę
+          </a>
         </div>
 
         {/* Additional info */}
