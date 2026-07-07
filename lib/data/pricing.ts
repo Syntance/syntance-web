@@ -89,6 +89,8 @@ export type ProjectTypeBundleRow = {
   bundlePriceNet?: number
   /** Gdy > 0: jedna liczba roboczogodzin na całą bazę zamiast sumy godzin pozycji w pakiecie. */
   bundleBaseHours?: number
+  /** Gdy > 0: dni robocze bazy w konfiguratorze zamiast liczenia z godzin pozycji. */
+  bundleBaseDays?: number
 }
 
 export interface PricingConfig {
@@ -245,9 +247,9 @@ export const defaultPricingData: PricingData = {
     },
     baseProjectCategoryId: 'base',
     projectTypeBundles: [
-      { projectTypeId: 'website', baseCategorySlug: 'base', bundlePriceNet: 0, bundleBaseHours: 0 },
-      { projectTypeId: 'ecommerce', baseCategorySlug: 'base', bundlePriceNet: 0, bundleBaseHours: 0 },
-      { projectTypeId: 'webapp', baseCategorySlug: 'base', bundlePriceNet: 0, bundleBaseHours: 0 },
+      { projectTypeId: 'website', baseCategorySlug: 'base', bundlePriceNet: 0, bundleBaseHours: 0, bundleBaseDays: 0 },
+      { projectTypeId: 'ecommerce', baseCategorySlug: 'base', bundlePriceNet: 0, bundleBaseHours: 0, bundleBaseDays: 0 },
+      { projectTypeId: 'webapp', baseCategorySlug: 'base', bundlePriceNet: 0, bundleBaseHours: 0, bundleBaseDays: 0 },
     ],
     // Ceny startowe
     discoveryWorkshopPrice: 8000,

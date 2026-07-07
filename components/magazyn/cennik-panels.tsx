@@ -115,17 +115,71 @@ export function ConfigPanel({
       <Fieldset legend="Ceny startowe (netto)">
         <p className="mb-3 text-xs text-neutral-500">
           Zapasowe wartości — preferuj sekcję <strong className="font-medium text-neutral-400">Pakiety</strong>{' '}
-          z opcją „Cena od”.
+          z opcją „Cena od”. Przy typach projektu możesz też ustawić{' '}
+          <strong className="font-medium text-neutral-400">dni robocze bazy</strong> widoczne w konfiguratorze
+          (/cennik); 0 = liczone automatycznie z godzin pozycji.
         </p>
+        <div className="mb-4 space-y-3">
+          {(
+            [
+              ['website', 'websiteStartPrice', 'Strona — start'],
+              ['ecommerce', 'ecommerceStandardStartPrice', 'Sklep — standard'],
+              ['webapp', 'webappStartPrice', 'Aplikacja web'],
+            ] as const
+          ).map(([typeId, priceKey, label]) => {
+            const bundleRow = configForm.projectTypeBundles?.find((r) => r.projectTypeId === typeId)
+            const baseDays = bundleRow?.bundleBaseDays ?? 0
+
+            function updateBundleDays(days: number) {
+              const rows = [...(configForm.projectTypeBundles ?? [])]
+              const idx = rows.findIndex((r) => r.projectTypeId === typeId)
+              const base =
+                idx >= 0
+                  ? rows[idx]
+                  : {
+                      projectTypeId: typeId,
+                      baseCategorySlug: 'base',
+                      bundlePriceNet: 0,
+                      bundleBaseHours: 0,
+                    }
+              const next = { ...base, bundleBaseDays: days }
+              if (idx >= 0) rows[idx] = next
+              else rows.push(next)
+              setConfigForm({ ...configForm, projectTypeBundles: rows })
+            }
+
+            return (
+              <div
+                key={typeId}
+                className="grid gap-4 rounded-lg border border-neutral-800 bg-neutral-900/40 p-4 sm:grid-cols-2"
+              >
+                <Field label={`${label} — cena`}>
+                  <input
+                    type="number"
+                    className={magazynInputClass}
+                    value={num(configForm[priceKey])}
+                    onChange={(e) => setConfigForm({ ...configForm, [priceKey]: Number(e.target.value) })}
+                  />
+                </Field>
+                <Field label={`${label} — dni robocze (baza)`}>
+                  <input
+                    type="number"
+                    min={0}
+                    className={magazynInputClass}
+                    value={baseDays}
+                    onChange={(e) => updateBundleDays(Number(e.target.value))}
+                  />
+                </Field>
+              </div>
+            )
+          })}
+        </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {(
             [
               ['discoveryWorkshopPrice', 'Discovery workshop'],
-              ['websiteStartPrice', 'Strona — start'],
               ['websiteAdvancedStartPrice', 'Strona — zaawansowana'],
-              ['ecommerceStandardStartPrice', 'Sklep — standard'],
               ['ecommerceProStartPrice', 'Sklep — pro'],
-              ['webappStartPrice', 'Aplikacja web'],
             ] as const
           ).map(([key, label]) => (
             <Field key={key} label={label}>

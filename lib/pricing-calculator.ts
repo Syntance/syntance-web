@@ -81,6 +81,18 @@ export function getBundleBaseWorkHours(projectTypeId: string, config: PricingCon
   return typeof n === 'number' && Number.isFinite(n) && n > 0 ? n : 0
 }
 
+/**
+ * Dni robocze bazy z wiersza `projectTypeBundles`.
+ * Zero = konfigurator liczy dni z łącznych godzin (pozycje w bazie + dodatki).
+ */
+export function getBundleBaseWorkDays(projectTypeId: string, config: PricingConfig | undefined): number {
+  if (!config) return 0
+  const row = getProjectTypeBundleRow(config, projectTypeId)
+  if (row === undefined) return 0
+  const n = row.bundleBaseDays
+  return typeof n === 'number' && Number.isFinite(n) && n > 0 ? Math.round(n) : 0
+}
+
 /** Cena katalogowa pozycji nie wchodzi do sumy, gdy jest w bazie projektu lub pokryta pakietem / ceną bazową typu. */
 function isGratisCatalogLine(
   item: PricingItem,
@@ -147,6 +159,7 @@ export function computeConfiguratorPricing(
   const baseCat = getBaseProjectCategoryId(config, projectTypeId)
   const bundleNet = getBaseBundlePriceNet(projectTypeId, config)
   const cmsBaseHours = getBundleBaseWorkHours(projectTypeId, config)
+  const cmsBaseDays = getBundleBaseWorkDays(projectTypeId, config)
 
   const typeFloorNet =
     typeof projectTypeBasePrice === 'number' && Number.isFinite(projectTypeBasePrice) && projectTypeBasePrice > 0
@@ -216,8 +229,12 @@ export function computeConfiguratorPricing(
     Math.round((priceNetto * (config.depositPercent || 20)) / 100),
   )
   const workHoursPerDay = config.workHoursPerDay || 6
-  const baseDays = Math.ceil(totalHours / workHoursPerDay)
-  const days = baseDays
+  const extraHoursScaled =
+    percentageAdd > 0 ? extrasHours * (1 + percentageAdd / 100) : extrasHours
+  const extraDays = Math.ceil(extraHoursScaled / workHoursPerDay)
+  const days =
+    cmsBaseDays > 0 ? cmsBaseDays + extraDays : Math.ceil(totalHours / workHoursPerDay)
+  const baseDays = days
 
   return {
     priceNetto,
