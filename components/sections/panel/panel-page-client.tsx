@@ -206,10 +206,10 @@ export default function PanelPageClient() {
                 id="pagespeed-heading"
                 className="text-3xl md:text-4xl font-light tracking-tight text-white mb-4"
               >
-                Zwykły CMS spowalnia stronę. <GradientText className="font-medium">Nasz — odwrotnie.</GradientText>
+                Zwykły CMS spowalnia stronę. <GradientText className="font-medium">Nasz nie.</GradientText>
               </h2>
               <p className="text-sm md:text-base text-gray-400 leading-relaxed">
-                WordPress i ciężkie headless&apos;y ładują treść i grafikę dynamicznie przy każdym wejściu.
+              WordPress składa stronę od nowa przy każdym wejściu, a wiele wdrożeń CMS dociąga treść dopiero w przeglądarce.
                 Stąd wtyczki, rozdmuchany kod i spadający PageSpeed.
               </p>
             </header>
@@ -307,8 +307,7 @@ export default function PanelPageClient() {
 
           <AnimatedSection delay={200}>
             <p className="text-center text-sm text-gray-500 max-w-2xl mx-auto leading-relaxed">
-              Wolisz standard branżowy? Ten sam projekt wdrożymy na Sanity — wtedy część grafik edytujesz
-              sam, kosztem dodatkowej subskrypcji.
+              Wolisz branżowy standard? Ten sam projekt wdrożymy na Sanity — zyskujesz samodzielną edycję także zdjęć i grafik, w zamian osobny panel do nauki i ewentualny abonament przy większej skali.
             </p>
           </AnimatedSection>
         </div>
@@ -348,7 +347,7 @@ export default function PanelPageClient() {
               ))}
             </ul>
             <p className="text-center text-xs md:text-sm text-gray-500 max-w-3xl mx-auto leading-relaxed">
-              Domyślnie wdrażamy autorski panel. Sanity, dodatkowe integracje czy inny zestaw płatności
+              Domyślnie wdrażamy Syntance CMS i Syntance Shop. Sanity, dodatkowe integracje czy inny zestaw płatności
               dobieramy pod konkretny projekt — nie płacisz za to, czego nie używasz.
             </p>
           </AnimatedSection>

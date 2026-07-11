@@ -95,7 +95,7 @@ export const SHOWCASE_STEPS: {
 export const ANALYTICS_BULLETS = [
   'Pełny lejek: wyświetlenie produktu → koszyk → checkout → zakup.',
   'Przychód, zamówienia, konwersja, top produkty i kanały — na żywo.',
-  'Te same nazwy zdarzeń w każdym projekcie — dane porównywalne między sklepami.',
+  'Sprawdzony słownik zdarzeń - analityka działa od pierwszego dnia, bez konfigurowania od zera.',
 ]
 
 export const SECURITY_PILLARS = [
