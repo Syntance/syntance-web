@@ -19,12 +19,12 @@ export default function PanelShowcase() {
     target: desktopSequenceRef,
     offset: ['start start', 'end end'],
   })
-  const panelX = useTransform(scrollYProgress, [0.04, 0.18], ['0%', '-40%'])
-  const panelScale = useTransform(scrollYProgress, [0.04, 0.18], [1.28, 1])
-  const panelY = useTransform(scrollYProgress, [0.04, 0.18], ['8%', '0%'])
+  const panelX = useTransform(scrollYProgress, [0.04, 0.09], ['0%', '-40%'])
+  const panelScale = useTransform(scrollYProgress, [0.04, 0.09], [1.28, 1])
+  const panelY = useTransform(scrollYProgress, [0.04, 0.09], ['8%', '0%'])
 
   useMotionValueEvent(scrollYProgress, 'change', (progress) => {
-    setDetailsVisible(progress >= 0.14)
+    setDetailsVisible(progress >= 0.08)
   })
 
   useEffect(() => {
@@ -100,7 +100,7 @@ export default function PanelShowcase() {
                 </p>
               </header>
 
-              <div className="absolute left-1/2 top-1/2 w-[46%] -translate-x-1/2 -translate-y-1/2">
+              <div className="absolute left-1/2 top-[50vh] w-[46%] -translate-x-1/2 -translate-y-1/2">
                 <motion.div
                   style={{ x: panelX, y: panelY, scale: panelScale }}
                   className="origin-center will-change-transform"
@@ -111,7 +111,7 @@ export default function PanelShowcase() {
 
             </div>
 
-            <div className="absolute inset-x-0 top-[120vh]">
+            <div className="absolute inset-x-0 top-[70vh]">
               {SHOWCASE_STEPS.map((step, index) => (
                 <article
                   key={step.id}
