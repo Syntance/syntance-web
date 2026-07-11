@@ -9,7 +9,7 @@ import {
   readCookieConsent,
   type CookiePreferences,
 } from '@/lib/consent'
-import { clearAnalyticsEligibilityCache, isAnalyticsEligible } from '@/lib/analytics/eligibility'
+import { isAnalyticsEligible } from '@/lib/analytics/eligibility'
 import {
   disableGa4,
   enableGa4,
@@ -81,7 +81,6 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     void sync()
 
     const onConsentUpdated = () => {
-      clearAnalyticsEligibilityCache()
       void sync()
     }
 

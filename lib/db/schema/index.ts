@@ -1,3 +1,4 @@
+export * from './analytics'
 export * from './seo'
 export * from './content'
 export * from './pricing'
