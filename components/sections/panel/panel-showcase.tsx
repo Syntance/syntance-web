@@ -19,7 +19,7 @@ export default function PanelShowcase() {
     target: desktopSequenceRef,
     offset: ['start start', 'end end'],
   })
-  const panelX = useTransform(scrollYProgress, [0.04, 0.18], ['0%', '-55%'])
+  const panelX = useTransform(scrollYProgress, [0.04, 0.18], ['0%', '-40%'])
   const panelScale = useTransform(scrollYProgress, [0.04, 0.18], [1.28, 1])
   const panelY = useTransform(scrollYProgress, [0.04, 0.18], ['8%', '0%'])
 
@@ -100,7 +100,7 @@ export default function PanelShowcase() {
                 </p>
               </header>
 
-              <div className="absolute left-1/2 top-1/2 w-[48%] -translate-x-1/2 -translate-y-1/2">
+              <div className="absolute left-1/2 top-1/2 w-[46%] -translate-x-1/2 -translate-y-1/2">
                 <motion.div
                   style={{ x: panelX, y: panelY, scale: panelScale }}
                   className="origin-center will-change-transform"
@@ -118,14 +118,14 @@ export default function PanelShowcase() {
                   ref={(el) => {
                     stepRefs.current[index] = el
                   }}
-                  className="ml-[56%] flex h-[70vh] w-[40%] items-center"
+                  className="ml-[62%] flex h-[70vh] w-[34%] items-center"
                   aria-current={activeIndex === index ? 'step' : undefined}
                 >
                   <div
-                    className={`max-w-md transition-all duration-500 ${
+                    className={`max-w-md transition-opacity duration-500 ${
                       detailsVisible && activeIndex === index
-                        ? 'translate-x-0 opacity-100'
-                        : 'translate-x-8 opacity-35'
+                        ? 'opacity-100'
+                        : 'opacity-35'
                     }`}
                   >
                     <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.2em] text-purple-300/70">
