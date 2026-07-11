@@ -9,6 +9,7 @@ import SubpageScrollbar from '@/components/SubpageScrollbar'
 import StickyCtaFloat from '@/components/StickyCtaFloat'
 import PanelMock from '@/components/sections/panel/panel-mock'
 import PricingStudioNew from '@/components/sections/pricing-studio-new'
+import { ContactForm } from '@/components/contact-form'
 import Footer from '@/components/sections/footer'
 import {
   ANALYTICS_BULLETS,
@@ -387,6 +388,57 @@ export default function PanelPageClient() {
 
       {/* 9. Cennik — ta sama sekcja co na stronie głównej */}
       <PricingStudioNew sectionId="panel-cta" headingId="panel-cta-heading" />
+
+      {/* 10. Kontakt — pod CTA cennika, cel scrolla "Napisz do nas" */}
+      <section
+        id="contact"
+        aria-labelledby="panel-contact-heading"
+        className="relative z-10 px-5 py-20 md:px-6 md:py-24 lg:px-12"
+      >
+        <div className="mx-auto max-w-4xl">
+          <AnimatedSection>
+            <p className="mb-3 text-center text-[11px] font-medium uppercase tracking-[0.2em] text-purple-300/70 md:hidden">
+              Kontakt
+            </p>
+            <h2
+              id="panel-contact-heading"
+              className="mb-3 text-center text-3xl font-light leading-[1.15] tracking-tight text-white md:mb-8 md:text-5xl md:tracking-wider"
+            >
+              Porozmawiajmy
+            </h2>
+            <p className="mx-auto mb-8 max-w-xl text-center text-sm leading-relaxed text-gray-400 md:mb-16 md:text-xl">
+              Masz pytania o panel? <span className="text-white">Odpowiadamy w 24h</span>.
+            </p>
+          </AnimatedSection>
+
+          <AnimatedSection delay={100}>
+            <div className="grid gap-12 md:grid-cols-2 md:mb-16">
+              <address className="hidden not-italic space-y-8 md:block">
+                <div>
+                  <h3 className="mb-4 text-xl font-medium tracking-wider">Email</h3>
+                  <a
+                    href="mailto:kontakt@syntance.com"
+                    className="text-lg text-gray-400 transition-colors hover:text-white"
+                  >
+                    kontakt@syntance.com
+                  </a>
+                </div>
+                <div>
+                  <h3 className="mb-4 text-xl font-medium tracking-wider">Telefon</h3>
+                  <a
+                    href="tel:+48537110170"
+                    className="text-lg text-gray-400 transition-colors hover:text-white"
+                  >
+                    +48 537 110 170
+                  </a>
+                </div>
+              </address>
+
+              <ContactForm idPrefix="panel" source="panel" />
+            </div>
+          </AnimatedSection>
+        </div>
+      </section>
 
       <Footer />
     </div>
