@@ -5,6 +5,7 @@ type PanelMockProps = {
   className?: string
   compact?: boolean
   animate?: boolean
+  onNavigate?: (viewId: PanelViewId) => void
 }
 
 function ViewOverview() {
@@ -192,31 +193,8 @@ function ViewCms() {
 function ViewSeo() {
   return (
     <div className="space-y-3">
-      {[
-        { path: '/', title: 'Sklep outdoor — Syntance Demo', score: 96 },
-        { path: '/produkty/kurtka', title: 'Kurtka Softshell Pro | Sklep', score: 94 },
-        { path: '/kontakt', title: 'Kontakt i wsparcie | Sklep', score: 98 },
-      ].map((row) => (
-        <div key={row.path} className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-          <div className="mb-1 flex items-center justify-between gap-2">
-            <span className="truncate text-[11px] text-gray-500">{row.path}</span>
-            <span className="shrink-0 text-[11px] text-emerald-400">SEO {row.score}</span>
-          </div>
-          <p className="text-sm text-white">{row.title}</p>
-          <p className="mt-1 line-clamp-2 text-[11px] text-gray-500">
-            Meta opis edytowany w panelu — publikacja bez wtyczek i redeploy.
-          </p>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function ViewStats() {
-  return (
-    <>
-      <div className="mb-3 flex gap-2">
-        {['Statystyki sprzedażowe', 'Analityka'].map((tab, index) => (
+      <div className="flex gap-2">
+        {['Globalne', 'Podstrony (12)'].map((tab, index) => (
           <span
             key={tab}
             className={`rounded-full px-3 py-1 text-[11px] ${
@@ -229,11 +207,65 @@ function ViewStats() {
           </span>
         ))}
       </div>
+
+      <div className="rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2">
+        <p className="text-[10px] uppercase tracking-wider text-purple-300/80">Ustawienia globalne</p>
+        <p className="mt-1 text-sm text-white">Meta tagi i Schema.org dla całej witryny</p>
+      </div>
+
+      <label className="block">
+        <span className="mb-1 block text-[11px] text-gray-500">Meta title</span>
+        <span className="block rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm text-white">
+          Sklep outdoor — Syntance Demo
+        </span>
+      </label>
+
+      <label className="block">
+        <span className="mb-1 block text-[11px] text-gray-500">Meta description</span>
+        <span className="block rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-[11px] leading-relaxed text-gray-300">
+          Sprzęt outdoorowy, szybka wysyłka i checkout zoptymalizowany pod mobile.
+        </span>
+      </label>
+
+      <label className="block">
+        <span className="mb-1 block text-[11px] text-gray-500">Canonical URL</span>
+        <span className="block rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm text-gray-300">
+          https://demo.syntance.com
+        </span>
+      </label>
+
+      <label className="block">
+        <span className="mb-1 block text-[11px] text-gray-500">OG title</span>
+        <span className="block rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm text-gray-300">
+          Sklep outdoor — Syntance Demo
+        </span>
+      </label>
+    </div>
+  )
+}
+
+function ViewStats() {
+  return (
+    <>
+      <div className="mb-3 flex gap-2">
+        {['Statystyki sprzedażowe', 'Analityka'].map((tab, index) => (
+          <span
+            key={tab}
+            className={`rounded-full px-3 py-1 text-[11px] ${
+              index === 1
+                ? 'bg-purple-500/20 text-purple-200 ring-1 ring-purple-400/30'
+                : 'text-gray-500'
+            }`}
+          >
+            {tab}
+          </span>
+        ))}
+      </div>
       <div className="mb-3 grid grid-cols-2 gap-2">
         {[
-          { label: 'Konwersja', value: '3,8%' },
-          { label: 'Przychód', value: '42,8k zł' },
-          { label: 'Koszyk → zakup', value: '61%' },
+          { label: 'Sesje', value: '18,4k' },
+          { label: 'Użytkownicy', value: '12,1k' },
+          { label: 'Wyświetlenia', value: '46,2k' },
           { label: 'Top kanał', value: 'Organic' },
         ].map((stat) => (
           <div
@@ -246,24 +278,18 @@ function ViewStats() {
         ))}
       </div>
       <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
-        <p className="mb-2 text-[11px] text-gray-500">Lejek · GA4 + PostHog</p>
-        <div className="space-y-2">
-          {[
-            { step: 'Wyświetlenie produktu', value: '12,4k' },
-            { step: 'Dodanie do koszyka', value: '2,1k' },
-            { step: 'Checkout', value: '890' },
-            { step: 'Zakup', value: '472' },
-          ].map((row, index) => (
-            <div key={row.step} className="flex items-center gap-2">
-              <span className="w-4 text-[10px] text-gray-600">{index + 1}</span>
-              <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/5">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-purple-500 to-cyan-400"
-                  style={{ width: `${100 - index * 22}%` }}
-                />
-              </div>
-              <span className="w-10 text-right text-[10px] text-gray-400">{row.value}</span>
-            </div>
+        <div className="mb-3 flex items-center justify-between text-[11px] text-gray-500">
+          <span>Ruch na stronie · ostatnie 7 dni</span>
+          <span className="text-emerald-400">+18%</span>
+        </div>
+        <div className="flex h-16 items-end gap-1.5">
+          {[38, 52, 44, 68, 58, 74, 62].map((height, index) => (
+            <div
+              key={index}
+              className="flex-1 rounded-sm bg-gradient-to-t from-purple-500/40 to-cyan-400/70"
+              style={{ height: `${height}%` }}
+              aria-hidden="true"
+            />
           ))}
         </div>
       </div>
@@ -302,7 +328,7 @@ const VIEW_META: Record<PanelViewId, { title: string; subtitle: string }> = {
   orders: { title: 'Zamówienia', subtitle: 'Statusy, płatności i wysyłka' },
   emails: { title: 'E-maile', subtitle: 'Konfigurator szablonów z podglądem' },
   cms: { title: 'CMS', subtitle: 'Treści publikowane na żywo' },
-  seo: { title: 'SEO', subtitle: 'Meta per podstrona' },
+  seo: { title: 'SEO', subtitle: 'Ustawienia globalne witryny' },
   stats: { title: 'Statystyki', subtitle: 'GA4 + PostHog w jednym widoku' },
   returns: { title: 'Zwroty', subtitle: 'Reklamacje i obsługa po sprzedaży' },
 }
@@ -333,6 +359,7 @@ export default function PanelMock({
   className = '',
   compact = false,
   animate = true,
+  onNavigate,
 }: PanelMockProps) {
   const meta = VIEW_META[view]
 
@@ -365,16 +392,26 @@ export default function PanelMock({
               <ul className="space-y-1">
                 {PANEL_NAV.map((item) => {
                   const isActive = item.id === view
+                  const itemClassName = `w-full rounded-lg px-2.5 py-2 text-left text-xs transition-colors duration-300 ${
+                    isActive
+                      ? 'bg-purple-500/15 font-medium text-white ring-1 ring-purple-400/30'
+                      : 'text-gray-500'
+                  }`
+
                   return (
-                    <li
-                      key={item.id}
-                      className={`rounded-lg px-2.5 py-2 text-xs transition-colors duration-300 ${
-                        isActive
-                          ? 'bg-purple-500/15 font-medium text-white ring-1 ring-purple-400/30'
-                          : 'text-gray-500'
-                      }`}
-                    >
-                      {item.label}
+                    <li key={item.id}>
+                      {onNavigate ? (
+                        <button
+                          type="button"
+                          onClick={() => onNavigate(item.id)}
+                          aria-current={isActive ? 'page' : undefined}
+                          className={`${itemClassName} cursor-pointer hover:bg-white/[0.04] hover:text-gray-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/40`}
+                        >
+                          {item.label}
+                        </button>
+                      ) : (
+                        <span className={itemClassName}>{item.label}</span>
+                      )}
                     </li>
                   )
                 })}

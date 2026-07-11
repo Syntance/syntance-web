@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { motion, useMotionValueEvent, useScroll, useTransform } from 'framer-motion'
 import PanelMock from '@/components/sections/panel/panel-mock'
 import { SHOWCASE_STEPS, type PanelViewId } from '@/components/sections/panel/panel-content'
@@ -15,6 +15,7 @@ export default function PanelShowcase() {
   )
   const desktopSequenceRef = useRef<HTMLDivElement>(null)
   const stepRefs = useRef<(HTMLElement | null)[]>([])
+  const navigationLockUntilRef = useRef(0)
   const { scrollYProgress } = useScroll({
     target: desktopSequenceRef,
     offset: ['start start', 'end end'],
@@ -37,7 +38,7 @@ export default function PanelShowcase() {
 
       const observer = new IntersectionObserver(
         ([entry]) => {
-          if (entry.isIntersecting) {
+          if (entry.isIntersecting && Date.now() > navigationLockUntilRef.current) {
             setActiveIndex(index)
           }
         },
@@ -54,6 +55,29 @@ export default function PanelShowcase() {
   }, [reducedMotion])
 
   const activeView: PanelViewId = SHOWCASE_STEPS[activeIndex]?.id ?? 'overview'
+
+  const scrollToStep = useCallback((viewId: PanelViewId) => {
+    const index = SHOWCASE_STEPS.findIndex((step) => step.id === viewId)
+    if (index < 0) return
+
+    const sequence = desktopSequenceRef.current
+    if (!sequence) return
+
+    navigationLockUntilRef.current = Date.now() + 1000
+    setActiveIndex(index)
+    setDetailsVisible(true)
+
+    const vh = window.innerHeight
+    const sequenceTop = sequence.getBoundingClientRect().top + window.scrollY
+    const stepCenter = sequenceTop + vh * 0.7 + index * vh * 0.7 + vh * 0.35
+    const targetScroll = stepCenter - vh * 0.5
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    window.scrollTo({
+      top: targetScroll,
+      behavior: reducedMotion ? 'auto' : 'smooth',
+    })
+  }, [])
 
   return (
     <section
@@ -83,7 +107,7 @@ export default function PanelShowcase() {
             ref={desktopSequenceRef}
             className="relative hidden min-h-[700vh] lg:block"
           >
-            <div className="sticky top-0 h-screen overflow-hidden">
+            <div className="sticky top-0 z-20 h-screen overflow-hidden pointer-events-none">
               <header
                 className={`pointer-events-none absolute inset-x-0 top-[11vh] z-20 mx-auto max-w-3xl text-center transition-all duration-700 ${
                   detailsVisible ? '-translate-y-20 opacity-0' : 'translate-y-0 opacity-100'
@@ -100,18 +124,18 @@ export default function PanelShowcase() {
                 </p>
               </header>
 
-              <div className="absolute left-1/2 top-[50vh] w-[46%] -translate-x-1/2 -translate-y-1/2">
+              <div className="pointer-events-auto absolute left-1/2 top-[50vh] z-40 w-[46%] -translate-x-1/2 -translate-y-1/2">
                 <motion.div
                   style={{ x: panelX, y: panelY, scale: panelScale }}
                   className="origin-center will-change-transform"
                 >
-                  <PanelMock view={activeView} animate />
+                  <PanelMock view={activeView} animate onNavigate={scrollToStep} />
                 </motion.div>
               </div>
 
             </div>
 
-            <div className="absolute inset-x-0 top-[70vh]">
+            <div className="pointer-events-none absolute inset-x-0 top-[70vh] z-10">
               {SHOWCASE_STEPS.map((step, index) => (
                 <article
                   key={step.id}
