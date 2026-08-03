@@ -36,15 +36,7 @@ export function isValidPortfolioSlug(slug: string): boolean {
   return SLUG_PATTERN.test(slug)
 }
 
-export async function savePortfolioPageSpeedScreenshot(
-  file: File,
-  slug: string,
-  slot: PageSpeedScreenshotSlot,
-): Promise<{ url: string }> {
-  if (!isValidPortfolioSlug(slug)) {
-    throw new Error('Nieprawidłowy slug realizacji.')
-  }
-
+async function toOptimizedWebp(file: File): Promise<Buffer> {
   if (file.size > MAX_BYTES) {
     throw new Error('Plik jest za duży (max 5 MB).')
   }
@@ -55,12 +47,15 @@ export async function savePortfolioPageSpeedScreenshot(
     throw new Error('Dozwolone są tylko pliki graficzne (PNG, JPG, WebP).')
   }
 
-  const webpBuffer = await sharp(inputBuffer)
-    .rotate()
-    .webp({ quality: 82, effort: 4 })
-    .toBuffer()
+  return sharp(inputBuffer).rotate().webp({ quality: 82, effort: 4 }).toBuffer()
+}
 
-  const filename = filenameForPageSpeedSlot(slot)
+async function saveWebpToPortfolioSlug(
+  webpBuffer: Buffer,
+  slug: string,
+  filename: string,
+  publicPath: string,
+): Promise<{ url: string }> {
   const blobToken = process.env.BLOB_READ_WRITE_TOKEN
 
   if (blobToken) {
@@ -76,7 +71,7 @@ export async function savePortfolioPageSpeedScreenshot(
 
   if (process.env.VERCEL === '1') {
     throw new Error(
-      'Brak BLOB_READ_WRITE_TOKEN — ustaw token Vercel Blob albo wklej URL zrzutu ręcznie.',
+      'Brak BLOB_READ_WRITE_TOKEN — ustaw token Vercel Blob albo wklej URL ręcznie.',
     )
   }
 
@@ -85,5 +80,45 @@ export async function savePortfolioPageSpeedScreenshot(
   await mkdir(absoluteDir, { recursive: true })
   await writeFile(path.join(absoluteDir, filename), webpBuffer)
 
-  return { url: withAssetCacheBust(publicPathForPageSpeedScreenshot(slug, slot)) }
+  return { url: withAssetCacheBust(publicPath) }
+}
+
+export async function savePortfolioPageSpeedScreenshot(
+  file: File,
+  slug: string,
+  slot: PageSpeedScreenshotSlot,
+): Promise<{ url: string }> {
+  if (!isValidPortfolioSlug(slug)) {
+    throw new Error('Nieprawidłowy slug realizacji.')
+  }
+
+  const webpBuffer = await toOptimizedWebp(file)
+  const filename = filenameForPageSpeedSlot(slot)
+
+  return saveWebpToPortfolioSlug(
+    webpBuffer,
+    slug,
+    filename,
+    publicPathForPageSpeedScreenshot(slug, slot),
+  )
+}
+
+const PREVIEW_IMAGE_FILENAME = 'preview.webp'
+
+export async function savePortfolioPreviewImage(
+  file: File,
+  slug: string,
+): Promise<{ url: string }> {
+  if (!isValidPortfolioSlug(slug)) {
+    throw new Error('Nieprawidłowy slug realizacji.')
+  }
+
+  const webpBuffer = await toOptimizedWebp(file)
+
+  return saveWebpToPortfolioSlug(
+    webpBuffer,
+    slug,
+    PREVIEW_IMAGE_FILENAME,
+    `/portfolio/${slug}/${PREVIEW_IMAGE_FILENAME}`,
+  )
 }

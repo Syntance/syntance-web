@@ -1,8 +1,9 @@
 'use client'
 
-import { useMemo, useState, useEffect, type ReactNode } from 'react'
+import { useMemo, useState, useEffect, useRef, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
-import { ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react'
+import Image from 'next/image'
+import { ChevronDown, ChevronUp, Loader2, Plus, Trash2, Upload } from 'lucide-react'
 import type {
   FaqPricingCategory,
   FaqPricingEntrySanity,
@@ -43,6 +44,105 @@ import { UndoRedoToolbar } from '@/components/magazyn/undo-redo-toolbar'
 import { useMagazynHistory } from '@/hooks/use-magazyn-history'
 
 type PortfolioRow = typeof portfolioItems.$inferSelect
+
+function PreviewImageUploadField({
+  slug,
+  url,
+  onUploaded,
+  onUrlChange,
+}: {
+  slug: string
+  url: string
+  onUploaded: (url: string) => void
+  onUrlChange: (url: string) => void
+}) {
+  const inputRef = useRef<HTMLInputElement>(null)
+  const [pending, setPending] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function handleFile(file: File) {
+    if (!slug.trim()) {
+      setError('Ustaw slug realizacji przed uploadem obrazu.')
+      return
+    }
+
+    setPending(true)
+    setError(null)
+    try {
+      const body = new FormData()
+      body.set('slug', slug)
+      body.set('file', file)
+
+      const res = await fetch('/api/magazyn/cms/portfolio/upload-preview', {
+        method: 'POST',
+        body,
+      })
+      const data = (await res.json()) as { url?: string; error?: string }
+      if (!res.ok || !data.url) {
+        throw new Error(data.error ?? 'Upload nie powiódł się.')
+      }
+      onUploaded(data.url)
+    } catch (uploadError) {
+      setError(uploadError instanceof Error ? uploadError.message : 'Upload nie powiódł się.')
+    } finally {
+      setPending(false)
+      if (inputRef.current) inputRef.current.value = ''
+    }
+  }
+
+  return (
+    <div className="space-y-2">
+      {url ? (
+        <div className="relative aspect-video w-full max-w-xs overflow-hidden rounded-lg border border-white/10 bg-neutral-950">
+          <Image
+            key={url}
+            src={url}
+            alt=""
+            fill
+            sizes="320px"
+            className="object-cover"
+            unoptimized={url.includes('blob.vercel-storage.com')}
+          />
+        </div>
+      ) : null}
+
+      <input
+        className={magazynInputClass}
+        value={url}
+        placeholder="/portfolio/slug/preview.webp"
+        onChange={(e) => onUrlChange(e.target.value)}
+      />
+
+      <div className="flex flex-wrap items-center gap-2">
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/png,image/jpeg,image/webp,image/avif"
+          className="sr-only"
+          onChange={(e) => {
+            const file = e.target.files?.[0]
+            if (file) void handleFile(file)
+          }}
+        />
+        <button
+          type="button"
+          disabled={pending}
+          onClick={() => inputRef.current?.click()}
+          className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 text-xs text-neutral-200 hover:bg-white/5 disabled:opacity-50"
+        >
+          {pending ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
+          ) : (
+            <Upload className="h-3.5 w-3.5" aria-hidden />
+          )}
+          {pending ? 'Wgrywam…' : 'Wrzuć zdjęcie'}
+        </button>
+      </div>
+
+      {error ? <p className="text-xs text-red-400">{error}</p> : null}
+    </div>
+  )
+}
 
 function normalizePortfolioRow(row: PortfolioRow): PortfolioRow {
   return {
@@ -528,12 +628,18 @@ export function CmsClient({
                   onChange={(e) => updatePortfolio(activePortfolio.id, { logoAlt: e.target.value })}
                 />
               </Field>
-              <Field label="Podgląd — obraz (URL)" hint="Ścieżka w /public lub pełny URL">
-                <input
-                  className={magazynInputClass}
-                  value={activePortfolio.previewImageFallback ?? ''}
-                  onChange={(e) =>
-                    updatePortfolio(activePortfolio.id, { previewImageFallback: e.target.value })
+              <Field
+                label="Podgląd — obraz"
+                hint="Wrzuć zdjęcie albo wklej ścieżkę w /public lub pełny URL"
+              >
+                <PreviewImageUploadField
+                  slug={activePortfolio.slug}
+                  url={activePortfolio.previewImageFallback ?? ''}
+                  onUploaded={(url) =>
+                    updatePortfolio(activePortfolio.id, { previewImageFallback: url })
+                  }
+                  onUrlChange={(url) =>
+                    updatePortfolio(activePortfolio.id, { previewImageFallback: url })
                   }
                 />
               </Field>
