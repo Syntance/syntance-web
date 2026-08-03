@@ -9,6 +9,8 @@ import {
 } from '@/lib/magazyn/portfolio-performance-cms'
 
 const MAX_BYTES = 5 * 1024 * 1024
+/** Budżet na zapisany asset — powyżej niego bezstratny webp przestaje się opłacać. */
+const MAX_STORED_BYTES = 4 * 1024 * 1024
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 
 /** Po nadpisaniu pliku w Blob/CDN URL się nie zmienia — bust cache dla podglądu CMS i frontu. */
@@ -47,7 +49,13 @@ async function toOptimizedWebp(file: File): Promise<Buffer> {
     throw new Error('Dozwolone są tylko pliki graficzne (PNG, JPG, WebP).')
   }
 
-  return sharp(inputBuffer).rotate().webp({ quality: 95, effort: 6 }).toBuffer()
+  // Zrzuty UI mają ostry tekst, który stratny webp rozmywa przy KAŻDYM zapisie —
+  // q95 zmienia ~14% subpikseli (odchyłka do 36/255), q100 ~12%. Bezstratny webp jest
+  // identyczny z oryginałem co do piksela; stratny q100 tylko jako fallback dla dużych zdjęć.
+  const lossless = await sharp(inputBuffer).rotate().webp({ lossless: true, effort: 6 }).toBuffer()
+  if (lossless.byteLength <= MAX_STORED_BYTES) return lossless
+
+  return sharp(inputBuffer).rotate().webp({ quality: 100, effort: 6 }).toBuffer()
 }
 
 async function saveWebpToPortfolioSlug(
