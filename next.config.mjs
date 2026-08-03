@@ -35,6 +35,8 @@ const nextConfig = {
       },
     ],
     formats: ['image/avif', 'image/webp'],
+    // 75 (default) + 90 dla wizytówek portfolio, gdzie ostrość obrazu liczy się na Awwwards-poziomie.
+    qualities: [75, 90, 100],
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',

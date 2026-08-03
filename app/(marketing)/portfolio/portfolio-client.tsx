@@ -80,6 +80,7 @@ function ProjectCard({
               alt={project.previewImageAlt}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
+              quality={100}
               className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
             />
             <div
@@ -112,6 +113,7 @@ function ProjectCard({
               alt={project.previewImageAlt}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
+              quality={100}
               className="object-cover object-top"
             />
             <div

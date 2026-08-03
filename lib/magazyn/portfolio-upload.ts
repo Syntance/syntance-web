@@ -47,7 +47,7 @@ async function toOptimizedWebp(file: File): Promise<Buffer> {
     throw new Error('Dozwolone są tylko pliki graficzne (PNG, JPG, WebP).')
   }
 
-  return sharp(inputBuffer).rotate().webp({ quality: 82, effort: 4 }).toBuffer()
+  return sharp(inputBuffer).rotate().webp({ quality: 95, effort: 6 }).toBuffer()
 }
 
 async function saveWebpToPortfolioSlug(
