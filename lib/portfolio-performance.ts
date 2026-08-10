@@ -37,6 +37,32 @@ export const PSI_TIMING_METRIC_FIELDS = [
 export const DEFAULT_PERFORMANCE_INTRO =
   'stan po migracji z WordPress na headless (Next.js + Medusa). Porównanie przed wdrożeniem optymalizacji i po publikacji nowego stacku.'
 
+export const DEFAULT_PERFORMANCE_INTRO_AFTER_ONLY =
+  'strona powstała od zera, więc nie ma pomiaru sprzed wdrożenia. Poniżej wynik opublikowanej wersji.'
+
+/**
+ * Redesign/migracja → `before-after` (dwa pomiary).
+ * Nowa strona budowana od zera → `after-only` (nie ma czego porównywać).
+ */
+export type PerformanceReportMode = 'before-after' | 'after-only'
+
+export const PERFORMANCE_REPORT_MODES = [
+  {
+    value: 'before-after',
+    label: 'Przed i po',
+    hint: 'Redesign lub migracja — pokazujemy pomiar sprzed wdrożenia i po nim.',
+  },
+  {
+    value: 'after-only',
+    label: 'Tylko po realizacji',
+    hint: 'Nowa strona od zera — nie było wersji „przed”, pokazujemy sam wynik.',
+  },
+] as const satisfies ReadonlyArray<{
+  value: PerformanceReportMode
+  label: string
+  hint: string
+}>
+
 export type PsiDeviceReport = {
   measuredAt: string
   metrics: PsiCoreMetrics
@@ -48,6 +74,8 @@ export type PortfolioPerformanceReport = {
   source: string
   /** Akapit pod nagłówkiem sekcji PageSpeed na case study. */
   intro?: string
+  /** Brak wartości = starsze rekordy sprzed wprowadzenia trybu → `before-after`. */
+  mode?: PerformanceReportMode
   before: {
     mobile: PsiDeviceReport
     desktop: PsiDeviceReport
@@ -57,6 +85,16 @@ export type PortfolioPerformanceReport = {
     desktop: PsiDeviceReport
   }
   improvements: readonly string[]
+}
+
+export function resolvePerformanceMode(
+  report: Pick<PortfolioPerformanceReport, 'mode'> | null | undefined,
+): PerformanceReportMode {
+  return report?.mode === 'after-only' ? 'after-only' : 'before-after'
+}
+
+export function performanceIntroPlaceholder(mode: PerformanceReportMode): string {
+  return mode === 'after-only' ? DEFAULT_PERFORMANCE_INTRO_AFTER_ONLY : DEFAULT_PERFORMANCE_INTRO
 }
 
 export type PerformanceDevice = 'mobile' | 'desktop'

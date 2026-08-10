@@ -3,13 +3,15 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import {
-  DEFAULT_PERFORMANCE_INTRO,
   PSI_SCORE_METRIC_FIELDS,
   PSI_TIMING_METRIC_FIELDS,
+  performanceIntroPlaceholder,
+  resolvePerformanceMode,
   scoreColorClass,
   scoreRingClass,
   type PerformanceDevice,
   type PortfolioPerformanceReport,
+  type PsiDeviceReport,
 } from '@/lib/portfolio-performance'
 
 const METRIC_LABELS = PSI_TIMING_METRIC_FIELDS.map(({ key, displayLabel }) => ({
@@ -95,6 +97,23 @@ function MetricsGroup({
 function PerformanceTeaser({ performance }: { performance: PortfolioPerformanceReport }) {
   const mobileAfter = performance.after.mobile.metrics
   const mobileBefore = performance.before.mobile.metrics
+  const mode = resolvePerformanceMode(performance)
+
+  if (mode === 'after-only') {
+    return (
+      <div
+        className="flex w-full flex-wrap items-end justify-center gap-4"
+        aria-label={`Wydajność mobile po realizacji: ${mobileAfter.performance}, LCP ${mobileAfter.lcp}`}
+      >
+        <MetricsGroup
+          label="Po realizacji"
+          performance={mobileAfter.performance}
+          lcp={mobileAfter.lcp}
+          badgeClass={BADGE_AFTER}
+        />
+      </div>
+    )
+  }
 
   return (
     <div
@@ -122,8 +141,165 @@ function PerformanceTeaser({ performance }: { performance: PortfolioPerformanceR
   )
 }
 
+function DeviceTabs({
+  device,
+  onChange,
+}: {
+  device: PerformanceDevice
+  onChange: (device: PerformanceDevice) => void
+}) {
+  return (
+    <div
+      className="inline-flex gap-1 rounded-full border border-white/10 bg-white/[0.02] p-1"
+      role="tablist"
+      aria-label="Urządzenie pomiaru"
+    >
+      {(['mobile', 'desktop'] as const).map((id) => (
+        <button
+          key={id}
+          type="button"
+          role="tab"
+          aria-selected={device === id}
+          onClick={() => onChange(id)}
+          className={`rounded-full px-4 py-1.5 text-sm transition-colors ${
+            device === id ? 'bg-white text-black' : 'text-neutral-400 hover:text-white'
+          }`}
+        >
+          {id === 'mobile' ? 'Mobile' : 'Desktop'}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function ScreenshotFigure({ caption, report }: { caption: string; report: PsiDeviceReport }) {
+  return (
+    <figure className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02]">
+      <div className="border-b border-white/10 px-4 py-2 text-xs text-neutral-500">{caption}</div>
+      <div className="w-full bg-neutral-950">
+        <Image
+          key={report.screenshot}
+          src={report.screenshot}
+          alt={report.screenshotAlt}
+          width={0}
+          height={0}
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="h-auto w-full"
+          unoptimized={report.screenshot.includes('blob.vercel-storage.com')}
+        />
+      </div>
+    </figure>
+  )
+}
+
+function ImprovementsList({ items }: { items: readonly string[] }) {
+  if (!items.length) return null
+  return (
+    <ul className="space-y-2 text-sm leading-relaxed text-neutral-400">
+      {items.map((item) => (
+        <li key={item} className="flex gap-2">
+          <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-purple-400/80" aria-hidden="true" />
+          {item}
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+function SectionHeader({
+  heading,
+  report,
+  device,
+  onDeviceChange,
+}: {
+  heading: string
+  report: PortfolioPerformanceReport
+  device: PerformanceDevice
+  onDeviceChange: (device: PerformanceDevice) => void
+}) {
+  return (
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.2em] text-purple-300/70">
+          Core Web Vitals
+        </p>
+        <h2 id="performance-heading" className="text-2xl font-light tracking-wide text-white md:text-3xl">
+          {heading}
+        </h2>
+        <p className="mt-2 max-w-xl text-sm leading-relaxed text-neutral-400">
+          Pomiary {report.source} —{' '}
+          {report.intro?.trim() || performanceIntroPlaceholder(resolvePerformanceMode(report))}
+        </p>
+      </div>
+
+      <DeviceTabs device={device} onChange={onDeviceChange} />
+    </div>
+  )
+}
+
+/** Nowa strona — nie było wersji „przed”, więc pokazujemy sam wynik po publikacji. */
+function AfterOnlyReport({
+  report,
+  device,
+  onDeviceChange,
+}: {
+  report: PortfolioPerformanceReport
+  device: PerformanceDevice
+  onDeviceChange: (device: PerformanceDevice) => void
+}) {
+  const after = report.after[device]
+
+  return (
+    <section aria-labelledby="performance-heading" className="space-y-8">
+      <SectionHeader
+        heading="Wyniki po realizacji"
+        report={report}
+        device={device}
+        onDeviceChange={onDeviceChange}
+      />
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {PSI_SCORE_METRIC_FIELDS.map(({ key, label }) => (
+          <ScoreBadge key={key} score={after.metrics[key]} label={label} />
+        ))}
+      </div>
+
+      <div className="overflow-hidden rounded-2xl border border-white/10">
+        <table className="w-full text-left text-sm">
+          <thead>
+            <tr className="border-b border-white/10 bg-white/[0.02] text-[11px] uppercase tracking-[0.14em] text-neutral-500">
+              <th className="px-4 py-3 font-medium">Metryka</th>
+              <th className="px-4 py-3 font-medium">Wynik</th>
+            </tr>
+          </thead>
+          <tbody>
+            {METRIC_LABELS.map(({ key, label }) => (
+              <tr key={key} className="border-b border-white/5 last:border-0">
+                <td className="px-4 py-3 text-neutral-400">{label}</td>
+                <td className="px-4 py-3 tabular-nums text-white">{after.metrics[key]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {after.screenshot ? (
+        <div className="mx-auto w-full max-w-md">
+          <ScreenshotFigure caption={`Pomiar · ${after.measuredAt}`} report={after} />
+        </div>
+      ) : null}
+
+      <ImprovementsList items={report.improvements} />
+    </section>
+  )
+}
+
 export function PerformanceBeforeAfter({ report }: { report: PortfolioPerformanceReport }) {
   const [device, setDevice] = useState<PerformanceDevice>('mobile')
+
+  if (resolvePerformanceMode(report) === 'after-only') {
+    return <AfterOnlyReport report={report} device={device} onDeviceChange={setDevice} />
+  }
 
   const before = report.before[device]
   const after = report.after[device]
@@ -131,40 +307,12 @@ export function PerformanceBeforeAfter({ report }: { report: PortfolioPerformanc
 
   return (
     <section aria-labelledby="performance-heading" className="space-y-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.2em] text-purple-300/70">
-            Core Web Vitals
-          </p>
-          <h2 id="performance-heading" className="text-2xl font-light tracking-wide text-white md:text-3xl">
-            Jak było → jak jest
-          </h2>
-          <p className="mt-2 max-w-xl text-sm leading-relaxed text-neutral-400">
-            Pomiary {report.source} — {report.intro?.trim() || DEFAULT_PERFORMANCE_INTRO}
-          </p>
-        </div>
-
-        <div
-          className="inline-flex gap-1 rounded-full border border-white/10 bg-white/[0.02] p-1"
-          role="tablist"
-          aria-label="Urządzenie pomiaru"
-        >
-          {(['mobile', 'desktop'] as const).map((id) => (
-            <button
-              key={id}
-              type="button"
-              role="tab"
-              aria-selected={device === id}
-              onClick={() => setDevice(id)}
-              className={`rounded-full px-4 py-1.5 text-sm transition-colors ${
-                device === id ? 'bg-white text-black' : 'text-neutral-400 hover:text-white'
-              }`}
-            >
-              {id === 'mobile' ? 'Mobile' : 'Desktop'}
-            </button>
-          ))}
-        </div>
-      </div>
+      <SectionHeader
+        heading="Jak było → jak jest"
+        report={report}
+        device={device}
+        onDeviceChange={setDevice}
+      />
 
       <div className="grid gap-6 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
         <ScoreBadge score={before.metrics.performance} label="Przed" />
@@ -220,50 +368,11 @@ export function PerformanceBeforeAfter({ report }: { report: PortfolioPerformanc
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <figure className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02]">
-          <div className="border-b border-white/10 px-4 py-2 text-xs text-neutral-500">
-            Przed · {before.measuredAt}
-          </div>
-          <div className="w-full bg-neutral-950">
-            <Image
-              key={before.screenshot}
-              src={before.screenshot}
-              alt={before.screenshotAlt}
-              width={0}
-              height={0}
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="h-auto w-full"
-              unoptimized={before.screenshot.includes('blob.vercel-storage.com')}
-            />
-          </div>
-        </figure>
-        <figure className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02]">
-          <div className="border-b border-white/10 px-4 py-2 text-xs text-neutral-500">
-            Po · {after.measuredAt}
-          </div>
-          <div className="w-full bg-neutral-950">
-            <Image
-              key={after.screenshot}
-              src={after.screenshot}
-              alt={after.screenshotAlt}
-              width={0}
-              height={0}
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="h-auto w-full"
-              unoptimized={after.screenshot.includes('blob.vercel-storage.com')}
-            />
-          </div>
-        </figure>
+        <ScreenshotFigure caption={`Przed · ${before.measuredAt}`} report={before} />
+        <ScreenshotFigure caption={`Po · ${after.measuredAt}`} report={after} />
       </div>
 
-      <ul className="space-y-2 text-sm leading-relaxed text-neutral-400">
-        {report.improvements.map((item) => (
-          <li key={item} className="flex gap-2">
-            <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-purple-400/80" aria-hidden="true" />
-            {item}
-          </li>
-        ))}
-      </ul>
+      <ImprovementsList items={report.improvements} />
     </section>
   )
 }

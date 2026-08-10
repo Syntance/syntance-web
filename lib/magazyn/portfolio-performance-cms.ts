@@ -1,8 +1,10 @@
-import type {
-  PerformanceDevice,
-  PortfolioPerformanceReport,
-  PsiCoreMetrics,
-  PsiDeviceReport,
+import {
+  resolvePerformanceMode,
+  type PerformanceDevice,
+  type PerformanceReportMode,
+  type PortfolioPerformanceReport,
+  type PsiCoreMetrics,
+  type PsiDeviceReport,
 } from '@/lib/portfolio-performance'
 
 export type PageSpeedScreenshotSlot =
@@ -44,10 +46,13 @@ function emptyDeviceReport(): PsiDeviceReport {
   }
 }
 
-export function createEmptyPerformanceReport(): PortfolioPerformanceReport {
+export function createEmptyPerformanceReport(
+  mode: PerformanceReportMode = 'before-after',
+): PortfolioPerformanceReport {
   return {
     source: 'Google PageSpeed Insights',
     intro: '',
+    mode,
     before: {
       mobile: emptyDeviceReport(),
       desktop: emptyDeviceReport(),
@@ -60,18 +65,43 @@ export function createEmptyPerformanceReport(): PortfolioPerformanceReport {
   }
 }
 
+/**
+ * Zmiana trybu nie kasuje danych „przed” — przełączenie z powrotem je przywraca.
+ * Front i tak czyta tylko fazy właściwe dla trybu.
+ */
+export function setPerformanceMode(
+  report: PortfolioPerformanceReport,
+  mode: PerformanceReportMode,
+): PortfolioPerformanceReport {
+  return { ...report, mode }
+}
+
+/** Fazy, które w danym trybie w ogóle mają sens — `after-only` pomija „przed”. */
+export function performancePhasesForMode(
+  mode: PerformanceReportMode,
+): ReadonlyArray<'before' | 'after'> {
+  return mode === 'after-only' ? ['after'] : ['before', 'after']
+}
+
+export function pageSpeedSlotsForMode(mode: PerformanceReportMode) {
+  const phases = performancePhasesForMode(mode)
+  return PAGESPEED_SCREENSHOT_SLOTS.filter((item) => phases.includes(item.phase))
+}
+
 export function hasPerformanceContent(
   report: PortfolioPerformanceReport | null | undefined,
 ): boolean {
   if (!report) return false
-  const phases = [report.before, report.after] as const
-  return phases.some(
-    (phase) =>
+  return performancePhasesForMode(resolvePerformanceMode(report)).some((phaseKey) => {
+    const phase = report[phaseKey]
+    if (!phase) return false
+    return Boolean(
       phase.mobile.screenshot.trim() ||
-      phase.desktop.screenshot.trim() ||
-      phase.mobile.metrics.performance > 0 ||
-      phase.desktop.metrics.performance > 0,
-  )
+        phase.desktop.screenshot.trim() ||
+        phase.mobile.metrics.performance > 0 ||
+        phase.desktop.metrics.performance > 0,
+    )
+  })
 }
 
 export function getDeviceReport(

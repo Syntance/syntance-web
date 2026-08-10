@@ -4,10 +4,13 @@ import { useRef, useState } from 'react'
 import Image from 'next/image'
 import { Loader2, Upload } from 'lucide-react'
 import {
-  DEFAULT_PERFORMANCE_INTRO,
+  PERFORMANCE_REPORT_MODES,
   PSI_SCORE_METRIC_FIELDS,
   PSI_TIMING_METRIC_FIELDS,
+  performanceIntroPlaceholder,
+  resolvePerformanceMode,
   type PerformanceDevice,
+  type PerformanceReportMode,
   type PortfolioPerformanceReport,
   type PsiCoreMetrics,
 } from '@/lib/portfolio-performance'
@@ -15,7 +18,10 @@ import {
   PAGESPEED_SCREENSHOT_SLOTS,
   createEmptyPerformanceReport,
   getDeviceReport,
+  pageSpeedSlotsForMode,
   patchDeviceReport,
+  performancePhasesForMode,
+  setPerformanceMode,
   type PageSpeedScreenshotSlot,
 } from '@/lib/magazyn/portfolio-performance-cms'
 import { Field, StringListEditor, magazynInputClass, magazynTextareaClass } from '@/components/magazyn/ui'
@@ -260,6 +266,21 @@ function ScreenshotUploadField({
   )
 }
 
+const DEVICE_LABEL: Record<PerformanceDevice, string> = {
+  mobile: 'Mobile',
+  desktop: 'Desktop',
+}
+
+/** W trybie „tylko po” dopisek „— po” jest zbędny, bo nie ma z czym porównywać. */
+function cardLabel(
+  mode: PerformanceReportMode,
+  device: PerformanceDevice,
+  phase: 'before' | 'after',
+): string {
+  if (mode === 'after-only') return DEVICE_LABEL[device]
+  return `${DEVICE_LABEL[device]} — ${phase === 'before' ? 'przed' : 'po'}`
+}
+
 export function PortfolioPerformanceEditor({
   slug,
   report,
@@ -268,6 +289,11 @@ export function PortfolioPerformanceEditor({
   onChange,
 }: Props) {
   const activeReport = report ?? createEmptyPerformanceReport()
+  const mode = resolvePerformanceMode(activeReport)
+  const screenshotSlots = pageSpeedSlotsForMode(mode)
+  const metricCards = (['mobile', 'desktop'] as const).flatMap((device) =>
+    performancePhasesForMode(mode).map((phase) => ({ device, phase })),
+  )
 
   function updateReport(next: PortfolioPerformanceReport) {
     onChange(next)
@@ -276,7 +302,11 @@ export function PortfolioPerformanceEditor({
   function updateScreenshot(slot: PageSpeedScreenshotSlot, screenshot: string) {
     const meta = PAGESPEED_SCREENSHOT_SLOTS.find((item) => item.slot === slot)
     if (!meta) return
-    const altDefault = `PageSpeed Insights ${meta.label.toLowerCase()} — ${projectName}`
+    const altDefault = `PageSpeed Insights ${cardLabel(
+      mode,
+      meta.device,
+      meta.phase,
+    ).toLowerCase()} — ${projectName}`
     updateReport(
       patchDeviceReport(activeReport, meta.phase, meta.device, {
         screenshot,
@@ -292,7 +322,7 @@ export function PortfolioPerformanceEditor({
         <div>
           <h3 className="text-sm font-medium text-neutral-100">PageSpeed Insights</h3>
           <p className="text-xs text-neutral-500">
-            Zrzuty ekranu i wyniki przed/po optymalizacji — sekcja na karcie portfolio i case study.
+            Zrzuty ekranu i wyniki PageSpeed — sekcja na karcie portfolio i case study.
           </p>
         </div>
         <label className="flex items-center gap-2 text-sm text-neutral-300">
@@ -316,6 +346,33 @@ export function PortfolioPerformanceEditor({
 
       {enabled ? (
         <>
+          <Field
+            label="Tryb prezentacji"
+            hint="Nowe strony nie mają wersji „przed” — wybierz „Tylko po realizacji”, a sekcja pokaże sam wynik."
+          >
+            <div className="flex flex-wrap gap-2">
+              {PERFORMANCE_REPORT_MODES.map((option) => {
+                const active = mode === option.value
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    aria-pressed={active}
+                    title={option.hint}
+                    onClick={() => updateReport(setPerformanceMode(activeReport, option.value))}
+                    className={`rounded-full border px-4 py-1.5 text-xs transition-colors ${
+                      active
+                        ? 'border-white/70 bg-white text-black'
+                        : 'border-white/15 text-neutral-300 hover:bg-white/5'
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                )
+              })}
+            </div>
+          </Field>
+
           <Field label="Źródło pomiaru" hint="Np. Google PageSpeed Insights">
             <input
               className={magazynInputClass}
@@ -326,25 +383,27 @@ export function PortfolioPerformanceEditor({
 
           <Field
             label="Opis sekcji PageSpeed"
-            hint="Akapit pod nagłówkiem „Jak było → jak jest”. Na stronie: „Pomiary [źródło] — [ten tekst]”."
+            hint={`Akapit pod nagłówkiem „${
+              mode === 'after-only' ? 'Wyniki po realizacji' : 'Jak było → jak jest'
+            }”. Na stronie: „Pomiary [źródło] — [ten tekst]”.`}
           >
             <textarea
               className={magazynTextareaClass}
               value={activeReport.intro ?? ''}
-              placeholder={DEFAULT_PERFORMANCE_INTRO}
+              placeholder={performanceIntroPlaceholder(mode)}
               onChange={(e) => updateReport({ ...activeReport, intro: e.target.value })}
             />
           </Field>
 
           <div className="grid gap-4 lg:grid-cols-2">
-            {PAGESPEED_SCREENSHOT_SLOTS.map((item) => {
+            {screenshotSlots.map((item) => {
               const deviceReport = getDeviceReport(activeReport, item.phase, item.device)
               return (
                 <ScreenshotUploadField
                   key={item.slot}
                   slug={slug}
                   slot={item.slot}
-                  label={item.label}
+                  label={cardLabel(mode, item.device, item.phase)}
                   url={deviceReport.screenshot}
                   alt={deviceReport.screenshotAlt}
                   onUploaded={(url) => updateScreenshot(item.slot, url)}
@@ -355,38 +414,20 @@ export function PortfolioPerformanceEditor({
           </div>
 
           <div className="grid gap-4 lg:grid-cols-2">
-            <MetricFields
-              label="Mobile — przed"
-              phase="before"
-              device="mobile"
-              report={activeReport}
-              onChange={updateReport}
-            />
-            <MetricFields
-              label="Mobile — po"
-              phase="after"
-              device="mobile"
-              report={activeReport}
-              onChange={updateReport}
-            />
-            <MetricFields
-              label="Desktop — przed"
-              phase="before"
-              device="desktop"
-              report={activeReport}
-              onChange={updateReport}
-            />
-            <MetricFields
-              label="Desktop — po"
-              phase="after"
-              device="desktop"
-              report={activeReport}
-              onChange={updateReport}
-            />
+            {metricCards.map(({ device, phase }) => (
+              <MetricFields
+                key={`${device}-${phase}`}
+                label={cardLabel(mode, device, phase)}
+                phase={phase}
+                device={device}
+                report={activeReport}
+                onChange={updateReport}
+              />
+            ))}
           </div>
 
           <StringListEditor
-            label="Co poprawiliśmy"
+            label={mode === 'after-only' ? 'Co zrobiliśmy dla wydajności' : 'Co poprawiliśmy'}
             placeholder="Np. Priorytetyzacja LCP — hero ładuje się od razu"
             items={[...activeReport.improvements]}
             onChange={(improvements) => updateReport({ ...activeReport, improvements })}
