@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment } from 'react'
+import type { ReactNode } from 'react'
 import Image from 'next/image'
 import {
   PSI_SCORE_METRIC_FIELDS,
@@ -205,49 +205,72 @@ const PERFORMANCE_DEVICES = [
   { device: 'desktop', label: 'Desktop' },
 ] as const satisfies ReadonlyArray<{ device: PerformanceDevice; label: string }>
 
-function DualScoreCard({
+/**
+ * Komplet danych jednego urządzenia — wyniki i tabela razem.
+ * Na mobile bloki idą jeden pod drugim, od `lg` obok siebie.
+ */
+function DeviceBlock({
   label,
-  mobile,
-  desktop,
+  meta,
+  children,
 }: {
   label: string
-  mobile: number
-  desktop: number
+  meta?: string
+  children: ReactNode
 }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-4">
-      <span className="block text-center text-[10px] font-medium uppercase tracking-[0.16em] text-neutral-500">
-        {label}
-      </span>
-      <div className="mt-3 grid grid-cols-2 divide-x divide-white/10">
-        {PERFORMANCE_DEVICES.map(({ device, label: deviceLabel }) => (
-          <div key={device} className="flex flex-col items-center px-1">
-            <span className="text-[10px] uppercase tracking-[0.12em] text-neutral-500">
-              {deviceLabel}
-            </span>
-            <span
-              className={`text-3xl font-light tabular-nums tracking-tight md:text-4xl ${scoreColorClass(
-                device === 'mobile' ? mobile : desktop,
-              )}`}
-            >
-              {device === 'mobile' ? mobile : desktop}
-            </span>
-          </div>
-        ))}
-      </div>
+    <div className="space-y-4 rounded-2xl border border-white/10 bg-white/[0.02] p-4 md:p-5">
+      <p className="flex flex-wrap items-baseline gap-x-2">
+        <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-neutral-200">
+          {label}
+        </span>
+        {meta ? <span className="text-xs text-neutral-500">{meta}</span> : null}
+      </p>
+      {children}
     </div>
   )
 }
 
-/** Data pomiaru — jedna linia, jeśli oba urządzenia mierzone tego samego dnia. */
-function measuredAtLabel(report: PortfolioPerformanceReport): string | null {
-  const mobile = report.after.mobile.measuredAt.trim()
-  const desktop = report.after.desktop.measuredAt.trim()
-  if (!mobile && !desktop) return null
-  if (mobile === desktop) return `Pomiar: ${mobile}`
-  return [mobile ? `Mobile: ${mobile}` : null, desktop ? `Desktop: ${desktop}` : null]
-    .filter(Boolean)
-    .join(' · ')
+/**
+ * Tabela bez własnej ramki — mieści się w bloku urządzenia bez przewijania w bok:
+ * nazwa metryki zabiera resztę szerokości i zawija, liczby trzymają się prawej.
+ */
+function MetricsTable({
+  columns,
+  rows,
+}: {
+  columns: readonly string[]
+  rows: ReadonlyArray<{ key: string; label: string; cells: readonly ReactNode[] }>
+}) {
+  return (
+    <table className="w-full text-left text-sm">
+      <thead>
+        <tr className="border-b border-white/10 text-[10px] uppercase tracking-[0.12em] text-neutral-500">
+          <th className="w-full py-2 pr-3 font-medium">Metryka</th>
+          {columns.map((column) => (
+            <th key={column} className="whitespace-nowrap py-2 pl-3 text-right font-medium">
+              {column}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row) => (
+          <tr key={row.key} className="border-b border-white/5 last:border-0">
+            <td className="py-2.5 pr-3 text-neutral-400">{row.label}</td>
+            {row.cells.map((cell, index) => (
+              <td
+                key={columns[index]}
+                className="whitespace-nowrap py-2.5 pl-3 text-right tabular-nums"
+              >
+                {cell}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
 }
 
 /**
@@ -255,53 +278,42 @@ function measuredAtLabel(report: PortfolioPerformanceReport): string | null {
  * Bez przełącznika urządzeń: mobile i desktop obok siebie.
  */
 function AfterOnlyReport({ report }: { report: PortfolioPerformanceReport }) {
-  const mobile = report.after.mobile
-  const desktop = report.after.desktop
-  const measuredAt = measuredAtLabel(report)
   const screenshots = PERFORMANCE_DEVICES.filter(({ device }) => report.after[device].screenshot)
 
   return (
     <section aria-labelledby="performance-heading" className="space-y-8">
       <SectionHeader heading="Wyniki po realizacji" report={report} />
 
-      <div className="space-y-3">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {PSI_SCORE_METRIC_FIELDS.map(({ key, label }) => (
-            <DualScoreCard
-              key={key}
+      <div className="grid gap-4 lg:grid-cols-2">
+        {PERFORMANCE_DEVICES.map(({ device, label }) => {
+          const deviceReport = report.after[device]
+          return (
+            <DeviceBlock
+              key={device}
               label={label}
-              mobile={mobile.metrics[key]}
-              desktop={desktop.metrics[key]}
-            />
-          ))}
-        </div>
-        {measuredAt ? (
-          <p className="text-center text-xs text-neutral-500 sm:text-right">{measuredAt}</p>
-        ) : null}
-      </div>
+              meta={deviceReport.measuredAt.trim() || undefined}
+            >
+              <div className="grid grid-cols-2 gap-3">
+                {PSI_SCORE_METRIC_FIELDS.map(({ key, label: scoreLabel }) => (
+                  <ScoreBadge key={key} score={deviceReport.metrics[key]} label={scoreLabel} />
+                ))}
+              </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-white/10">
-        <table className="w-full min-w-[32rem] text-left text-sm">
-          <thead>
-            <tr className="border-b border-white/10 bg-white/[0.02] text-[11px] uppercase tracking-[0.14em] text-neutral-500">
-              <th className="px-4 py-3 font-medium">Metryka</th>
-              {PERFORMANCE_DEVICES.map(({ device, label }) => (
-                <th key={device} className="px-4 py-3 font-medium">
-                  {label}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {METRIC_LABELS.map(({ key, label }) => (
-              <tr key={key} className="border-b border-white/5 last:border-0">
-                <td className="px-4 py-3 text-neutral-400">{label}</td>
-                <td className="px-4 py-3 tabular-nums text-white">{mobile.metrics[key]}</td>
-                <td className="px-4 py-3 tabular-nums text-white">{desktop.metrics[key]}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+              <MetricsTable
+                columns={['Wynik']}
+                rows={METRIC_LABELS.map(({ key, label: metricLabel }) => ({
+                  key,
+                  label: metricLabel,
+                  cells: [
+                    <span key="value" className="text-white">
+                      {deviceReport.metrics[key]}
+                    </span>,
+                  ],
+                }))}
+              />
+            </DeviceBlock>
+          )
+        })}
       </div>
 
       {screenshots.length ? (
@@ -341,32 +353,6 @@ function DeltaMarker({ delta }: { delta: number }) {
   )
 }
 
-/** Performance przed → po dla jednego urządzenia, jako samodzielna karta. */
-function DevicePerformanceCompare({
-  label,
-  before,
-  after,
-}: {
-  label: string
-  before: PsiDeviceReport
-  after: PsiDeviceReport
-}) {
-  const delta = after.metrics.performance - before.metrics.performance
-
-  return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
-      <p className="mb-3 text-center text-[10px] font-medium uppercase tracking-[0.16em] text-neutral-400">
-        {label}
-      </p>
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-        <ScoreBadge score={before.metrics.performance} label="Przed" />
-        <DeltaMarker delta={delta} />
-        <ScoreBadge score={after.metrics.performance} label="Po" />
-      </div>
-    </div>
-  )
-}
-
 /** Redesign/migracja — oba urządzenia naraz, bez przełącznika. */
 function BeforeAfterReport({ report }: { report: PortfolioPerformanceReport }) {
   const screenshots = PERFORMANCE_DEVICES.flatMap(({ device, label }) =>
@@ -386,83 +372,47 @@ function BeforeAfterReport({ report }: { report: PortfolioPerformanceReport }) {
       <SectionHeader heading="Jak było → jak jest" report={report} />
 
       <div className="grid gap-4 lg:grid-cols-2">
-        {PERFORMANCE_DEVICES.map(({ device, label }) => (
-          <DevicePerformanceCompare
-            key={device}
-            label={label}
-            before={report.before[device]}
-            after={report.after[device]}
-          />
-        ))}
-      </div>
+        {PERFORMANCE_DEVICES.map(({ device, label }) => {
+          const before = report.before[device]
+          const after = report.after[device]
+          return (
+            <DeviceBlock key={device} label={label}>
+              <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+                <ScoreBadge score={before.metrics.performance} label="Przed" />
+                <DeltaMarker delta={after.metrics.performance - before.metrics.performance} />
+                <ScoreBadge score={after.metrics.performance} label="Po" />
+              </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-white/10">
-        <table className="w-full min-w-[40rem] text-left text-sm">
-          <thead className="text-[11px] uppercase tracking-[0.14em] text-neutral-500">
-            <tr className="bg-white/[0.02]">
-              <th rowSpan={2} className="border-b border-white/10 px-4 py-3 font-medium align-bottom">
-                Metryka
-              </th>
-              {PERFORMANCE_DEVICES.map(({ device, label }) => (
-                <th
-                  key={device}
-                  colSpan={2}
-                  className="border-b border-white/5 border-l border-l-white/10 px-4 py-2 text-center font-medium text-neutral-300"
-                >
-                  {label}
-                </th>
-              ))}
-            </tr>
-            <tr className="bg-white/[0.02]">
-              {PERFORMANCE_DEVICES.map(({ device }) => (
-                <Fragment key={device}>
-                  <th className="border-b border-white/10 border-l border-l-white/10 px-4 py-2 font-medium">
-                    Przed
-                  </th>
-                  <th className="border-b border-white/10 px-4 py-2 font-medium">Po</th>
-                </Fragment>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {METRIC_LABELS.map(({ key, label }) => (
-              <tr key={key} className="border-b border-white/5 last:border-0">
-                <td className="px-4 py-3 text-neutral-400">{label}</td>
-                {PERFORMANCE_DEVICES.map(({ device }) => (
-                  <Fragment key={device}>
-                    <td className="border-l border-white/10 px-4 py-3 tabular-nums text-neutral-500">
-                      {report.before[device].metrics[key]}
-                    </td>
-                    <td className="px-4 py-3 tabular-nums text-white">
-                      {report.after[device].metrics[key]}
-                    </td>
-                  </Fragment>
+              <MetricsTable
+                columns={['Przed', 'Po']}
+                rows={METRIC_LABELS.map(({ key, label: metricLabel }) => ({
+                  key,
+                  label: metricLabel,
+                  cells: [
+                    <span key="before" className="text-neutral-500">
+                      {before.metrics[key]}
+                    </span>,
+                    <span key="after" className="text-white">
+                      {after.metrics[key]}
+                    </span>,
+                  ],
+                }))}
+              />
+
+              <div className="flex flex-wrap gap-2">
+                {AUDIT_LABELS.map(({ key, label: auditLabel }) => (
+                  <span
+                    key={key}
+                    className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-neutral-300"
+                  >
+                    {auditLabel}: {before.metrics[key]} →{' '}
+                    <span className="text-[oklch(0.82_0.12_145)]">{after.metrics[key]}</span>
+                  </span>
                 ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="space-y-2">
-        {PERFORMANCE_DEVICES.map(({ device, label }) => (
-          <div key={device} className="flex flex-wrap items-center gap-2">
-            <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-neutral-500">
-              {label}
-            </span>
-            {AUDIT_LABELS.map(({ key, label: auditLabel }) => (
-              <span
-                key={key}
-                className="rounded-full border border-white/10 bg-white/[0.02] px-3 py-1.5 text-xs text-neutral-300"
-              >
-                {auditLabel}: {report.before[device].metrics[key]} →{' '}
-                <span className="text-[oklch(0.82_0.12_145)]">
-                  {report.after[device].metrics[key]}
-                </span>
-              </span>
-            ))}
-          </div>
-        ))}
+              </div>
+            </DeviceBlock>
+          )
+        })}
       </div>
 
       {screenshots.length ? (
