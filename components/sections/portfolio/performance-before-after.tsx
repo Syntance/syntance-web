@@ -214,8 +214,9 @@ function SectionHeader({
 }: {
   heading: string
   report: PortfolioPerformanceReport
-  device: PerformanceDevice
-  onDeviceChange: (device: PerformanceDevice) => void
+  /** Bez pary device/onDeviceChange nagłówek nie renderuje przełącznika. */
+  device?: PerformanceDevice
+  onDeviceChange?: (device: PerformanceDevice) => void
 }) {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -232,60 +233,124 @@ function SectionHeader({
         </p>
       </div>
 
-      <DeviceTabs device={device} onChange={onDeviceChange} />
+      {device && onDeviceChange ? <DeviceTabs device={device} onChange={onDeviceChange} /> : null}
     </div>
   )
 }
 
-/** Nowa strona — nie było wersji „przed”, więc pokazujemy sam wynik po publikacji. */
-function AfterOnlyReport({
-  report,
-  device,
-  onDeviceChange,
+const AFTER_ONLY_DEVICES = [
+  { device: 'mobile', label: 'Mobile' },
+  { device: 'desktop', label: 'Desktop' },
+] as const satisfies ReadonlyArray<{ device: PerformanceDevice; label: string }>
+
+function DualScoreCard({
+  label,
+  mobile,
+  desktop,
 }: {
-  report: PortfolioPerformanceReport
-  device: PerformanceDevice
-  onDeviceChange: (device: PerformanceDevice) => void
+  label: string
+  mobile: number
+  desktop: number
 }) {
-  const after = report.after[device]
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-4">
+      <span className="block text-center text-[10px] font-medium uppercase tracking-[0.16em] text-neutral-500">
+        {label}
+      </span>
+      <div className="mt-3 grid grid-cols-2 divide-x divide-white/10">
+        {AFTER_ONLY_DEVICES.map(({ device, label: deviceLabel }) => (
+          <div key={device} className="flex flex-col items-center px-1">
+            <span className="text-[10px] uppercase tracking-[0.12em] text-neutral-500">
+              {deviceLabel}
+            </span>
+            <span
+              className={`text-3xl font-light tabular-nums tracking-tight md:text-4xl ${scoreColorClass(
+                device === 'mobile' ? mobile : desktop,
+              )}`}
+            >
+              {device === 'mobile' ? mobile : desktop}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Data pomiaru — jedna linia, jeśli oba urządzenia mierzone tego samego dnia. */
+function measuredAtLabel(report: PortfolioPerformanceReport): string | null {
+  const mobile = report.after.mobile.measuredAt.trim()
+  const desktop = report.after.desktop.measuredAt.trim()
+  if (!mobile && !desktop) return null
+  if (mobile === desktop) return `Pomiar: ${mobile}`
+  return [mobile ? `Mobile: ${mobile}` : null, desktop ? `Desktop: ${desktop}` : null]
+    .filter(Boolean)
+    .join(' · ')
+}
+
+/**
+ * Nowa strona — nie było wersji „przed”, więc pokazujemy sam wynik po publikacji.
+ * Bez przełącznika urządzeń: mobile i desktop obok siebie.
+ */
+function AfterOnlyReport({ report }: { report: PortfolioPerformanceReport }) {
+  const mobile = report.after.mobile
+  const desktop = report.after.desktop
+  const measuredAt = measuredAtLabel(report)
+  const screenshots = AFTER_ONLY_DEVICES.filter(({ device }) => report.after[device].screenshot)
 
   return (
     <section aria-labelledby="performance-heading" className="space-y-8">
-      <SectionHeader
-        heading="Wyniki po realizacji"
-        report={report}
-        device={device}
-        onDeviceChange={onDeviceChange}
-      />
+      <SectionHeader heading="Wyniki po realizacji" report={report} />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {PSI_SCORE_METRIC_FIELDS.map(({ key, label }) => (
-          <ScoreBadge key={key} score={after.metrics[key]} label={label} />
-        ))}
+      <div className="space-y-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {PSI_SCORE_METRIC_FIELDS.map(({ key, label }) => (
+            <DualScoreCard
+              key={key}
+              label={label}
+              mobile={mobile.metrics[key]}
+              desktop={desktop.metrics[key]}
+            />
+          ))}
+        </div>
+        {measuredAt ? (
+          <p className="text-center text-xs text-neutral-500 sm:text-right">{measuredAt}</p>
+        ) : null}
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-white/10">
-        <table className="w-full text-left text-sm">
+      <div className="overflow-x-auto rounded-2xl border border-white/10">
+        <table className="w-full min-w-[32rem] text-left text-sm">
           <thead>
             <tr className="border-b border-white/10 bg-white/[0.02] text-[11px] uppercase tracking-[0.14em] text-neutral-500">
               <th className="px-4 py-3 font-medium">Metryka</th>
-              <th className="px-4 py-3 font-medium">Wynik</th>
+              {AFTER_ONLY_DEVICES.map(({ device, label }) => (
+                <th key={device} className="px-4 py-3 font-medium">
+                  {label}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {METRIC_LABELS.map(({ key, label }) => (
               <tr key={key} className="border-b border-white/5 last:border-0">
                 <td className="px-4 py-3 text-neutral-400">{label}</td>
-                <td className="px-4 py-3 tabular-nums text-white">{after.metrics[key]}</td>
+                <td className="px-4 py-3 tabular-nums text-white">{mobile.metrics[key]}</td>
+                <td className="px-4 py-3 tabular-nums text-white">{desktop.metrics[key]}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      {after.screenshot ? (
-        <div className="mx-auto w-full max-w-md">
-          <ScreenshotFigure caption={`Pomiar · ${after.measuredAt}`} report={after} />
+      {screenshots.length ? (
+        <div
+          className={`grid gap-4 ${
+            screenshots.length > 1 ? 'md:grid-cols-2' : 'mx-auto w-full max-w-md'
+          }`}
+        >
+          {screenshots.map(({ device, label }) => (
+            <ScreenshotFigure key={device} caption={label} report={report.after[device]} />
+          ))}
         </div>
       ) : null}
 
@@ -298,7 +363,7 @@ export function PerformanceBeforeAfter({ report }: { report: PortfolioPerformanc
   const [device, setDevice] = useState<PerformanceDevice>('mobile')
 
   if (resolvePerformanceMode(report) === 'after-only') {
-    return <AfterOnlyReport report={report} device={device} onDeviceChange={setDevice} />
+    return <AfterOnlyReport report={report} />
   }
 
   const before = report.before[device]
