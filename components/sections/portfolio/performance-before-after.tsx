@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Fragment } from 'react'
 import Image from 'next/image'
 import {
   PSI_SCORE_METRIC_FIELDS,
@@ -23,11 +23,12 @@ const AUDIT_LABELS = PSI_SCORE_METRIC_FIELDS.filter(({ key }) => key !== 'perfor
   ({ key, label }) => ({ key, label }),
 )
 
+/** Kafel wyniku — mieści się po dwa w karcie urządzenia, także na wąskim mobile. */
 function ScoreBadge({ score, label }: { score: number; label: string }) {
   return (
-    <div className={`flex flex-col items-center rounded-2xl border px-5 py-4 ${scoreRingClass(score)}`}>
+    <div className={`flex flex-col items-center rounded-2xl border px-3 py-3 ${scoreRingClass(score)}`}>
       <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-neutral-500">{label}</span>
-      <span className={`mt-1 text-4xl font-light tabular-nums tracking-tight md:text-5xl ${scoreColorClass(score)}`}>
+      <span className={`mt-1 text-3xl font-light tabular-nums tracking-tight md:text-4xl ${scoreColorClass(score)}`}>
         {score}
       </span>
     </div>
@@ -141,37 +142,6 @@ function PerformanceTeaser({ performance }: { performance: PortfolioPerformanceR
   )
 }
 
-function DeviceTabs({
-  device,
-  onChange,
-}: {
-  device: PerformanceDevice
-  onChange: (device: PerformanceDevice) => void
-}) {
-  return (
-    <div
-      className="inline-flex gap-1 rounded-full border border-white/10 bg-white/[0.02] p-1"
-      role="tablist"
-      aria-label="Urządzenie pomiaru"
-    >
-      {(['mobile', 'desktop'] as const).map((id) => (
-        <button
-          key={id}
-          type="button"
-          role="tab"
-          aria-selected={device === id}
-          onClick={() => onChange(id)}
-          className={`rounded-full px-4 py-1.5 text-sm transition-colors ${
-            device === id ? 'bg-white text-black' : 'text-neutral-400 hover:text-white'
-          }`}
-        >
-          {id === 'mobile' ? 'Mobile' : 'Desktop'}
-        </button>
-      ))}
-    </div>
-  )
-}
-
 function ScreenshotFigure({ caption, report }: { caption: string; report: PsiDeviceReport }) {
   return (
     <figure className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02]">
@@ -209,36 +179,28 @@ function ImprovementsList({ items }: { items: readonly string[] }) {
 function SectionHeader({
   heading,
   report,
-  device,
-  onDeviceChange,
 }: {
   heading: string
   report: PortfolioPerformanceReport
-  /** Bez pary device/onDeviceChange nagłówek nie renderuje przełącznika. */
-  device?: PerformanceDevice
-  onDeviceChange?: (device: PerformanceDevice) => void
 }) {
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-      <div>
-        <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.2em] text-purple-300/70">
-          Core Web Vitals
-        </p>
-        <h2 id="performance-heading" className="text-2xl font-light tracking-wide text-white md:text-3xl">
-          {heading}
-        </h2>
-        <p className="mt-2 max-w-xl text-sm leading-relaxed text-neutral-400">
-          Pomiary {report.source} —{' '}
-          {report.intro?.trim() || performanceIntroPlaceholder(resolvePerformanceMode(report))}
-        </p>
-      </div>
-
-      {device && onDeviceChange ? <DeviceTabs device={device} onChange={onDeviceChange} /> : null}
+    <div>
+      <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.2em] text-purple-300/70">
+        Core Web Vitals
+      </p>
+      <h2 id="performance-heading" className="text-2xl font-light tracking-wide text-white md:text-3xl">
+        {heading}
+      </h2>
+      <p className="mt-2 max-w-xl text-sm leading-relaxed text-neutral-400">
+        Pomiary {report.source} —{' '}
+        {report.intro?.trim() || performanceIntroPlaceholder(resolvePerformanceMode(report))}
+      </p>
     </div>
   )
 }
 
-const AFTER_ONLY_DEVICES = [
+/** Kolejność urządzeń wspólna dla obu trybów — mobile jako pierwsze (ważniejsze). */
+const PERFORMANCE_DEVICES = [
   { device: 'mobile', label: 'Mobile' },
   { device: 'desktop', label: 'Desktop' },
 ] as const satisfies ReadonlyArray<{ device: PerformanceDevice; label: string }>
@@ -258,7 +220,7 @@ function DualScoreCard({
         {label}
       </span>
       <div className="mt-3 grid grid-cols-2 divide-x divide-white/10">
-        {AFTER_ONLY_DEVICES.map(({ device, label: deviceLabel }) => (
+        {PERFORMANCE_DEVICES.map(({ device, label: deviceLabel }) => (
           <div key={device} className="flex flex-col items-center px-1">
             <span className="text-[10px] uppercase tracking-[0.12em] text-neutral-500">
               {deviceLabel}
@@ -296,7 +258,7 @@ function AfterOnlyReport({ report }: { report: PortfolioPerformanceReport }) {
   const mobile = report.after.mobile
   const desktop = report.after.desktop
   const measuredAt = measuredAtLabel(report)
-  const screenshots = AFTER_ONLY_DEVICES.filter(({ device }) => report.after[device].screenshot)
+  const screenshots = PERFORMANCE_DEVICES.filter(({ device }) => report.after[device].screenshot)
 
   return (
     <section aria-labelledby="performance-heading" className="space-y-8">
@@ -323,7 +285,7 @@ function AfterOnlyReport({ report }: { report: PortfolioPerformanceReport }) {
           <thead>
             <tr className="border-b border-white/10 bg-white/[0.02] text-[11px] uppercase tracking-[0.14em] text-neutral-500">
               <th className="px-4 py-3 font-medium">Metryka</th>
-              {AFTER_ONLY_DEVICES.map(({ device, label }) => (
+              {PERFORMANCE_DEVICES.map(({ device, label }) => (
                 <th key={device} className="px-4 py-3 font-medium">
                   {label}
                 </th>
@@ -359,86 +321,168 @@ function AfterOnlyReport({ report }: { report: PortfolioPerformanceReport }) {
   )
 }
 
-export function PerformanceBeforeAfter({ report }: { report: PortfolioPerformanceReport }) {
-  const [device, setDevice] = useState<PerformanceDevice>('mobile')
+function DeltaMarker({ delta }: { delta: number }) {
+  return (
+    <div className="flex flex-col items-center gap-1 text-center">
+      <span className="text-2xl text-neutral-600" aria-hidden="true">
+        →
+      </span>
+      <span
+        className={`rounded-full px-3 py-1 text-sm font-medium tabular-nums ${
+          delta > 0
+            ? 'bg-[oklch(0.78_0.16_145/0.12)] text-[oklch(0.82_0.12_145)]'
+            : 'bg-white/10 text-neutral-300'
+        }`}
+      >
+        {delta > 0 ? '+' : ''}
+        {delta} pkt
+      </span>
+    </div>
+  )
+}
 
-  if (resolvePerformanceMode(report) === 'after-only') {
-    return <AfterOnlyReport report={report} />
-  }
+/** Performance przed → po dla jednego urządzenia, jako samodzielna karta. */
+function DevicePerformanceCompare({
+  label,
+  before,
+  after,
+}: {
+  label: string
+  before: PsiDeviceReport
+  after: PsiDeviceReport
+}) {
+  const delta = after.metrics.performance - before.metrics.performance
 
-  const before = report.before[device]
-  const after = report.after[device]
-  const perfDelta = after.metrics.performance - before.metrics.performance
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+      <p className="mb-3 text-center text-[10px] font-medium uppercase tracking-[0.16em] text-neutral-400">
+        {label}
+      </p>
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+        <ScoreBadge score={before.metrics.performance} label="Przed" />
+        <DeltaMarker delta={delta} />
+        <ScoreBadge score={after.metrics.performance} label="Po" />
+      </div>
+    </div>
+  )
+}
+
+/** Redesign/migracja — oba urządzenia naraz, bez przełącznika. */
+function BeforeAfterReport({ report }: { report: PortfolioPerformanceReport }) {
+  const screenshots = PERFORMANCE_DEVICES.flatMap(({ device, label }) =>
+    (['before', 'after'] as const)
+      .filter((phase) => report[phase][device].screenshot)
+      .map((phase) => ({
+        key: `${device}-${phase}`,
+        caption: `${label} — ${phase === 'before' ? 'przed' : 'po'} · ${
+          report[phase][device].measuredAt
+        }`,
+        report: report[phase][device],
+      })),
+  )
 
   return (
     <section aria-labelledby="performance-heading" className="space-y-8">
-      <SectionHeader
-        heading="Jak było → jak jest"
-        report={report}
-        device={device}
-        onDeviceChange={setDevice}
-      />
+      <SectionHeader heading="Jak było → jak jest" report={report} />
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
-        <ScoreBadge score={before.metrics.performance} label="Przed" />
-        <div className="flex flex-col items-center gap-1 text-center">
-          <span className="text-2xl text-neutral-600" aria-hidden="true">
-            →
-          </span>
-          <span
-            className={`rounded-full px-3 py-1 text-sm font-medium tabular-nums ${
-              perfDelta > 0
-                ? 'bg-[oklch(0.78_0.16_145/0.12)] text-[oklch(0.82_0.12_145)]'
-                : 'bg-white/10 text-neutral-300'
-            }`}
-          >
-            {perfDelta > 0 ? '+' : ''}
-            {perfDelta} pkt
-          </span>
-        </div>
-        <ScoreBadge score={after.metrics.performance} label="Po" />
+      <div className="grid gap-4 lg:grid-cols-2">
+        {PERFORMANCE_DEVICES.map(({ device, label }) => (
+          <DevicePerformanceCompare
+            key={device}
+            label={label}
+            before={report.before[device]}
+            after={report.after[device]}
+          />
+        ))}
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-white/10">
-        <table className="w-full text-left text-sm">
-          <thead>
-            <tr className="border-b border-white/10 bg-white/[0.02] text-[11px] uppercase tracking-[0.14em] text-neutral-500">
-              <th className="px-4 py-3 font-medium">Metryka</th>
-              <th className="px-4 py-3 font-medium">Przed</th>
-              <th className="px-4 py-3 font-medium">Po</th>
+      <div className="overflow-x-auto rounded-2xl border border-white/10">
+        <table className="w-full min-w-[40rem] text-left text-sm">
+          <thead className="text-[11px] uppercase tracking-[0.14em] text-neutral-500">
+            <tr className="bg-white/[0.02]">
+              <th rowSpan={2} className="border-b border-white/10 px-4 py-3 font-medium align-bottom">
+                Metryka
+              </th>
+              {PERFORMANCE_DEVICES.map(({ device, label }) => (
+                <th
+                  key={device}
+                  colSpan={2}
+                  className="border-b border-white/5 border-l border-l-white/10 px-4 py-2 text-center font-medium text-neutral-300"
+                >
+                  {label}
+                </th>
+              ))}
+            </tr>
+            <tr className="bg-white/[0.02]">
+              {PERFORMANCE_DEVICES.map(({ device }) => (
+                <Fragment key={device}>
+                  <th className="border-b border-white/10 border-l border-l-white/10 px-4 py-2 font-medium">
+                    Przed
+                  </th>
+                  <th className="border-b border-white/10 px-4 py-2 font-medium">Po</th>
+                </Fragment>
+              ))}
             </tr>
           </thead>
           <tbody>
             {METRIC_LABELS.map(({ key, label }) => (
               <tr key={key} className="border-b border-white/5 last:border-0">
                 <td className="px-4 py-3 text-neutral-400">{label}</td>
-                <td className="px-4 py-3 tabular-nums text-neutral-500">{before.metrics[key]}</td>
-                <td className="px-4 py-3 tabular-nums text-white">{after.metrics[key]}</td>
+                {PERFORMANCE_DEVICES.map(({ device }) => (
+                  <Fragment key={device}>
+                    <td className="border-l border-white/10 px-4 py-3 tabular-nums text-neutral-500">
+                      {report.before[device].metrics[key]}
+                    </td>
+                    <td className="px-4 py-3 tabular-nums text-white">
+                      {report.after[device].metrics[key]}
+                    </td>
+                  </Fragment>
+                ))}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        {AUDIT_LABELS.map(({ key, label }) => (
-          <span
-            key={key}
-            className="rounded-full border border-white/10 bg-white/[0.02] px-3 py-1.5 text-xs text-neutral-300"
-          >
-            {label}: {before.metrics[key]} →{' '}
-            <span className="text-[oklch(0.82_0.12_145)]">{after.metrics[key]}</span>
-          </span>
+      <div className="space-y-2">
+        {PERFORMANCE_DEVICES.map(({ device, label }) => (
+          <div key={device} className="flex flex-wrap items-center gap-2">
+            <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-neutral-500">
+              {label}
+            </span>
+            {AUDIT_LABELS.map(({ key, label: auditLabel }) => (
+              <span
+                key={key}
+                className="rounded-full border border-white/10 bg-white/[0.02] px-3 py-1.5 text-xs text-neutral-300"
+              >
+                {auditLabel}: {report.before[device].metrics[key]} →{' '}
+                <span className="text-[oklch(0.82_0.12_145)]">
+                  {report.after[device].metrics[key]}
+                </span>
+              </span>
+            ))}
+          </div>
         ))}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <ScreenshotFigure caption={`Przed · ${before.measuredAt}`} report={before} />
-        <ScreenshotFigure caption={`Po · ${after.measuredAt}`} report={after} />
-      </div>
+      {screenshots.length ? (
+        <div className="grid gap-4 md:grid-cols-2">
+          {screenshots.map((item) => (
+            <ScreenshotFigure key={item.key} caption={item.caption} report={item.report} />
+          ))}
+        </div>
+      ) : null}
 
       <ImprovementsList items={report.improvements} />
     </section>
+  )
+}
+
+export function PerformanceBeforeAfter({ report }: { report: PortfolioPerformanceReport }) {
+  return resolvePerformanceMode(report) === 'after-only' ? (
+    <AfterOnlyReport report={report} />
+  ) : (
+    <BeforeAfterReport report={report} />
   )
 }
 
