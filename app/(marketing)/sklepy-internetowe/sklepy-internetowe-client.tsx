@@ -22,6 +22,7 @@ import {
   Lock,
   Layers
 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 import GradientText from '@/components/GradientText'
 import TiltCard from '@/components/tilt-card'
@@ -193,7 +194,14 @@ const targetAudiences = [
   },
 ]
 
-const techStack = [
+const techStack: Array<{
+  layer: string
+  tech: string
+  why: string
+  icon: LucideIcon
+  gradient: string
+  wide?: boolean
+}> = [
   {
     layer: "Backend",
     tech: "Medusa",
@@ -217,10 +225,18 @@ const techStack = [
   },
   {
     layer: "CMS",
-    tech: "Sanity",
+    tech: "Syntance CMS / Sanity",
     why: "Edycja treści bez programisty",
     icon: Database,
     gradient: "from-amber-500 to-orange-500",
+  },
+  {
+    layer: "Panel sklepu",
+    tech: "Syntance Shop",
+    why: "Produkty, zamówienia i płatności w jednym panelu",
+    icon: Store,
+    gradient: "from-sky-500 to-indigo-500",
+    wide: true,
   },
 ]
 
@@ -455,7 +471,7 @@ export default function SklepyInternetoweContent({
             {techStack.map((tech, index) => {
               const Icon = tech.icon
               return (
-                <AnimatedSection key={index} delay={index * 100}>
+                <AnimatedSection key={index} delay={index * 100} className={tech.wide ? 'md:col-span-2' : undefined}>
                   <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 transition-colors">
                     <div className="flex items-start gap-4">
                       <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tech.gradient} flex items-center justify-center flex-shrink-0`}>
