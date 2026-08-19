@@ -132,23 +132,46 @@ const GooeyNav = ({
     if (!containerRef.current || !filterRef.current || !textRef.current) return;
     const containerRect = containerRef.current.getBoundingClientRect();
     
-    // Znajdź element <a> wewnątrz li żeby uzyskać prawidłowe wymiary (bez dropdown)
     const anchorEl = element.querySelector('a');
+    const labelEl = anchorEl?.querySelector('.gooey-nav-label');
+    const chevronEl = anchorEl?.querySelector('.gooey-nav-chevron');
     const targetEl = anchorEl || element;
-    const pos = targetEl.getBoundingClientRect();
+    const anchorRect = targetEl.getBoundingClientRect();
+
+    // Dropdown aktywny: pigułka obejmuje tylko label (jak nieaktywny gap przed strzałką)
+    const isDropdownActive = Boolean(labelEl && chevronEl && element.classList.contains('active'));
+    let effectX = anchorRect.x;
+    let effectY = anchorRect.y;
+    let effectWidth = anchorRect.width;
+    let effectHeight = anchorRect.height;
+
+    if (isDropdownActive && labelEl && chevronEl) {
+      const labelRect = labelEl.getBoundingClientRect();
+      const chevronRect = chevronEl.getBoundingClientRect();
+      const gapBeforeChevron = chevronRect.left - labelRect.right;
+      const pillWidth = chevronRect.left - anchorRect.left - gapBeforeChevron;
+
+      element.style.setProperty('--active-pill-width', `${pillWidth}px`);
+      effectWidth = pillWidth;
+    } else {
+      element.style.removeProperty('--active-pill-width');
+    }
     
     const styles = {
-      left: `${pos.x - containerRect.x}px`,
-      top: `${pos.y - containerRect.y}px`,
-      width: `${pos.width}px`,
-      height: `${pos.height}px`
+      left: `${effectX - containerRect.x}px`,
+      top: `${effectY - containerRect.y}px`,
+      width: `${effectWidth}px`,
+      height: `${effectHeight}px`
     };
     Object.assign(filterRef.current.style, styles);
     Object.assign(textRef.current.style, styles);
     
-    // Pobierz tylko tekst z pierwszego dziecka tekstowego (label), nie z dropdown
-    const labelText = element.querySelector('a')?.childNodes[0]?.textContent || element.innerText;
-    textRef.current.innerText = labelText.trim();
+    const labelText =
+      labelEl?.textContent?.trim() ||
+      anchorEl?.querySelector('.gooey-nav-label')?.textContent?.trim() ||
+      anchorEl?.childNodes[0]?.textContent?.trim() ||
+      element.innerText.trim();
+    textRef.current.innerText = labelText;
   };
 
   const scheduleEffectPositionUpdate = (element: HTMLElement | null | undefined) => {
@@ -378,10 +401,16 @@ const GooeyNav = ({
           white-space: nowrap;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          box-sizing: border-box;
+          padding-inline: 0.7em;
         }
         @media (min-width: 1280px) {
           .gooey-effect.text {
             font-size: 0.875rem;
+            padding-inline: 1em;
           }
         }
         .gooey-effect.text.active {
@@ -481,6 +510,10 @@ const GooeyNav = ({
         .gooey-nav-item.active a svg {
           color: #000000;
         }
+        .gooey-nav-item.active.has-dropdown::after {
+          width: var(--active-pill-width, 100%);
+          right: auto;
+        }
         .gooey-nav-item.active::after {
           opacity: 1;
           transform: scale(1);
@@ -517,8 +550,8 @@ const GooeyNav = ({
                   }
                 }}
                 className={`gooey-nav-item rounded-full relative cursor-pointer transition-[background-color_color] duration-300 ease text-white text-xs xl:text-sm font-light tracking-wider ${
-                  activeIndex === index ? 'active' : ''
-                }`}
+                  item.dropdown && item.dropdown.length > 0 ? 'has-dropdown' : ''
+                } ${activeIndex === index ? 'active' : ''}`}
                 onPointerDown={(e) => handlePointerDown(e, index)}
                 onClick={(e) => handleClick(e, index)}
               >
@@ -528,7 +561,7 @@ const GooeyNav = ({
                   className="outline-none py-[0.5em] px-[0.7em] xl:py-[0.6em] xl:px-[1em] inline-flex items-center gap-1.5 whitespace-nowrap"
                   onClick={(e) => item.dropdown && e.preventDefault()}
                 >
-                  {item.label}
+                  <span className="gooey-nav-label">{item.label}</span>
                   {item.dropdown && item.dropdown.length > 0 && (
                     <svg
                       aria-hidden
@@ -538,7 +571,7 @@ const GooeyNav = ({
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="2"
-                      className={`size-3.5 shrink-0 transition-transform duration-200 ${
+                      className={`gooey-nav-chevron size-3.5 shrink-0 transition-transform duration-200 ${
                         openDropdown === index ? 'rotate-180' : ''
                       }`}
                     >
