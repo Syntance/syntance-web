@@ -478,6 +478,9 @@ const GooeyNav = ({
           color: transparent;
           font-weight: 600;
         }
+        .gooey-nav-item.active a svg {
+          color: #000000;
+        }
         .gooey-nav-item.active::after {
           opacity: 1;
           transform: scale(1);
