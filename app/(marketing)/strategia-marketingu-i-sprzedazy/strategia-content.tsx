@@ -271,105 +271,94 @@ export default function StrategiaContent({ discoveryPrice, websiteMinNet, faqIte
             </p>
           </AnimatedSection>
           
-          <div className="space-y-8">
+          <div className="space-y-4">
             {fundamenty.map((fundament, index) => {
               const Icon = fundament.icon
               return (
-                <AnimatedSection key={index} delay={index * 150}>
-                  <TiltCard className="w-full">
-                    <div className="relative group">
-                      <div className={`absolute -inset-0.5 bg-gradient-to-r ${fundament.gradient} rounded-3xl opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-500`} />
-                      <div className="relative p-8 md:p-12 rounded-3xl bg-gray-900/80 backdrop-blur-sm border border-white/10">
-                        <div className="flex flex-col md:flex-row gap-8">
-                          <div className="flex-shrink-0">
-                            <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${fundament.gradient} flex items-center justify-center mb-4`}>
-                              <Icon className="w-10 h-10 text-white" />
-                            </div>
-                            <div className={`text-6xl font-light ${fundament.textColor} opacity-30`}>
-                              0{index + 1}
-                            </div>
-                          </div>
-                          
-                          <div className="flex-1">
-                            <h3 className="text-2xl md:text-3xl font-medium text-white mb-2">
+                <AnimatedSection key={index} delay={index * 100}>
+                  <div className="relative group">
+                    <div className={`absolute -inset-0.5 bg-gradient-to-r ${fundament.gradient} rounded-2xl opacity-0 group-hover:opacity-20 blur transition-opacity duration-300`} />
+                    <div className="relative p-6 md:p-8 rounded-2xl bg-gray-900/60 border border-white/10 hover:border-white/20 transition-colors">
+                      <div className="flex items-start gap-4 mb-5">
+                        <div className={`w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0`}>
+                          <Icon size={18} className={fundament.textColor} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-baseline gap-3">
+                            <span className={`text-xs font-mono ${fundament.textColor} opacity-60`}>0{index + 1}</span>
+                            <h3 className="text-xl md:text-2xl font-medium text-white">
                               {fundament.title}
                             </h3>
-                            <p className={`text-lg ${fundament.textColor} mb-4`}>
-                              {fundament.question}
-                            </p>
-                            <p className="text-gray-400 mb-6">
-                              {fundament.description}
-                            </p>
-                            
-                            {fundament.examples && (
-                              <div className="mb-6">
-                                <h4 className="text-sm font-medium text-white mb-3">Przykładowe cele:</h4>
-                                <ul className="grid md:grid-cols-2 gap-2">
-                                  {fundament.examples.map((ex, i) => (
-                                    <li key={i} className="flex items-start gap-2 text-gray-400 text-sm">
-                                      <CheckCircle2 size={16} className={`${fundament.textColor} flex-shrink-0 mt-0.5`} />
-                                      <span>{ex}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                            
-                            {fundament.nie && fundament.tak && (
-                              <div className="grid md:grid-cols-2 gap-6 mb-6">
-                                <div>
-                                  <h4 className="text-sm font-medium text-red-400 mb-3">Buyer Persona to NIE:</h4>
-                                  <ul className="space-y-2">
-                                    {fundament.nie.map((item, i) => (
-                                      <li key={i} className="flex items-start gap-2 text-gray-400 text-sm">
-                                        <XCircle size={16} className="text-red-400 flex-shrink-0 mt-0.5" />
-                                        <span>{item}</span>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                                <div>
-                                  <h4 className="text-sm font-medium text-green-400 mb-3">Buyer Persona to:</h4>
-                                  <ul className="space-y-2">
-                                    {fundament.tak.map((item, i) => (
-                                      <li key={i} className="flex items-start gap-2 text-gray-400 text-sm">
-                                        <CheckCircle2 size={16} className="text-green-400 flex-shrink-0 mt-0.5" />
-                                        <span>{item}</span>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              </div>
-                            )}
-                            
-                            {fundament.template && (
-                              <div className="p-4 rounded-xl bg-white/5 border border-white/10 mb-4">
-                                <h4 className="text-sm font-medium text-white mb-2">Szablon UVP:</h4>
-                                <p className="text-gray-400 text-sm italic">{fundament.template}</p>
-                              </div>
-                            )}
-                            
-                            {fundament.example && (
-                              <div className="p-4 rounded-xl bg-white/5 border border-white/10 mb-6">
-                                <h4 className="text-sm font-medium text-white mb-2">Przykład:</h4>
-                                <p className="text-gray-400 text-sm">{fundament.example}</p>
-                              </div>
-                            )}
-                            
-                            <div className={`p-4 rounded-xl bg-gradient-to-r ${fundament.gradient} border border-white/10`}>
-                              <div className="flex items-start gap-3">
-                                <AlertCircle size={18} className={`${fundament.textColor} flex-shrink-0 mt-0.5`} />
-                                <p className="text-sm text-gray-400">
-                                  <span className={`font-medium ${fundament.textColor}`}>Pytanie kontrolne: </span>
-                                  {fundament.kontrolne}
-                                </p>
-                              </div>
-                            </div>
                           </div>
+                          <p className={`text-sm ${fundament.textColor} mt-1`}>
+                            {fundament.question}
+                          </p>
                         </div>
                       </div>
+
+                      <p className="text-gray-400 mb-5">
+                        {fundament.description}
+                      </p>
+
+                      {fundament.examples && (
+                        <ul className="grid md:grid-cols-2 gap-x-6 gap-y-2 mb-5">
+                          {fundament.examples.map((ex, i) => (
+                            <li key={i} className="flex items-start gap-2 text-gray-400 text-sm">
+                              <CheckCircle2 size={14} className={`${fundament.textColor} flex-shrink-0 mt-1 opacity-70`} />
+                              <span>{ex}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+
+                      {fundament.nie && fundament.tak && (
+                        <div className="grid md:grid-cols-2 gap-6 mb-5">
+                          <div>
+                            <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-2">To NIE jest persona</h4>
+                            <ul className="space-y-1.5">
+                              {fundament.nie.map((item, i) => (
+                                <li key={i} className="flex items-start gap-2 text-gray-400 text-sm">
+                                  <XCircle size={14} className="text-red-400/70 flex-shrink-0 mt-1" />
+                                  <span>{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          <div>
+                            <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-2">To jest persona</h4>
+                            <ul className="space-y-1.5">
+                              {fundament.tak.map((item, i) => (
+                                <li key={i} className="flex items-start gap-2 text-gray-400 text-sm">
+                                  <CheckCircle2 size={14} className="text-green-400/70 flex-shrink-0 mt-1" />
+                                  <span>{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      )}
+
+                      {fundament.template && (
+                        <p className="text-sm text-gray-400 italic border-l border-white/10 pl-4 mb-3">
+                          {fundament.template}
+                        </p>
+                      )}
+
+                      {fundament.example && (
+                        <p className="text-sm text-gray-400 border-l border-white/10 pl-4 mb-5">
+                          {fundament.example}
+                        </p>
+                      )}
+
+                      <div className="flex items-start gap-3 pt-4 border-t border-white/10">
+                        <AlertCircle size={16} className={`${fundament.textColor} flex-shrink-0 mt-0.5 opacity-70`} />
+                        <p className="text-sm text-gray-400">
+                          <span className={`font-medium ${fundament.textColor}`}>Pytanie kontrolne: </span>
+                          {fundament.kontrolne}
+                        </p>
+                      </div>
                     </div>
-                  </TiltCard>
+                  </div>
                 </AnimatedSection>
               )
             })}
