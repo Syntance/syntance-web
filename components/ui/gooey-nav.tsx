@@ -132,46 +132,32 @@ const GooeyNav = ({
     if (!containerRef.current || !filterRef.current || !textRef.current) return;
     const containerRect = containerRef.current.getBoundingClientRect();
     
+    // Znajdź element <a> wewnątrz li żeby uzyskać prawidłowe wymiary (bez dropdown)
     const anchorEl = element.querySelector('a');
     const labelEl = anchorEl?.querySelector('.gooey-nav-label');
-    const chevronEl = anchorEl?.querySelector('.gooey-nav-chevron');
     const targetEl = anchorEl || element;
-    const anchorRect = targetEl.getBoundingClientRect();
+    const pos = targetEl.getBoundingClientRect();
 
-    // Dropdown aktywny: pigułka obejmuje tylko label (jak nieaktywny gap przed strzałką)
-    const isDropdownActive = Boolean(labelEl && chevronEl && element.classList.contains('active'));
-    let effectX = anchorRect.x;
-    let effectY = anchorRect.y;
-    let effectWidth = anchorRect.width;
-    let effectHeight = anchorRect.height;
+    Object.assign(filterRef.current.style, {
+      left: `${pos.x - containerRect.x}px`,
+      top: `${pos.y - containerRect.y}px`,
+      width: `${pos.width}px`,
+      height: `${pos.height}px`
+    });
 
-    if (isDropdownActive && labelEl && chevronEl) {
-      const labelRect = labelEl.getBoundingClientRect();
-      const chevronRect = chevronEl.getBoundingClientRect();
-      const gapBeforeChevron = chevronRect.left - labelRect.right;
-      const pillWidth = chevronRect.left - anchorRect.left - gapBeforeChevron;
+    // Overlay z etykietą kryje sam label, nie cały anchor — przy dropdownie
+    // centrowanie w pigułce (label + strzałka) zjadałoby odstęp przed strzałką.
+    // 2px bleedu, bo overhang glifów wychodzi poza zmierzony box.
+    const labelPos = labelEl?.getBoundingClientRect() ?? pos;
+    Object.assign(textRef.current.style, {
+      left: `${labelPos.x - containerRect.x - 2}px`,
+      top: `${pos.y - containerRect.y}px`,
+      width: `${labelPos.width + 4}px`,
+      height: `${pos.height}px`
+    });
 
-      element.style.setProperty('--active-pill-width', `${pillWidth}px`);
-      effectWidth = pillWidth;
-    } else {
-      element.style.removeProperty('--active-pill-width');
-    }
-    
-    const styles = {
-      left: `${effectX - containerRect.x}px`,
-      top: `${effectY - containerRect.y}px`,
-      width: `${effectWidth}px`,
-      height: `${effectHeight}px`
-    };
-    Object.assign(filterRef.current.style, styles);
-    Object.assign(textRef.current.style, styles);
-    
-    const labelText =
-      labelEl?.textContent?.trim() ||
-      anchorEl?.querySelector('.gooey-nav-label')?.textContent?.trim() ||
-      anchorEl?.childNodes[0]?.textContent?.trim() ||
-      element.innerText.trim();
-    textRef.current.innerText = labelText;
+    const labelText = labelEl?.textContent || anchorEl?.childNodes[0]?.textContent || element.innerText;
+    textRef.current.innerText = labelText.trim();
   };
 
   const scheduleEffectPositionUpdate = (element: HTMLElement | null | undefined) => {
@@ -401,16 +387,10 @@ const GooeyNav = ({
           white-space: nowrap;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
-          display: flex;
-          align-items: center;
-          justify-content: flex-start;
-          box-sizing: border-box;
-          padding-inline: 0.7em;
         }
         @media (min-width: 1280px) {
           .gooey-effect.text {
             font-size: 0.875rem;
-            padding-inline: 1em;
           }
         }
         .gooey-effect.text.active {
@@ -510,10 +490,6 @@ const GooeyNav = ({
         .gooey-nav-item.active a svg {
           color: #000000;
         }
-        .gooey-nav-item.active.has-dropdown::after {
-          width: var(--active-pill-width, 100%);
-          right: auto;
-        }
         .gooey-nav-item.active::after {
           opacity: 1;
           transform: scale(1);
@@ -550,8 +526,8 @@ const GooeyNav = ({
                   }
                 }}
                 className={`gooey-nav-item rounded-full relative cursor-pointer transition-[background-color_color] duration-300 ease text-white text-xs xl:text-sm font-light tracking-wider ${
-                  item.dropdown && item.dropdown.length > 0 ? 'has-dropdown' : ''
-                } ${activeIndex === index ? 'active' : ''}`}
+                  activeIndex === index ? 'active' : ''
+                }`}
                 onPointerDown={(e) => handlePointerDown(e, index)}
                 onClick={(e) => handleClick(e, index)}
               >
