@@ -84,6 +84,7 @@ const fundamenty = [
   {
     icon: Target,
     title: "Cel biznesowy",
+    borderColor: "border-purple-400/30",
     question: "Co strona ma osiągnąć?",
     gradient: "from-purple-500 to-blue-500",
     textColor: "text-purple-400",
@@ -99,6 +100,7 @@ const fundamenty = [
   {
     icon: Users,
     title: "Buyer Persona",
+    borderColor: "border-blue-400/30",
     question: "Do kogo mówisz?",
     gradient: "from-blue-500 to-cyan-500",
     textColor: "text-blue-400",
@@ -110,6 +112,7 @@ const fundamenty = [
   {
     icon: Zap,
     title: "Propozycja Wartości (UVP)",
+    borderColor: "border-cyan-400/30",
     question: "Dlaczego Ty, nie konkurencja?",
     gradient: "from-cyan-500 to-teal-500",
     textColor: "text-cyan-400",
@@ -120,6 +123,108 @@ const fundamenty = [
   }
 ]
 
+type Fundament = (typeof fundamenty)[number]
+
+/** Jeden fundament — duża teza, cyfra-widmo w tle, treść odsłaniana kaskadowo. */
+function FundamentBlock({ fundament, index }: { fundament: Fundament; index: number }) {
+  const Icon = fundament.icon
+
+  return (
+    <article className="relative border-t border-white/10 pt-12 md:pt-16">
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-8 right-0 select-none font-light leading-none text-white/[0.04] text-[7rem] md:-top-12 md:text-[11rem]"
+      >
+        0{index + 1}
+      </span>
+
+      <AnimatedSection>
+        <div className="flex items-center gap-3">
+          <Icon size={18} strokeWidth={1.5} className={fundament.textColor} />
+          <span className={`text-xs uppercase tracking-[0.25em] ${fundament.textColor}`}>
+            {fundament.title}
+          </span>
+        </div>
+      </AnimatedSection>
+
+      <AnimatedSection delay={80}>
+        <h3 className="mt-7 max-w-3xl text-3xl font-light leading-tight text-white md:text-[2.5rem]">
+          {fundament.description}
+        </h3>
+        <p className="mt-5 text-lg text-gray-400">{fundament.question}</p>
+      </AnimatedSection>
+
+      <AnimatedSection delay={160}>
+        <div className="mt-12 text-base">
+          {fundament.examples && (
+            <>
+              <p className="mb-6 text-xs uppercase tracking-[0.2em] text-gray-500">Przykładowe cele</p>
+              <ul className="grid gap-x-16 gap-y-4 md:grid-cols-2">
+                {fundament.examples.map((ex, i) => (
+                  <li key={i} className="flex gap-4 leading-relaxed text-gray-300">
+                    <span className={`${fundament.textColor} opacity-60`}>—</span>
+                    <span>{ex}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+
+          {fundament.nie && fundament.tak && (
+            <div className="grid gap-10 md:grid-cols-2 md:gap-16">
+              <div>
+                <p className="mb-6 text-xs uppercase tracking-[0.2em] text-gray-500">To nie persona</p>
+                <ul className="space-y-4">
+                  {fundament.nie.map((item, i) => (
+                    <li key={i} className="flex gap-4 leading-relaxed text-gray-500">
+                      <span className="text-red-400/60">×</span>
+                      <span className="line-through decoration-white/25">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="mb-6 text-xs uppercase tracking-[0.2em] text-gray-500">To persona</p>
+                <ul className="space-y-4">
+                  {fundament.tak.map((item, i) => (
+                    <li key={i} className="flex gap-4 leading-relaxed text-gray-300">
+                      <span className={`${fundament.textColor} opacity-60`}>—</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {fundament.template && (
+            <div className="grid gap-10 md:grid-cols-2 md:gap-16">
+              <div>
+                <p className="mb-6 text-xs uppercase tracking-[0.2em] text-gray-500">Szablon</p>
+                <p className="leading-relaxed text-gray-400">{fundament.template}</p>
+              </div>
+              {fundament.example && (
+                <div>
+                  <p className="mb-6 text-xs uppercase tracking-[0.2em] text-gray-500">Przykład</p>
+                  <p className="leading-relaxed text-gray-300">{fundament.example}</p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </AnimatedSection>
+
+      <AnimatedSection delay={240}>
+        <p className={`mt-12 border-l pl-6 ${fundament.borderColor}`}>
+          <span className="block text-xs uppercase tracking-[0.2em] text-gray-500">Pytanie kontrolne</span>
+          <span className="mt-2 block text-lg font-light leading-relaxed text-gray-200">
+            {fundament.kontrolne}
+          </span>
+        </p>
+      </AnimatedSection>
+    </article>
+  )
+}
 function formatPrice(price: number): string {
   return price.toLocaleString('pl-PL')
 }
@@ -259,109 +364,20 @@ export default function StrategiaContent({ discoveryPrice, websiteMinNet, faqIte
         </AnimatedSection>
       </section>
 
-      {/* 3 Fundamenty Section */}
-      <section id="fundamenty" className="relative z-10 py-32 px-6 lg:px-12">
-        <div className="max-w-5xl mx-auto">
-          <AnimatedSection className="text-center mb-20">
-            <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6 glow-text">
+      {/* 3 Fundamenty — zwykły przepływ, treść odsłania się przy wejściu w kadr */}
+      <section id="fundamenty" className="relative z-10 px-6 py-32 lg:px-12">
+        <div className="mx-auto max-w-5xl">
+          <AnimatedSection className="mb-20 text-center">
+            <h2 className="glow-text mb-6 text-3xl font-light tracking-wide md:text-5xl">
               3 fundamenty skutecznej strony
             </h2>
-            <p className="text-xl text-gray-400">
-              (zanim napiszesz linijkę kodu)
-            </p>
+            <p className="text-xl text-gray-400">(zanim napiszesz linijkę kodu)</p>
           </AnimatedSection>
-          
-          <div className="space-y-4">
-            {fundamenty.map((fundament, index) => {
-              const Icon = fundament.icon
-              return (
-                <AnimatedSection key={index} delay={index * 100}>
-                  <div className="relative group">
-                    <div className={`absolute -inset-0.5 bg-gradient-to-r ${fundament.gradient} rounded-2xl opacity-0 group-hover:opacity-20 blur transition-opacity duration-300`} />
-                    <div className="relative p-6 md:p-8 rounded-2xl bg-gray-900/60 border border-white/10 hover:border-white/20 transition-colors">
-                      <div className="flex items-start gap-4 mb-5">
-                        <div className={`w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0`}>
-                          <Icon size={18} className={fundament.textColor} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-baseline gap-3">
-                            <span className={`text-xs font-mono ${fundament.textColor} opacity-60`}>0{index + 1}</span>
-                            <h3 className="text-xl md:text-2xl font-medium text-white">
-                              {fundament.title}
-                            </h3>
-                          </div>
-                          <p className={`text-sm ${fundament.textColor} mt-1`}>
-                            {fundament.question}
-                          </p>
-                        </div>
-                      </div>
 
-                      <p className="text-gray-400 mb-5">
-                        {fundament.description}
-                      </p>
-
-                      {fundament.examples && (
-                        <ul className="grid md:grid-cols-2 gap-x-6 gap-y-2 mb-5">
-                          {fundament.examples.map((ex, i) => (
-                            <li key={i} className="flex items-start gap-2 text-gray-400 text-sm">
-                              <CheckCircle2 size={14} className={`${fundament.textColor} flex-shrink-0 mt-1 opacity-70`} />
-                              <span>{ex}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-
-                      {fundament.nie && fundament.tak && (
-                        <div className="grid md:grid-cols-2 gap-6 mb-5">
-                          <div>
-                            <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-2">To NIE jest persona</h4>
-                            <ul className="space-y-1.5">
-                              {fundament.nie.map((item, i) => (
-                                <li key={i} className="flex items-start gap-2 text-gray-400 text-sm">
-                                  <XCircle size={14} className="text-red-400/70 flex-shrink-0 mt-1" />
-                                  <span>{item}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                          <div>
-                            <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-2">To jest persona</h4>
-                            <ul className="space-y-1.5">
-                              {fundament.tak.map((item, i) => (
-                                <li key={i} className="flex items-start gap-2 text-gray-400 text-sm">
-                                  <CheckCircle2 size={14} className="text-green-400/70 flex-shrink-0 mt-1" />
-                                  <span>{item}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </div>
-                      )}
-
-                      {fundament.template && (
-                        <p className="text-sm text-gray-400 italic border-l border-white/10 pl-4 mb-3">
-                          {fundament.template}
-                        </p>
-                      )}
-
-                      {fundament.example && (
-                        <p className="text-sm text-gray-400 border-l border-white/10 pl-4 mb-5">
-                          {fundament.example}
-                        </p>
-                      )}
-
-                      <div className="flex items-start gap-3 pt-4 border-t border-white/10">
-                        <AlertCircle size={16} className={`${fundament.textColor} flex-shrink-0 mt-0.5 opacity-70`} />
-                        <p className="text-sm text-gray-400">
-                          <span className={`font-medium ${fundament.textColor}`}>Pytanie kontrolne: </span>
-                          {fundament.kontrolne}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </AnimatedSection>
-              )
-            })}
+          <div className="space-y-24 md:space-y-32">
+            {fundamenty.map((fundament, index) => (
+              <FundamentBlock key={index} fundament={fundament} index={index} />
+            ))}
           </div>
         </div>
       </section>

@@ -9,12 +9,10 @@ import {
   Wrench, 
   Rocket, 
   ArrowRight, 
-  CheckCircle2, 
   AlertCircle,
 } from 'lucide-react'
 import Link from 'next/link'
 import GradientText from '@/components/GradientText'
-import TiltCard from '@/components/tilt-card'
 import SubpageScrollbar from '@/components/SubpageScrollbar'
 import { AnalyticsEvent, trackAnalyticsEvent } from '@/lib/analytics'
 import StickyCtaFloat from '@/components/StickyCtaFloat'
@@ -74,7 +72,7 @@ const techBenefits = [
     icon: Zap,
     title: "Szybkość to nie luksus",
     subtitle: "PageSpeed 90+ zamiast 30-50",
-    gradient: "from-yellow-500 to-orange-500",
+    borderColor: "border-yellow-400/30",
     textColor: "text-yellow-400",
     description: "Strona ładująca się powyżej 3 sekund traci 53% użytkowników. WordPress z wtyczkami? Często przekracza 5 sekund. Next.js? Poniżej 1 sekundy.",
     bullets: [
@@ -88,7 +86,7 @@ const techBenefits = [
     icon: Shield,
     title: "Bezpieczeństwo: zero wtyczek = zero dziur",
     subtitle: "WordPress to 90% ataków na strony",
-    gradient: "from-blue-500 to-cyan-500",
+    borderColor: "border-blue-400/30",
     textColor: "text-blue-400",
     description: "WordPress jest celem 90% ataków na CMS-y, głównie przez wtyczki. Każda wtyczka to potencjalna furtka. Next.js? Brak wtyczek, brak backdoorów.",
     bullets: [
@@ -102,7 +100,7 @@ const techBenefits = [
     icon: TrendingUp,
     title: "Konwersja: szybkość = więcej pieniędzy",
     subtitle: "Walmart zwiększył konwersję o 2% na każde 100ms",
-    gradient: "from-green-500 to-emerald-500",
+    borderColor: "border-green-400/30",
     textColor: "text-green-400",
     description: "To nie teoria. Walmart zarobił miliony dzięki zmniejszeniu czasu ładowania. Pinterest zwiększył rejestracje o 15%. Next.js daje Ci tę przewagę out-of-the-box.",
     bullets: [
@@ -116,7 +114,7 @@ const techBenefits = [
     icon: DollarSign,
     title: "Google Ads: niższy CPC, wyższy ROI",
     subtitle: "Quality Score zależy od szybkości strony",
-    gradient: "from-purple-500 to-pink-500",
+    borderColor: "border-purple-400/30",
     textColor: "text-purple-400",
     description: "Google liczy Quality Score m.in. na podstawie PageSpeed. Wyższy QS = niższy koszt kliknięcia (nawet o 50%). Wolna strona? Płacisz więcej za ten sam ruch.",
     bullets: [
@@ -130,7 +128,7 @@ const techBenefits = [
     icon: Wrench,
     title: "Utrzymanie: 1h rocznie vs. 10h miesięcznie",
     subtitle: "WordPress = niekończąca się karuzela aktualizacji",
-    gradient: "from-amber-500 to-yellow-500",
+    borderColor: "border-amber-400/30",
     textColor: "text-amber-400",
     description: "WordPress wymaga ciągłej uwagi: aktualizacje wtyczek, core, PHP. Jedna aktualizacja = ryzyko. Next.js? Raz wdrożony, działa latami.",
     bullets: [
@@ -144,7 +142,7 @@ const techBenefits = [
     icon: Rocket,
     title: "Skalowanie: 100 czy 100 000 użytkowników?",
     subtitle: "WordPress pada przy 1000 równoczesnych użytkowników",
-    gradient: "from-indigo-500 to-purple-500",
+    borderColor: "border-indigo-400/30",
     textColor: "text-indigo-400",
     description: "WordPress + hosting współdzielony = katastrofa przy wzroście ruchu. Next.js + Vercel Edge = automatyczne skalowanie. Ruch wzrósł 100x? Strona działa tak samo.",
     bullets: [
@@ -156,6 +154,61 @@ const techBenefits = [
   },
 ]
 
+type TechBenefit = (typeof techBenefits)[number]
+
+/** Jeden powód — duża teza, cyfra-widmo w tle, treść odsłaniana kaskadowo. */
+function BenefitBlock({ benefit, index }: { benefit: TechBenefit; index: number }) {
+  const Icon = benefit.icon
+
+  return (
+    <article className="relative border-t border-white/10 pt-12 md:pt-16">
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-8 right-0 select-none font-light leading-none text-white/[0.04] text-[7rem] md:-top-12 md:text-[11rem]"
+      >
+        0{index + 1}
+      </span>
+
+      <AnimatedSection>
+        <div className="flex items-center gap-3">
+          <Icon size={18} strokeWidth={1.5} className={benefit.textColor} />
+          <span className={`text-xs uppercase tracking-[0.25em] ${benefit.textColor}`}>
+            {benefit.subtitle}
+          </span>
+        </div>
+      </AnimatedSection>
+
+      <AnimatedSection delay={80}>
+        <h3 className="mt-7 max-w-3xl text-3xl font-light leading-tight text-white md:text-[2.5rem]">
+          {benefit.title}
+        </h3>
+        <p className="mt-5 max-w-3xl text-lg leading-relaxed text-gray-400">
+          {benefit.description}
+        </p>
+      </AnimatedSection>
+
+      <AnimatedSection delay={160}>
+        <ul className="mt-12 grid gap-x-16 gap-y-4 md:grid-cols-2">
+          {benefit.bullets.map((bullet, i) => (
+            <li key={i} className="flex gap-4 leading-relaxed text-gray-300">
+              <span className={`${benefit.textColor} opacity-60`}>—</span>
+              <span>{bullet}</span>
+            </li>
+          ))}
+        </ul>
+      </AnimatedSection>
+
+      <AnimatedSection delay={240}>
+        <p className={`mt-12 border-l pl-6 ${benefit.borderColor}`}>
+          <span className="block text-xs uppercase tracking-[0.2em] text-gray-500">Real world</span>
+          <span className="mt-2 block text-lg font-light leading-relaxed text-gray-200">
+            {benefit.realWorld}
+          </span>
+        </p>
+      </AnimatedSection>
+    </article>
+  )
+}
 const comparisonTable = [
   { feature: "Szybkość (PageSpeed)", wordpress: "30-50/100", nextjs: "90-100/100" },
   { feature: "Bezpieczeństwo", wordpress: "Wtyczki = dziury", nextjs: "Zero wtyczek" },
@@ -265,67 +318,18 @@ export default function NextjsPage() {
       </section>
 
       {/* Tech Benefits - Timeline */}
-      <section id="benefits" className="relative z-10 py-32 px-6 lg:px-12 bg-gradient-to-b from-transparent via-blue-950/10 to-transparent">
-        <div className="max-w-5xl mx-auto">
-          <AnimatedSection className="text-center mb-20">
-            <h2 className="text-3xl md:text-5xl font-light tracking-wide mb-6 glow-text">
+      <section id="benefits" className="relative z-10 px-6 py-32 lg:px-12 bg-gradient-to-b from-transparent via-blue-950/10 to-transparent">
+        <div className="mx-auto max-w-5xl">
+          <AnimatedSection className="mb-20 text-center">
+            <h2 className="glow-text mb-6 text-3xl font-light tracking-wide md:text-5xl">
               6 powodów, dla których Next.js wygrywa
             </h2>
           </AnimatedSection>
-          
-          <div className="space-y-8">
-            {techBenefits.map((benefit, index) => {
-              const Icon = benefit.icon
-              return (
-                <AnimatedSection key={index} delay={index * 100}>
-                  <TiltCard className="w-full">
-                    <div className="relative group">
-                      <div className={`absolute -inset-0.5 bg-gradient-to-r ${benefit.gradient} rounded-2xl opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-500`} />
-                      <div className="relative p-8 rounded-2xl bg-gray-900/80 backdrop-blur-sm border border-white/10">
-                        <div className="flex flex-col lg:flex-row gap-8">
-                          <div className="flex-shrink-0">
-                            <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${benefit.gradient} flex items-center justify-center mb-4`}>
-                              <Icon size={32} className="text-white" />
-                            </div>
-                            <div className={`text-5xl font-light ${benefit.textColor} opacity-30`}>
-                              0{index + 1}
-                            </div>
-                          </div>
 
-                          <div className="flex-1">
-                            <h3 className="text-2xl font-medium text-white mb-2">
-                              {benefit.title}
-                            </h3>
-                            <p className={`text-sm ${benefit.textColor} mb-4`}>
-                              {benefit.subtitle}
-                            </p>
-                            <p className="text-gray-400 mb-6">
-                              {benefit.description}
-                            </p>
-                            
-                            <ul className="space-y-2 mb-6">
-                              {benefit.bullets.map((bullet, i) => (
-                                <li key={i} className="flex items-start gap-3">
-                                  <CheckCircle2 size={18} className={`flex-shrink-0 mt-0.5 ${benefit.textColor}`} />
-                                  <span className="text-gray-400 text-sm">{bullet}</span>
-                                </li>
-                              ))}
-                            </ul>
-
-                            <div className={`p-4 rounded-xl bg-gradient-to-r ${benefit.gradient} border border-white/10`}>
-                              <p className="text-sm text-gray-400">
-                                <span className="font-medium text-white">Real world: </span>
-                                {benefit.realWorld}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </TiltCard>
-                </AnimatedSection>
-              )
-            })}
+          <div className="space-y-24 md:space-y-32">
+            {techBenefits.map((benefit, index) => (
+              <BenefitBlock key={index} benefit={benefit} index={index} />
+            ))}
           </div>
         </div>
       </section>
