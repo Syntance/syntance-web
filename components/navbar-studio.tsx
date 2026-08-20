@@ -16,7 +16,7 @@ const navItems = [
     dropdown: [
       { label: "Strony", href: "/strony-www" },
       { label: "Sklepy", href: "/sklepy-internetowe" },
-      { label: "Dla agencji", href: "/agencje-marketingowe" },
+      { label: "Dla agencji", href: "/dla-agencji" },
     ],
   },
   {
@@ -42,7 +42,7 @@ const pathToNavIndex: Record<string, number> = {
   '/': 0,
   '/strony-www': 1,
   '/sklepy-internetowe': 1,
-  '/agencje-marketingowe': 1,
+  '/dla-agencji': 1,
   '/panel': 2,
   '/portfolio': 3,
   '/realizacje': 3,
@@ -135,7 +135,7 @@ export default function NavbarStudio() {
   const isOfertaActive =
     pathname === '/strony-www' ||
     pathname === '/sklepy-internetowe' ||
-    pathname === '/agencje-marketingowe';
+    pathname === '/dla-agencji';
 
   const isProduktyActive = pathname === '/panel';
 
@@ -304,9 +304,9 @@ export default function NavbarStudio() {
                     Sklepy
                   </Link>
                   <Link
-                    href="/agencje-marketingowe"
+                    href="/dla-agencji"
                     className={`block tap-target justify-start py-3 text-sm font-light tracking-wider transition-colors ${
-                      pathname === '/agencje-marketingowe'
+                      pathname === '/dla-agencji'
                         ? 'text-white'
                         : 'text-gray-400 hover:text-white active:text-purple-300'
                     }`}

@@ -16,7 +16,31 @@ const schema = z.object({
   message: z.string().min(10).max(2000),
   hp: z.string().optional().default(""),
   source: z.string().optional().default("website"),
+  /** Kwalifikacja leada z formularza partnerskiego (/dla-agencji). Opcjonalna — inne formularze jej nie wysyłają. */
+  partner: z
+    .object({
+      entityType: z.string().max(60).optional().default(""),
+      preferredMode: z.string().max(60).optional().default(""),
+      yearlyVolume: z.string().max(60).optional().default(""),
+    })
+    .optional(),
 });
+
+/** Blok "Dane partnerskie" doklejany do maila właściciela (szablon w CMS nie zna tych tokenów). */
+function renderPartnerBlock(partner: {
+  entityType: string;
+  preferredMode: string;
+  yearlyVolume: string;
+}): string {
+  const rows = [
+    ["Typ podmiotu", partner.entityType],
+    ["Preferowany tryb", partner.preferredMode],
+    ["Wolumen roczny", partner.yearlyVolume],
+  ].filter(([, value]) => value.length > 0);
+
+  if (rows.length === 0) return "";
+  return `\n\n--- Dane partnerskie ---\n${rows.map(([label, value]) => `${label}: ${value}`).join("\n")}`;
+}
 
 // Lazy initialization to avoid build-time errors
 let resend: Resend | null = null;
@@ -48,7 +72,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false }, { status: 400 });
     }
 
-    const { name, email, phone, message, source } = parsed.data;
+    const { name, email, phone, message, source, partner } = parsed.data;
     const resendClient = getResend();
     const formattedPhone = phone.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
 
@@ -72,7 +96,7 @@ export async function POST(req: Request) {
       to: [process.env.CONTACT_TO_EMAIL!],
       replyTo: email,
       subject: ownerContent.subject,
-      text: ownerContent.text,
+      text: partner ? `${ownerContent.text}${renderPartnerBlock(partner)}` : ownerContent.text,
     });
 
     // 2. Email potwierdzający do klienta

@@ -90,6 +90,8 @@ const nextConfig = {
       { source: '/booking', destination: porozmawiajmy, permanent: true },
       { source: '/meeting', destination: porozmawiajmy, permanent: true },
       { source: '/sklepy', destination: '/sklepy-internetowe', permanent: true },
+      // Zmiana slug: ICP obejmuje też studia brandingowe i freelancerów, nie tylko agencje marketingowe.
+      { source: '/agencje-marketingowe', destination: '/dla-agencji', permanent: true },
       { source: '/realizacje', destination: '/portfolio', permanent: true },
     ]
   },

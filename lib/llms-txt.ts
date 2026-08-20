@@ -44,7 +44,7 @@ Forma prawna: JDG Kamil Podobiński (jednoosobowa działalność gospodarcza), f
 - [O nas](https://syntance.com/o-nas): Wartości, podejście i sposób pracy przy projektach.
 - [Portfolio](https://syntance.com/portfolio): Realizacje stron WWW i sklepów e-commerce.
 - [Realizacje](https://syntance.com/realizacje): Case studies i przykłady wdrożeń.
-- [Dla agencji marketingowych](https://syntance.com/agencje-marketingowe): Współpraca white-label i partnerska.
+- [Dla agencji](https://syntance.com/dla-agencji): Współpraca partnerska dla agencji, studiów i freelancerów — cena jako procent od cennika detalicznego, tryb jawny albo white-label.
 - [Kontakt](https://syntance.com/kontakt): Bezpłatna konsultacja — kontakt@syntance.com, +48 537 110 170.
 - [Porozmawiajmy](https://syntance.com/porozmawiajmy): Umów bezpłatną rozmowę o projekcie.
 

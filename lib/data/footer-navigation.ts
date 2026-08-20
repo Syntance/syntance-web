@@ -7,7 +7,7 @@ export type FooterLink = {
 export const footerOfferLinks: FooterLink[] = [
   { label: 'Strony internetowe', href: '/strony-www' },
   { label: 'Sklepy internetowe', href: '/sklepy-internetowe' },
-  { label: 'Dla agencji', href: '/agencje-marketingowe' },
+  { label: 'Dla agencji', href: '/dla-agencji' },
   { label: 'Panel klienta', href: '/panel' },
   { label: 'Portfolio', href: '/portfolio' },
   { label: 'Cennik', href: '/cennik' },

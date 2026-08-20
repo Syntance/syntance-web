@@ -335,32 +335,33 @@ export const defaultFaqHome: SimpleFaqQA[] = [
 
 export const defaultFaqAgencje: SimpleFaqQA[] = [
   {
-    question: 'Mam freelancera na WP, po co mi to?',
+    question: 'Dlaczego nie podajecie sztywnych cen pakietów?',
     answer:
-      'Twój freelancer często kończy na niskim wyniku w PageSpeed. Z nami w modelu WL: kupujesz np. od 2,9 tys., sprzedajesz np. za 8 tys. — zostaje Ci marża w tysiącach złotych przy wyższej jakości dostarczenia.',
+      'Bo zakres realnie się różni — trzy podstrony z formularzem i sklep z integracją magazynową to nie jest ta sama praca. Sztywny pakiet albo jest zawyżony na zapas, albo kończy się dopłatami w trakcie. Konfigurator na /cennik daje kwotę z rozbiciem na pozycje, a Twój poziom partnerski to stały procent od tej kwoty.',
   },
   {
-    question: 'Za drogo — freelancer WP bierze 3 tys.',
+    question: 'Czym różni się tryb jawny od white-label i co mi się bardziej opłaca?',
     answer:
-      'Freelancer za 3 tys. to często słaba wydajność, bez porządnego CMS i bez gwarancji. W pakiecie partnerskim od 2 900 PLN masz m.in. PageSpeed 96+, CMS pod treści, SLA i NDA.',
+      'W trybie jawnym w stopce jest „development: Syntance”, a po sześciu miesiącach możemy — za Twoją zgodą — pokazać projekt w portfolio. W white-label nie ma po nas śladu i nie publikujemy nic, a cena jest o 10% wyższa. Jeśli sprzedajesz się jako agencja pełnego zakresu i credit w stopce jest problemem, bierz white-label. Jeśli nie jest, tryb jawny wychodzi taniej o te 10%.',
   },
   {
-    question: 'Klient nie zna headless, chce WP.',
+    question: 'Co jeśli mój klient nie zapłaci mi na czas?',
     answer:
-      'Klient nie kupuje technologii — kupuje wynik. Panel treści jest prosty w obsłudze; dla klienta wygląda jak „normalna” strona do edycji.',
+      'To dwie osobne umowy. Rozliczamy się z Tobą według harmonogramu 50/50, niezależnie od tego, kiedy wpłynie płatność od Twojego klienta. Mówimy o tym wprost: ryzyko kredytowe wobec swojego klienta zostaje po Twojej stronie, tak samo jak marża.',
   },
   {
-    question: 'A co jeśli klient chce zmiany?',
+    question: 'Jesteście jedną osobą — co przy większym wolumenie?',
     answer:
-      'Treści edytuje sam w CMS. Zmiany w zakresie rozwoju obsługujemy w kanale partnerskim — SLA odpowiedzi poniżej 4 godzin.',
+      'Prowadzimy 1–2 projekty równolegle. Przy stałej współpracy rezerwujemy terminy z wyprzedzeniem: mówisz w lutym, że w kwietniu będą dwa projekty, i te sloty są Twoje. Nie obiecujemy nieograniczonej przepustowości i nie przyjmiemy zlecenia, którego nie dowieziemy w terminie — kara umowna za opóźnienie działa też na nas i to jest zabezpieczenie tej deklaracji.',
   },
   {
-    question: 'Nie chcę NDA.',
+    question: 'Klient chce WordPressa.',
     answer:
-      'NDA chroni Ciebie: gwarantuje, że nigdy nie skontaktujemy się z Twoim klientem i nie ujawnimy współpracy.',
+      'Wtedy WordPress jest właściwym wyborem i nie jesteśmy dobrym wykonawcą — nie pracujemy w tym stacku. Jeśli klient nie ma preferencji technologicznej, a chodzi mu o samodzielną edycję treści, dostaje panel CMS, w którym zmienia teksty i zdjęcia bez udziału programisty. Jeśli powodem jest cena, warto policzyć całość razem z hostingiem i utrzymaniem, bo to zwykle inny obraz niż sama licencja wtyczek.',
   },
   {
     question: 'Jak wygląda komunikacja?',
-    answer: 'Jeden kanał Slack lub Teams. Brief od Ciebie → my realizujemy → Ty akceptujesz.',
+    answer:
+      'Jeden kanał: Slack albo Teams. Brief od Ciebie, realizacja u nas, akceptacja po Twojej stronie. Podgląd na środowisku preview i status raz w tygodniu. SLA pierwszej odpowiedzi: poniżej 4 godzin w dni robocze.',
   },
 ]

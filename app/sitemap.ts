@@ -62,7 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.75,
     },
     {
-      url: `${baseUrl}/agencje-marketingowe`,
+      url: `${baseUrl}/dla-agencji`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.75,

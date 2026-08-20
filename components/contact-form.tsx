@@ -3,6 +3,11 @@
 import { useState } from 'react'
 import { AnalyticsEvent, trackAnalyticsEvent } from '@/lib/analytics'
 
+/** Pola kwalifikujące lead partnerski — widoczne tylko na `/dla-agencji`. */
+export const PARTNER_ENTITY_OPTIONS = ['Agencja', 'Studio', 'Freelancer'] as const
+export const PARTNER_MODE_OPTIONS = ['Jawny', 'White-label', 'Jeszcze nie wiem'] as const
+export const PARTNER_VOLUME_OPTIONS = ['1 projekt', '2–3 projekty', '4+ projektów', 'Nie wiem'] as const
+
 interface ContactFormProps {
   /** Unikalny prefix dla ID formularza (dla multiple forms na jednej stronie) */
   idPrefix?: string
@@ -10,13 +15,22 @@ interface ContactFormProps {
   source?: string
   /** Klasy CSS dla kontenera */
   className?: string
+  /** `partner` dokłada pola kwalifikujące (typ podmiotu, tryb, wolumen). */
+  variant?: 'default' | 'partner'
 }
 
-export function ContactForm({ 
-  idPrefix = 'contact', 
+export function ContactForm({
+  idPrefix = 'contact',
   source = 'website',
-  className = ''
+  className = '',
+  variant = 'default'
 }: ContactFormProps) {
+  const isPartner = variant === 'partner'
+  const [partnerData, setPartnerData] = useState({
+    entityType: '',
+    preferredMode: '',
+    yearlyVolume: '',
+  })
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -81,7 +95,11 @@ export function ContactForm({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ...formData, source }),
+        body: JSON.stringify({
+          ...formData,
+          source,
+          ...(isPartner ? { partner: partnerData } : {}),
+        }),
         signal: AbortSignal.timeout(30_000),
       })
 
@@ -93,6 +111,7 @@ export function ContactForm({
 
       setFormStatus('success')
       setFormData({ name: '', email: '', phone: '', message: '', hp: '' })
+      setPartnerData({ entityType: '', preferredMode: '', yearlyVolume: '' })
       setConsentChecked(false)
       trackAnalyticsEvent(AnalyticsEvent.ContactFormSuccess, { source })
     } catch (error) {
@@ -172,6 +191,67 @@ export function ContactForm({
           className="w-full px-5 sm:px-6 py-4 min-h-[52px] text-base bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 focus:ring-2 focus:ring-purple-500/30 transition-colors disabled:opacity-50"
         />
       </div>
+      {isPartner && (
+        <div className="grid sm:grid-cols-2 gap-6">
+          <div>
+            <label htmlFor={`${idPrefix}-entity`} className="block text-sm text-gray-300 mb-2">
+              Typ podmiotu <span className="text-red-400">*</span>
+            </label>
+            <select
+              id={`${idPrefix}-entity`}
+              name="entityType"
+              value={partnerData.entityType}
+              onChange={(e) => setPartnerData(prev => ({ ...prev, entityType: e.target.value }))}
+              required
+              disabled={formStatus === 'loading'}
+              className="w-full px-5 py-4 min-h-[52px] text-base bg-white/5 border border-gray-800 rounded-lg text-white focus:outline-none focus:border-gray-600 focus:ring-2 focus:ring-purple-500/30 transition-colors disabled:opacity-50"
+            >
+              <option value="">— wybierz —</option>
+              {PARTNER_ENTITY_OPTIONS.map(option => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor={`${idPrefix}-mode`} className="block text-sm text-gray-300 mb-2">
+              Preferowany tryb <span className="text-red-400">*</span>
+            </label>
+            <select
+              id={`${idPrefix}-mode`}
+              name="preferredMode"
+              value={partnerData.preferredMode}
+              onChange={(e) => setPartnerData(prev => ({ ...prev, preferredMode: e.target.value }))}
+              required
+              disabled={formStatus === 'loading'}
+              className="w-full px-5 py-4 min-h-[52px] text-base bg-white/5 border border-gray-800 rounded-lg text-white focus:outline-none focus:border-gray-600 focus:ring-2 focus:ring-purple-500/30 transition-colors disabled:opacity-50"
+            >
+              <option value="">— wybierz —</option>
+              {PARTNER_MODE_OPTIONS.map(option => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
+          </div>
+          <div className="sm:col-span-2">
+            <label htmlFor={`${idPrefix}-volume`} className="block text-sm text-gray-300 mb-2">
+              Orientacyjny wolumen roczny
+            </label>
+            <select
+              id={`${idPrefix}-volume`}
+              name="yearlyVolume"
+              value={partnerData.yearlyVolume}
+              onChange={(e) => setPartnerData(prev => ({ ...prev, yearlyVolume: e.target.value }))}
+              disabled={formStatus === 'loading'}
+              className="w-full px-5 py-4 min-h-[52px] text-base bg-white/5 border border-gray-800 rounded-lg text-white focus:outline-none focus:border-gray-600 focus:ring-2 focus:ring-purple-500/30 transition-colors disabled:opacity-50"
+            >
+              <option value="">— nieokreślony —</option>
+              {PARTNER_VOLUME_OPTIONS.map(option => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      )}
+
       <div>
         <label htmlFor={`${idPrefix}-message`} className="sr-only">Wiadomość</label>
         <textarea

@@ -51,7 +51,7 @@ export const CMS_FAQ_PAGES: CmsFaqPageDef[] = [
   { id: 'strategia', label: 'Strategia', path: '/strategia-marketingu-i-sprzedazy', faqKey: 'faqStrategia' },
   { id: 'o-nas', label: 'O nas', path: '/o-nas', faqKey: 'faqONas' },
   { id: 'kontakt', label: 'Kontakt', path: '/kontakt', faqKey: 'faqKontakt' },
-  { id: 'agencje', label: 'Agencje', path: '/agencje-marketingowe', faqKey: 'faqAgencje' },
+  { id: 'agencje', label: 'Agencje', path: '/dla-agencji', faqKey: 'faqAgencje' },
 ]
 
 export const CMS_CONTENT_PAGES: CmsContentPageDef[] = [
