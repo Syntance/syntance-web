@@ -8,7 +8,7 @@ import { scrollToPartnerForm, scrollToSection } from './partner-nav'
 
 const badges = [
   'Kara umowna za opóźnienie',
-  'PageSpeed 96+ albo poprawiamy na nasz koszt',
+  'PageSpeed 90+ albo poprawiamy na nasz koszt',
   'Kod w Twoim repo od dnia 1',
 ]
 
@@ -31,7 +31,7 @@ export default function PartnerHero() {
         }`}
       >
         <h1 className="mb-6 glow-text text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-wide leading-tight">
-          Strony{' '}
+          Realizujemy strony i sklepy{' '}
           <GradientText
             colors={['#06b6d4', '#3b82f6', '#8b5cf6', '#3b82f6', '#06b6d4']}
             animationSpeed={4}
@@ -39,11 +39,11 @@ export default function PartnerHero() {
           >
             Next.js
           </GradientText>{' '}
-          dla agencji — w terminie, z karą umowną po naszej stronie.
+          jako podwykonawca.
         </h1>
         <p className="text-lg md:text-xl font-light tracking-wide text-gray-400 mb-8 max-w-3xl mx-auto">
-          Pracujemy pod Twoją marką albo obok niej — tryb wybierasz Ty. Rozliczenie to procent od
-          naszego cennika detalicznego, więc znasz punkt odniesienia zanim zapytasz o wycenę.
+          Rozliczenie to procent od naszego cennika detalicznego, więc znasz punkt odniesienia
+          zanim zapytasz o wycenę.
         </p>
         <ul className="flex flex-wrap justify-center gap-2 mb-10 text-xs md:text-sm text-gray-400">
           {badges.map((badge) => (

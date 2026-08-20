@@ -687,7 +687,7 @@ export function CmsClient({
 
             <StringListEditor
               label="Co wyszło — punkty"
-              placeholder="Np. PageSpeed 95+ na mobile"
+              placeholder="Np. PageSpeed 90+ na mobile"
               items={activePortfolio.highlights ?? []}
               onChange={(highlights) => updatePortfolio(activePortfolio.id, { highlights })}
             />

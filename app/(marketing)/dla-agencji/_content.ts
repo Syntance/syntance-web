@@ -162,7 +162,7 @@ export const guarantees = [
     highlight: true,
   },
   {
-    name: 'PageSpeed 96+ na mobile',
+    name: 'PageSpeed 90+ na mobile',
     desc:
       'Mierzone na produkcji po starcie: strona startowa i jedna podstrona do Twojego wyboru. Poniżej progu poprawiamy na nasz koszt.',
     highlight: false,
