@@ -8,6 +8,64 @@ export const PARTNER_ENTITY_OPTIONS = ['Agencja', 'Studio', 'Freelancer'] as con
 export const PARTNER_MODE_OPTIONS = ['Jawny', 'White-label', 'Jeszcze nie wiem'] as const
 export const PARTNER_VOLUME_OPTIONS = ['1 projekt', '2–3 projekty', '4+ projektów', 'Nie wiem'] as const
 
+/**
+ * Wybór jednokrotny jako kafelki zamiast `<select>`.
+ * Natywny popup selecta renderuje się w jasnym schemacie systemu i na ciemnym tle
+ * gubi tekst opcji — a jego stylowania nie da się kontrolować w każdej przeglądarce.
+ * Radiogroup wygląda spójnie z przelicznikiem na /dla-agencji i działa wszędzie tak samo.
+ */
+function ChoiceGroup({
+  name,
+  legend,
+  options,
+  value,
+  onChange,
+  disabled = false,
+  required = false,
+  hint,
+}: {
+  name: string
+  legend: string
+  options: readonly string[]
+  value: string
+  onChange: (value: string) => void
+  disabled?: boolean
+  required?: boolean
+  hint?: string
+}) {
+  return (
+    <fieldset disabled={disabled} className="disabled:opacity-50">
+      <legend className="text-sm text-gray-300 mb-3">
+        {legend}
+        {required && <span className="text-red-400 ml-1">*</span>}
+        {hint && <span className="text-gray-500 ml-2">({hint})</span>}
+      </legend>
+      <div className="flex flex-wrap gap-2">
+        {options.map(option => (
+          <label
+            key={option}
+            className={`cursor-pointer select-none rounded-full border px-4 py-2.5 text-sm transition-colors focus-within:ring-2 focus-within:ring-purple-500/50 focus-within:ring-offset-2 focus-within:ring-offset-gray-950 ${
+              value === option
+                ? 'border-purple-400/60 bg-purple-400/15 text-white'
+                : 'border-gray-800 bg-white/5 text-gray-400 hover:border-gray-600 hover:text-gray-200'
+            }`}
+          >
+            <input
+              type="radio"
+              name={name}
+              value={option}
+              checked={value === option}
+              onChange={() => onChange(option)}
+              className="sr-only"
+            />
+            {option}
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  )
+}
+
 interface ContactFormProps {
   /** Unikalny prefix dla ID formularza (dla multiple forms na jednej stronie) */
   idPrefix?: string
@@ -56,7 +114,15 @@ export function ContactForm({
       setErrorMessage('Musisz wyrazić zgodę na przetwarzanie danych osobowych.')
       return
     }
-    
+
+    // Kafelki wyboru nie mają natywnego `required` (input jest sr-only, więc przeglądarka
+    // nie potrafiłaby pokazać przy nim dymka walidacji) — sprawdzamy je tutaj.
+    if (isPartner && (!partnerData.entityType || !partnerData.preferredMode)) {
+      setFormStatus('error')
+      setErrorMessage('Wybierz typ podmiotu i preferowany tryb współpracy.')
+      return
+    }
+
     setFormStatus('loading')
     setErrorMessage('')
     trackAnalyticsEvent(AnalyticsEvent.ContactFormSubmit, { source })
@@ -192,63 +258,34 @@ export function ContactForm({
         />
       </div>
       {isPartner && (
-        <div className="grid sm:grid-cols-2 gap-6">
-          <div>
-            <label htmlFor={`${idPrefix}-entity`} className="block text-sm text-gray-300 mb-2">
-              Typ podmiotu <span className="text-red-400">*</span>
-            </label>
-            <select
-              id={`${idPrefix}-entity`}
-              name="entityType"
-              value={partnerData.entityType}
-              onChange={(e) => setPartnerData(prev => ({ ...prev, entityType: e.target.value }))}
-              required
-              disabled={formStatus === 'loading'}
-              className="w-full px-5 py-4 min-h-[52px] text-base bg-white/5 border border-gray-800 rounded-lg text-white focus:outline-none focus:border-gray-600 focus:ring-2 focus:ring-purple-500/30 transition-colors disabled:opacity-50"
-            >
-              <option value="">— wybierz —</option>
-              {PARTNER_ENTITY_OPTIONS.map(option => (
-                <option key={option} value={option}>{option}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor={`${idPrefix}-mode`} className="block text-sm text-gray-300 mb-2">
-              Preferowany tryb <span className="text-red-400">*</span>
-            </label>
-            <select
-              id={`${idPrefix}-mode`}
-              name="preferredMode"
-              value={partnerData.preferredMode}
-              onChange={(e) => setPartnerData(prev => ({ ...prev, preferredMode: e.target.value }))}
-              required
-              disabled={formStatus === 'loading'}
-              className="w-full px-5 py-4 min-h-[52px] text-base bg-white/5 border border-gray-800 rounded-lg text-white focus:outline-none focus:border-gray-600 focus:ring-2 focus:ring-purple-500/30 transition-colors disabled:opacity-50"
-            >
-              <option value="">— wybierz —</option>
-              {PARTNER_MODE_OPTIONS.map(option => (
-                <option key={option} value={option}>{option}</option>
-              ))}
-            </select>
-          </div>
-          <div className="sm:col-span-2">
-            <label htmlFor={`${idPrefix}-volume`} className="block text-sm text-gray-300 mb-2">
-              Orientacyjny wolumen roczny
-            </label>
-            <select
-              id={`${idPrefix}-volume`}
-              name="yearlyVolume"
-              value={partnerData.yearlyVolume}
-              onChange={(e) => setPartnerData(prev => ({ ...prev, yearlyVolume: e.target.value }))}
-              disabled={formStatus === 'loading'}
-              className="w-full px-5 py-4 min-h-[52px] text-base bg-white/5 border border-gray-800 rounded-lg text-white focus:outline-none focus:border-gray-600 focus:ring-2 focus:ring-purple-500/30 transition-colors disabled:opacity-50"
-            >
-              <option value="">— nieokreślony —</option>
-              {PARTNER_VOLUME_OPTIONS.map(option => (
-                <option key={option} value={option}>{option}</option>
-              ))}
-            </select>
-          </div>
+        <div className="space-y-6">
+          <ChoiceGroup
+            name={`${idPrefix}-entityType`}
+            legend="Typ podmiotu"
+            required
+            options={PARTNER_ENTITY_OPTIONS}
+            value={partnerData.entityType}
+            disabled={formStatus === 'loading'}
+            onChange={(value) => setPartnerData(prev => ({ ...prev, entityType: value }))}
+          />
+          <ChoiceGroup
+            name={`${idPrefix}-preferredMode`}
+            legend="Preferowany tryb"
+            required
+            options={PARTNER_MODE_OPTIONS}
+            value={partnerData.preferredMode}
+            disabled={formStatus === 'loading'}
+            onChange={(value) => setPartnerData(prev => ({ ...prev, preferredMode: value }))}
+          />
+          <ChoiceGroup
+            name={`${idPrefix}-yearlyVolume`}
+            legend="Orientacyjny wolumen roczny"
+            hint="opcjonalnie"
+            options={PARTNER_VOLUME_OPTIONS}
+            value={partnerData.yearlyVolume}
+            disabled={formStatus === 'loading'}
+            onChange={(value) => setPartnerData(prev => ({ ...prev, yearlyVolume: value }))}
+          />
         </div>
       )}
 
