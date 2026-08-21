@@ -5,6 +5,12 @@ export const paymentSettings = pgTable('payment_settings', {
   data: jsonb('data').$type<Record<string, unknown>>().notNull().default({}),
 })
 
+/** Parametry handlowe modelu partnerskiego (/dla-agencji) — singleton jak paymentSettings. */
+export const partnerSettings = pgTable('partner_settings', {
+  id: text('id').primaryKey().default('default'),
+  data: jsonb('data').$type<Record<string, unknown>>().notNull().default({}),
+})
+
 export const contractFiles = pgTable('contract_files', {
   id: uuid('id').primaryKey().defaultRandom(),
   sanityId: text('sanity_id'),

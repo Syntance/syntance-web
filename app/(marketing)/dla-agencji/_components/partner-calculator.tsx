@@ -2,12 +2,7 @@
 
 import { useId, useMemo, useState } from 'react'
 import { Calculator } from 'lucide-react'
-import {
-  MIN_PROJECT_NET,
-  PARTNER_LEVELS,
-  WHITE_LABEL_SURCHARGE,
-  type PartnerLevelId,
-} from '../_content'
+import { computePartnerPrice, formatPln, type PartnerSettings } from '@/lib/data/partner'
 
 type Mode = 'jawny' | 'white-label'
 
@@ -19,16 +14,12 @@ function parseAmount(raw: string): number {
   return Number.isFinite(value) ? value : 0
 }
 
-function formatPln(value: number): string {
-  return `${Math.round(value).toLocaleString('pl-PL')} PLN`
-}
-
-export default function PartnerCalculator() {
+export default function PartnerCalculator({ settings }: { settings: PartnerSettings }) {
   const retailId = useId()
   const sellId = useId()
   const [retailInput, setRetailInput] = useState('')
   const [sellInput, setSellInput] = useState('')
-  const [level, setLevel] = useState<PartnerLevelId>('partner')
+  const [levelId, setLevelId] = useState(settings.levels[0]?.id ?? '')
   const [mode, setMode] = useState<Mode>('jawny')
 
   const result = useMemo(() => {
@@ -36,21 +27,26 @@ export default function PartnerCalculator() {
     const sell = parseAmount(sellInput)
     if (retail <= 0) return null
 
-    const discount = PARTNER_LEVELS.find((l) => l.id === level)?.discount ?? 0
-    const afterDiscount = retail * (1 - discount)
-    const withMode = mode === 'white-label' ? afterDiscount * (1 + WHITE_LABEL_SURCHARGE) : afterDiscount
-    const belowMinimum = withMode < MIN_PROJECT_NET
-    const partnerPrice = belowMinimum ? MIN_PROJECT_NET : withMode
+    const discountPercent =
+      settings.levels.find((level) => level.id === levelId)?.discountPercent ?? 0
+    const { price, belowMinimum } = computePartnerPrice(
+      retail,
+      discountPercent,
+      mode === 'white-label',
+      settings,
+    )
 
     const hasSell = sell > 0
-    const margin = hasSell ? sell - partnerPrice : 0
-    const marginPct = hasSell && sell > 0 ? (margin / sell) * 100 : 0
+    const margin = hasSell ? sell - price : 0
+    const marginPct = hasSell ? (margin / sell) * 100 : 0
 
-    return { retail, partnerPrice, belowMinimum, hasSell, margin, marginPct }
-  }, [retailInput, sellInput, level, mode])
+    return { partnerPrice: price, belowMinimum, hasSell, margin, marginPct }
+  }, [retailInput, sellInput, levelId, mode, settings])
 
   const fieldClass =
     'w-full px-5 py-4 min-h-[52px] text-base bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 focus:ring-2 focus:ring-purple-500/30 transition-colors'
+  const optionClass =
+    'cursor-pointer rounded-xl border p-4 transition-colors focus-within:ring-2 focus-within:ring-purple-500/50 focus-within:ring-offset-2 focus-within:ring-offset-black'
 
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8">
@@ -59,7 +55,10 @@ export default function PartnerCalculator() {
         Przelicznik
       </h3>
       <p className="text-sm text-gray-400 mb-8">
-        Wpisz kwotę z konfiguratora na <a href="/cennik" className="text-gray-300 underline underline-offset-4 hover:text-white">/cennik</a>{' '}
+        Wpisz kwotę z konfiguratora na{' '}
+        <a href="/cennik" className="text-gray-300 underline underline-offset-4 hover:text-white">
+          /cennik
+        </a>{' '}
         i wybierz poziom. Liczymy w przeglądarce — nie zapisujemy ani nie wysyłamy tych danych.
       </p>
 
@@ -99,11 +98,11 @@ export default function PartnerCalculator() {
       <fieldset className="mt-8">
         <legend className="text-sm text-gray-300 mb-3">Poziom partnerski</legend>
         <div className="grid sm:grid-cols-3 gap-3">
-          {PARTNER_LEVELS.map((option) => (
+          {settings.levels.map((option) => (
             <label
               key={option.id}
-              className={`cursor-pointer rounded-xl border p-4 transition-colors focus-within:ring-2 focus-within:ring-purple-500/50 focus-within:ring-offset-2 focus-within:ring-offset-black ${
-                level === option.id
+              className={`${optionClass} ${
+                levelId === option.id
                   ? 'border-cyan-400/60 bg-cyan-400/10'
                   : 'border-white/10 bg-white/[0.02] hover:border-white/25'
               }`}
@@ -112,15 +111,13 @@ export default function PartnerCalculator() {
                 type="radio"
                 name="partner-level"
                 value={option.id}
-                checked={level === option.id}
-                onChange={() => setLevel(option.id)}
-                className="sr-only peer"
+                checked={levelId === option.id}
+                onChange={() => setLevelId(option.id)}
+                className="sr-only"
               />
-              <span className="block text-white font-medium peer-focus-visible:underline">
-                {option.name}
-              </span>
+              <span className="block text-white font-medium">{option.name}</span>
               <span className="block text-xs text-gray-400 mt-1">
-                detal −{Math.round(option.discount * 100)}%
+                detal −{option.discountPercent}%
               </span>
             </label>
           ))}
@@ -133,12 +130,16 @@ export default function PartnerCalculator() {
           {(
             [
               { id: 'jawny' as const, name: 'Jawny', hint: 'bez dopłaty' },
-              { id: 'white-label' as const, name: 'White-label', hint: '+10%' },
+              {
+                id: 'white-label' as const,
+                name: 'White-label',
+                hint: `+${settings.whiteLabelSurchargePercent}%`,
+              },
             ] satisfies { id: Mode; name: string; hint: string }[]
           ).map((option) => (
             <label
               key={option.id}
-              className={`cursor-pointer rounded-xl border p-4 transition-colors focus-within:ring-2 focus-within:ring-purple-500/50 focus-within:ring-offset-2 focus-within:ring-offset-black ${
+              className={`${optionClass} ${
                 mode === option.id
                   ? 'border-violet-400/60 bg-violet-400/10'
                   : 'border-white/10 bg-white/[0.02] hover:border-white/25'
@@ -150,11 +151,9 @@ export default function PartnerCalculator() {
                 value={option.id}
                 checked={mode === option.id}
                 onChange={() => setMode(option.id)}
-                className="sr-only peer"
+                className="sr-only"
               />
-              <span className="block text-white font-medium peer-focus-visible:underline">
-                {option.name}
-              </span>
+              <span className="block text-white font-medium">{option.name}</span>
               <span className="block text-xs text-gray-400 mt-1">{option.hint}</span>
             </label>
           ))}
@@ -203,7 +202,7 @@ export default function PartnerCalculator() {
             {result.belowMinimum && (
               <p className="mt-6 text-sm text-amber-300/90">
                 Wyliczenie schodzi poniżej minimum projektu — przyjmujemy{' '}
-                {formatPln(MIN_PROJECT_NET)} netto.
+                {formatPln(settings.minProjectNet)} netto.
               </p>
             )}
             {result.hasSell && result.margin < 0 && (

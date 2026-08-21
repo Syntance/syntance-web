@@ -17,22 +17,18 @@ import { fetchPricingData } from '@/lib/pricing-data'
 import { strategiaWorkshopPriceNet } from '@/lib/pricing-calculator'
 import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
 import { fetchFaqSettings, resolveAgencjeFaq } from '@/lib/faq-data'
+import { fetchPartnerSettings } from '@/lib/db/queries/partner'
+import { buildPricingConditions, buildProcessSteps, formatPln } from '@/lib/data/partner'
 import PartnerHero from './_components/partner-hero'
 import PartnerCalculator from './_components/partner-calculator'
 import { PartnerStickyBar } from './_components/partner-nav'
 import {
-  AUDIT_PRICE_NET,
-  HOURLY_RATE_PARTNER,
-  HOURLY_RATE_RETAIL,
   PARTNER_FORM_SECTION_ID,
-  PARTNER_LEVELS,
   PARTNER_PRICING_SECTION_ID,
   audienceProfiles,
   cooperationModes,
   guarantees,
   moduleItems,
-  pricingConditions,
-  processSteps,
   proofRows,
   scrollbarSections,
 } from './_content'
@@ -40,10 +36,16 @@ import {
 const canonical = 'https://syntance.com/dla-agencji'
 
 export default async function DlaAgencjiPage() {
-  const [pricingData, faqDoc] = await Promise.all([fetchPricingData(), fetchFaqSettings()])
+  const [pricingData, faqDoc, partner] = await Promise.all([
+    fetchPricingData(),
+    fetchFaqSettings(),
+    fetchPartnerSettings(),
+  ])
   const mins = getConfiguratorMinimumPricesNet(pricingData)
   const discoveryNet = strategiaWorkshopPriceNet(pricingData)
   const faqItems = resolveAgencjeFaq(faqDoc, mins, discoveryNet)
+  const pricingConditions = buildPricingConditions(partner)
+  const processSteps = buildProcessSteps(partner)
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -79,7 +81,7 @@ export default async function DlaAgencjiPage() {
         offers: {
           '@type': 'Offer',
           name: 'Audyt i specyfikacja projektu',
-          price: String(AUDIT_PRICE_NET),
+          price: String(partner.auditPriceNet),
           priceCurrency: 'PLN',
           description:
             'Płatny audyt zakresu i ryzyk zakończony specyfikacją. Kwota zaliczana na poczet pierwszego projektu.',
@@ -169,7 +171,9 @@ export default async function DlaAgencjiPage() {
                       </span>
                     )}
                     <h3 className="text-2xl font-light text-white mb-1">{mode.name}</h3>
-                    <p className="text-sm text-violet-200/80 mb-4">{mode.price}</p>
+                    <p className="text-sm text-violet-200/80 mb-4">
+                      {mode.price(partner.whiteLabelSurchargePercent)}
+                    </p>
                     <p className="text-gray-400 text-sm leading-relaxed mb-6">{mode.summary}</p>
                     <dl className="space-y-4">
                       {mode.rows.map((row) => (
@@ -189,7 +193,7 @@ export default async function DlaAgencjiPage() {
             <AnimatedSection>
               <p className="mt-8 text-sm text-gray-400 leading-relaxed max-w-3xl">
                 Anonimowość jest usługą dodatkową, nie rabatem. W trybie white-label rezygnujemy z
-                portfolio i referencji z projektu — to realny koszt po naszej stronie i stąd te 10%.
+                portfolio i referencji z projektu — to realny koszt po naszej stronie i stąd ta dopłata.
               </p>
             </AnimatedSection>
           </div>
@@ -233,14 +237,14 @@ export default async function DlaAgencjiPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {PARTNER_LEVELS.map((level) => (
+                    {partner.levels.map((level) => (
                       <tr key={level.id} className="border-b border-white/5">
                         <th scope="row" className="p-4 text-white font-medium text-left">
                           {level.name}
                         </th>
                         <td className="p-4 text-gray-400">{level.when}</td>
                         <td className="p-4 text-cyan-300/90 whitespace-nowrap">
-                          detal −{Math.round(level.discount * 100)}%
+                          detal −{level.discountPercent}%
                         </td>
                       </tr>
                     ))}
@@ -262,7 +266,7 @@ export default async function DlaAgencjiPage() {
             </AnimatedSection>
 
             <AnimatedSection className="mt-10">
-              <PartnerCalculator />
+              <PartnerCalculator settings={partner} />
             </AnimatedSection>
           </div>
         </section>
@@ -478,13 +482,13 @@ export default async function DlaAgencjiPage() {
               Zacznijmy od audytu
             </h2>
             <p className="text-lg text-gray-400 mb-4">
-              {AUDIT_PRICE_NET.toLocaleString('pl-PL')} PLN netto, zaliczane na poczet pierwszego
+              {formatPln(partner.auditPriceNet)} netto, zaliczane na poczet pierwszego
               projektu. Dostajesz specyfikację, którą możesz wycenić gdziekolwiek — także u kogoś
               innego.
             </p>
             <p className="text-sm text-gray-500 mb-10">
               Jeśli zakres jest jeszcze nieokreślony, pracujemy godzinowo:{' '}
-              {HOURLY_RATE_PARTNER} PLN/h dla partnerów, {HOURLY_RATE_RETAIL} PLN/h detalicznie.
+              {partner.hourlyRatePartner} PLN/h dla partnerów, {partner.hourlyRateRetail} PLN/h detalicznie.
             </p>
 
             <div className="text-left rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8">

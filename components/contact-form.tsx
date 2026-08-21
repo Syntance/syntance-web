@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { AnalyticsEvent, trackAnalyticsEvent } from '@/lib/analytics'
 
 /** Pola kwalifikujące lead partnerski — widoczne tylko na `/dla-agencji`. */
-export const PARTNER_ENTITY_OPTIONS = ['Agencja', 'Studio', 'Freelancer'] as const
+export const PARTNER_ENTITY_OPTIONS = ['Agencja', 'Studio', 'Freelancer', 'Inny'] as const
 export const PARTNER_MODE_OPTIONS = ['Jawny', 'White-label', 'Jeszcze nie wiem'] as const
 export const PARTNER_VOLUME_OPTIONS = ['1 projekt', '2–3 projekty', '4+ projektów', 'Nie wiem'] as const
 
