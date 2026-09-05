@@ -32,7 +32,7 @@ export const SEO_PAGE_CATALOG: SeoPageCatalogEntry[] = [
     isActive: true,
     metaTitle: 'Ile kosztuje strona internetowa? Cennik 2026 | Syntance',
     metaDescription:
-      'Strona firmowa i sklep e-commerce — sprawdź cenę w konfiguratorze. Wycena w kilka minut, bez zobowiązań.',
+      'Strona firmowa od {{WEBSITE_NET}} PLN netto, sklep e-commerce od {{ECOMMERCE_NET}} PLN netto. Sprawdź cenę w konfiguratorze — wycena w kilka minut, bez zobowiązań.',
     canonicalUrl: `${SITE}/cennik`,
     focusKeyword: 'cennik stron Next.js',
     keywords: ['cennik stron internetowych', 'ile kosztuje strona Next.js', 'wycena strony www'],
@@ -47,7 +47,7 @@ export const SEO_PAGE_CATALOG: SeoPageCatalogEntry[] = [
     isActive: true,
     metaTitle: 'Strony internetowe dla firm | Profesjonalne strony www Next.js | Syntance',
     metaDescription:
-      'Tworzymy profesjonalne strony internetowe dla firm B2B. Next.js, PageSpeed 90+, strategia marketingu i sprzedaży (faza przedwdrożeniowa).',
+      'Tworzymy profesjonalne strony internetowe dla firm B2B. Next.js, PageSpeed 90+, strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od {{WEBSITE_NET}} PLN netto.',
     canonicalUrl: `${SITE}/strony-www`,
     focusKeyword: 'strony internetowe dla firm',
     keywords: [
@@ -69,7 +69,7 @@ export const SEO_PAGE_CATALOG: SeoPageCatalogEntry[] = [
     isActive: true,
     metaTitle: 'Sklepy internetowe headless | Medusa & Next.js | Syntance',
     metaDescription:
-      'Budujemy sklepy internetowe w architekturze headless. Medusa, Next.js, zero prowizji. Wycena w 24h.',
+      'Budujemy sklepy internetowe w architekturze headless. Medusa, Next.js, zero prowizji. Sklepy od {{ECOMMERCE_NET}} PLN netto.',
     canonicalUrl: `${SITE}/sklepy-internetowe`,
     focusKeyword: 'sklep internetowy headless',
     keywords: [

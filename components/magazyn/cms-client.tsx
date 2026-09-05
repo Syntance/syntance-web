@@ -398,6 +398,36 @@ export function CmsClient({
     }
   }
 
+  async function restoreFaqFromCode() {
+    if (activeModule !== 'faq') return
+    if (
+      !window.confirm(
+        `Przywrócić FAQ podstrony „${activeFaqPage.label}” z kodu? Nadpisze to obecną treść w bazie.`,
+      )
+    ) {
+      return
+    }
+    setPending(true)
+    setStatus(null)
+    setError(false)
+    try {
+      const res = await fetch('/api/magazyn/cms/faq/reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ section: activeFaqPage.id }),
+      })
+      if (!res.ok) throw new Error('Przywracanie FAQ nie powiodło się')
+      const data = (await res.json()) as { restored: number }
+      setStatus(`Przywrócono z kodu: ${data.restored} pytań. Odśwież stronę, aby zobaczyć zmiany.`)
+      afterSave()
+    } catch (e) {
+      setError(true)
+      setStatus(e instanceof Error ? e.message : 'Błąd')
+    } finally {
+      setPending(false)
+    }
+  }
+
   async function savePortfolio() {
     const invalid = portfolio.find((item) => !item.name.trim() || !item.slug.trim() || !item.url.trim())
     if (invalid) {
@@ -843,7 +873,17 @@ export function CmsClient({
             </ul>
           )}
         </Fieldset>
-        <SaveButton pending={pending} label="Zapisz treści podstrony" onClick={saveFaq} />
+        <div className="flex flex-wrap items-center gap-3">
+          <SaveButton pending={pending} label="Zapisz treści podstrony" onClick={saveFaq} />
+          <button
+            type="button"
+            disabled={pending}
+            onClick={restoreFaqFromCode}
+            className="rounded-lg border border-neutral-700 px-4 py-2 text-sm text-neutral-300 transition hover:border-neutral-500 hover:text-white disabled:opacity-50"
+          >
+            Przywróć FAQ tej podstrony z kodu
+          </button>
+        </div>
       </>
     )
   }

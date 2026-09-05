@@ -7,6 +7,8 @@
  * a nie stronę główną.
  */
 import { resolveSeoFields, defaultSeo, type PageMetadataInput } from '@/lib/seo'
+import { interpolateText } from '@/lib/interpolate-pricing-faq'
+import { SEO_PAGE_CATALOG } from '@/lib/data/seo-page-catalog'
 import type { PageSeo } from '@/lib/data/seo-types'
 
 let failures = 0
@@ -107,6 +109,21 @@ console.log('\n6. Trasa bez slasha końcowego i strona główna')
     resolveSeoFields({ ...CODE, path: '/cennik/' }, defaultSeo, null).canonical,
     'https://syntance.com/cennik',
   )
+}
+
+console.log('\n7. Tokeny cenowe w treści z katalogu podstawiają się na kwoty')
+{
+  const mins = { websiteNet: 10000, ecommerceNet: 20000, webappNet: 50000 }
+  const discoveryNet = 4500
+  const withTokens = SEO_PAGE_CATALOG.filter((e) =>
+    /\{\{[A-Z_]+\}\}/.test(`${e.metaTitle ?? ''}${e.metaDescription ?? ''}${e.ogDescription ?? ''}`),
+  )
+  check('katalog faktycznie używa tokenów', withTokens.length > 0, true)
+  for (const entry of withTokens) {
+    const out = interpolateText(entry.metaDescription ?? '', mins, discoveryNet)
+    check(`${entry.slug}: brak surowego tokenu po podstawieniu`, /\{\{[A-Z_]+\}\}/.test(out), false)
+    check(`${entry.slug}: kwota faktycznie wstawiona`, /\d/.test(out), true)
+  }
 }
 
 if (failures > 0) {

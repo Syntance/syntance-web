@@ -133,6 +133,40 @@ export async function ensureSeoPages(): Promise<void> {
   }
 }
 
+/**
+ * Nadpisuje wiersze SEO trescia z SEO_PAGE_CATALOG (kod = zrodlo prawdy).
+ *
+ * Potrzebne, bo wiersze w bazie potrafia byc starsze niz kod: po pierwszym
+ * wlaczeniu nadpisywania z CMS wjechaly na produkcje nieaktualne ceny i literowki.
+ * Zamiast przepisywac tresc recznie w panelu, przywracamy ja jednym ruchem.
+ *
+ * @param slug pojedyncza trasa albo brak = wszystkie trasy z katalogu
+ * @returns liczba zaktualizowanych/dodanych wierszy
+ */
+export async function resetSeoPagesFromCatalog(slug?: string): Promise<number> {
+  if (!hasDb()) return 0
+  const db = getDb()
+  const entries = slug
+    ? SEO_PAGE_CATALOG.filter((entry) => entry.slug === slug)
+    : SEO_PAGE_CATALOG
+
+  const existing = await db.select({ id: seoPages.id, slug: seoPages.slug }).from(seoPages)
+  const idBySlug = new Map(existing.map((row) => [row.slug, row.id]))
+
+  let count = 0
+  for (const entry of entries) {
+    const { order: _order, ...page } = entry
+    const id = idBySlug.get(entry.slug)
+    if (id) {
+      await db.update(seoPages).set({ ...page, lastUpdated: new Date() }).where(eq(seoPages.id, id))
+    } else {
+      await db.insert(seoPages).values({ ...page, lastUpdated: new Date() })
+    }
+    count += 1
+  }
+  return count
+}
+
 export async function listSeoPages(): Promise<PageSeo[]> {
   if (!hasDb()) return []
   const db = getDb()

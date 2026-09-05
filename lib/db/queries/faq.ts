@@ -6,6 +6,16 @@ import type {
   FaqSettingsDocument,
   FaqSimpleEntrySanity,
 } from '@/lib/data/faq'
+import {
+  defaultFaqItems,
+  defaultFaqHome,
+  defaultFaqStronyWww,
+  defaultFaqSklepy,
+  defaultFaqStrategia,
+  defaultFaqONas,
+  defaultFaqKontakt,
+  defaultFaqAgencje,
+} from '@/lib/data/faq'
 
 const SECTION_MAP: Record<string, keyof FaqSettingsDocument> = {
   home: 'faqHome',
@@ -130,4 +140,51 @@ export async function replaceFaqSettings(doc: FaqSettingsDocument): Promise<void
   }
 
   if (rows.length) await db.insert(faqEntries).values(rows)
+}
+
+/**
+ * Nadpisuje sekcje FAQ trescia domyslna z kodu.
+ *
+ * Ta sama potrzeba co przy SEO: wiersze w bazie bywaja starsze niz kod.
+ * Na /dla-agencji produkcja serwowala FAQ ze zdezaktualizowanego modelu
+ * white-label, mimo ze kod mial juz aktualny model partnerski.
+ */
+export async function resetFaqSectionFromDefaults(section: string): Promise<number> {
+  if (!hasDb()) return 0
+
+  if (section === 'cennik') {
+    const entries = defaultFaqItems.map((item, index) => ({
+      id: `cennik-${index}`,
+      question: item.question,
+      answer: item.answer,
+      category: item.category,
+      sortOrder: item.order ?? index,
+      isActive: true,
+    }))
+    await replaceFaqSection('cennik', entries)
+    return entries.length
+  }
+
+  const SIMPLE_DEFAULTS: Record<string, { question: string; answer: string }[]> = {
+    home: defaultFaqHome,
+    stronyWww: defaultFaqStronyWww,
+    sklepy: defaultFaqSklepy,
+    strategia: defaultFaqStrategia,
+    oNas: defaultFaqONas,
+    kontakt: defaultFaqKontakt,
+    agencje: defaultFaqAgencje,
+  }
+
+  const list = SIMPLE_DEFAULTS[section]
+  if (!list) throw new Error(`Nieznana sekcja FAQ: ${section}`)
+
+  const entries = list.map((item, index) => ({
+    id: `${section}-${index}`,
+    question: item.question,
+    answer: item.answer,
+    sortOrder: index,
+    isActive: true,
+  }))
+  await replaceFaqSection(section, entries)
+  return entries.length
 }
