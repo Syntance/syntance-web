@@ -160,13 +160,14 @@ export function CennikClient({
   }
 
   const serverDraftKeyRef = useRef<string | null>(null)
+  const { commitSaved } = history
 
   useEffect(() => {
     const key = JSON.stringify({ config, items, categories, projectTypes })
     if (serverDraftKeyRef.current === key) return
     serverDraftKeyRef.current = key
-    history.commitSaved(buildCennikDraft({ config, items, categories, projectTypes }))
-  }, [config, items, categories, projectTypes])
+    commitSaved(buildCennikDraft({ config, items, categories, projectTypes }))
+  }, [config, items, categories, projectTypes, commitSaved])
 
   const [status, setStatus] = useState<string | null>(null)
   const [error, setError] = useState(false)

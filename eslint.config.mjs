@@ -6,7 +6,15 @@ import hooksPlugin from "eslint-plugin-react-hooks";
 
 export default defineConfig([
   {
-    ignores: [".next/**", "node_modules/**"],
+    // Przeniesione z .eslintignore — ESLint 9 (flat config) tego pliku juz nie czyta.
+    ignores: [
+      "node_modules/**",
+      ".next/**",
+      "out/**",
+      "dist/**",
+      "build/**",
+      "**/*.config.js",
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -20,7 +28,9 @@ export default defineConfig([
       ...nextPlugin.configs.recommended.rules,
       ...nextPlugin.configs["core-web-vitals"].rules,
       ...hooksPlugin.configs.recommended.rules,
-      "@typescript-eslint/no-unused-vars": "warn",
+      // ignoreRestSiblings to domyslka bazowej reguly no-unused-vars — dotyczy wylacznie
+      // idiomu "pomin klucz": `const { order: _order, ...page } = entry`. Reszta reguly dziala.
+      "@typescript-eslint/no-unused-vars": ["warn", { ignoreRestSiblings: true }],
       "@typescript-eslint/no-explicit-any": "off",
     },
   },

@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import dynamic from 'next/dynamic'
-import Link from 'next/link'
 import { ChevronDown } from 'lucide-react'
 import GradientText from '@/components/GradientText'
 import SubpageScrollbar from '@/components/SubpageScrollbar'

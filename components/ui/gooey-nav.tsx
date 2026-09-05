@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 
 interface DropdownItem {
@@ -128,7 +128,7 @@ const GooeyNav = ({
       }, 30);
     }
   };
-  const updateEffectPosition = (element: HTMLElement) => {
+  const updateEffectPosition = useCallback((element: HTMLElement) => {
     if (!containerRef.current || !filterRef.current || !textRef.current) return;
     const containerRect = containerRef.current.getBoundingClientRect();
     
@@ -158,9 +158,9 @@ const GooeyNav = ({
 
     const labelText = labelEl?.textContent || anchorEl?.childNodes[0]?.textContent || element.innerText;
     textRef.current.innerText = labelText.trim();
-  };
+  }, []);
 
-  const scheduleEffectPositionUpdate = (element: HTMLElement | null | undefined) => {
+  const scheduleEffectPositionUpdate = useCallback((element: HTMLElement | null | undefined) => {
     if (!element) return;
     // Podwójny rAF: React musi najpierw nałożyć klasę .active (font-weight 600
     // na <a>), dopiero potem getBoundingClientRect zwraca poprawną szerokość pigułki.
@@ -169,7 +169,7 @@ const GooeyNav = ({
         updateEffectPosition(element);
       });
     });
-  };
+  }, [updateEffectPosition]);
   const movePill = (liEl: HTMLElement, index: number) => {
     setActiveIndex(index);
     scheduleEffectPositionUpdate(liEl);
@@ -337,7 +337,7 @@ const GooeyNav = ({
     resizeObserver.observe(containerRef.current);
     if (navRef.current) resizeObserver.observe(navRef.current);
     return () => resizeObserver.disconnect();
-  }, [activeIndex]);
+  }, [activeIndex, scheduleEffectPositionUpdate, updateEffectPosition]);
 
   // Web fonty (font-display: swap) potrafią zmienić szerokość etykiet PO pierwszym
   // obliczeniu pozycji pigułki/tekstu — przelicz po załadowaniu fontów i po zmianie trasy.
@@ -357,8 +357,7 @@ const GooeyNav = ({
       clearTimeout(fallbackTimer);
       window.removeEventListener('resize', recalc);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeIndex, pathname]);
+  }, [activeIndex, pathname, updateEffectPosition]);
 
   return (
     <>

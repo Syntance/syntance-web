@@ -16,7 +16,6 @@ import { generatePricingPDF, PDFData, PDFItem } from '@/lib/generatePDF'
 import {
   computeConfiguratorPricing,
   getBaseBundlePriceNet,
-  getBaseProjectCategoryId,
   isCatalogLineIncludedInBasePrice,
 } from '@/lib/pricing-calculator'
 import { getProjectStartPriceNet } from '@/lib/pricing-configurator-minimum'
@@ -223,8 +222,6 @@ export function PricingConfigurator({ data }: Props) {
     configuratorProjectTypes,
   ])
 
-  const baseCategoryId = getBaseProjectCategoryId(config, state.projectType)
-  const baseBundleNet = getBaseBundlePriceNet(state.projectType, config)
   const showIncludedInPackageLabel = config.showIncludedInPackageLabel === true
 
   // Znajdź wszystkie produkty, które mają ten element w bundledWith

@@ -132,9 +132,6 @@ export default function PorozmawiajmyContent() {
     [searchParams],
   )
 
-  const [heroVisible, setHeroVisible] = useState(false)
-  useEffect(() => setHeroVisible(true), [])
-
   const viewTrackedRef = useRef(false)
   useEffect(() => {
     if (viewTrackedRef.current) return
@@ -184,9 +181,7 @@ export default function PorozmawiajmyContent() {
         className="relative z-10 flex min-h-screen items-center justify-center px-6 pt-32 pb-20 lg:px-12"
       >
         <div
-          className={`mx-auto max-w-3xl text-center transition-all duration-1000 ${
-            heroVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-          }`}
+          className="mx-auto max-w-3xl text-center animate-hero-rise"
         >
           <h1 className="font-heading glow-text mb-8 text-4xl font-light leading-tight tracking-tight md:text-5xl lg:text-6xl">
             Skuteczna strona musi być zbudowana{' '}
@@ -234,9 +229,7 @@ export default function PorozmawiajmyContent() {
         </div>
 
         <div
-          className={`absolute bottom-10 left-1/2 -translate-x-1/2 transition-all delay-700 duration-1000 ${
-            heroVisible ? 'opacity-100' : 'opacity-0'
-          }`}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-hero-reveal-late"
         >
           <button
             type="button"
