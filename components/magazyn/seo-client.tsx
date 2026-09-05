@@ -104,36 +104,6 @@ export function SeoClient({ globalSeo, pages, dbConnected }: Props) {
     }
   }
 
-  async function restoreFromCode(scope: 'page' | 'all') {
-    if (scope === 'page' && !selectedPage) return
-    const what =
-      scope === 'all'
-        ? 'wszystkich podstron'
-        : `podstrony „${selectedPage!.pageName}”`
-    if (!window.confirm(`Przywrócić treść SEO ${what} z kodu? Nadpisze to obecne wartości w bazie.`)) {
-      return
-    }
-    setPending(true)
-    setStatus(null)
-    setError(false)
-    try {
-      const res = await fetch('/api/magazyn/seo/pages/reset', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(scope === 'all' ? {} : { slug: selectedPage!.slug }),
-      })
-      if (!res.ok) throw new Error('Przywracanie nie powiodło się')
-      const data = (await res.json()) as { restored: number; pages: PageSeo[] }
-      setPagesForm(data.pages)
-      setStatus(`Przywrócono z kodu: ${data.restored} ${data.restored === 1 ? 'podstronę' : 'podstron'}.`)
-    } catch (e) {
-      setError(true)
-      setStatus(e instanceof Error ? e.message : 'Błąd')
-    } finally {
-      setPending(false)
-    }
-  }
-
   function updatePage(patch: Partial<PageSeo>) {
     if (selectedIndex < 0) return
     setPagesForm((prev) => prev.map((p, i) => (i === selectedIndex ? { ...p, ...patch } : p)))
@@ -245,25 +215,7 @@ export function SeoClient({ globalSeo, pages, dbConnected }: Props) {
                 ))}
               </Fieldset>
 
-              <div className="flex flex-wrap items-center gap-3">
-                <SaveButton pending={pending} label="Zapisz SEO podstrony" onClick={savePage} />
-                <button
-                  type="button"
-                  disabled={pending}
-                  onClick={() => restoreFromCode('page')}
-                  className="rounded-lg border border-neutral-700 px-4 py-2 text-sm text-neutral-300 transition hover:border-neutral-500 hover:text-white disabled:opacity-50"
-                >
-                  Przywróć tę podstronę z kodu
-                </button>
-                <button
-                  type="button"
-                  disabled={pending}
-                  onClick={() => restoreFromCode('all')}
-                  className="rounded-lg border border-neutral-700 px-4 py-2 text-sm text-neutral-400 transition hover:border-neutral-500 hover:text-white disabled:opacity-50"
-                >
-                  Przywróć wszystkie
-                </button>
-              </div>
+              <SaveButton pending={pending} label="Zapisz SEO podstrony" onClick={savePage} />
             </div>
           ) : null}
         </div>
