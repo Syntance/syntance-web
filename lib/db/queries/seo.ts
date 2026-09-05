@@ -36,24 +36,35 @@ function rowToSeoSettings(row: typeof seoGlobal.$inferSelect): SeoSettings {
   }
 }
 
+/**
+ * Puste pole w panelu zapisuje sie jako "" (nie NULL). Bez tej normalizacji
+ * `page.metaTitle ?? global.metaTitle` zwrocilby "" — czyli wyczyszczenie pola
+ * w CMS kasowaloby metadana zamiast wrocic do wartosci z kodu.
+ */
+function blankToUndefined(value: string | null | undefined): string | undefined {
+  if (typeof value !== 'string') return undefined
+  const trimmed = value.trim()
+  return trimmed.length > 0 ? trimmed : undefined
+}
+
 function rowToPageSeo(row: typeof seoPages.$inferSelect): PageSeo {
   return {
     id: row.id,
     pageName: row.pageName,
     slug: row.slug,
     isActive: row.isActive,
-    metaTitle: row.metaTitle ?? undefined,
-    metaDescription: row.metaDescription ?? undefined,
-    canonicalUrl: row.canonicalUrl ?? undefined,
-    focusKeyword: row.focusKeyword ?? undefined,
-    keywords: row.keywords ?? undefined,
-    keywordDensity: row.keywordDensity ?? undefined,
-    ogTitle: row.ogTitle ?? undefined,
-    ogDescription: row.ogDescription ?? undefined,
-    ogImageUrl: row.ogImageUrl ?? undefined,
-    twitterTitle: row.twitterTitle ?? undefined,
-    twitterDescription: row.twitterDescription ?? undefined,
-    seoNotes: row.seoNotes ?? undefined,
+    metaTitle: blankToUndefined(row.metaTitle),
+    metaDescription: blankToUndefined(row.metaDescription),
+    canonicalUrl: blankToUndefined(row.canonicalUrl),
+    focusKeyword: blankToUndefined(row.focusKeyword),
+    keywords: row.keywords?.length ? row.keywords : undefined,
+    keywordDensity: blankToUndefined(row.keywordDensity),
+    ogTitle: blankToUndefined(row.ogTitle),
+    ogDescription: blankToUndefined(row.ogDescription),
+    ogImageUrl: blankToUndefined(row.ogImageUrl),
+    twitterTitle: blankToUndefined(row.twitterTitle),
+    twitterDescription: blankToUndefined(row.twitterDescription),
+    seoNotes: blankToUndefined(row.seoNotes),
     lastUpdated: row.lastUpdated?.toISOString(),
   }
 }

@@ -1,25 +1,18 @@
 import type { Metadata } from 'next'
-import { pageSocialMetadata } from '@/lib/seo'
+import { pageMetadata } from '@/lib/seo'
 import PanelRealizationsClient from '@/components/sections/panel/panel-realizations-client'
 import { panelRealizations } from '@/lib/panel-realizations-content'
 
 const canonical = 'https://syntance.com/panel/realizacje'
 
-export const metadata: Metadata = {
-  title: 'Realizacje panelu sklepu — Syntance',
-  description:
-    'Zrzuty ekranu panelu Syntance u klientów produkcyjnych. Zarządzanie sklepem, treściami i analityką w praktyce.',
-  keywords: [
-    'panel sklepu realizacje',
-    'case study panel e-commerce',
-    'autorski CMS sklep',
-    'panel Syntance wdrożenia',
-  ],
-  ...pageSocialMetadata({
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
     path: '/panel/realizacje',
     title: 'Realizacje panelu sklepu — Syntance',
-    description: 'Zobacz, jak panel Syntance wygląda u prawdziwych klientów — zrzuty z produkcyjnych wdrożeń.',
-  }),
+    description: 'Zrzuty ekranu panelu Syntance u klientów produkcyjnych. Zarządzanie sklepem, treściami i analityką w praktyce.',
+    ogDescription: 'Zobacz, jak panel Syntance wygląda u prawdziwych klientów — zrzuty z produkcyjnych wdrożeń.',
+    keywords: [ 'panel sklepu realizacje', 'case study panel e-commerce', 'autorski CMS sklep', 'panel Syntance wdrożenia', ],
+  })
 }
 
 export default function PanelRealizationsPage() {

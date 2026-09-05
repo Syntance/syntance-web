@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { pageSocialMetadata } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import NavbarSimple from "@/components/navbar-simple";
 import Footer from "@/components/sections/footer";
@@ -15,17 +15,15 @@ import {
   termsOfServiceLastUpdated,
 } from "@/lib/data/legal-entity";
 
-export const metadata: Metadata = {
-  title: "Regulamin Świadczenia Usług Drogą Elektroniczną | Syntance",
-  description:
-    "Regulamin świadczenia usług drogą elektroniczną przez Syntance. Zasady korzystania z serwisu, warunki umów, prawa i obowiązki użytkowników.",
-  keywords: ["regulamin", "warunki korzystania", "usługi elektroniczne", "Syntance", "terms of service"],
-  ...pageSocialMetadata({
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
     path: "/regulamin",
     title: "Regulamin Świadczenia Usług Drogą Elektroniczną | Syntance",
-    description: "Regulamin korzystania z usług elektronicznych Syntance",
-  }),
-};
+    description: "Regulamin świadczenia usług drogą elektroniczną przez Syntance. Zasady korzystania z serwisu, warunki umów, prawa i obowiązki użytkowników.",
+    ogDescription: "Regulamin korzystania z usług elektronicznych Syntance",
+    keywords: ["regulamin", "warunki korzystania", "usługi elektroniczne", "Syntance", "terms of service"],
+  })
+}
 
 export default function TermsOfServicePage() {
   return (

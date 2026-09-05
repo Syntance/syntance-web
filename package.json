@@ -18,7 +18,8 @@
     "db:studio": "drizzle-kit studio",
     "migrate:sanity": "tsx scripts/migrate-from-sanity.ts",
     "patch:pricing": "tsx scripts/patch-pricing-catalog.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "verify:seo": "tsx scripts/verify-seo-precedence.ts"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",

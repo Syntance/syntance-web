@@ -165,19 +165,6 @@ export const SEO_PAGE_CATALOG: SeoPageCatalogEntry[] = [
       'Realizacje Syntance: strony firmowe i sklepy headless z naciskiem na szybkość, SEO i konwersję.',
   },
   {
-    order: 9,
-    pageName: 'Realizacje',
-    slug: '/realizacje',
-    isActive: true,
-    metaTitle: 'Realizacje i case studies — Syntance',
-    metaDescription:
-      'Wybrane projekty Syntance: strony Next.js i sklepy Next.js z naciskiem na strategię, performance i konwersję.',
-    canonicalUrl: `${SITE}/realizacje`,
-    focusKeyword: 'realizacje stron Next.js',
-    ogTitle: 'Realizacje i case studies — Syntance',
-    ogDescription: 'Case studies z polskimi firmami — skuteczne strony i sklepy w Next.js.',
-  },
-  {
     order: 10,
     pageName: 'Dlaczego Next.js',
     slug: '/nextjs',

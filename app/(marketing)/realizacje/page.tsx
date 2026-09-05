@@ -1,17 +1,15 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import { pageSocialMetadata } from '@/lib/seo'
+import { pageMetadata } from '@/lib/seo'
 
 
-export const metadata: Metadata = {
-  title: 'Realizacje i case studies — Syntance',
-  description:
-    'Wybrane projekty Syntance: strony Next.js i sklepy Next.js z naciskiem na strategię, performance i konwersję.',
-  ...pageSocialMetadata({
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
     path: '/realizacje',
     title: 'Realizacje i case studies — Syntance',
-    description: 'Case studies z polami skutecznymi stronami i sklepami dla firm.',
-  }),
+    description: 'Wybrane projekty Syntance: strony Next.js i sklepy Next.js z naciskiem na strategię, performance i konwersję.',
+    ogDescription: 'Case studies z polami skutecznymi stronami i sklepami dla firm.',
+  })
 }
 
 /** Krótka witryna pod canonical URL `/realizacje` — Notion jako punkt wyjścia z /porozmawiajmy. */

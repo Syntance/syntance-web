@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { pageSocialMetadata } from '@/lib/seo'
+import { pageMetadata } from '@/lib/seo'
 import { PricingConfigurator } from '@/components/PricingConfigurator'
 import PricingFAQ from '@/components/sections/pricing-faq'
 import { fetchPricingData } from '@/lib/pricing-data'
@@ -21,15 +21,13 @@ export async function generateMetadata(): Promise<Metadata> {
   const data = await fetchPricingData()
   const mins = getConfiguratorMinimumPricesNet(data)
 
-  return {
+  return pageMetadata({
+    path: '/cennik',
     title: 'Ile kosztuje strona internetowa? Cennik 2026 | Syntance',
     description: `Strona firmowa od ${formatPrice(mins.websiteNet)} PLN netto (baza w konfiguratorze), sklep e-commerce od ${formatPrice(mins.ecommerceNet)} PLN netto. Sprawdź cenę w konfiguratorze — wycena w kilka minut, bez zobowiązań.`,
-    ...pageSocialMetadata({
-      path: '/cennik',
-      title: 'Ile kosztuje strona internetowa? | Syntance',
-      description: 'Cena strony internetowej zależy od funkcjonalności. Sprawdź ile kosztuje zrobienie strony internetowej lub sklepu e-commerce.',
-    }),
-  }
+    ogTitle: 'Ile kosztuje strona internetowa? | Syntance',
+    ogDescription: 'Cena strony internetowej zależy od funkcjonalności. Sprawdź ile kosztuje zrobienie strony internetowej lub sklepu e-commerce.',
+  })
 }
 
 export default async function CennikPage() {

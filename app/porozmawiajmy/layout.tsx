@@ -1,20 +1,14 @@
 import type { Metadata } from 'next'
-import { pageSocialMetadata } from '@/lib/seo'
+import { pageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Porozmawiajmy o projekcie — Syntance',
-  description:
-    'Strony i sklepy oparte o strategię, lejek i KPI — nie o szablon. Skontaktuj się z Syntance i opisz swój projekt.',
-  robots: {
-    index: false,
-    follow: true,
-    googleBot: { index: false, follow: true },
-  },
-  ...pageSocialMetadata({
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
     path: '/porozmawiajmy',
     title: 'Porozmawiajmy o projekcie — Syntance',
-    description: 'Strony i sklepy oparte o strategię, lejek i KPI. Napisz do nas — odpowiadamy w 24h.',
-  }),
+    description: 'Strony i sklepy oparte o strategię, lejek i KPI — nie o szablon. Skontaktuj się z Syntance i opisz swój projekt.',
+    ogDescription: 'Strony i sklepy oparte o strategię, lejek i KPI. Napisz do nas — odpowiadamy w 24h.',
+    robots: { index: false, follow: true, googleBot: { index: false, follow: true }, },
+  })
 }
 
 export default function PorozmawiajmyLayout({

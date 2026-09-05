@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { pageSocialMetadata } from '@/lib/seo'
+import { pageMetadata } from '@/lib/seo'
 import NavbarSimple from '@/components/navbar-simple'
 import Footer from '@/components/sections/footer'
 import Container from '@/components/container'
@@ -14,15 +14,13 @@ import {
   legalTradeName,
 } from '@/lib/data/legal-entity'
 
-export const metadata: Metadata = {
-  title: 'Deklaracja dostępności | Syntance',
-  description:
-    'Deklaracja dostępności serwisu syntance.com. Status zgodności z WCAG 2.2, sposób zgłaszania problemów i procedura skarg.',
-  ...pageSocialMetadata({
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
     path: '/deklaracja-dostepnosci',
     title: 'Deklaracja dostępności | Syntance',
-    description: 'Informacje o dostępności cyfrowej serwisu syntance.com',
-  }),
+    description: 'Deklaracja dostępności serwisu syntance.com. Status zgodności z WCAG 2.2, sposób zgłaszania problemów i procedura skarg.',
+    ogDescription: 'Informacje o dostępności cyfrowej serwisu syntance.com',
+  })
 }
 
 export default function AccessibilityStatementPage() {

@@ -10,7 +10,8 @@ function formatPln(n: number): string {
   return Math.round(n).toLocaleString('pl-PL')
 }
 
-function interpolateText(
+/** Podstawia tokeny cenowe ({{WEBSITE_NET}} itd.) w dowolnym tekscie z CMS. */
+export function interpolateText(
   text: string,
   mins: ConfiguratorMinimumPricesNet,
   discoveryNet: number,

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { pageSocialMetadata } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo";
 import NavbarSimple from "@/components/navbar-simple";
 import Footer from "@/components/sections/footer";
 import Container from "@/components/container";
@@ -15,24 +15,16 @@ import {
   privacyPolicyLastUpdated,
 } from "@/lib/data/legal-entity";
 
-export const metadata: Metadata = {
-  title: "Polityka Prywatności | Syntance - Ochrona Danych Osobowych",
-  description:
-    "Polityka prywatności Syntance. Dowiedz się, jak przetwarzamy i chronimy Twoje dane osobowe zgodnie z RODO. Transparentna ochrona prywatności użytkowników.",
-  keywords: [
-    "polityka prywatności",
-    "RODO",
-    "ochrona danych osobowych",
-    "prywatność",
-    "Syntance",
-    "przetwarzanie danych",
-  ],
-  ...pageSocialMetadata({
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
     path: "/polityka-prywatnosci",
-    title: "Polityka Prywatności | Syntance",
-    description: "Polityka prywatności i ochrony danych osobowych zgodna z RODO",
-  }),
-};
+    title: "Polityka Prywatności | Syntance - Ochrona Danych Osobowych",
+    description: "Polityka prywatności Syntance. Dowiedz się, jak przetwarzamy i chronimy Twoje dane osobowe zgodnie z RODO. Transparentna ochrona prywatności użytkowników.",
+    ogTitle: "Polityka Prywatności | Syntance",
+    ogDescription: "Polityka prywatności i ochrony danych osobowych zgodna z RODO",
+    keywords: [ "polityka prywatności", "RODO", "ochrona danych osobowych", "prywatność", "Syntance", "przetwarzanie danych", ],
+  })
+}
 
 const processingPurposes = [
   {

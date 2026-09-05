@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { pageSocialMetadata } from '@/lib/seo'
+import { pageMetadata } from '@/lib/seo'
 import { Target, Zap, Code, Users, ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import { HeroTransition } from '@/components/page-transition'
@@ -10,15 +10,14 @@ import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-mini
 import { fetchFaqSettings, resolveONasFaq } from '@/lib/faq-data'
 import Footer from '@/components/sections/footer'
 
-export const metadata: Metadata = {
-  title: 'O nas — Syntance | Agencja interaktywna i software house Next.js',
-  description:
-    'Syntance to agencja interaktywna i software house z Polski. Specjalizujemy się w tworzeniu stron internetowych i sklepów e-commerce w Next.js. Strategia marketingu i sprzedaży (faza przedwdrożeniowa).',
-  ...pageSocialMetadata({
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
     path: '/o-nas',
-    title: 'O nas | Syntance — Agencja interaktywna',
-    description: 'Syntance to agencja interaktywna i software house z Polski. Specjalizujemy się w tworzeniu stron internetowych i sklepów e-commerce w Next.js.',
-  }),
+    title: 'O nas — Syntance | Agencja interaktywna i software house Next.js',
+    description: 'Syntance to agencja interaktywna i software house z Polski. Specjalizujemy się w tworzeniu stron internetowych i sklepów e-commerce w Next.js. Strategia marketingu i sprzedaży (faza przedwdrożeniowa).',
+    ogTitle: 'O nas | Syntance — Agencja interaktywna',
+    ogDescription: 'Syntance to agencja interaktywna i software house z Polski. Specjalizujemy się w tworzeniu stron internetowych i sklepów e-commerce w Next.js.',
+  })
 }
 
 const values = [

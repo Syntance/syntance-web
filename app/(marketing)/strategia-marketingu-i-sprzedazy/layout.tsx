@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { pageSocialMetadata } from '@/lib/seo'
+import { pageMetadata } from '@/lib/seo'
 import { getDiscoveryWorkshopPrice } from '@/lib/pricing-discovery'
 
 function formatPrice(price: number): string {
@@ -13,23 +13,14 @@ export async function generateMetadata(): Promise<Metadata> {
   const workshopPrice = await getDiscoveryWorkshopPrice()
   const priceFormatted = formatPrice(workshopPrice)
 
-  return {
+  return pageMetadata({
+    path: '/strategia-marketingu-i-sprzedazy',
     title: 'Strategia marketingu i sprzedaży (faza przedwdrożeniowa) | Syntance',
     description: `${SHORT} Pełna usługa od ${priceFormatted} PLN netto.`,
-    keywords: [
-      'strategia marketingu i sprzedaży',
-      'strategia strony internetowej',
-      'faza przedwdrożeniowa',
-      'buyer persona',
-      'UVP',
-      'strona B2B',
-    ],
-    ...pageSocialMetadata({
-      path: '/strategia-marketingu-i-sprzedazy',
-      title: 'Strategia marketingu i sprzedaży | Syntance',
-      description: SHORT,
-    }),
-  }
+    ogTitle: 'Strategia marketingu i sprzedaży | Syntance',
+    ogDescription: SHORT,
+    keywords: [ 'strategia marketingu i sprzedaży', 'strategia strony internetowej', 'faza przedwdrożeniowa', 'buyer persona', 'UVP', 'strona B2B', ],
+  })
 }
 
 export default function StrategiaMarketinguLayout({

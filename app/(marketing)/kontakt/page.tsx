@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { pageSocialMetadata } from '@/lib/seo'
+import { pageMetadata } from '@/lib/seo'
 import { Mail, Phone, Calendar, MapPin, Clock, ArrowRight, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 import { ContactForm } from '@/components/contact-form'
@@ -11,15 +11,14 @@ import { fetchFaqSettings, resolveKontaktFaq } from '@/lib/faq-data'
 import { legalEntityLabel, legalFormLabel, legalNip, legalTradeName } from '@/lib/data/legal-entity'
 import Footer from '@/components/sections/footer'
 
-export const metadata: Metadata = {
-  title: 'Kontakt — Syntance | Strony i sklepy Next.js',
-  description:
-    'Skontaktuj się z software house Next.js — Syntance. Email: kontakt@syntance.com, tel +48 537 110 170. Bezpłatna konsultacja o projekcie.',
-  ...pageSocialMetadata({
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
     path: '/kontakt',
-    title: 'Kontakt | Syntance',
-    description: 'Skontaktuj się z software house Next.js — Syntance. Email: kontakt@syntance.com, tel +48 537 110 170.',
-  }),
+    title: 'Kontakt — Syntance | Strony i sklepy Next.js',
+    description: 'Skontaktuj się z software house Next.js — Syntance. Email: kontakt@syntance.com, tel +48 537 110 170. Bezpłatna konsultacja o projekcie.',
+    ogTitle: 'Kontakt | Syntance',
+    ogDescription: 'Skontaktuj się z software house Next.js — Syntance. Email: kontakt@syntance.com, tel +48 537 110 170.',
+  })
 }
 
 export default async function KontaktPage() {

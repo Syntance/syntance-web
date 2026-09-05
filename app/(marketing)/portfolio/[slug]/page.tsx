@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { pageSocialMetadata } from '@/lib/seo'
+import { pageMetadata } from '@/lib/seo'
 import { notFound } from 'next/navigation'
 import CaseStudyClient from '@/app/(marketing)/portfolio/[slug]/case-study-client'
 import { fetchPortfolioCaseStudy, listPortfolioSlugs } from '@/lib/portfolio-data'
@@ -25,18 +25,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? `${project.name} — case study · PageSpeed ${perf} mobile`
     : `${project.name} — case study`
 
-  return {
-    title,
+  return pageMetadata({
+    path: `/portfolio/${slug}`,
+    title: `${title} | Syntance`,
+    ogTitle: title,
     description: project.description,
-    ...pageSocialMetadata({
-      path: `/portfolio/${slug}`,
-      title,
-      description: project.description,
-      imageUrl: project.previewImage,
-      imageAlt: project.previewImageAlt,
-      type: 'article',
-    }),
-  }
+    imageUrl: project.previewImage,
+    imageAlt: project.previewImageAlt,
+    type: 'article',
+  })
 }
 
 export default async function PortfolioCaseStudyPage({ params }: Props) {

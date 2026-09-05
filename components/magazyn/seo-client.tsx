@@ -38,6 +38,8 @@ const PAGE_FIELDS: Array<{ key: keyof PageSeo; label: string; long?: boolean }> 
   { key: 'ogTitle', label: 'OG title' },
   { key: 'ogDescription', label: 'OG description', long: true },
   { key: 'ogImageUrl', label: 'OG image URL' },
+  { key: 'twitterTitle', label: 'Twitter title' },
+  { key: 'twitterDescription', label: 'Twitter description', long: true },
   { key: 'seoNotes', label: 'Notatki wewnętrzne', long: true },
 ]
 
@@ -183,6 +185,14 @@ export function SeoClient({ globalSeo, pages, dbConnected }: Props) {
                   Aktywna
                 </label>
               </div>
+
+              <p className="text-sm leading-relaxed text-neutral-400">
+                Puste pole = wartość z kodu strony (a dalej: ustawienia globalne). Odznaczenie
+                „Aktywna” całkowicie pomija te ustawienia dla tej podstrony. W tekstach możesz
+                używać tokenów cenowych: <code>{'{{WEBSITE_NET}}'}</code>,{' '}
+                <code>{'{{ECOMMERCE_NET}}'}</code>, <code>{'{{WEBAPP_NET}}'}</code>,{' '}
+                <code>{'{{DISCOVERY_NET}}'}</code> — podstawią się aktualne kwoty z cennika.
+              </p>
 
               <Fieldset legend="Meta podstrony">
                 {PAGE_FIELDS.map(({ key, label, long }) => (

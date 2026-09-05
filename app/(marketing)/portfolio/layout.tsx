@@ -1,22 +1,14 @@
 import type { Metadata } from 'next'
-import { pageSocialMetadata } from '@/lib/seo'
+import { pageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Portfolio stron Next.js i sklepów — Syntance',
-  description:
-    'Wybrane realizacje Syntance: strony firmowe i sklepy internetowe w Next.js. Lumine Concept, RetroHouse i kolejne projekty z naciskiem na performance i konwersję.',
-  keywords: [
-    'portfolio stron next.js',
-    'realizacje sklepów internetowych',
-    'case studies next.js',
-    'portfolio agencji interaktywnej',
-    'strony internetowe portfolio',
-  ],
-  ...pageSocialMetadata({
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
     path: '/portfolio',
     title: 'Portfolio stron Next.js i sklepów — Syntance',
-    description: 'Realizacje Syntance: strony firmowe i sklepy headless z naciskiem na szybkość, SEO i konwersję.',
-  }),
+    description: 'Wybrane realizacje Syntance: strony firmowe i sklepy internetowe w Next.js. Lumine Concept, RetroHouse i kolejne projekty z naciskiem na performance i konwersję.',
+    ogDescription: 'Realizacje Syntance: strony firmowe i sklepy headless z naciskiem na szybkość, SEO i konwersję.',
+    keywords: [ 'portfolio stron next.js', 'realizacje sklepów internetowych', 'case studies next.js', 'portfolio agencji interaktywnej', 'strony internetowe portfolio', ],
+  })
 }
 
 export default function PortfolioLayout({

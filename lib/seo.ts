@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import type { Metadata } from 'next'
 import {
   getSeoSettings as getSeoSettingsFromDb,
@@ -7,13 +8,25 @@ import {
 import { defaultSeo } from '@/lib/data/seo-defaults'
 import { legalEntityLabel } from '@/lib/data/legal-entity'
 import type { PageSeo, SeoSettings } from '@/lib/data/seo-types'
+import { fetchPricingData } from '@/lib/pricing-data'
+import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
+import { strategiaWorkshopPriceNet } from '@/lib/pricing-calculator'
+import { interpolateText } from '@/lib/interpolate-pricing-faq'
 
 export type { PageSeo, SeoSettings }
 export { defaultSeo }
 
-export async function getSeoSettings(): Promise<SeoSettings> {
+/**
+ * `cache()` deduplikuje w obrebie jednego requestu: root layout, generateMetadata
+ * i pageMetadata pytaly o te same ustawienia trzy razy.
+ */
+export const getSeoSettings = cache(async function getSeoSettings(): Promise<SeoSettings> {
   return getSeoSettingsFromDb()
-}
+})
+
+const getPageSeoCached = cache(async function getPageSeoCached(slug: string): Promise<PageSeo | null> {
+  return getPageSeo(slug)
+})
 
 export { getPageSeo, mergeSeoSettings }
 
@@ -92,62 +105,173 @@ export async function generateSeoMetadata(pathname?: string): Promise<Metadata> 
   }
 }
 
-
 const SITE_URL = defaultSeo.canonicalUrl
 const OG_IMAGE_WIDTH = 1200
 const OG_IMAGE_HEIGHT = 630
+const TOKEN_RE = /\{\{[A-Z_]+\}\}/
 
-export type PageSocialInput = {
-  /** Sciezka bez domeny, np. '/cennik'. Strona glowna: '/'. */
+export type PageMetadataInput = {
+  /** Sciezka bez domeny, np. '/cennik'. Strona glowna: '/'. Zarazem klucz wiersza w CMS. */
   path: string
-  /** Tytul karty social — zwykle krotszy niz <title>. */
-  title: string
-  /** Opis karty social. */
-  description: string
-  /** Wlasny obrazek 1200x630; domyslnie wspolny obrazek marki. */
+  /** Tytul uzywany, gdy CMS nie ma wlasnego. Pelny — marka nie jest doklejana. */
+  title?: string
+  description?: string
+  ogTitle?: string
+  ogDescription?: string
   imageUrl?: string
   imageAlt?: string
+  keywords?: string | string[]
   type?: 'website' | 'article'
+  robots?: Metadata['robots']
+  languages?: Record<string, string>
+}
+
+/** Podstawia tokeny cenowe tylko wtedy, gdy ktorykolwiek tekst faktycznie ich uzywa. */
+async function interpolateAll(fields: Record<string, string | undefined>) {
+  const needsPricing = Object.values(fields).some((v) => typeof v === 'string' && TOKEN_RE.test(v))
+  if (!needsPricing) return fields
+
+  const pricing = await fetchPricingData()
+  const mins = getConfiguratorMinimumPricesNet(pricing)
+  const discoveryNet = strategiaWorkshopPriceNet(pricing)
+
+  const out: Record<string, string | undefined> = {}
+  for (const [key, value] of Object.entries(fields)) {
+    out[key] = typeof value === 'string' ? interpolateText(value, mins, discoveryNet) : value
+  }
+  return out
 }
 
 /**
- * Komplet metadanych social + canonical dla pojedynczej podstrony.
+ * Komplet metadanych podstrony, z CMS jako zrodlem prawdy.
  *
- * Next.js NIE scala zagniezdzonych obiektow metadata: `openGraph`, `twitter`
- * i `alternates` zdefiniowane w podstronie ZASTEPUJA blok z root layoutu w calosci.
- * Podstrona, ktora podala tylko `openGraph: { title, description, url }`, gubila
- * przez to `og:image` (brak podgladu przy udostepnianiu) i zostawala z `twitter:title`
- * strony glownej. Ten helper zwraca komplet z jednego zrodla, wiec nowe podstrony
- * nie moga juz powtorzyc tego bledu.
+ * Priorytet pole po polu: **CMS (Magazyn → SEO → Podstrony) → wartosc z kodu → globalne SEO**.
+ * Puste pole w panelu schodzi na wartosc z kodu (patrz `blankToUndefined`), a wylaczenie
+ * strony przelacznikiem `isActive` calkowicie pomija CMS dla tej trasy.
+ *
+ * Teksty z CMS moga uzywac tokenow cenowych ({{WEBSITE_NET}}, {{ECOMMERCE_NET}},
+ * {{WEBAPP_NET}}, {{DISCOVERY_NET}}) — te same, co FAQ — wiec redakcja w panelu
+ * nie zamraza cen. Dane cenowe pobieramy wylacznie gdy token wystapi.
+ *
+ * Tytul ustawiamy jako `absolute`, zeby globalny `title.template` nie doklejal marki
+ * do tytulu, ktory juz ja zawiera (zrodlo zdublowanego „| Syntance”).
  */
-export function pageSocialMetadata({
-  path,
-  title,
-  description,
-  imageUrl = defaultSeo.ogImageUrl ?? `${SITE_URL}/og/og-home-1200x630.png`,
-  imageAlt = defaultSeo.twitterImageAlt,
-  type = 'website',
-}: PageSocialInput): Pick<Metadata, 'openGraph' | 'twitter' | 'alternates'> {
-  const url = path === '/' ? SITE_URL : `${SITE_URL}${path}`
+export type ResolvedSeoFields = {
+  title: string
+  description: string
+  ogTitle: string
+  ogDescription: string
+  twitterTitle?: string
+  twitterDescription?: string
+  canonical: string
+  imageUrl: string
+  imageAlt: string
+  keywords?: string | string[]
+}
+
+/** Puste/bialoznakowe pole z CMS traktujemy jak brak wartosci, nie jak "wyczysc metadana". */
+function present(value: string | undefined | null): string | undefined {
+  if (typeof value !== 'string') return undefined
+  const trimmed = value.trim()
+  return trimmed.length > 0 ? trimmed : undefined
+}
+
+/**
+ * Czysta funkcja rozstrzygajaca priorytety — bez I/O, zeby dalo sie ja przetestowac.
+ * Kolejnosc: **CMS (wiersz podstrony) → wartosc z kodu → globalne SEO**.
+ */
+export function resolveSeoFields(
+  input: PageMetadataInput,
+  globalSeo: SeoSettings,
+  pageSeo: PageSeo | null,
+): ResolvedSeoFields {
+  const slug = input.path === '/' ? '/' : input.path.replace(/\/$/, '')
+
+  const title = present(pageSeo?.metaTitle) ?? input.title ?? globalSeo.metaTitle
+  const description =
+    present(pageSeo?.metaDescription) ?? input.description ?? globalSeo.metaDescription
+  const ogTitle = present(pageSeo?.ogTitle) ?? input.ogTitle ?? input.title ?? globalSeo.ogTitle
+  const ogDescription =
+    present(pageSeo?.ogDescription) ??
+    input.ogDescription ??
+    input.description ??
+    globalSeo.ogDescription
+
+  const pageKeywords = pageSeo?.keywords?.length ? pageSeo.keywords : undefined
 
   return {
-    alternates: { canonical: url },
+    title,
+    description,
+    ogTitle,
+    ogDescription,
+    // Swiadomie BEZ zejscia na globalne: globalne twitterTitle jest zawsze ustawione,
+    // wiec przykrywaloby ogTitle i kazda podstrona wracalaby do tytulu strony glownej.
+    twitterTitle: present(pageSeo?.twitterTitle),
+    twitterDescription: present(pageSeo?.twitterDescription),
+    canonical: present(pageSeo?.canonicalUrl) ?? (slug === '/' ? SITE_URL : `${SITE_URL}${slug}`),
+    imageUrl:
+      present(pageSeo?.ogImageUrl) ??
+      input.imageUrl ??
+      globalSeo.ogImageUrl ??
+      `${SITE_URL}/og/og-home-1200x630.png`,
+    imageAlt: input.imageAlt ?? globalSeo.twitterImageAlt,
+    keywords: pageKeywords ?? input.keywords,
+  }
+}
+
+/**
+ * Komplet metadanych podstrony, z CMS jako zrodlem prawdy.
+ *
+ * Priorytet pole po polu: **CMS (Magazyn → SEO → Podstrony) → wartosc z kodu → globalne SEO**.
+ * Puste pole w panelu schodzi na wartosc z kodu, a wylaczenie strony przelacznikiem
+ * `isActive` calkowicie pomija CMS dla tej trasy.
+ *
+ * Teksty z CMS moga uzywac tokenow cenowych ({{WEBSITE_NET}}, {{ECOMMERCE_NET}},
+ * {{WEBAPP_NET}}, {{DISCOVERY_NET}}) — tych samych co FAQ — wiec redakcja w panelu
+ * nie zamraza cen. Dane cenowe pobieramy wylacznie gdy token faktycznie wystapi.
+ *
+ * Tytul ustawiamy jako `absolute`, zeby globalny `title.template` nie doklejal marki
+ * do tytulu, ktory juz ja zawiera (zrodlo zdublowanego „| Syntance”).
+ */
+export async function pageMetadata(input: PageMetadataInput): Promise<Metadata> {
+  const slug = input.path === '/' ? '/' : input.path.replace(/\/$/, '')
+  const [globalSeo, pageSeo] = await Promise.all([getSeoSettings(), getPageSeoCached(slug)])
+
+  const f = resolveSeoFields(input, globalSeo, pageSeo)
+  const t = await interpolateAll({
+    title: f.title,
+    description: f.description,
+    ogTitle: f.ogTitle,
+    ogDescription: f.ogDescription,
+    twitterTitle: f.twitterTitle,
+    twitterDescription: f.twitterDescription,
+  })
+
+  return {
+    title: { absolute: t.title! },
+    description: t.description,
+    ...(f.keywords && f.keywords.length ? { keywords: f.keywords } : {}),
+    ...(input.robots ? { robots: input.robots } : {}),
+    alternates: {
+      canonical: f.canonical,
+      ...(input.languages ? { languages: input.languages } : {}),
+    },
     openGraph: {
-      title,
-      description,
-      url,
-      siteName: defaultSeo.organizationName,
+      title: t.ogTitle,
+      description: t.ogDescription,
+      url: f.canonical,
+      siteName: globalSeo.organizationName,
       locale: 'pl_PL',
-      type,
+      type: input.type ?? 'website',
       images: [
-        { url: imageUrl, width: OG_IMAGE_WIDTH, height: OG_IMAGE_HEIGHT, alt: imageAlt },
+        { url: f.imageUrl, width: OG_IMAGE_WIDTH, height: OG_IMAGE_HEIGHT, alt: f.imageAlt },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title,
-      description,
-      images: [{ url: imageUrl, alt: imageAlt }],
+      title: t.twitterTitle ?? t.ogTitle,
+      description: t.twitterDescription ?? t.ogDescription,
+      images: [{ url: f.imageUrl, alt: f.imageAlt }],
     },
   }
 }
