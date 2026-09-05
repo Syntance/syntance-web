@@ -1,4 +1,3 @@
-import { defaultSeo } from '@/lib/data/seo-defaults'
 import type { PageSeo } from '@/lib/data/seo-types'
 
 export type SeoPageCatalogEntry = Omit<PageSeo, 'id' | 'lastUpdated'> & {
@@ -14,30 +13,56 @@ export const SEO_PAGE_CATALOG: SeoPageCatalogEntry[] = [
     pageName: 'Strona główna',
     slug: '/',
     isActive: true,
-    metaTitle: defaultSeo.metaTitle,
-    metaDescription: defaultSeo.metaDescription,
-    canonicalUrl: SITE,
+    metaTitle: 'Syntance — Strony i sklepy Next.js | PageSpeed 90+ | Polska',
+    metaDescription:
+      'Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia przed kodem. Strony od 5k PLN, sklepy od 20k PLN. Realizacja w 2-4 tygodnie.',
+    canonicalUrl: `${SITE}`,
     focusKeyword: 'strony Next.js',
-    keywords: defaultSeo.keywords,
-    ogTitle: defaultSeo.ogTitle,
-    ogDescription: defaultSeo.ogDescription,
-    ogImageUrl: defaultSeo.ogImageUrl,
-    twitterTitle: defaultSeo.twitterTitle,
-    twitterDescription: defaultSeo.twitterDescription,
+    keywords: [
+      'strony Next.js',
+      'tworzenie stron',
+      'strony internetowe Next.js',
+      'sklepy internetowe Next.js',
+      'headless ecommerce',
+      'MedusaJS sklep',
+      'sklep next.js',
+      'strona next.js',
+    ],
+    ogTitle: 'Syntance — Strony i sklepy Next.js | PageSpeed 90+',
+    ogDescription:
+      'Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia przed kodem. Strony od 10k PLN. Realizacja w 2-8 tygodni.',
+    ogImageUrl: `${SITE}/og/og-home-1200x630.png`,
+    twitterTitle: 'Syntance — Strony i sklepy Next.js | PageSpeed 90+',
+    twitterDescription:
+      'Szybkie strony i sklepy internetowe z gwarancją PageSpeed 90+. Strategia przed kodem. Strony od 10k PLN. Realizacja w 2-8 tygodni.',
   },
   {
     order: 2,
     pageName: 'Cennik',
     slug: '/cennik',
     isActive: true,
-    metaTitle: 'Ile kosztuje strona internetowa? Cennik 2026 | Syntance',
+    metaTitle: 'Cennik stron i sklepów Next.js | Od 5000 PLN | Syntance',
     metaDescription:
-      'Strona firmowa od {{WEBSITE_NET}} PLN netto, sklep e-commerce od {{ECOMMERCE_NET}} PLN netto. Sprawdź cenę w konfiguratorze — wycena w kilka minut, bez zobowiązań.',
+      'Transparentny cennik: Strony WWW od 5000 PLN, sklepy e-commerce od 20000 PLN. Warsztat Discovery 4500 PLN. Pełna własność kodu. Sprawdź kalkulator ceny!',
     canonicalUrl: `${SITE}/cennik`,
     focusKeyword: 'cennik stron Next.js',
-    keywords: ['cennik stron internetowych', 'ile kosztuje strona Next.js', 'wycena strony www'],
+    keywords: [
+      'cennik stron Next.js',
+      'ile kosztuje strona Next.js',
+      'cennik sklepu e-commerce',
+      'ile kosztuje sklep internetowy',
+      'ile kosztuje zrobienie strony internetowej',
+      'wycena strony internetowej',
+      'koszt strony internetowej',
+      'cena strony internetowej',
+      'cennik stron internetowych',
+    ],
     ogTitle: 'Ile kosztuje strona internetowa? | Syntance',
     ogDescription:
+      'Cena strony internetowej zależy od funkcjonalności. Sprawdź ile kosztuje zrobienie strony internetowej lub sklepu e-commerce.',
+    ogImageUrl: `${SITE}/og/og-home-1200x630.png`,
+    twitterTitle: 'Ile kosztuje strona internetowa? | Syntance',
+    twitterDescription:
       'Cena strony internetowej zależy od funkcjonalności. Sprawdź ile kosztuje zrobienie strony internetowej lub sklepu e-commerce.',
   },
   {
@@ -47,7 +72,7 @@ export const SEO_PAGE_CATALOG: SeoPageCatalogEntry[] = [
     isActive: true,
     metaTitle: 'Strony internetowe dla firm | Profesjonalne strony www Next.js | Syntance',
     metaDescription:
-      'Tworzymy profesjonalne strony internetowe dla firm B2B. Next.js, PageSpeed 90+, strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od {{WEBSITE_NET}} PLN netto.',
+      'Tworzymy profesjonalne strony internetowe dla firm B2B. Next.js, PageSpeed 90+, strategia marketingu i sprzedaży (faza przedwdrożeniowa).',
     canonicalUrl: `${SITE}/strony-www`,
     focusKeyword: 'strony internetowe dla firm',
     keywords: [
@@ -61,27 +86,35 @@ export const SEO_PAGE_CATALOG: SeoPageCatalogEntry[] = [
     ogTitle: 'Strony internetowe dla firm | Syntance',
     ogDescription:
       'Profesjonalne strony www w Next.js z PageSpeed 90+ i strategią marketingu i sprzedaży w standardzie.',
+    ogImageUrl: `${SITE}/og/og-home-1200x630.png`,
+    twitterTitle: 'Strony internetowe dla firm | Syntance',
+    twitterDescription:
+      'Profesjonalne strony www w Next.js z PageSpeed 90+ i strategią marketingu i sprzedaży w standardzie.',
   },
   {
     order: 4,
     pageName: 'Sklepy internetowe',
     slug: '/sklepy-internetowe',
     isActive: true,
-    metaTitle: 'Sklepy internetowe headless | Medusa & Next.js | Syntance',
+    metaTitle: 'Sklepy internetowe dla firm | Headless e-commerce MedusaJS &amp; Next.js',
     metaDescription:
-      'Budujemy sklepy internetowe w architekturze headless. Medusa, Next.js, zero prowizji. Sklepy od {{ECOMMERCE_NET}} PLN netto.',
+      'Budujemy sklepy internetowe w architekturze headless. MedusaJS, Next.js, zero prowizji. Sklepy od 12 000 PLN.',
     canonicalUrl: `${SITE}/sklepy-internetowe`,
     focusKeyword: 'sklep internetowy headless',
     keywords: [
-      'ile kosztuje sklep internetowy',
-      'sklep internetowy dla firmy',
-      'headless ecommerce',
+      'sklep internetowy headless',
       'sklep next.js',
-      'medusajs sklep',
-      'alternatywa dla Shopify',
+      'medusa.js sklep',
+      'headless ecommerce',
+      'własny sklep internetowy',
     ],
-    ogTitle: 'Sklepy internetowe headless | Syntance',
-    ogDescription: 'Sklepy e-commerce na Medusa i Next.js — szybkie, skalowalne, bez prowizji platformy.',
+    ogTitle: 'Sklepy internetowe headless | Medusa &amp; Next.js | Syntance',
+    ogDescription:
+      'Budujemy sklepy e-commerce w architekturze headless. Zero prowizji, pełna kontrola. Sklepy od 20 000 PLN netto.',
+    ogImageUrl: `${SITE}/og/og-home-1200x630.png`,
+    twitterTitle: 'Sklepy internetowe headless | Medusa &amp; Next.js | Syntance',
+    twitterDescription:
+      'Budujemy sklepy e-commerce w architekturze headless. Zero prowizji, pełna kontrola. Sklepy od 20 000 PLN netto.',
   },
   {
     order: 5,
@@ -103,15 +136,19 @@ export const SEO_PAGE_CATALOG: SeoPageCatalogEntry[] = [
     ogTitle: 'Strategia marketingu i sprzedaży | Syntance',
     ogDescription:
       'Faza przedwdrożeniowa: segmentacja, pozycjonowanie, lejek i plan SEO przed kodem.',
+    ogImageUrl: `${SITE}/og/og-home-1200x630.png`,
+    twitterTitle: 'Strategia marketingu i sprzedaży | Syntance',
+    twitterDescription:
+      'Faza przedwdrożeniowa: segmentacja, pozycjonowanie, lejek i plan SEO przed kodem.',
   },
   {
     order: 6,
     pageName: 'Panel',
     slug: '/panel',
     isActive: true,
-    metaTitle: 'Panel sklepu Syntance — sklep, CMS, SEO i analityka w jednym miejscu',
+    metaTitle: 'Panel do zarządzania sklepem i stroną — Syntance CMS + Shop | Syntance',
     metaDescription:
-      'Zarządzaj stroną, produktami, zamówieniami, treściami i analityką GA4 + PostHog z jednego panelu. PageSpeed 90+, pełna własność kodu, RODO w standardzie.',
+      'Zarządzaj stroną, produktami, zamówieniami i treściami z jednego panelu. Podgląd statystyk GA4 i PostHog, 0 zł miesięcznie, pełna własność kodu.',
     canonicalUrl: `${SITE}/panel`,
     focusKeyword: 'panel do zarządzania sklepem internetowym',
     keywords: [
@@ -122,7 +159,11 @@ export const SEO_PAGE_CATALOG: SeoPageCatalogEntry[] = [
     ],
     ogTitle: 'Panel sklepu Syntance — jeden panel zamiast pięciu narzędzi',
     ogDescription:
-      'Autorski panel Syntance: strona, sklep, CMS, SEO i analityka GA4 + PostHog w jednym miejscu.',
+      'Autorski panel Syntance: sklep, treści strony, SEO i statystyki w jednym miejscu. Zero abonamentów.',
+    ogImageUrl: `${SITE}/og/og-home-1200x630.png`,
+    twitterTitle: 'Panel sklepu Syntance — jeden panel zamiast pięciu narzędzi',
+    twitterDescription:
+      'Autorski panel Syntance: sklep, treści strony, SEO i statystyki w jednym miejscu. Zero abonamentów.',
   },
   {
     order: 7,
@@ -142,6 +183,10 @@ export const SEO_PAGE_CATALOG: SeoPageCatalogEntry[] = [
     ],
     ogTitle: 'Realizacje panelu sklepu — Syntance',
     ogDescription:
+      'Zobacz, jak panel Syntance wygląda u prawdziwych klientów — zrzuty z produkcyjnych wdrożeń.',
+    ogImageUrl: `${SITE}/og/og-home-1200x630.png`,
+    twitterTitle: 'Realizacje panelu sklepu — Syntance',
+    twitterDescription:
       'Zobacz, jak panel Syntance wygląda u prawdziwych klientów — zrzuty z produkcyjnych wdrożeń.',
   },
   {
@@ -163,27 +208,34 @@ export const SEO_PAGE_CATALOG: SeoPageCatalogEntry[] = [
     ogTitle: 'Portfolio stron Next.js i sklepów — Syntance',
     ogDescription:
       'Realizacje Syntance: strony firmowe i sklepy headless z naciskiem na szybkość, SEO i konwersję.',
+    ogImageUrl: `${SITE}/og/og-home-1200x630.png`,
+    twitterTitle: 'Portfolio stron Next.js i sklepów — Syntance',
+    twitterDescription:
+      'Realizacje Syntance: strony firmowe i sklepy headless z naciskiem na szybkość, SEO i konwersję.',
   },
   {
     order: 10,
     pageName: 'Dlaczego Next.js',
     slug: '/nextjs',
     isActive: true,
-    metaTitle: 'Dlaczego Next.js? Framework, który zmienia zasady gry | Syntance',
+    metaTitle: 'Dlaczego Next.js? Technologia stron Syntance',
     metaDescription:
-      'Next.js to nie tylko szybkość. To bezpieczeństwo, skalowalność i realna przewaga nad konkurencją. Sprawdź, dlaczego WordPress to przeszłość.',
+      'laczego wybieramy Next.js? PageSpeed 90+, SEO-first, bezpieczeństwo, skalowalność. Poznaj technologię za naszymi stronami i sklepami.',
     canonicalUrl: `${SITE}/nextjs`,
     focusKeyword: 'Next.js',
     keywords: [
-      'Next.js',
-      'WordPress vs Next.js',
-      'szybka strona internetowa',
-      'bezpieczna strona',
-      'PageSpeed',
+      'Next.js vs WordPress',
+      'strony Next.js',
       'React framework',
+      'headless CMS',
+      'SSR SSG Next.js',
     ],
     ogTitle: 'Dlaczego Next.js? | Syntance',
     ogDescription:
+      'Framework używany przez Netflix, TikTok i Nike. Poznaj technologię, która daje realną przewagę biznesową.',
+    ogImageUrl: `${SITE}/og/og-home-1200x630.png`,
+    twitterTitle: 'Dlaczego Next.js? | Syntance',
+    twitterDescription:
       'Framework używany przez Netflix, TikTok i Nike. Poznaj technologię, która daje realną przewagę biznesową.',
   },
   {
@@ -191,13 +243,22 @@ export const SEO_PAGE_CATALOG: SeoPageCatalogEntry[] = [
     pageName: 'O nas',
     slug: '/o-nas',
     isActive: true,
-    metaTitle: 'O nas — Syntance | Agencja interaktywna i software house Next.js',
+    metaTitle: 'O nas — Syntance Studio | Next.js, PageSpeed 90+',
     metaDescription:
-      'Syntance to agencja interaktywna i software house z Polski. Specjalizujemy się w tworzeniu stron internetowych i sklepów e-commerce w Next.js.',
+      'Studio oferujące strony i sklepy Next.js. Specjalizujemy się w headless CMS, MedusaJS i nowoczesnym e-commerce. Strategia przed kodem. Małopolska, Polska.',
     canonicalUrl: `${SITE}/o-nas`,
     focusKeyword: 'studio Next.js Polska',
+    keywords: [
+      'studio Next.js Polska',
+      'agencja Next.js',
+      'tworzenie stron Małopolska',
+    ],
     ogTitle: 'O nas | Syntance — Agencja interaktywna',
     ogDescription:
+      'Syntance to agencja interaktywna i software house z Polski. Specjalizujemy się w tworzeniu stron internetowych i sklepów e-commerce w Next.js.',
+    ogImageUrl: `${SITE}/og/og-home-1200x630.png`,
+    twitterTitle: 'O nas | Syntance — Agencja interaktywna',
+    twitterDescription:
       'Syntance to agencja interaktywna i software house z Polski. Specjalizujemy się w tworzeniu stron internetowych i sklepów e-commerce w Next.js.',
   },
   {
@@ -207,11 +268,20 @@ export const SEO_PAGE_CATALOG: SeoPageCatalogEntry[] = [
     isActive: true,
     metaTitle: 'Kontakt — Syntance | Strony i sklepy Next.js',
     metaDescription:
-      'Skontaktuj się z software house Next.js — Syntance. Email: kontakt@syntance.com, tel +48 537 110 170. Bezpłatna konsultacja o projekcie.',
+      'Skontaktuj się z Syntance. Email: kontakt@syntance.com, tel: +48 662 519 544. Bezpłatna rozmowa o Twoim projekcie.',
     canonicalUrl: `${SITE}/kontakt`,
     focusKeyword: 'kontakt Syntance',
+    keywords: [
+      'kontakt Syntance',
+      'wycena strony internetowej',
+      'kontakt agencja webowa',
+    ],
     ogTitle: 'Kontakt | Syntance',
     ogDescription:
+      'Skontaktuj się z software house Next.js — Syntance. Email: kontakt@syntance.com, tel +48 537 110 170.',
+    ogImageUrl: `${SITE}/og/og-home-1200x630.png`,
+    twitterTitle: 'Kontakt | Syntance',
+    twitterDescription:
       'Skontaktuj się z software house Next.js — Syntance. Email: kontakt@syntance.com, tel +48 537 110 170.',
   },
   {
@@ -224,8 +294,30 @@ export const SEO_PAGE_CATALOG: SeoPageCatalogEntry[] = [
       'Strony i sklepy oparte o strategię, lejek i KPI — nie o szablon. Skontaktuj się z Syntance i opisz swój projekt.',
     canonicalUrl: `${SITE}/porozmawiajmy`,
     focusKeyword: 'kontakt projekt strony',
+    keywords: [
+      'strony Next.js',
+      'sklepy Next.js',
+      'strony internetowe Next.js',
+      'sklep e-commerce Next.js',
+      'MedusaJS sklep',
+      'Headless CMS',
+      'Sanity CMS',
+      'PageSpeed 90+',
+      'strony dla firm',
+      'Next.js Polska',
+      'tworzenie stron Next.js',
+      'szybkie strony internetowe',
+      'sklep next.js',
+      'strona next.js',
+      'sklep internetowy',
+    ],
     ogTitle: 'Porozmawiajmy o projekcie — Syntance',
-    ogDescription: 'Strony i sklepy oparte o strategię, lejek i KPI. Napisz do nas — odpowiadamy w 24h.',
+    ogDescription:
+      'Strony i sklepy oparte o strategię, lejek i KPI. Napisz do nas — odpowiadamy w 24h.',
+    ogImageUrl: `${SITE}/og/og-home-1200x630.png`,
+    twitterTitle: 'Porozmawiajmy o projekcie — Syntance',
+    twitterDescription:
+      'Strony i sklepy oparte o strategię, lejek i KPI. Napisz do nas — odpowiadamy w 24h.',
     seoNotes: 'Strona z robots: noindex — edytuj meta, ale indeksowanie kontroluje layout.',
   },
   {
@@ -245,37 +337,58 @@ export const SEO_PAGE_CATALOG: SeoPageCatalogEntry[] = [
       'wdrożenie projektu z Figmy',
       'outsourcing web development Polska',
     ],
-    ogTitle: 'Współpraca partnerska dla agencji — strony Next.js | Syntance',
+    ogTitle: 'Współpraca partnerska dla agencji — strony Next.js',
     ogDescription:
-      'Strony i sklepy Next.js dla agencji i studiów. Cena jako procent od cennika detalicznego, termin z karą umowną, kod w Twoim repozytorium.',
+      'Realizujemy strony i sklepy Next.js dla agencji, studiów i freelancerów. Cena to procent od cennika detalicznego, termin objęty karą umowną, kod w Twoim repozytorium. Tryb jawny albo white-label.',
+    ogImageUrl: `${SITE}/og/og-home-1200x630.png`,
+    twitterTitle: 'Współpraca partnerska dla agencji — strony Next.js',
+    twitterDescription:
+      'Realizujemy strony i sklepy Next.js dla agencji, studiów i freelancerów. Cena to procent od cennika detalicznego, termin objęty karą umowną, kod w Twoim repozytorium. Tryb jawny albo white-label.',
   },
   {
     order: 15,
     pageName: 'Polityka prywatności',
     slug: '/polityka-prywatnosci',
     isActive: true,
-    metaTitle: 'Polityka Prywatności | Syntance - Ochrona Danych Osobowych',
+    metaTitle: 'Polityka prywatności | Syntance',
     metaDescription:
-      'Polityka prywatności Syntance. Dowiedz się, jak przetwarzamy i chronimy Twoje dane osobowe zgodnie z RODO.',
+      'Polityka prywatności Syntance. Dowiedz się jak przetwarzamy Twoje dane osobowe.',
     canonicalUrl: `${SITE}/polityka-prywatnosci`,
     focusKeyword: 'polityka prywatności',
-    keywords: ['polityka prywatności', 'RODO', 'ochrona danych osobowych', 'prywatność'],
+    keywords: [
+      'polityka prywatności',
+      'RODO',
+      'ochrona danych',
+    ],
     ogTitle: 'Polityka Prywatności | Syntance',
-    ogDescription: 'Transparentna ochrona prywatności użytkowników zgodnie z RODO.',
+    ogDescription:
+      'Polityka prywatności i ochrony danych osobowych zgodna z RODO',
+    ogImageUrl: `${SITE}/og/og-home-1200x630.png`,
+    twitterTitle: 'Polityka Prywatności | Syntance',
+    twitterDescription:
+      'Polityka prywatności i ochrony danych osobowych zgodna z RODO',
   },
   {
     order: 16,
     pageName: 'Regulamin',
     slug: '/regulamin',
     isActive: true,
-    metaTitle: 'Regulamin Świadczenia Usług Drogą Elektroniczną | Syntance',
+    metaTitle: 'Regulamin świadczenia usług | Syntance',
     metaDescription:
-      'Regulamin świadczenia usług drogą elektroniczną przez Syntance. Zasady korzystania z serwisu, warunki umów, prawa i obowiązki użytkowników.',
+      'Regulamin świadczenia usług przez Syntance. Warunki współpracy, realizacji projektów i reklamacji.',
     canonicalUrl: `${SITE}/regulamin`,
     focusKeyword: 'regulamin',
-    keywords: ['regulamin', 'warunki korzystania', 'usługi elektroniczne', 'Syntance'],
+    keywords: [
+      'regulamin',
+      'warunki współpracy',
+    ],
     ogTitle: 'Regulamin Świadczenia Usług Drogą Elektroniczną | Syntance',
-    ogDescription: 'Regulamin korzystania z usług elektronicznych Syntance.',
+    ogDescription:
+      'Regulamin korzystania z usług elektronicznych Syntance',
+    ogImageUrl: `${SITE}/og/og-home-1200x630.png`,
+    twitterTitle: 'Regulamin Świadczenia Usług Drogą Elektroniczną | Syntance',
+    twitterDescription:
+      'Regulamin korzystania z usług elektronicznych Syntance',
   },
   {
     order: 17,
@@ -287,8 +400,30 @@ export const SEO_PAGE_CATALOG: SeoPageCatalogEntry[] = [
       'Deklaracja dostępności serwisu syntance.com. Status zgodności z WCAG 2.2, sposób zgłaszania problemów i procedura skarg.',
     canonicalUrl: `${SITE}/deklaracja-dostepnosci`,
     focusKeyword: 'deklaracja dostępności',
+    keywords: [
+      'strony Next.js',
+      'sklepy Next.js',
+      'strony internetowe Next.js',
+      'sklep e-commerce Next.js',
+      'MedusaJS sklep',
+      'Headless CMS',
+      'Sanity CMS',
+      'PageSpeed 90+',
+      'strony dla firm',
+      'Next.js Polska',
+      'tworzenie stron Next.js',
+      'szybkie strony internetowe',
+      'sklep next.js',
+      'strona next.js',
+      'sklep internetowy',
+    ],
     ogTitle: 'Deklaracja dostępności | Syntance',
-    ogDescription: 'Informacje o dostępności cyfrowej serwisu syntance.com.',
+    ogDescription:
+      'Informacje o dostępności cyfrowej serwisu syntance.com.',
+    ogImageUrl: `${SITE}/og/og-home-1200x630.png`,
+    twitterTitle: 'Deklaracja dostępności | Syntance',
+    twitterDescription:
+      'Informacje o dostępności cyfrowej serwisu syntance.com.',
   },
 ]
 

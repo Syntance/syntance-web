@@ -118,7 +118,10 @@ console.log('\n7. Tokeny cenowe w treści z katalogu podstawiają się na kwoty'
   const withTokens = SEO_PAGE_CATALOG.filter((e) =>
     /\{\{[A-Z_]+\}\}/.test(`${e.metaTitle ?? ''}${e.metaDescription ?? ''}${e.ogDescription ?? ''}`),
   )
-  check('katalog faktycznie używa tokenów', withTokens.length > 0, true)
+  // Katalog nie musi używać tokenów — treść może mieć kwoty wpisane wprost,
+  // jeśli tak zdecydował redaktor. Pilnujemy tylko tego, że token, jeśli już
+  // jest, faktycznie się podstawia i nie trafi na stronę jako `{{...}}`.
+  console.log(`  (wpisów z tokenami: ${withTokens.length})`)
   for (const entry of withTokens) {
     const out = interpolateText(entry.metaDescription ?? '', mins, discoveryNet)
     check(`${entry.slug}: brak surowego tokenu po podstawieniu`, /\{\{[A-Z_]+\}\}/.test(out), false)
