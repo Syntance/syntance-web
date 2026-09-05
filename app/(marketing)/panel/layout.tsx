@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { pageSocialMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = {
   title: 'Panel sklepu Syntance — sklep, CMS, SEO i analityka w jednym miejscu',
@@ -10,15 +11,11 @@ export const metadata: Metadata = {
     'sklep internetowy z analityką GA4 PostHog',
     'headless e-commerce panel Next.js',
   ],
-  openGraph: {
+  ...pageSocialMetadata({
+    path: '/panel',
     title: 'Panel sklepu Syntance — jeden panel zamiast pięciu narzędzi',
-    description:
-      'Autorski panel Syntance: strona, sklep, CMS, SEO i analityka GA4 + PostHog w jednym miejscu.',
-    url: 'https://syntance.com/panel',
-  },
-  alternates: {
-    canonical: 'https://syntance.com/panel',
-  },
+    description: 'Autorski panel Syntance: strona, sklep, CMS, SEO i analityka GA4 + PostHog w jednym miejscu.',
+  }),
 }
 
 export default function PanelLayout({ children }: { children: React.ReactNode }) {

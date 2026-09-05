@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { pageSocialMetadata } from '@/lib/seo'
 import { getDiscoveryWorkshopPrice } from '@/lib/pricing-discovery'
 
 function formatPrice(price: number): string {
@@ -11,7 +12,6 @@ const SHORT =
 export async function generateMetadata(): Promise<Metadata> {
   const workshopPrice = await getDiscoveryWorkshopPrice()
   const priceFormatted = formatPrice(workshopPrice)
-  const canonical = 'https://syntance.com/strategia-marketingu-i-sprzedazy'
 
   return {
     title: 'Strategia marketingu i sprzedaży (faza przedwdrożeniowa) | Syntance',
@@ -24,19 +24,11 @@ export async function generateMetadata(): Promise<Metadata> {
       'UVP',
       'strona B2B',
     ],
-    openGraph: {
+    ...pageSocialMetadata({
+      path: '/strategia-marketingu-i-sprzedazy',
       title: 'Strategia marketingu i sprzedaży | Syntance',
       description: SHORT,
-      url: canonical,
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: 'Strategia marketingu i sprzedaży | Syntance',
-      description: SHORT,
-    },
-    alternates: {
-      canonical,
-    },
+    }),
   }
 }
 

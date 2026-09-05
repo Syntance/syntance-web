@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { pageSocialMetadata } from '@/lib/seo'
 import NavbarSimple from '@/components/navbar-simple'
 import Footer from '@/components/sections/footer'
 import Container from '@/components/container'
@@ -17,14 +18,11 @@ export const metadata: Metadata = {
   title: 'Deklaracja dostępności | Syntance',
   description:
     'Deklaracja dostępności serwisu syntance.com. Status zgodności z WCAG 2.2, sposób zgłaszania problemów i procedura skarg.',
-  alternates: {
-    canonical: 'https://syntance.com/deklaracja-dostepnosci',
-  },
-  openGraph: {
+  ...pageSocialMetadata({
+    path: '/deklaracja-dostepnosci',
     title: 'Deklaracja dostępności | Syntance',
     description: 'Informacje o dostępności cyfrowej serwisu syntance.com',
-    type: 'website',
-  },
+  }),
 }
 
 export default function AccessibilityStatementPage() {

@@ -101,7 +101,7 @@ export const defaultFaqItems: PricingFaqItem[] = [
     category: 'pricing',
     question: 'Dlaczego ceny zaczynają się od {{WEBSITE_NET}} PLN, a nie 500 zł?',
     answer:
-      'Jako software house budujemy w Next.js — tej samej technologii, z której korzystają m.in. Nike, Netflix i Notion. To nie jest szablon WordPressa. Dostajesz kod pisany pod Twój projekt, bardzo krótki czas ładowania (Core Web Vitals ok. 95+) i witrynę, która przetrwa lata bez „aktualizacji wtyczek”.',
+      'Jako software house budujemy w Next.js — tej samej technologii, z której korzystają m.in. Nike, Netflix i Notion. To nie jest szablon WordPressa. Dostajesz kod pisany pod Twój projekt, bardzo krótki czas ładowania (Core Web Vitals, PageSpeed 90+) i witrynę, która przetrwa lata bez „aktualizacji wtyczek”.',
     order: 3,
   },
   {

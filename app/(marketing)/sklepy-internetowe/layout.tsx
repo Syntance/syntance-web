@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { pageSocialMetadata } from '@/lib/seo'
 import { fetchPricingData } from '@/lib/pricing-data'
 import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
 
@@ -28,14 +29,11 @@ export async function generateMetadata(): Promise<Metadata> {
       'tworzenie sklepów internetowych Polska',
       'agencja e-commerce Małopolska',
     ],
-    openGraph: {
+    ...pageSocialMetadata({
+      path: '/sklepy-internetowe',
       title: 'Sklepy internetowe headless | Medusa & Next.js | Syntance',
       description: `Budujemy sklepy e-commerce w architekturze headless. Zero prowizji, pełna kontrola. Sklepy od ${priceStr} PLN netto.`,
-      url: 'https://syntance.com/sklepy-internetowe',
-    },
-    alternates: {
-      canonical: 'https://syntance.com/sklepy-internetowe',
-    },
+    }),
   }
 }
 

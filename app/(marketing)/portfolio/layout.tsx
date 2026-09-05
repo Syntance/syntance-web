@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { pageSocialMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = {
   title: 'Portfolio stron Next.js i sklepów — Syntance',
@@ -11,17 +12,11 @@ export const metadata: Metadata = {
     'portfolio agencji interaktywnej',
     'strony internetowe portfolio',
   ],
-  openGraph: {
+  ...pageSocialMetadata({
+    path: '/portfolio',
     title: 'Portfolio stron Next.js i sklepów — Syntance',
-    description:
-      'Realizacje Syntance: strony firmowe i sklepy headless z naciskiem na szybkość, SEO i konwersję.',
-    url: 'https://syntance.com/portfolio',
-    siteName: 'Syntance',
-    locale: 'pl_PL',
-  },
-  alternates: {
-    canonical: 'https://syntance.com/portfolio',
-  },
+    description: 'Realizacje Syntance: strony firmowe i sklepy headless z naciskiem na szybkość, SEO i konwersję.',
+  }),
 }
 
 export default function PortfolioLayout({

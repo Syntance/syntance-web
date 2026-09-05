@@ -1,21 +1,17 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import { pageSocialMetadata } from '@/lib/seo'
 
-const SITE_URL = 'https://syntance.com'
 
 export const metadata: Metadata = {
   title: 'Realizacje i case studies — Syntance',
   description:
     'Wybrane projekty Syntance: strony Next.js i sklepy Next.js z naciskiem na strategię, performance i konwersję.',
-  alternates: { canonical: `${SITE_URL}/realizacje` },
-  openGraph: {
-    url: `${SITE_URL}/realizacje`,
+  ...pageSocialMetadata({
+    path: '/realizacje',
     title: 'Realizacje i case studies — Syntance',
-    description:
-      'Case studies z polami skutecznymi stronami i sklepami dla firm.',
-    siteName: 'Syntance',
-    locale: 'pl_PL',
-  },
+    description: 'Case studies z polami skutecznymi stronami i sklepami dla firm.',
+  }),
 }
 
 /** Krótka witryna pod canonical URL `/realizacje` — Notion jako punkt wyjścia z /porozmawiajmy. */

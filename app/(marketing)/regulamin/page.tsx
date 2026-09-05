@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageSocialMetadata } from "@/lib/seo";
 import Link from "next/link";
 import NavbarSimple from "@/components/navbar-simple";
 import Footer from "@/components/sections/footer";
@@ -19,14 +20,11 @@ export const metadata: Metadata = {
   description:
     "Regulamin świadczenia usług drogą elektroniczną przez Syntance. Zasady korzystania z serwisu, warunki umów, prawa i obowiązki użytkowników.",
   keywords: ["regulamin", "warunki korzystania", "usługi elektroniczne", "Syntance", "terms of service"],
-  openGraph: {
+  ...pageSocialMetadata({
+    path: "/regulamin",
     title: "Regulamin Świadczenia Usług Drogą Elektroniczną | Syntance",
     description: "Regulamin korzystania z usług elektronicznych Syntance",
-    type: "website",
-  },
-  alternates: {
-    canonical: "https://syntance.com/regulamin",
-  },
+  }),
 };
 
 export default function TermsOfServicePage() {

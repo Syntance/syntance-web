@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import Link from 'next/link'
+import { pageSocialMetadata } from '@/lib/seo'
 import { PricingConfigurator } from '@/components/PricingConfigurator'
 import PricingFAQ from '@/components/sections/pricing-faq'
 import { fetchPricingData } from '@/lib/pricing-data'
@@ -24,12 +24,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'Ile kosztuje strona internetowa? Cennik 2026 | Syntance',
     description: `Strona firmowa od ${formatPrice(mins.websiteNet)} PLN netto (baza w konfiguratorze), sklep e-commerce od ${formatPrice(mins.ecommerceNet)} PLN netto. Sprawdź cenę w konfiguratorze — wycena w kilka minut, bez zobowiązań.`,
-    openGraph: {
+    ...pageSocialMetadata({
+      path: '/cennik',
       title: 'Ile kosztuje strona internetowa? | Syntance',
-      description:
-        'Cena strony internetowej zależy od funkcjonalności. Sprawdź ile kosztuje zrobienie strony internetowej lub sklepu e-commerce.',
-      url: 'https://syntance.com/cennik',
-    },
+      description: 'Cena strony internetowej zależy od funkcjonalności. Sprawdź ile kosztuje zrobienie strony internetowej lub sklepu e-commerce.',
+    }),
   }
 }
 

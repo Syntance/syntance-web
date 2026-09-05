@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { pageSocialMetadata } from '@/lib/seo'
 
 const canonical = 'https://syntance.com/dla-agencji'
 
@@ -17,12 +18,11 @@ export const metadata: Metadata = {
     'wdrożenie projektu z Figmy',
     'outsourcing web development Polska',
   ],
-  openGraph: {
+  ...pageSocialMetadata({
+    path: '/dla-agencji',
     title,
     description,
-    url: canonical,
-    locale: 'pl_PL',
-  },
+  }),
   alternates: {
     canonical,
     languages: {

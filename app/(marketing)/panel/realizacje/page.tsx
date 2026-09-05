@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { pageSocialMetadata } from '@/lib/seo'
 import PanelRealizationsClient from '@/components/sections/panel/panel-realizations-client'
 import { panelRealizations } from '@/lib/panel-realizations-content'
 
@@ -14,17 +15,11 @@ export const metadata: Metadata = {
     'autorski CMS sklep',
     'panel Syntance wdrożenia',
   ],
-  openGraph: {
+  ...pageSocialMetadata({
+    path: '/panel/realizacje',
     title: 'Realizacje panelu sklepu — Syntance',
-    description:
-      'Zobacz, jak panel Syntance wygląda u prawdziwych klientów — zrzuty z produkcyjnych wdrożeń.',
-    url: canonical,
-    siteName: 'Syntance',
-    locale: 'pl_PL',
-  },
-  alternates: {
-    canonical,
-  },
+    description: 'Zobacz, jak panel Syntance wygląda u prawdziwych klientów — zrzuty z produkcyjnych wdrożeń.',
+  }),
 }
 
 export default function PanelRealizationsPage() {

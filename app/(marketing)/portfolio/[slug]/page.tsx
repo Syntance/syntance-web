@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { pageSocialMetadata } from '@/lib/seo'
 import { notFound } from 'next/navigation'
 import CaseStudyClient from '@/app/(marketing)/portfolio/[slug]/case-study-client'
 import { fetchPortfolioCaseStudy, listPortfolioSlugs } from '@/lib/portfolio-data'
@@ -19,7 +20,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const project = await fetchPortfolioCaseStudy(slug)
   if (!project) return {}
 
-  const canonical = `https://syntance.com/portfolio/${slug}`
   const perf = project.performance?.after.mobile.metrics.performance
   const title = perf
     ? `${project.name} — case study · PageSpeed ${perf} mobile`
@@ -28,15 +28,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description: project.description,
-    alternates: { canonical },
-    openGraph: {
+    ...pageSocialMetadata({
+      path: `/portfolio/${slug}`,
       title,
       description: project.description,
-      url: canonical,
-      siteName: 'Syntance',
-      locale: 'pl_PL',
-      images: [{ url: project.previewImage, alt: project.previewImageAlt }],
-    },
+      imageUrl: project.previewImage,
+      imageAlt: project.previewImageAlt,
+      type: 'article',
+    }),
   }
 }
 

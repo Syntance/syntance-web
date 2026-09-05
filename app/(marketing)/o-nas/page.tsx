@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { pageSocialMetadata } from '@/lib/seo'
 import { Target, Zap, Code, Users, ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import { HeroTransition } from '@/components/page-transition'
@@ -13,11 +14,11 @@ export const metadata: Metadata = {
   title: 'O nas — Syntance | Agencja interaktywna i software house Next.js',
   description:
     'Syntance to agencja interaktywna i software house z Polski. Specjalizujemy się w tworzeniu stron internetowych i sklepów e-commerce w Next.js. Strategia marketingu i sprzedaży (faza przedwdrożeniowa).',
-  openGraph: {
+  ...pageSocialMetadata({
+    path: '/o-nas',
     title: 'O nas | Syntance — Agencja interaktywna',
     description: 'Syntance to agencja interaktywna i software house z Polski. Specjalizujemy się w tworzeniu stron internetowych i sklepów e-commerce w Next.js.',
-    url: 'https://syntance.com/o-nas',
-  },
+  }),
 }
 
 const values = [

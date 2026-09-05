@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageSocialMetadata } from "@/lib/seo";
 import NavbarSimple from "@/components/navbar-simple";
 import Footer from "@/components/sections/footer";
 import Container from "@/components/container";
@@ -26,14 +27,11 @@ export const metadata: Metadata = {
     "Syntance",
     "przetwarzanie danych",
   ],
-  openGraph: {
+  ...pageSocialMetadata({
+    path: "/polityka-prywatnosci",
     title: "Polityka Prywatności | Syntance",
     description: "Polityka prywatności i ochrony danych osobowych zgodna z RODO",
-    type: "website",
-  },
-  alternates: {
-    canonical: "https://syntance.com/polityka-prywatnosci",
-  },
+  }),
 };
 
 const processingPurposes = [

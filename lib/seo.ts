@@ -82,8 +82,72 @@ export async function generateSeoMetadata(pathname?: string): Promise<Metadata> 
       ],
     },
     alternates: {
-      canonical: seo.canonicalUrl,
+      // Ścieżka wzgledna: Next.js rozwija ja wzgledem metadataBase ORAZ biezacej trasy.
+      // Absolutny seo.canonicalUrl ustawial tu canonical strony glownej na KAZDEJ
+      // podstronie, ktora nie nadpisala `alternates` — czyli jawna deklaracje
+      // "to duplikat home" dla Google. Domena nadal pochodzi z panelu (metadataBase).
+      canonical: './',
     },
     category: 'technology',
+  }
+}
+
+
+const SITE_URL = defaultSeo.canonicalUrl
+const OG_IMAGE_WIDTH = 1200
+const OG_IMAGE_HEIGHT = 630
+
+export type PageSocialInput = {
+  /** Sciezka bez domeny, np. '/cennik'. Strona glowna: '/'. */
+  path: string
+  /** Tytul karty social — zwykle krotszy niz <title>. */
+  title: string
+  /** Opis karty social. */
+  description: string
+  /** Wlasny obrazek 1200x630; domyslnie wspolny obrazek marki. */
+  imageUrl?: string
+  imageAlt?: string
+  type?: 'website' | 'article'
+}
+
+/**
+ * Komplet metadanych social + canonical dla pojedynczej podstrony.
+ *
+ * Next.js NIE scala zagniezdzonych obiektow metadata: `openGraph`, `twitter`
+ * i `alternates` zdefiniowane w podstronie ZASTEPUJA blok z root layoutu w calosci.
+ * Podstrona, ktora podala tylko `openGraph: { title, description, url }`, gubila
+ * przez to `og:image` (brak podgladu przy udostepnianiu) i zostawala z `twitter:title`
+ * strony glownej. Ten helper zwraca komplet z jednego zrodla, wiec nowe podstrony
+ * nie moga juz powtorzyc tego bledu.
+ */
+export function pageSocialMetadata({
+  path,
+  title,
+  description,
+  imageUrl = defaultSeo.ogImageUrl ?? `${SITE_URL}/og/og-home-1200x630.png`,
+  imageAlt = defaultSeo.twitterImageAlt,
+  type = 'website',
+}: PageSocialInput): Pick<Metadata, 'openGraph' | 'twitter' | 'alternates'> {
+  const url = path === '/' ? SITE_URL : `${SITE_URL}${path}`
+
+  return {
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: defaultSeo.organizationName,
+      locale: 'pl_PL',
+      type,
+      images: [
+        { url: imageUrl, width: OG_IMAGE_WIDTH, height: OG_IMAGE_HEIGHT, alt: imageAlt },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [{ url: imageUrl, alt: imageAlt }],
+    },
   }
 }

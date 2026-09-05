@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { pageSocialMetadata } from '@/lib/seo'
 import { fetchPricingData } from '@/lib/pricing-data'
 import { getConfiguratorMinimumPricesNet } from '@/lib/pricing-configurator-minimum'
 
@@ -26,14 +27,11 @@ export async function generateMetadata(): Promise<Metadata> {
       'strony internetowe Małopolska',
       'agencja webowa Polska',
     ],
-    openGraph: {
+    ...pageSocialMetadata({
+      path: '/strony-www',
       title: 'Strony internetowe dla firm | Syntance',
       description: `Profesjonalne strony www w Next.js z gwarancją PageSpeed 90+. Strategia marketingu i sprzedaży (faza przedwdrożeniowa). Strony od ${priceStr} PLN netto.`,
-      url: 'https://syntance.com/strony-www',
-    },
-    alternates: {
-      canonical: 'https://syntance.com/strony-www',
-    },
+    }),
   }
 }
 
