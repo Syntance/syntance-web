@@ -156,6 +156,21 @@ async function interpolateAll(fields: Record<string, string | undefined>) {
  * Tytul ustawiamy jako `absolute`, zeby globalny `title.template` nie doklejal marki
  * do tytulu, ktory juz ja zawiera (zrodlo zdublowanego „| Syntance”).
  */
+/**
+ * Przelacznik nadpisywania metadanych trescia z Magazyn → SEO → Podstrony.
+ *
+ * Domyslnie WYLACZONY. Wiersze w bazie potrafia byc starsze niz kod (sprawdzone:
+ * po pierwszym wlaczeniu na produkcji wjechaly nieaktualne ceny w tytulach),
+ * wiec wlaczamy to dopiero po przejrzeniu tresci w panelu — zgodnie z zasada
+ * „ryzykowna zmiana za flaga, nigdy od razu na 100%”.
+ *
+ * Wlaczenie: ustaw `SEO_CMS_PAGES=1` w zmiennych srodowiskowych (Vercel).
+ * Wylaczenie pojedynczej podstrony bez ruszania flagi: odznacz „Aktywna” w panelu.
+ */
+export function cmsPagesEnabled(): boolean {
+  return process.env.SEO_CMS_PAGES === '1'
+}
+
 export type ResolvedSeoFields = {
   title: string
   description: string
@@ -235,7 +250,10 @@ export function resolveSeoFields(
  */
 export async function pageMetadata(input: PageMetadataInput): Promise<Metadata> {
   const slug = input.path === '/' ? '/' : input.path.replace(/\/$/, '')
-  const [globalSeo, pageSeo] = await Promise.all([getSeoSettings(), getPageSeoCached(slug)])
+  const [globalSeo, pageSeo] = await Promise.all([
+    getSeoSettings(),
+    cmsPagesEnabled() ? getPageSeoCached(slug) : Promise.resolve(null),
+  ])
 
   const f = resolveSeoFields(input, globalSeo, pageSeo)
   const t = await interpolateAll({
