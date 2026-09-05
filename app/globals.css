@@ -519,10 +519,24 @@
   }
 }
 
-/* WCAG 2.2 / prefers-reduced-motion: bez animacji wejscia, tresc od razu widoczna. */
+/* WCAG 2.2 AA / EAA — prefers-reduced-motion.
+   Wylaczamy ruch dekoracyjny i kazda animacje nieskonczona (ryzyko dolegliwosci
+   przedsionkowych). Zostaje ruch niosacy informacje: `animate-spin` (loadery)
+   i `animate-accordion-*` (rozwijanie tresci), zgodnie z wyjatkiem dla
+   ruchu niezbednego. `animation: none` przywraca stan spoczynkowy, wiec
+   tresc z animacja wejscia pozostaje widoczna. */
 @media (prefers-reduced-motion: reduce) {
   .animate-hero-rise,
-  .animate-hero-reveal-late {
+  .animate-hero-reveal-late,
+  .animate-fade-in-scale,
+  .animate-float,
+  .animate-float-delayed,
+  .animate-gradient,
+  .animate-gradient-slow,
+  .animate-highlight-pulse,
+  .animate-ping,
+  .animate-bounce,
+  .fluid-gradient {
     animation: none;
   }
 }
