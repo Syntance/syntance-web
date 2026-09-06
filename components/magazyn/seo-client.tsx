@@ -47,9 +47,11 @@ type Props = {
   globalSeo: SeoSettings
   pages: PageSeo[]
   dbConnected: boolean
+  /** Trasy faktycznie obecne w aplikacji — wiersze spoza tej listy są osierocone. */
+  knownRoutes: string[]
 }
 
-export function SeoClient({ globalSeo, pages, dbConnected }: Props) {
+export function SeoClient({ globalSeo, pages, dbConnected, knownRoutes }: Props) {
   const [tab, setTab] = useState<'global' | 'pages'>('global')
   const [globalForm, setGlobalForm] = useState(globalSeo)
   const [pagesForm, setPagesForm] = useState(pages)
@@ -57,6 +59,9 @@ export function SeoClient({ globalSeo, pages, dbConnected }: Props) {
   const [status, setStatus] = useState<string | null>(null)
   const [error, setError] = useState(false)
   const [pending, setPending] = useState(false)
+
+  const routeSet = new Set(knownRoutes)
+  const isOrphan = (slug: string) => !routeSet.has(slug)
 
   const selectedPage = pagesForm.find((p) => p.slug === selectedSlug) ?? null
   const selectedIndex = pagesForm.findIndex((p) => p.slug === selectedSlug)
@@ -96,6 +101,37 @@ export function SeoClient({ globalSeo, pages, dbConnected }: Props) {
       const updated = (await res.json()) as PageSeo
       setPagesForm((prev) => prev.map((p) => (p.slug === updated.slug ? updated : p)))
       setStatus(`Zapisano SEO: ${selectedPage.pageName}.`)
+    } catch (e) {
+      setError(true)
+      setStatus(e instanceof Error ? e.message : 'Błąd')
+    } finally {
+      setPending(false)
+    }
+  }
+
+  async function removePage() {
+    if (!selectedPage?.id) return
+    if (
+      !window.confirm(
+        `Usunąć ustawienia SEO dla „${selectedPage.slug}”? Ta trasa nie istnieje już w aplikacji.`,
+      )
+    ) {
+      return
+    }
+    setPending(true)
+    setStatus(null)
+    setError(false)
+    try {
+      const res = await fetch('/api/magazyn/seo/pages', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: selectedPage.id }),
+      })
+      if (!res.ok) throw new Error('Nie udało się usunąć wiersza')
+      const data = (await res.json()) as { pages: PageSeo[] }
+      setPagesForm(data.pages)
+      setSelectedSlug(data.pages[0]?.slug ?? null)
+      setStatus('Usunięto ustawienia SEO nieistniejącej podstrony.')
     } catch (e) {
       setError(true)
       setStatus(e instanceof Error ? e.message : 'Błąd')
@@ -165,7 +201,17 @@ export function SeoClient({ globalSeo, pages, dbConnected }: Props) {
                     selectedSlug === p.slug ? 'bg-white/10 text-white' : 'text-neutral-400 hover:bg-white/5'
                   }`}
                 >
-                  <span className="block font-medium">{p.pageName}</span>
+                  <span className="block font-medium">
+                    {p.pageName}
+                    {isOrphan(p.slug) ? (
+                      <span
+                        className="ml-2 rounded bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-normal text-amber-300"
+                        title="Ta trasa nie istnieje już w aplikacji"
+                      >
+                        nieaktywna trasa
+                      </span>
+                    ) : null}
+                  </span>
                   <span className="text-xs text-neutral-500">{p.slug}</span>
                 </button>
               ))
@@ -187,12 +233,31 @@ export function SeoClient({ globalSeo, pages, dbConnected }: Props) {
               </div>
 
               <p className="text-sm leading-relaxed text-neutral-400">
+                Lista podstron powstaje automatycznie z tras obecnych w aplikacji — nowa strona
+                albo zmieniony adres pojawi się tu sam po najbliższym wdrożeniu.{' '}
                 Puste pole = wartość z kodu strony (a dalej: ustawienia globalne). Odznaczenie
                 „Aktywna” całkowicie pomija te ustawienia dla tej podstrony. W tekstach możesz
                 używać tokenów cenowych: <code>{'{{WEBSITE_NET}}'}</code>,{' '}
                 <code>{'{{ECOMMERCE_NET}}'}</code>, <code>{'{{WEBAPP_NET}}'}</code>,{' '}
                 <code>{'{{DISCOVERY_NET}}'}</code> — podstawią się aktualne kwoty z cennika.
               </p>
+
+              {isOrphan(selectedPage.slug) ? (
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-200">
+                  <span>
+                    Adres <code>{selectedPage.slug}</code> nie odpowiada żadnej stronie w aplikacji
+                    — te ustawienia nigdy się nie wyrenderują.
+                  </span>
+                  <button
+                    type="button"
+                    disabled={pending}
+                    onClick={removePage}
+                    className="rounded-lg border border-amber-400/40 px-3 py-1.5 text-xs text-amber-100 transition hover:bg-amber-500/20 disabled:opacity-50"
+                  >
+                    Usuń ten wpis
+                  </button>
+                </div>
+              ) : null}
 
               <Fieldset legend="Meta podstrony">
                 {PAGE_FIELDS.map(({ key, label, long }) => (
@@ -213,6 +278,21 @@ export function SeoClient({ globalSeo, pages, dbConnected }: Props) {
                     )}
                   </Field>
                 ))}
+
+                <Field label="Keywords (oddzielone przecinkami)">
+                  <input
+                    className={magazynInputClass}
+                    value={(selectedPage.keywords ?? []).join(', ')}
+                    onChange={(e) =>
+                      updatePage({
+                        keywords: e.target.value
+                          .split(',')
+                          .map((k) => k.trim())
+                          .filter(Boolean),
+                      })
+                    }
+                  />
+                </Field>
               </Fieldset>
 
               <SaveButton pending={pending} label="Zapisz SEO podstrony" onClick={savePage} />

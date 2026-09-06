@@ -1,4 +1,5 @@
 import type { PageSeo } from '@/lib/data/seo-types'
+import { DISCOVERED_ROUTES } from '@/lib/data/routes.generated'
 
 export type SeoPageCatalogEntry = Omit<PageSeo, 'id' | 'lastUpdated'> & {
   /** Kolejność w menu Magazyn → SEO */
@@ -7,7 +8,13 @@ export type SeoPageCatalogEntry = Omit<PageSeo, 'id' | 'lastUpdated'> & {
 
 const SITE = 'https://syntance.com'
 
-export const SEO_PAGE_CATALOG: SeoPageCatalogEntry[] = [
+/**
+ * Treść startowa dla znanych tras. NIE jest już źródłem listy podstron —
+ * lista pochodzi z `DISCOVERED_ROUTES` (skan plikow page.tsx w app/, w prebuild).
+ * Wpis tutaj tylko podpowiada ładniejszą nazwę i domyślne meta przy pierwszym
+ * zasianiu wiersza; późniejsza edycja żyje w bazie.
+ */
+const CURATED_ENTRIES: SeoPageCatalogEntry[] = [
   {
     order: 1,
     pageName: 'Strona główna',
@@ -426,6 +433,45 @@ export const SEO_PAGE_CATALOG: SeoPageCatalogEntry[] = [
       'Informacje o dostępności cyfrowej serwisu syntance.com.',
   },
 ]
+
+
+/** „/strony-www" → „Strony www"; „/panel/realizacje" → „Panel — realizacje". */
+function derivePageName(slug: string): string {
+  if (slug === '/') return 'Strona główna'
+  const parts = slug.replace(/^\//, '').split('/')
+  const pretty = parts.map((part) => {
+    const words = part.replace(/-/g, ' ')
+    return words.charAt(0).toUpperCase() + words.slice(1)
+  })
+  return pretty.join(' — ')
+}
+
+const CURATED_BY_SLUG = new Map(CURATED_ENTRIES.map((entry) => [entry.slug, entry]))
+
+/**
+ * Lista podstron widoczna w Magazyn → SEO.
+ *
+ * Wynika z tras faktycznie obecnych w `app/`, nie z ręcznej listy — dodanie
+ * nowego `page.tsx` albo zmiana nazwy folderu pojawia się w panelu sama,
+ * przy najbliższym buildzie. Trasy z curated dostają dopracowane meta startowe,
+ * pozostałe — sensowne wartości domyślne do uzupełnienia w panelu.
+ */
+export const SEO_PAGE_CATALOG: SeoPageCatalogEntry[] = DISCOVERED_ROUTES.map(
+  (slug, index): SeoPageCatalogEntry => {
+    const curated = CURATED_BY_SLUG.get(slug)
+    if (curated) return { ...curated, order: index + 1 }
+    return {
+      order: index + 1,
+      pageName: derivePageName(slug),
+      slug,
+      isActive: true,
+      canonicalUrl: slug === '/' ? SITE : `${SITE}${slug}`,
+    }
+  },
+)
+
+/** Trasy istniejące w aplikacji — do oznaczania osieroconych wierszy w panelu. */
+export const KNOWN_ROUTES: readonly string[] = DISCOVERED_ROUTES
 
 const catalogOrder = new Map(SEO_PAGE_CATALOG.map((entry) => [entry.slug, entry.order]))
 

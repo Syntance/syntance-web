@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { requireAdminSession } from '@/lib/admin-auth'
-import { listSeoPages, upsertSeoPage } from '@/lib/db/queries/seo'
+import { deleteSeoPage, listSeoPages, upsertSeoPage } from '@/lib/db/queries/seo'
 
 export async function GET() {
   try {
@@ -73,4 +73,30 @@ export async function PUT(request: Request) {
   const pages = await listSeoPages()
   const saved = pages.find((p) => p.slug === parsed.data.slug)
   return NextResponse.json(saved ?? parsed.data)
+}
+
+const deleteSchema = z.object({ id: z.string().min(1).max(200) })
+
+/** Usuwa wiersz SEO — używane dla podstron, których trasa już nie istnieje. */
+export async function DELETE(request: Request) {
+  try {
+    await requireAdminSession()
+  } catch {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  let raw: unknown
+  try {
+    raw = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Nieprawidłowy JSON' }, { status: 400 })
+  }
+
+  const parsed = deleteSchema.safeParse(raw)
+  if (!parsed.success) {
+    return NextResponse.json({ error: 'Brak id wiersza' }, { status: 400 })
+  }
+
+  await deleteSeoPage(parsed.data.id)
+  return NextResponse.json({ pages: await listSeoPages() })
 }

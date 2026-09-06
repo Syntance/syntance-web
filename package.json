@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 next build",
-    "prebuild": "node scripts/vercel-prebuild-db.mjs",
+    "prebuild": "node scripts/generate-routes.mjs && node scripts/vercel-prebuild-db.mjs",
     "start": "next start -p 3000",
     "lint": "eslint app/ components/ lib/",
     "format": "prettier --write .",
@@ -19,7 +19,8 @@
     "migrate:sanity": "tsx scripts/migrate-from-sanity.ts",
     "patch:pricing": "tsx scripts/patch-pricing-catalog.ts",
     "typecheck": "tsc --noEmit",
-    "verify:seo": "tsx scripts/verify-seo-precedence.ts"
+    "verify:seo": "tsx scripts/verify-seo-precedence.ts",
+    "generate:routes": "node scripts/generate-routes.mjs"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
