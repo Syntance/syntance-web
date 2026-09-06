@@ -255,12 +255,6 @@ export async function pageMetadata(input: PageMetadataInput): Promise<Metadata> 
     cmsPagesEnabled() ? getPageSeoCached(slug) : Promise.resolve(null),
   ])
 
-  if (process.env.SEO_DEBUG === '1') {
-    console.log(
-      `[seo-debug] slug=${slug} flaga=${cmsPagesEnabled()} wierszCms=${pageSeo ? 'jest' : 'brak'} tytulCms=${pageSeo?.metaTitle ?? '-'}`,
-    )
-  }
-
   const f = resolveSeoFields(input, globalSeo, pageSeo)
   const t = await interpolateAll({
     title: f.title,
