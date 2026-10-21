@@ -8,6 +8,7 @@ export const MAGAZYN_NAV = [
   { href: '/magazyn/emaile', label: 'E-maile', icon: 'mail' },
   { href: '/magazyn/cennik', label: 'Cennik', icon: 'pricing' },
   { href: '/magazyn/model-partnerski', label: 'Model partnerski', icon: 'pricing' },
+  { href: '/magazyn/studio', label: 'Syntance Studio', icon: 'studio' },
   { href: '/magazyn/ustawienia', label: 'Ustawienia', icon: 'settings' },
 ] as const
 
