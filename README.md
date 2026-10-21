@@ -263,3 +263,14 @@ Projekt wykorzystuje Vercel Analytics do śledzenia:
 - Email: kontakt@syntance.com
 - Telefon: +48 537 110 170
 
+
+## Panel „Syntance Studio” (`/magazyn/studio`)
+
+Zarządzanie sprzedawaną aplikacją desktopową Syntance Studio: licencje (wystawianie, trial, unieważnianie, urządzenia,
+uprawnienia), klienci i RODO (eksport/wymazanie), zamówienia z Paddle, mapowanie cen, dziennik audytu.
+Publiczne API dla aplikacji: `POST /api/studio/v1/{activate,refresh,deactivate}`, webhook `POST /api/studio/v1/webhooks/paddle`
+(kontrakt 1:1 z `folio-pdf/server`). Logika: `lib/studio/*` (testy: `pnpm test`). Logowanie do `/magazyn`: hasło Argon2id + TOTP.
+
+- Decyzje i model bezpieczeństwa: [`docs/adr/001-studio-panel.md`](docs/adr/001-studio-panel.md)
+- Sekrety, DPA, domeny, kolejność wdrożenia: [`docs/DO_ZROBIENIA_WLASCICIELA.md`](docs/DO_ZROBIENIA_WLASCICIELA.md)
+- Klucze licencji: `pnpm studio:keygen` (klucz prywatny wyłącznie do sekretów Vercel)
