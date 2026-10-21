@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
-import { getAdminSession } from '@/lib/admin-auth'
+import { getAdminSession } from '@/lib/admin-session'
 import { cancelEvent } from '@/lib/google-calendar'
 import { findBookingById, updateBookingStatus, deleteBooking } from '@/lib/db/queries/booking'
 

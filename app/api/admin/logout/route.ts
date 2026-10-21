@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-import { buildClearCookie, getAdminSession } from '@/lib/admin-auth'
+import { buildClearCookie } from '@/lib/admin-auth'
+import { getAdminSession } from '@/lib/admin-session'
 import { revokeSession } from '@/lib/admin/accounts'
 import { writeAudit } from '@/lib/studio/audit'
 

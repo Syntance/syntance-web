@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { requireAdminSession } from '@/lib/admin-auth'
+import { requireAdminSession } from '@/lib/admin-session'
 import { replaceFaqSettings } from '@/lib/db/queries/faq'
 import type { FaqSettingsDocument } from '@/lib/data/faq'
 

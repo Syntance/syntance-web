@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { requireAdminSession } from '@/lib/admin-auth'
+import { requireAdminSession } from '@/lib/admin-session'
 import { getSeoSettings, saveSeoSettings } from '@/lib/db/queries/seo'
 import type { SeoSettings } from '@/lib/data/seo-types'
 

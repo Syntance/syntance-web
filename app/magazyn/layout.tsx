@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { getAdminSession } from '@/lib/admin-auth'
+import { getAdminSession } from '@/lib/admin-session'
 import { MagazynShell } from '@/components/magazyn/shell'
 
 export const metadata: Metadata = {

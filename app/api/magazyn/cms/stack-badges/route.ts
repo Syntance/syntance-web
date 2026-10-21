@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { requireAdminSession } from '@/lib/admin-auth'
+import { requireAdminSession } from '@/lib/admin-session'
 import { replaceAllStackBadges } from '@/lib/db/queries/stack-badges'
 import type { StackBadgeRecord } from '@/lib/data/stack-badges'
 

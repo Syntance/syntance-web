@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { requireAdminSession } from '@/lib/admin-auth'
+import { requireAdminSession } from '@/lib/admin-session'
 import { getEmailTemplates, saveEmailTemplates } from '@/lib/db/queries/settings'
 import type { EmailTemplates } from '@/lib/data/email-templates'
 

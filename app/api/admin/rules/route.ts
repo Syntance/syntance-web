@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { getAdminSession } from '@/lib/admin-auth'
+import { getAdminSession } from '@/lib/admin-session'
 import { getBookingRules, saveBookingRules } from '@/lib/db/queries/booking'
 
 const HHMM = /^([01]\d|2[0-3]):[0-5]\d$/

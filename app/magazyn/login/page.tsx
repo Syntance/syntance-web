@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
-import { getAdminSession } from '@/lib/admin-auth'
+import { getAdminSession } from '@/lib/admin-session'
 import { LoginForm } from './login-form'
 
 export const metadata: Metadata = {

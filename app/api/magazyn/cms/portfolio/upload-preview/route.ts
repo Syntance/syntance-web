@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
-import { requireAdminSession } from '@/lib/admin-auth'
+import { requireAdminSession } from '@/lib/admin-session'
 import { isValidPortfolioSlug, savePortfolioPreviewImage } from '@/lib/magazyn/portfolio-upload'
 
 export async function POST(request: Request) {

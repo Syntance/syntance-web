@@ -1,6 +1,6 @@
 import { revalidatePath } from 'next/cache'
 import { NextResponse } from 'next/server'
-import { requireAdminSession } from '@/lib/admin-auth'
+import { requireAdminSession } from '@/lib/admin-session'
 import { replaceAllPortfolioItems } from '@/lib/db/queries/portfolio'
 import type { PortfolioProjectType } from '@/lib/portfolio-content'
 import type { PortfolioPerformanceReport } from '@/lib/portfolio-performance'

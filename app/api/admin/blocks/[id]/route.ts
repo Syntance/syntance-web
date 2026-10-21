@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getAdminSession } from '@/lib/admin-auth'
+import { getAdminSession } from '@/lib/admin-session'
 import { deleteBlock } from '@/lib/db/queries/booking'
 
 export async function DELETE(_req: Request, ctx: { params: Promise<{ id: string }> }) {
