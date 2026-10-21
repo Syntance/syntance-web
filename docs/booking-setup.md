@@ -54,8 +54,8 @@ Wrzuć do env jako `ADMIN_COOKIE_SECRET`.
 ### 4. Reszta env
 
 ```
-ADMIN_EMAIL=kamil@syntance.com
-ADMIN_PASSWORD=Fv215b0108
+ADMIN_BOOTSTRAP_TOKEN=...   # logowanie: hasło + TOTP, patrz docs/adr/001-studio-panel.md
+ADMIN_ENC_KEY=...
 RESEND_API_KEY=...
 NEXT_PUBLIC_SITE_URL=https://syntance.com
 ```
@@ -66,7 +66,7 @@ Wszystkie env ustaw na `Production` + `Preview` (Vercel dashboard → Settings �
 
 Po deployu:
 1. Wejdź na `https://syntance.com/admin/login`
-2. Zaloguj się: `kamil@syntance.com` + `Fv215b0108`
+2. Zaloguj się: e-mail + hasło + kod TOTP (pierwsza konfiguracja konta: `/magazyn/login` → „Pierwsza konfiguracja konta")
 3. Na `/admin` zobacz status integracji — zielone ✅ przy Google Calendar, Resend, Sanity
 4. Przejdź na `/admin/regulamin` i skonfiguruj sloty (domyślnie: 10:00, 13:00, 16:00, pon–pt)
 5. Zrób testową rezerwację na `/porozmawiajmy` — sprawdź czy:

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getAdminSession } from '@/lib/admin-auth'
 import {
   renderContactFormClientEmail,
   renderContractsEmail,
@@ -31,6 +32,9 @@ import { getPaymentSettings } from '@/lib/db/queries/settings'
  *   - bookingId / name — nadpisanie danych mock
  */
 export async function GET(req: NextRequest) {
+  if (!(await getAdminSession())) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
   const params = req.nextUrl.searchParams
   const template = (params.get('template') ?? 'contracts').toLowerCase()
   const useDefaults = params.get('useDefaults') === '1'
