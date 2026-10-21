@@ -43,6 +43,13 @@
       "when": 1787305116164,
       "tag": "0005_partner_settings",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792580330771,
+      "tag": "0006_studio_panel",
+      "breakpoints": true
     }
   ]
 }
