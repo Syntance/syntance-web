@@ -21,7 +21,8 @@
     "typecheck": "tsc --noEmit",
     "verify:seo": "tsx scripts/verify-seo-precedence.ts",
     "generate:routes": "node scripts/generate-routes.mjs",
-    "test": "vitest run"
+    "test": "vitest run",
+    "studio:keygen": "tsx scripts/studio-keygen.ts"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
