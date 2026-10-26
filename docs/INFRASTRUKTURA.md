@@ -70,8 +70,12 @@ Założenia: 1k użytkowników ≈ 1 TB pobrań/mc (instalator + moduły + aktua
 **Umowy (DPA):** dodaj Cloudflare (R2/CDN) do listy w `DO_ZROBIENIA_WLASCICIELA.md`.
 
 ## 6. Dziennik zmian na kontach zewnętrznych
-Tu dopisujemy **każdą** zmianę wykonaną w panelach (co, gdzie, kiedy, jak cofnąć). Do dnia 2026-10-26: **brak zmian na kontach** — wykonano tylko odczyty publiczne (DNS, nagłówki HTTP) i prace w repozytorium.
+Tu dopisujemy **każdą** zmianę wykonaną w panelach (co, gdzie, kiedy, jak cofnąć). Zgoda właściciela z 2026-10-26: Cloudflare R2 + `dl.syntance.com`, zmienne i Firewall w Vercel, Neon/Upstash tylko odczyt; R2 ma już metodę płatności, bez zmian planów.
+Konto Cloudflare: `Kamil.podobinski@tutamail.com's Account` (ID konta w URL dashboardu). W koncie istnieje inny, nietykany bucket `detailing-lacko-media` (inny projekt).
 
 | Data | Serwis | Zmiana | Jak cofnąć |
 | --- | --- | --- | --- |
-| — | — | — | — |
+| 2026-10-26 | Cloudflare R2 | Nowy bucket `syntance-studio` (lokalizacja EEUR, klasa Standard, publiczny dostęp i `r2.dev` wyłączone). Nic nie ruszono w istniejącym buckecie | R2 → bucket → Settings → Empty Bucket, potem Delete Bucket |
+| 2026-10-26 | Cloudflare R2 + DNS | Custom domain `dl.syntance.com` podpięta do bucketu (Cloudflare dodało nowy rekord CNAME; istniejące rekordy bez zmian). Status po dodaniu: Initializing → ma przejść w Active; Minimum TLS 1.0 (do podniesienia do 1.2) | Bucket → Settings → Custom Domains → usuń `dl.syntance.com` (rekord DNS zniknie razem z nim) |
+| 2026-10-26 | Cloudflare R2 | CORS bucketu: origin `https://syntance.com`, metody PUT/GET/HEAD, nagłówki content-type/cache-control/content-length, ETag eksponowany, MaxAge 3600 | Bucket → Settings → CORS Policy → Edit/Delete |
+| 2026-10-26 | Cloudflare R2 | Utworzono i **od razu usunięto** token API `syntance-studio-uploads` (Object Read & Write, tylko bucket `syntance-studio`): wartość sekretu pojawiła się w wyniku narzędzia automatyzacji, więc została unieważniona. Nowy token powstaje dopiero przy wklejaniu do Vercel (schowek, bez odczytu wartości) | — (usunięty) |
