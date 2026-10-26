@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { magazynInputClass, PageHeader, StatusMessage, TabPills } from '@/components/magazyn/ui'
+import { Modules } from '@/components/magazyn/studio-modules'
 
 const ENTITLEMENTS = ['pro', 'print', 'vector', 'image'] as const
 type Entitlement = (typeof ENTITLEMENTS)[number]
-type Tab = 'licenses' | 'customers' | 'orders' | 'prices' | 'audit'
+type Tab = 'licenses' | 'customers' | 'orders' | 'prices' | 'modules' | 'audit'
 
 interface LicenseRow {
   id: string
@@ -382,13 +383,14 @@ export function StudioClient() {
 
   return (
     <div className="space-y-6 p-6">
-      <PageHeader title="Syntance Studio" description="Licencje, klienci, zamówienia i ceny aplikacji desktopowej. Moduły i katalog aktualizacji — w następnym etapie." />
+      <PageHeader title="Syntance Studio" description="Licencje, klienci, zamówienia i ceny aplikacji desktopowej. Moduły i katalog aktualizacji w zakładce „Moduły i katalog”." />
       <TabPills
         tabs={[
           { id: 'licenses', label: 'Licencje' },
           { id: 'customers', label: 'Klienci' },
           { id: 'orders', label: 'Zamówienia' },
           { id: 'prices', label: 'Ceny (Paddle)' },
+          { id: 'modules', label: 'Moduły i katalog' },
           { id: 'audit', label: 'Audyt' },
         ]}
         active={tab}
@@ -399,6 +401,7 @@ export function StudioClient() {
       {tab === 'customers' && <Customers notify={notify} />}
       {tab === 'orders' && <Orders notify={notify} />}
       {tab === 'prices' && <Prices notify={notify} />}
+      {tab === 'modules' && <Modules notify={notify} />}
       {tab === 'audit' && <Audit notify={notify} />}
     </div>
   )
