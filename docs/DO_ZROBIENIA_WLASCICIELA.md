@@ -1,6 +1,6 @@
 # Do zrobienia przez właściciela — panel Syntance Studio
 
-Stan: etapy F1 (API licencji, auth) i F2 (zakładka w `/magazyn`) gotowe na branchu `feat/studio-panel`; F3 (moduły, Blob, katalog) w toku.
+Stan (2026-10-26): kod F1–F3 gotowy na branchu `feat/studio-panel` (PR do przeglądu). Cloudflare R2 skonfigurowane (bucket `syntance-studio`, `dl.syntance.com`, CORS) — dziennik w `docs/INFRASTRUKTURA.md` §6. Zostają zmienne w Vercel i kroki poniżej.
 Decyzje: `docs/adr/001-studio-panel.md`.
 
 ## Przed pierwszym deployem (kolejność ma znaczenie)
@@ -15,7 +15,10 @@ Decyzje: `docs/adr/001-studio-panel.md`.
 | 7 | Skonfigurować Paddle: destynacja powiadomień `https://syntance.com/api/studio/v1/webhooks/paddle` (zdarzenia: `transaction.completed`, `subscription.updated`, `subscription.canceled`, `adjustment.created/updated`), sekret → `PADDLE_WEBHOOK_SECRET`; w checkout przekazywać `custom_data.email` | Paddle | Najpierw sandbox: kupić testowo i sprawdzić, że licencja powstaje (mapowanie jest w kodzie „do potwierdzenia”) |
 | 8 | W panelu → Syntance Studio → Ceny: dodać mapowanie każdego `price_id` (plan, uprawnienia, miesiące aktualizacji) | `/magazyn/studio` | Bez mapowania webhook ignoruje zakup |
 | 9 | Resend: zweryfikować domenę nadawcy, ustawić `LICENSE_FROM_EMAIL` (np. `licencje@syntance.com`) | Resend | |
-| 10 | Aplikacja desktopowa (osobny PR w folio-pdf): `FOLIO_LICENSE_URL=https://syntance.com/api/studio`, adres katalogu, lista dozwolonych hostów | folio-pdf | Zadanie 18 z `DO_ZROBIENIA_PRZEZ_WLASCICIELA.md` w tamtym repo (klucz wydawcy) |
+| 10a | Vercel (Sensitive): `STUDIO_R2_ENDPOINT`, `STUDIO_R2_BUCKET=syntance-studio`, `STUDIO_R2_ACCESS_KEY_ID`, `STUDIO_R2_SECRET_ACCESS_KEY` (nowy token R2 Object Read & Write tylko dla bucketu — patrz INFRASTRUKTURA.md), `STUDIO_DL_BASE_URL=https://dl.syntance.com`, `STUDIO_MODULE_PUBLIC_KEY` (klucz PUBLICZNY wydawcy modułów, base64 SPKI), `CRON_SECRET`, `HEALTHCHECK_RETENTION_URL` | Vercel | Bez nich wgrywanie modułów i cron nie działają |
+| 10b | Cloudflare: Cache Rule dla hosta `dl.syntance.com` (Cache eligibility: eligible, Edge TTL 1 rok) i Minimum TLS 1.2 dla custom domain | Cloudflare | Domyślny cache nie obejmuje `.fmod`/`.msi`/`.onnx` |
+| 10c | Podpisywanie katalogu lokalnie: `pnpm hub:tool sign catalog-draft.json` (folio-pdf PR #13) | lokalnie | Klucz wydawcy zostaje offline |
+| 10 | Aplikacja desktopowa (folio-pdf PR #13 — nazwa Syntance Studio, nowe adresy, egress): `FOLIO_LICENSE_URL=https://syntance.com/api/studio`, adres katalogu, lista dozwolonych hostów | folio-pdf | Zadanie 18 z `DO_ZROBIENIA_PRZEZ_WLASCICIELA.md` w tamtym repo (klucz wydawcy) |
 
 ## Umowy powierzenia (DPA) i RODO
 - Podpisać/zaakceptować DPA i zapisać w `docs/dpa/`: **Vercel** (hosting, Blob), **Neon** (baza), **Upstash** (limity — przechowuje hashe IP), **Resend** (e-mail z kluczem), **Paddle** (niezależny administrator płatności — regulamin sprzedaży/Merchant of Record).
