@@ -30,8 +30,8 @@ export async function GET() {
     }
   }
 
-  const url = process.env.UPSTASH_REDIS_REST_URL?.trim()
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN?.trim()
+  const url = (process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL)?.trim()
+  const token = (process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN)?.trim()
   if (!url || !token) {
     checks.redis = process.env.VERCEL_ENV === 'production' ? 'down' : 'skipped'
   } else {

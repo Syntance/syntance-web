@@ -11,8 +11,9 @@ let client: Redis | null | undefined
 
 function redis(): Redis | null {
   if (client !== undefined) return client
-  const url = process.env.UPSTASH_REDIS_REST_URL?.trim()
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN?.trim()
+  // Integracja Upstash z Vercel Marketplace wystawia KV_REST_API_*; ręczna konfiguracja — UPSTASH_REDIS_REST_*.
+  const url = (process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL)?.trim()
+  const token = (process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN)?.trim()
   client = url && token ? new Redis({ url, token }) : null
   return client
 }
