@@ -39,7 +39,8 @@ const nextConfig = {
     qualities: [75, 90, 100],
   },
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
+    // Zostawiamy error/warn: log serwera (limiter, audyt, błędy API licencji) musi być widoczny w Vercel Logs.
+    removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
   },
   compress: true,
   poweredByHeader: false,

@@ -15,13 +15,22 @@ let service: LicenseService | null = null
 export function getLicenseService(): LicenseService {
   if (service) return service
   const pem = process.env.LICENSE_PRIVATE_KEY
-  if (!pem) throw new Error('LICENSE_PRIVATE_KEY is not configured')
-  service = new LicenseService({
-    store: new DrizzleStudioStore(),
-    privateKey: privateKeyFromPem(pem),
-    mailer: new ResendMailer(),
-    audit: writeAudit,
-  })
+  if (!pem) {
+    console.error('[studio] LICENSE_PRIVATE_KEY nie jest ustawiony')
+    throw new StudioHttpError(503, 'SERVER_MISCONFIGURED')
+  }
+  try {
+    service = new LicenseService({
+      store: new DrizzleStudioStore(),
+      privateKey: privateKeyFromPem(pem),
+      mailer: new ResendMailer(),
+      audit: writeAudit,
+    })
+  } catch (error) {
+    // Komunikat błędu OpenSSL nie zawiera klucza; logujemy go, klientowi zwracamy ogólny 503.
+    console.error('[studio] nie udało się wczytać LICENSE_PRIVATE_KEY', error instanceof Error ? error.message : error)
+    throw new StudioHttpError(503, 'SERVER_MISCONFIGURED')
+  }
   return service
 }
 

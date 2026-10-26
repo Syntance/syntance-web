@@ -11,9 +11,22 @@ export function generateLicenseKeyPair(): { privateKeyPem: string; publicKeySpki
   }
 }
 
-/** PEM z env bywa zapisany z literalnymi "\n" (panele hostingowe) — normalizujemy. */
+const PEM_BODY = /-----BEGIN PRIVATE KEY-----([\s\S]*?)-----END PRIVATE KEY-----/
+
+/**
+ * PEM z env bywa zniekształcony przez panele hostingowe i schowek: literalne "\n", jedna linia, cudzysłowy,
+ * spacje lub CRLF. Wyciągamy treść base64 spomiędzy znaczników i odbudowujemy kanoniczny PEM (PKCS#8).
+ */
+export function normalizePrivateKeyPem(input: string): string {
+  const cleaned = input.trim().replace(/^["']+|["']+$/g, '').replace(/\\r/g, '').replace(/\\n/g, '\n')
+  const match = PEM_BODY.exec(cleaned)
+  if (!match?.[1]) return cleaned
+  const body = match[1].replace(/\s+/g, '')
+  return `-----BEGIN PRIVATE KEY-----\n${body.match(/.{1,64}/g)?.join('\n') ?? ''}\n-----END PRIVATE KEY-----\n`
+}
+
 export function privateKeyFromPem(pem: string): KeyObject {
-  return createPrivateKey(pem.includes('\\n') ? pem.replace(/\\n/g, '\n') : pem)
+  return createPrivateKey(normalizePrivateKeyPem(pem))
 }
 
 export function publicKeyFromSpki(spkiBase64: string): KeyObject {
