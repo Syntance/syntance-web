@@ -166,3 +166,47 @@ export const studioAuditLog = pgTable(
   },
   (t) => [index('studio_audit_at_idx').on(t.at), index('studio_audit_target_idx').on(t.target)],
 )
+
+/* ───────────── Moduły i katalog aktualizacji (F3) ───────────── */
+
+/** Wersje modułów zarejestrowane w panelu (pakiet .fmod w R2). Status: staged → live → withdrawn. */
+export const studioModuleVersions = pgTable(
+  'studio_module_versions',
+  {
+    moduleId: text('module_id').notNull(),
+    version: text('version').notNull(),
+    appSlug: text('app_slug')
+      .notNull()
+      .references(() => studioApps.slug)
+      .default('studio'),
+    channel: text('channel').$type<'stable' | 'beta'>().notNull(),
+    status: text('status').$type<'staged' | 'live' | 'withdrawn'>().notNull().default('staged'),
+    objectKey: text('object_key').notNull(),
+    url: text('url').notNull(),
+    size: integer('size').notNull(),
+    sha256: text('sha256').notNull(),
+    hubApiMin: smallint('hub_api_min').notNull(),
+    hubApiMax: smallint('hub_api_max').notNull(),
+    notesPl: text('notes_pl').notNull().default(''),
+    notesEn: text('notes_en').notNull().default(''),
+    /** Zweryfikowany manifest (module.json) — nazwa, opis, uprawnienie do wyświetlenia w panelu. */
+    manifest: jsonb('manifest').$type<Record<string, unknown>>().notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.moduleId, t.version] })],
+)
+
+/** Opublikowane, podpisane katalogi (archiwum). Bieżący = najnowszy `issued_at`; `catalog_text` to dokładnie podpisany tekst. */
+export const studioCatalogs = pgTable(
+  'studio_catalogs',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    issuedAt: timestamp('issued_at', { withTimezone: true }).notNull(),
+    catalogText: text('catalog_text').notNull(),
+    signature: text('signature').notNull(),
+    publishedBy: text('published_by').notNull(),
+    publishedAt: timestamp('published_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('studio_catalogs_issued_uq').on(t.issuedAt)],
+)
