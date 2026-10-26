@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { requireAdminSession } from '@/lib/admin-auth'
+import { requireAdminSession } from '@/lib/admin-session'
 import { savePartnerSettings } from '@/lib/db/queries/partner'
 import { partnerSettingsSchema } from '@/lib/data/partner-schema'
 

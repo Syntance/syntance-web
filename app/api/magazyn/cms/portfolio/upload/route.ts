@@ -1,7 +1,7 @@
 import { revalidatePath } from 'next/cache'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
-import { requireAdminSession } from '@/lib/admin-auth'
+import { requireAdminSession } from '@/lib/admin-session'
 import { patchPortfolioPerformanceScreenshotBySlug } from '@/lib/db/queries/portfolio'
 import type { PageSpeedScreenshotSlot } from '@/lib/magazyn/portfolio-performance-cms'
 import { isValidPortfolioSlug, savePortfolioPageSpeedScreenshot } from '@/lib/magazyn/portfolio-upload'

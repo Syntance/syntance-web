@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { cookies } from 'next/headers'
-import { ADMIN_COOKIE_NAME, verifySession } from '@/lib/admin-auth'
+import { getAdminSession } from '@/lib/admin-session'
 import { createBlock, listBlocks } from '@/lib/db/queries/booking'
 
 async function requireAdmin() {
-  const jar = await cookies()
-  const session = await verifySession(jar.get(ADMIN_COOKIE_NAME)?.value)
+  const session = await getAdminSession()
   return session
 }
 

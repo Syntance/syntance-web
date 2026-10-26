@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { requireAdminSession } from '@/lib/admin-auth'
+import { requireAdminSession } from '@/lib/admin-session'
 import { replacePricingCategories, type PricingCategoryAdmin } from '@/lib/db/queries/pricing'
 
 export async function PUT(request: Request) {

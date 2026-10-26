@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { cookies } from 'next/headers'
-import { ADMIN_COOKIE_NAME, verifySession } from '@/lib/admin-auth'
+import { getAdminSession } from '@/lib/admin-session'
 import { getBookingRules, saveBookingRules } from '@/lib/db/queries/booking'
 
 const HHMM = /^([01]\d|2[0-3]):[0-5]\d$/
@@ -19,8 +18,7 @@ const schema = z.object({
 })
 
 async function requireAdmin() {
-  const jar = await cookies()
-  return verifySession(jar.get(ADMIN_COOKIE_NAME)?.value)
+  return getAdminSession()
 }
 
 export async function GET() {

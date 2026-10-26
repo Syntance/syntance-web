@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { execSync } from 'node:child_process'
 import { count } from 'drizzle-orm'
-import { getAdminSession } from '@/lib/admin-auth'
+import { getAdminSession } from '@/lib/admin-session'
 import { getDb, hasDb } from '@/lib/db'
 import { seoGlobal } from '@/lib/db/schema'
 

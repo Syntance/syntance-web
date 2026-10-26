@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
-import { requireAdminSession } from '@/lib/admin-auth'
+import { requireAdminSession } from '@/lib/admin-session'
 import { deleteSeoPage, listSeoPages, upsertSeoPage } from '@/lib/db/queries/seo'
 
 export async function GET() {

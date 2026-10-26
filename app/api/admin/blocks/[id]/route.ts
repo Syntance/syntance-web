@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
-import { ADMIN_COOKIE_NAME, verifySession } from '@/lib/admin-auth'
+import { getAdminSession } from '@/lib/admin-session'
 import { deleteBlock } from '@/lib/db/queries/booking'
 
 export async function DELETE(_req: Request, ctx: { params: Promise<{ id: string }> }) {
-  const jar = await cookies()
-  const session = await verifySession(jar.get(ADMIN_COOKIE_NAME)?.value)
+  const session = await getAdminSession()
   if (!session) return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await ctx.params

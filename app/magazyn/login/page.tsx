@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
-import { ADMIN_COOKIE_NAME, verifySession } from '@/lib/admin-auth'
+import { getAdminSession } from '@/lib/admin-session'
 import { LoginForm } from './login-form'
 
 export const metadata: Metadata = {
@@ -12,8 +11,7 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic'
 
 export default async function MagazynLoginPage() {
-  const jar = await cookies()
-  const session = await verifySession(jar.get(ADMIN_COOKIE_NAME)?.value)
+  const session = await getAdminSession()
   if (session) redirect('/magazyn')
 
   return (

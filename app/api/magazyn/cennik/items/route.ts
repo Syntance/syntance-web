@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { requireAdminSession } from '@/lib/admin-auth'
+import { requireAdminSession } from '@/lib/admin-session'
 import { replaceAllPricingItems } from '@/lib/db/queries/pricing'
 import type { PricingItem } from '@/lib/data/pricing'
 
