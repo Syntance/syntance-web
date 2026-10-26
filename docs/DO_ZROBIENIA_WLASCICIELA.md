@@ -1,6 +1,6 @@
 # Do zrobienia przez właściciela — panel Syntance Studio
 
-Stan (2026-10-26): kod F1–F3 gotowy na branchu `feat/studio-panel` (PR do przeglądu). Cloudflare R2 skonfigurowane (bucket `syntance-studio`, `dl.syntance.com`, CORS) — dziennik w `docs/INFRASTRUKTURA.md` §6. W Vercelu (Production) są już: STUDIO_R2_*, STUDIO_DL_BASE_URL, CRON_SECRET, ADMIN_ENC_KEY i reguła Firewall. Zostają: LICENSE_PRIVATE_KEY, STUDIO_MODULE_PUBLIC_KEY, ADMIN_BOOTSTRAP_TOKEN (musisz go znać — ustaw sam), PADDLE_WEBHOOK_SECRET, HEALTHCHECK_RETENTION_URL, Upstash (brak w projekcie!) i kroki poniżej.
+Stan (2026-10-26): kod F1–F3 gotowy na branchu `feat/studio-panel` (PR do przeglądu). Cloudflare R2 skonfigurowane (bucket `syntance-studio`, `dl.syntance.com`, CORS) — dziennik w `docs/INFRASTRUKTURA.md` §6. W Vercelu (Production) są już: STUDIO_R2_*, STUDIO_DL_BASE_URL, CRON_SECRET, ADMIN_ENC_KEY i reguła Firewall. Zostają: LICENSE_PRIVATE_KEY, STUDIO_MODULE_PUBLIC_KEY, ADMIN_BOOTSTRAP_TOKEN (musisz go znać — ustaw sam), PADDLE_WEBHOOK_SECRET, HEALTHCHECK_RETENTION_URL, kroki poniżej. Upstash Redis (Free, Frankfurt) podpięty do Production 2026-10-26 — aktywny po pierwszym wdrożeniu produkcyjnym.
 Decyzje: `docs/adr/001-studio-panel.md`.
 
 ## Przed pierwszym deployem (kolejność ma znaczenie)
