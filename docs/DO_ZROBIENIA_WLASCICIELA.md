@@ -1,6 +1,6 @@
 # Do zrobienia przez właściciela — panel Syntance Studio
 
-Stan (2026-10-26): kod F1–F3 gotowy na branchu `feat/studio-panel` (PR do przeglądu). Cloudflare R2 skonfigurowane (bucket `syntance-studio`, `dl.syntance.com`, CORS) — dziennik w `docs/INFRASTRUKTURA.md` §6. Zostają zmienne w Vercel i kroki poniżej.
+Stan (2026-10-26): kod F1–F3 gotowy na branchu `feat/studio-panel` (PR do przeglądu). Cloudflare R2 skonfigurowane (bucket `syntance-studio`, `dl.syntance.com`, CORS) — dziennik w `docs/INFRASTRUKTURA.md` §6. W Vercelu (Production) są już: STUDIO_R2_*, STUDIO_DL_BASE_URL, CRON_SECRET, ADMIN_ENC_KEY i reguła Firewall. Zostają: LICENSE_PRIVATE_KEY, STUDIO_MODULE_PUBLIC_KEY, ADMIN_BOOTSTRAP_TOKEN (musisz go znać — ustaw sam), PADDLE_WEBHOOK_SECRET, HEALTHCHECK_RETENTION_URL, Upstash (brak w projekcie!) i kroki poniżej.
 Decyzje: `docs/adr/001-studio-panel.md`.
 
 ## Przed pierwszym deployem (kolejność ma znaczenie)
@@ -16,7 +16,7 @@ Decyzje: `docs/adr/001-studio-panel.md`.
 | 8 | W panelu → Syntance Studio → Ceny: dodać mapowanie każdego `price_id` (plan, uprawnienia, miesiące aktualizacji) | `/magazyn/studio` | Bez mapowania webhook ignoruje zakup |
 | 9 | Resend: zweryfikować domenę nadawcy, ustawić `LICENSE_FROM_EMAIL` (np. `licencje@syntance.com`) | Resend | |
 | 10a | Vercel (Sensitive): `STUDIO_R2_ENDPOINT`, `STUDIO_R2_BUCKET=syntance-studio`, `STUDIO_R2_ACCESS_KEY_ID`, `STUDIO_R2_SECRET_ACCESS_KEY` (nowy token R2 Object Read & Write tylko dla bucketu — patrz INFRASTRUKTURA.md), `STUDIO_DL_BASE_URL=https://dl.syntance.com`, `STUDIO_MODULE_PUBLIC_KEY` (klucz PUBLICZNY wydawcy modułów, base64 SPKI), `CRON_SECRET`, `HEALTHCHECK_RETENTION_URL` | Vercel | Bez nich wgrywanie modułów i cron nie działają |
-| 10b | Cloudflare: Cache Rule dla hosta `dl.syntance.com` (Cache eligibility: eligible, Edge TTL 1 rok) i Minimum TLS 1.2 dla custom domain | Cloudflare | Domyślny cache nie obejmuje `.fmod`/`.msi`/`.onnx` |
+| 10b | ~~Cloudflare: Cache Rule i TLS 1.2~~ — zrobione 2026-10-26 (patrz INFRASTRUKTURA.md §6) | — | — |
 | 10c | Podpisywanie katalogu lokalnie: `pnpm hub:tool sign catalog-draft.json` (folio-pdf PR #13) | lokalnie | Klucz wydawcy zostaje offline |
 | 10 | Aplikacja desktopowa (folio-pdf PR #13 — nazwa Syntance Studio, nowe adresy, egress): `FOLIO_LICENSE_URL=https://syntance.com/api/studio`, adres katalogu, lista dozwolonych hostów | folio-pdf | Zadanie 18 z `DO_ZROBIENIA_PRZEZ_WLASCICIELA.md` w tamtym repo (klucz wydawcy) |
 
