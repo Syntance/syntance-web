@@ -77,3 +77,27 @@ describe('klucz licencji', () => {
     expect(normalizeLicenseKey('  studio–abcde fghjk-mnpqr-stuvw ')).toBe('STUDIO-ABCDEFGHJK-MNPQR-STUVW')
   })
 })
+
+describe('wczytywanie klucza prywatnego z env (zniekształcone PEM)', () => {
+  const { privateKeyPem, publicKeySpki } = generateLicenseKeyPair()
+  const pub = publicKeyFromSpki(publicKeySpki)
+  const variants: Record<string, string> = {
+    kanoniczny: privateKeyPem,
+    crlf: privateKeyPem.replace(/\n/g, '\r\n'),
+    'literalne \n': privateKeyPem.trimEnd().replace(/\n/g, '\n'),
+    'jedna linia (spacje zamiast nowych linii)': privateKeyPem.trim().replace(/\n/g, ' '),
+    'cudzysłowy': `"${privateKeyPem.trimEnd()}"`,
+    'spacje z przodu i z tyłu': `  ${privateKeyPem.trimEnd()}   `,
+    'wcięte linie': privateKeyPem.trimEnd().replace(/\n/g, '\n   '),
+  }
+  for (const [name, pem] of Object.entries(variants)) {
+    it(`przyjmuje: ${name}`, () => {
+      const cert = signCertificate(payload(), privateKeyFromPem(pem))
+      expect(verifyCertificate(cert, pub)).toEqual(payload())
+    })
+  }
+  it('odrzuca śmieci zamiast klucza', () => {
+    expect(() => privateKeyFromPem('to nie jest klucz')).toThrow()
+    expect(() => privateKeyFromPem('')).toThrow()
+  })
+})
