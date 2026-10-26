@@ -20,7 +20,8 @@ Nazwy zmiennych środowiskowych tylko jako nazwy — **wartości nigdy w repo**.
 | Integracje (nazwy env) | `RESEND_API_KEY`, `ATTIO_*`, `GOOGLE_*` (Calendar), `NEXT_PUBLIC_SANITY_*`, `NEXT_PUBLIC_POSTHOG_*`, `NEXT_PUBLIC_GA_MEASUREMENT_ID`, `BLOB_READ_WRITE_TOKEN`, `DATABASE_URL`, `UPSTASH_REDIS_REST_*` | `git grep process.env` |
 | Dostęp CLI | `vercel` 48.4 zainstalowany, ale **niezalogowany** (token nieważny); `wrangler` dostępny przez `npx`; brak `neonctl` | sesja 2026-10-26 |
 | Vercel (panel, 2026-10-26) | Zespół `syntance` na planie **Pro**; projekt `syntance-web`; Firewall aktywny, wcześniej 0 reguł własnych; Neon podpięty przez integrację (`neon-aureolin-lamp`, **plan Free**, zmienne `DATABASE_URL`/`POSTGRES_*` dla **Production i Preview** — ta sama baza); Blob `syntance-portfolio`; **brak zmiennych Upstash** (ani `UPSTASH_*`, ani `KV_*`) | panel Vercel (Environment Variables, Storage, Firewall) |
-| **Nie zweryfikowane** | Neon (region, PITR — plan Free ma tylko 6 h historii) i Upstash (konto) — przeglądarka nie była tam zalogowana (logowanie wymagane od właściciela) | — |
+| Neon (konsola, 2026-10-26, odczyt) | Projekt `neon-aureolin-lamp` (`autumn-base-51810050`), region **Frankfurt (aws-eu-central-1)**, plan **Free**, jedna gałąź `main` (brak gałęzi Preview), compute 0,25 CU, zużycie 31,6 z 100 CU-h, dane 51 MB; **okno historii (PITR) 6 godzin**, brak migawek. Zapytanie tylko do odczytu: w bazie jest 9 tabel `studio_*`, 2 tabele `admin_*` i 8 wpisów migracji Drizzle — **migracje 0006 i 0007 zostały już zastosowane na produkcyjnej bazie** przez build Preview gałęzi `feat/studio-panel` (addytywne, bez wpływu na dotychczasowe tabele) | konsola Neon (SQL Editor, Backup & Restore, Branches) |
+| **Nie zweryfikowane** | Upstash — przeglądarka nie jest zalogowana do konsoli Upstash (konto istnieje wg właściciela, ale w Vercelu nie ma żadnej integracji ani zmiennych) | — |
 
 ## 2. Architektura docelowa
 ```
