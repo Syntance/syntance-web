@@ -39,7 +39,7 @@ Panel pokazuje jego licencje, urządzenia i zamówienia oraz pozwala je wyekspor
 (magic link) — po MVP. Tożsamość urządzenia: SHA-256 odcisku (pseudonim), nazwa urządzenia ≤120 znaków.
 
 ### 4. Uwierzytelnianie właściciela (decyzja 4)
-Hasło (Argon2id, OWASP: 19 MiB / 2 iteracje, min. 14 znaków) + **obowiązkowy TOTP** (RFC 6238, każdy kod
+Hasło (Argon2id, OWASP: 19 MiB / 2 iteracje, min. 6 znaków — decyzja właściciela z 2026-10-27, pierwotnie 14; słabsze hasło równoważą obowiązkowy TOTP, limity prób Upstash i sesje unieważnialne) + **obowiązkowy TOTP** (RFC 6238, każdy kod
 jednorazowy) + 10 kodów zapasowych. Sesje po stronie bazy (`admin_sessions`, 24 h bez odnawiania, unieważnialne),
 cookie `__Host-` HttpOnly Secure SameSite=Strict niesie tylko id sesji podpisane HMAC. Limity prób na Upstash
 (IP: 10/10 min, konto: 5/15 min; brak Upstash = odmowa). Mutacje API panelu wymagają `Sec-Fetch-Site: same-origin`

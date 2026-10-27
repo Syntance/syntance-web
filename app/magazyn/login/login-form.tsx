@@ -160,11 +160,11 @@ export function LoginForm() {
         />
       </label>
       <label className="block">
-        <span className="mb-1 block text-sm text-neutral-400">{isSetup ? 'Nowe hasło (min. 14 znaków)' : 'Hasło'}</span>
+        <span className="mb-1 block text-sm text-neutral-400">{isSetup ? 'Nowe hasło (min. 6 znaków)' : 'Hasło'}</span>
         <input
           type="password"
           required
-          minLength={isSetup ? 14 : undefined}
+          minLength={isSetup ? 6 : undefined}
           autoComplete={isSetup ? 'new-password' : 'current-password'}
           value={password}
           onChange={(e) => setPassword(e.target.value)}

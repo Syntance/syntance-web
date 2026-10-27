@@ -8,7 +8,7 @@ import {
   normalizeBackupCode,
   parseEncryptionKey,
 } from './crypto'
-import { dummyHash, hashPassword, verifyPassword } from './password'
+import { MIN_PASSWORD_LENGTH, dummyHash, hashPassword, verifyPassword } from './password'
 import { base32Decode, base32Encode, generateTotpSecret, hotp, otpauthUri, totpAt, verifyTotp } from './totp'
 
 // Wektory testowe RFC 4226 (sekret "12345678901234567890").
@@ -96,6 +96,11 @@ describe('hasło Argon2id', () => {
     expect(await verifyPassword(phc, 'correct horse battery staple')).toBe(true)
     expect(await verifyPassword(phc, 'zle haslo')).toBe(false)
     expect(await verifyPassword('nie-phc', 'x')).toBe(false)
+  })
+  it('minimalna długość hasła to 6 znaków (decyzja właściciela)', async () => {
+    expect(MIN_PASSWORD_LENGTH).toBe(6)
+    const phc = await hashPassword('abc123')
+    expect(await verifyPassword(phc, 'abc123')).toBe(true)
   })
   it('hash-wabik jest poprawnym hashem (to samo koszty co prawdziwe konto)', async () => {
     expect((await dummyHash()).startsWith('$argon2id$')).toBe(true)

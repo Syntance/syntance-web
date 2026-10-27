@@ -3,7 +3,8 @@ import { hash, verify } from '@node-rs/argon2'
 /** Argon2id (domyślny wariant @node-rs/argon2), parametry wg OWASP: 19 MiB, 2 iteracje, 1 wątek. */
 const OPTIONS = { memoryCost: 19_456, timeCost: 2, parallelism: 1 } as const
 
-export const MIN_PASSWORD_LENGTH = 14
+/** Decyzja właściciela (2026-10-27): minimum 6 znaków; dodatkową ochronę dają obowiązkowy TOTP i limity prób (ADR 001 §4). */
+export const MIN_PASSWORD_LENGTH = 6
 export const MAX_PASSWORD_LENGTH = 128
 
 export function hashPassword(password: string): Promise<string> {
