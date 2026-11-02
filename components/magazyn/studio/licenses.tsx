@@ -1,8 +1,10 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import { Eye, EyeOff, Plus } from 'lucide-react'
+import { FeaturePicker, deriveEnts, useFeatureCatalog, type PlanRow } from '@/components/magazyn/studio/plans'
 import {
   BTN,
   BTN_DANGER,
@@ -34,7 +36,6 @@ import {
 import { Field, magazynInputClass } from '@/components/magazyn/ui'
 import {
   EntitlementBadges,
-  EntitlementPicker,
   PLAN_LABEL,
   StateBadge,
   addMonthsDate,
@@ -71,7 +72,8 @@ function IssueModal({ open, onClose, onDone, presetEmail }: { open: boolean; onC
   const [f, setF] = useState({
     email: presetEmail ?? '',
     plan: 'perpetual' as Plan,
-    entitlements: ['pro'] as Entitlement[],
+    planId: '',
+    features: [] as string[],
     until: addMonthsDate(12),
     maxDevices: 2,
     note: '',
@@ -80,6 +82,21 @@ function IssueModal({ open, onClose, onDone, presetEmail }: { open: boolean; onC
   })
   const [pending, setPending] = useState(false)
   const [issued, setIssued] = useState<{ key: string; email: string } | null>(null)
+  const { features: catalog } = useFeatureCatalog()
+  const [plans, setPlans] = useState<PlanRow[]>([])
+
+  useEffect(() => {
+    if (!open) return
+    api<{ plans: PlanRow[] }>('/api/magazyn/studio/plans')
+      .then((r) => setPlans(r.plans.filter((p) => p.kind === 'paid' && p.active)))
+      .catch((e: unknown) => notify(errMsg(e), true))
+  }, [open, notify])
+
+  const pickPlan = (id: string) => {
+    const p = plans.find((x) => x.id === id)
+    if (!p) return setF((s) => ({ ...s, planId: '' }))
+    setF((s) => ({ ...s, planId: id, plan: p.billing, features: p.features, maxDevices: p.maxDevices, until: addMonthsDate(p.updateMonths) }))
+  }
 
   useEffect(() => {
     if (open) {
@@ -93,11 +110,12 @@ function IssueModal({ open, onClose, onDone, presetEmail }: { open: boolean; onC
     setPending(true)
     try {
       const body = trial
-        ? { trial: true, email: f.email, days: f.trialDays, entitlements: f.entitlements }
+        ? { trial: true, email: f.email, days: f.trialDays, entitlements: deriveEnts(f.features, catalog ?? []) }
         : {
             email: f.email,
             plan: f.plan,
-            entitlements: f.entitlements,
+            features: f.features,
+            planId: f.planId || null,
             updatesUntil: dateToIso(f.until),
             expiresAt: f.plan === 'subscription' ? dateToIso(f.until) : null,
             maxDevices: f.maxDevices,
@@ -147,7 +165,18 @@ function IssueModal({ open, onClose, onDone, presetEmail }: { open: boolean; onC
               <input className={magazynInputClass} type="date" required value={f.until} onChange={(e) => setF({ ...f, until: e.target.value })} />
             </Field>
           </div>
-          <EntitlementPicker value={f.entitlements} onChange={(entitlements) => setF({ ...f, entitlements })} />
+          <Field label="Plan (szablon)" hint="Plan wypełnia pola poniżej; możesz je zmienić tylko dla tej licencji.">
+            <select className={magazynInputClass} value={f.planId} onChange={(e) => pickPlan(e.target.value)}>
+              <option value="">Własny zakres (bez planu)</option>
+              {plans.map((p) => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
+          </Field>
+          <div>
+            <p className="mb-2 text-sm font-medium text-neutral-300">Moduły i funkcje</p>
+            <FeaturePicker catalog={catalog ?? []} value={f.features} onChange={(features) => setF({ ...f, features })} />
+          </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Limit urządzeń">
               <input className={magazynInputClass} type="number" min={1} max={10} value={f.maxDevices} onChange={(e) => setF({ ...f, maxDevices: Number(e.target.value) })} />
@@ -166,11 +195,11 @@ function IssueModal({ open, onClose, onDone, presetEmail }: { open: boolean; onC
               <Field label="Próbna (dni)">
                 <input className={`${magazynInputClass} w-24`} type="number" min={1} max={365} value={f.trialDays} onChange={(e) => setF({ ...f, trialDays: Number(e.target.value) })} />
               </Field>
-              <button type="button" className={BTN} disabled={pending || !f.email || f.entitlements.length === 0} onClick={(e) => void submit(e, true)}>
+              <button type="button" className={BTN} disabled={pending || !f.email || deriveEnts(f.features, catalog ?? []).length === 0} onClick={(e) => void submit(e, true)}>
                 Wystaw próbną
               </button>
             </div>
-            <button type="submit" className={BTN_PRIMARY} disabled={pending || f.entitlements.length === 0}>
+            <button type="submit" className={BTN_PRIMARY} disabled={pending || deriveEnts(f.features, catalog ?? []).length === 0}>
               {pending ? 'Wystawiam…' : 'Wystaw licencję'}
             </button>
           </div>
@@ -288,6 +317,8 @@ interface Detail {
     email: string
     plan: Plan
     entitlements: Entitlement[]
+    features: string[] | null
+    planId: string | null
     updatesUntil: string
     expiresAt: string | null
     maxDevices: number
@@ -311,15 +342,19 @@ export function LicenseDetail({ id }: { id: string }) {
   const [missing, setMissing] = useState(false)
   const [reveal, setReveal] = useState(false)
   const [terms, setTerms] = useState({ plan: 'perpetual' as Plan, until: '', note: '' })
-  const [ents, setEnts] = useState<Entitlement[]>([])
+  const { features: catalog } = useFeatureCatalog()
+  const [feats, setFeats] = useState<string[] | null>(null)
   const [limit, setLimit] = useState(2)
+  const [deleting, setDeleting] = useState(false)
+  const [confirmEmail, setConfirmEmail] = useState('')
+  const router = useRouter()
 
   const load = useCallback(async () => {
     try {
       const res = await api<Detail>(`/api/magazyn/studio/licenses/${id}`)
       setD(res)
       setTerms({ plan: res.license.plan, until: isoToDate(res.license.plan === 'subscription' ? res.license.expiresAt : res.license.updatesUntil), note: res.license.note })
-      setEnts(res.license.entitlements)
+      setFeats(null)
       setLimit(res.license.maxDevices)
     } catch (e) {
       if (errMsg(e).includes('Nie znaleziono')) setMissing(true)
@@ -346,6 +381,16 @@ export function LicenseDetail({ id }: { id: string }) {
   if (!d) return <p className="text-sm text-neutral-400" role="status">Wczytuję…</p>
   const l = d.license
   const state = licenseState(l, d.blocked)
+  const currentFeatures = feats ?? l.features ?? (catalog ?? []).filter((f) => f.entitlement && l.entitlements.includes(f.entitlement)).map((f) => f.key)
+
+  const removeForever = async () => {
+    try {
+      await api(`/api/magazyn/studio/licenses/${id}`, { method: 'DELETE', body: JSON.stringify({ confirmEmail }) })
+      router.replace('/magazyn/studio/licencje')
+    } catch (e) {
+      notify(errMsg(e), true)
+    }
+  }
 
   return (
     <div className="space-y-5">
@@ -448,11 +493,14 @@ export function LicenseDetail({ id }: { id: string }) {
           </form>
         </Card>
 
-        <Card title="Uprawnienia i urządzenia">
+        <Card title="Zakres licencji i urządzenia">
           <div className="space-y-5">
-            <EntitlementPicker value={ents} onChange={setEnts} />
-            <button type="button" className={BTN} disabled={ents.length === 0} onClick={() => void act({ action: 'entitlements', entitlements: ents }, 'Uprawnienia zapisano.')}>
-              Zapisz uprawnienia
+            <p className="text-sm text-neutral-400">
+              {l.features ? 'Zakres ustawiony na tej licencji.' : 'Licencja sprzed wprowadzenia funkcji — zakres wynika z uprawnień. Zapis ustawi jawną listę funkcji.'}
+            </p>
+            <FeaturePicker catalog={catalog ?? []} value={currentFeatures} onChange={setFeats} />
+            <button type="button" className={BTN} disabled={feats === null || deriveEnts(currentFeatures, catalog ?? []).length === 0} onClick={() => void act({ action: 'features', features: currentFeatures }, 'Zakres zapisano.')}>
+              Zapisz zakres
             </button>
             <div className="flex flex-wrap items-end gap-2 border-t border-white/10 pt-4">
               <Field label="Limit urządzeń">
@@ -465,6 +513,25 @@ export function LicenseDetail({ id }: { id: string }) {
           </div>
         </Card>
       </div>
+
+      {l.status === 'revoked' ? (
+        <Card title="Usuwanie">
+          <p className="mb-3 text-sm text-neutral-300">Trwale usuwa licencję, jej urządzenia i klucz. Zamówienia i historia zostają. Tej operacji nie da się cofnąć.</p>
+          <button type="button" className={BTN_DANGER} onClick={() => { setConfirmEmail(''); setDeleting(true) }}>Usuń licencję trwale</button>
+          <Modal open={deleting} onClose={() => setDeleting(false)} title="Usunąć licencję trwale?">
+            <div className="space-y-4">
+              <p className="text-sm text-neutral-300">Aby potwierdzić, wpisz adres e-mail klienta: <strong>{l.email}</strong></p>
+              <input className={magazynInputClass} type="email" autoComplete="off" value={confirmEmail} onChange={(e) => setConfirmEmail(e.target.value)} aria-label="Adres e-mail klienta" />
+              <div className="flex justify-end gap-2">
+                <button type="button" className={BTN} onClick={() => setDeleting(false)}>Anuluj</button>
+                <button type="button" className={BTN_DANGER} disabled={confirmEmail.trim().toLowerCase() !== l.email.toLowerCase()} onClick={() => void removeForever()}>Usuń trwale</button>
+              </div>
+            </div>
+          </Modal>
+        </Card>
+      ) : (
+        <p className="text-sm text-neutral-500">Aby usunąć licencję trwale, najpierw ją unieważnij.</p>
+      )}
 
       <Card title={`Aktywowane urządzenia (${l.devices.length} / ${l.maxDevices})`}>
         {l.devices.length === 0 ? (

@@ -151,13 +151,20 @@ interface Price {
   plan: Plan
   entitlements: string[]
   updateMonths: number
+  planId: string | null
 }
 
 export function Prices() {
   const { notify, node } = useNotify()
   const { confirm, dialog } = useConfirm()
   const [rows, setRows] = useState<Price[] | null>(null)
-  const [f, setF] = useState({ priceId: '', label: '', plan: 'perpetual' as Plan, entitlements: ['pro'] as Entitlement[], updateMonths: 12 })
+  const [f, setF] = useState({ priceId: '', label: '', plan: 'perpetual' as Plan, entitlements: ['pro'] as Entitlement[], updateMonths: 12, planId: '' })
+  const [plans, setPlans] = useState<{ id: string; name: string; kind: string; active: boolean }[]>([])
+  useEffect(() => {
+    api<{ plans: typeof plans }>('/api/magazyn/studio/plans')
+      .then((r) => setPlans(r.plans.filter((p) => p.kind === 'paid')))
+      .catch(() => undefined)
+  }, [])
 
   const load = useCallback(async () => {
     try {
@@ -174,7 +181,7 @@ export function Prices() {
   const save = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      await api('/api/magazyn/studio/prices', { method: 'PUT', body: JSON.stringify(f) })
+      await api('/api/magazyn/studio/prices', { method: 'PUT', body: JSON.stringify({ ...f, planId: f.planId || null }) })
       notify('Cena zapisana.')
       setF({ ...f, priceId: '', label: '' })
       await load()
@@ -209,8 +216,14 @@ export function Prices() {
           </Field>
           <Field label="Miesiące aktualizacji" hint="Dla wieczystej."><input className={magazynInputClass} type="number" min={1} max={120} value={f.updateMonths} onChange={(e) => setF({ ...f, updateMonths: Number(e.target.value) })} /></Field>
         </div>
-        <EntitlementPicker value={f.entitlements} onChange={(entitlements) => setF({ ...f, entitlements })} />
-        <button type="submit" className={BTN_PRIMARY} disabled={f.entitlements.length === 0}>Zapisz cenę</button>
+        <Field label="Plan z katalogu (opcjonalnie)" hint="Gdy wybierzesz plan, zakup wystawi licencję o jego zakresie i limicie urządzeń, a pola plan/uprawnienia/aktualizacje wynikają z planu.">
+          <select className={magazynInputClass} value={f.planId} onChange={(e) => setF({ ...f, planId: e.target.value })}>
+            <option value="">Bez planu (tylko uprawnienia poniżej)</option>
+            {plans.map((p) => <option key={p.id} value={p.id}>{p.name}{p.active ? '' : ' (nieaktywny)'}</option>)}
+          </select>
+        </Field>
+        {f.planId ? null : <EntitlementPicker value={f.entitlements} onChange={(entitlements) => setF({ ...f, entitlements })} />}
+        <button type="submit" className={BTN_PRIMARY} disabled={!f.planId && f.entitlements.length === 0}>Zapisz cenę</button>
       </form>
       <TableWrap caption="Mapowanie cen">
         <thead><tr>{['Price id', 'Nazwa', 'Plan', 'Uprawnienia', 'Aktualizacje', ''].map((h) => <th key={h} scope="col" className={TH}>{h || <span className="sr-only">Akcje</span>}</th>)}</tr></thead>
