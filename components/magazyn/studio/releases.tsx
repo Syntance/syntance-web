@@ -60,7 +60,8 @@ function putWithProgress(url: string, headers: Record<string, string>, file: Fil
 }
 
 /** Wersja z nazwy pliku w stylu „Syntance-Studio-Setup-0.1.12-beta.exe” (podpowiedź, można poprawić). */
-const guessVersion = (name: string): string => /(\d+\.\d+\.\d+(?:-[0-9A-Za-z.]+)?)/.exec(name)?.[1] ?? ''
+const guessVersion = (name: string): string =>
+  /(\d+\.\d+\.\d+(?:-[0-9A-Za-z]+(?:\.[0-9A-Za-z]+)*)?)/.exec(name.replace(/\.(exe|msi|msix)$/i, ''))?.[1] ?? ''
 
 export function ReleasesPage() {
   const { notify, node } = useNotify()
@@ -160,7 +161,7 @@ export function ReleasesPage() {
           </Field>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Wersja (semver)" hint="np. 0.1.12-beta lub 1.0.0">
-              <input className={`${magazynInputClass} font-mono`} required pattern="\d+\.\d+\.\d+(-[0-9A-Za-z.]+)?" value={version} onChange={(e) => setVersion(e.target.value)} />
+              <input className={`${magazynInputClass} font-mono`} required pattern="\d+\.\d+\.\d+(-[0-9A-Za-z]+(\.[0-9A-Za-z]+)*)?" title="Wersja w formacie semver, np. 0.1.102-beta (bez .exe)" value={version} onChange={(e) => setVersion(e.target.value)} />
             </Field>
             <Field label="Kanał">
               <select className={magazynInputClass} value={channel} onChange={(e) => setChannel(e.target.value as 'stable' | 'beta')}>
