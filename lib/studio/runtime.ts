@@ -6,10 +6,13 @@ import { writeAudit } from './audit'
 import { privateKeyFromPem } from './certificate'
 import { DrizzleStudioStore } from './drizzle-store'
 import { LicenseService, StudioHttpError } from './license-service'
+import { DrizzlePromoStore } from './drizzle-promo-store'
+import { PromoService } from './promo'
 import { ResendMailer } from './mailer'
 import { PaddleProvider, WebhookSignatureError, type PaymentProvider } from './payments'
 
 let service: LicenseService | null = null
+let promoService: PromoService | null = null
 
 /** Serwis licencji z produkcyjnymi zależnościami. Klucz prywatny pochodzi wyłącznie z env (sekrety Vercel). */
 export function getLicenseService(): LicenseService {
@@ -25,6 +28,7 @@ export function getLicenseService(): LicenseService {
       privateKey: privateKeyFromPem(pem),
       mailer: new ResendMailer(),
       audit: writeAudit,
+      onPromo: (promo, email, licenseId) => getPromoService().recordPurchase(promo, email, licenseId),
     })
   } catch (error) {
     // Komunikat błędu OpenSSL nie zawiera klucza; logujemy go, klientowi zwracamy ogólny 503.
@@ -32,6 +36,19 @@ export function getLicenseService(): LicenseService {
     throw new StudioHttpError(503, 'SERVER_MISCONFIGURED')
   }
   return service
+}
+
+/** Serwis kodów promocyjnych (wystawia licencje przez ten sam LicenseService). */
+export function getPromoService(): PromoService {
+  if (promoService) return promoService
+  const store = new DrizzleStudioStore()
+  promoService = new PromoService({
+    store: new DrizzlePromoStore(),
+    licenses: getLicenseService(),
+    isBlocked: (email) => store.isBlocked(email),
+    audit: writeAudit,
+  })
+  return promoService
 }
 
 export function getPaymentProviders(): PaymentProvider[] {

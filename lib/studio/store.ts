@@ -67,4 +67,7 @@ export interface StudioStore {
   /** True = zdarzenie do przetworzenia (nowe albo wcześniej niedokończone); false = już przetworzone. */
   claimEvent(provider: string, eventId: string, type: string): Promise<boolean>
   completeEvent(provider: string, eventId: string): Promise<void>
+  /** Czy e-mail (małe litery) jest zablokowany w panelu — wtedy żadna jego licencja nie jest aktywowana ani odświeżana. */
+  isBlocked(email: string): Promise<boolean>
+  setBlocked(email: string, blocked: boolean, reason: string): Promise<void>
 }

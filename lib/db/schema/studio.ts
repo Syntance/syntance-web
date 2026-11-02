@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
 import {
+  boolean,
   index,
   integer,
   jsonb,
@@ -209,4 +210,74 @@ export const studioCatalogs = pgTable(
     publishedAt: timestamp('published_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [uniqueIndex('studio_catalogs_issued_uq').on(t.issuedAt)],
+)
+
+/* ───────────── Klienci (flagi), kody promocyjne i ich wykorzystania ───────────── */
+
+/** Flagi klienta po e-mailu (małe litery). Brak wiersza = klient bez blokady. Zablokowany nie aktywuje ani nie odświeża licencji. */
+export const studioCustomerFlags = pgTable('studio_customer_flags', {
+  email: text('email').primaryKey(),
+  blockedAt: timestamp('blocked_at', { withTimezone: true }),
+  blockedReason: text('blocked_reason').notNull().default(''),
+  note: text('note').notNull().default(''),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
+export const studioPromoCodes = pgTable(
+  'studio_promo_codes',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    appSlug: text('app_slug')
+      .notNull()
+      .references(() => studioApps.slug)
+      .default('studio'),
+    /** Wielkie litery, bez spacji (normalizowane przy zapisie i odczycie). */
+    code: text('code').notNull().unique(),
+    kind: text('kind').$type<'percent' | 'amount' | 'free_license' | 'trial'>().notNull(),
+    /** percent: 1..100. */
+    percentOff: smallint('percent_off'),
+    /** amount: jednostki najmniejsze waluty `currency`. */
+    amountOff: integer('amount_off'),
+    currency: text('currency'),
+    /** trial: liczba dni licencji próbnej. */
+    trialDays: smallint('trial_days'),
+    /** free_license / trial: co zostaje wystawione. */
+    grantPlan: text('grant_plan').$type<'perpetual' | 'subscription'>(),
+    grantEntitlements: jsonb('grant_entitlements').$type<string[]>(),
+    grantUpdateMonths: smallint('grant_update_months'),
+    grantMaxDevices: smallint('grant_max_devices'),
+    /** Zawężenie rabatów (percent/amount) do planu / uprawnień; null = wszystkie. */
+    appliesToPlan: text('applies_to_plan').$type<'perpetual' | 'subscription'>(),
+    appliesToEntitlements: jsonb('applies_to_entitlements').$type<string[]>(),
+    maxUses: integer('max_uses'),
+    usedCount: integer('used_count').notNull().default(0),
+    validFrom: timestamp('valid_from', { withTimezone: true }),
+    validUntil: timestamp('valid_until', { withTimezone: true }),
+    active: boolean('active').notNull().default(true),
+    /** Id rabatu w Paddle (dla kodów percent/amount stosowanych w checkout) — uzupełnia właściciel po konfiguracji. */
+    providerDiscountId: text('provider_discount_id'),
+    note: text('note').notNull().default(''),
+    createdBy: text('created_by').notNull().default(''),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('studio_promo_app_idx').on(t.appSlug)],
+)
+
+export const studioPromoRedemptions = pgTable(
+  'studio_promo_redemptions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    codeId: uuid('code_id')
+      .notNull()
+      .references(() => studioPromoCodes.id, { onDelete: 'cascade' }),
+    /** Małe litery. Jeden e-mail może wykorzystać dany kod raz. */
+    email: text('email').notNull(),
+    licenseId: uuid('license_id').references(() => studioLicenses.id, { onDelete: 'set null' }),
+    source: text('source').$type<'manual' | 'redeem' | 'paddle'>().notNull(),
+    /** Udzielony rabat w jednostkach najmniejszych (kody percent/amount z zamówienia). */
+    discountAmount: integer('discount_amount'),
+    currency: text('currency'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('studio_promo_redemptions_uq').on(t.codeId, t.email), index('studio_promo_redemptions_code_idx').on(t.codeId)],
 )

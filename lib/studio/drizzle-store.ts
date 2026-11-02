@@ -200,6 +200,24 @@ export class DrizzleStudioStore implements StudioStore {
       .set({ processedAt: new Date() })
       .where(and(eq(schema.studioWebhookEvents.provider, provider), eq(schema.studioWebhookEvents.eventId, eventId)))
   }
+
+  async isBlocked(email: string): Promise<boolean> {
+    const [row] = await this.db
+      .select({ blockedAt: schema.studioCustomerFlags.blockedAt })
+      .from(schema.studioCustomerFlags)
+      .where(eq(schema.studioCustomerFlags.email, email.toLowerCase()))
+      .limit(1)
+    return Boolean(row?.blockedAt)
+  }
+
+  async setBlocked(email: string, blocked: boolean, reason: string): Promise<void> {
+    const key = email.toLowerCase()
+    const values = { blockedAt: blocked ? new Date() : null, blockedReason: blocked ? reason : '', updatedAt: new Date() }
+    await this.db
+      .insert(schema.studioCustomerFlags)
+      .values({ email: key, ...values })
+      .onConflictDoUpdate({ target: schema.studioCustomerFlags.email, set: values })
+  }
 }
 
 /** Mapowanie price id → produkt (tabela studio_prices). */

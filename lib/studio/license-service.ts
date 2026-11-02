@@ -1,4 +1,4 @@
-import { randomUUID, type KeyObject } from 'node:crypto'
+import { createHash, randomUUID, type KeyObject } from 'node:crypto'
 import { z } from 'zod'
 import { signCertificate } from './certificate'
 import {
@@ -16,6 +16,9 @@ import type { PaymentEvent } from './payments'
 import type { LicenseRecord, StudioStore } from './store'
 
 const DAY = 24 * 60 * 60 * 1000
+
+/** Identyfikator klienta w panelu i audycie: SHA-256 e-maila (małe litery) — bez e-maila w adresach URL i logach. */
+export const customerId = (email: string): string => createHash('sha256').update(email.trim().toLowerCase()).digest('hex')
 
 /** Dostarcza klucz licencji kupującemu (produkcja: e-mail transakcyjny; testy: pamięć). */
 export interface Mailer {
@@ -44,6 +47,8 @@ export interface LicenseServiceDeps {
   privateKey: KeyObject
   mailer: Mailer
   audit?: (entry: AuditEntry) => Promise<void>
+  /** Wywoływane po zakupie z kodem promocyjnym (webhook) — rejestruje wykorzystanie kodu. */
+  onPromo?: (promo: { code: string; discount: number | null; currency: string | null }, email: string, licenseId: string) => Promise<void>
   now?: () => number
   appSlug?: string
 }
@@ -106,7 +111,8 @@ export class LicenseService {
   private async activeLicense(k: string): Promise<LicenseRecord> {
     const record = await this.deps.store.findByKey(k)
     if (!record) throw new StudioHttpError(404, 'UNKNOWN_KEY')
-    if (record.status === 'revoked') throw new StudioHttpError(410, 'REVOKED')
+    // Zablokowany klient dostaje ten sam kod co unieważniona licencja (aplikacja zna REVOKED).
+    if (record.status === 'revoked' || (await this.deps.store.isBlocked(record.email))) throw new StudioHttpError(410, 'REVOKED')
     return record
   }
 
@@ -198,6 +204,13 @@ export class LicenseService {
             createdAt: t,
           })
           await this.audit({ actor: provider, action: 'license.created', target: created.id, meta: { plan: event.plan } })
+          if (event.promo) {
+            try {
+              await this.deps.onPromo?.({ ...event.promo, currency: event.amount?.currency ?? null }, event.email, created.id)
+            } catch {
+              await this.audit({ actor: provider, action: 'promo.record_failed', target: created.id })
+            }
+          }
           await this.sendKey(created, provider)
         }
         break
@@ -254,7 +267,7 @@ export class LicenseService {
 
   /* ───────────── Operacje panelu (właściciel) ───────────── */
 
-  async issueManual(actor: string, input: ManualLicenseInput): Promise<LicenseRecord> {
+  async issueManual(actor: string, input: ManualLicenseInput, source: LicenseRecord['source'] = null): Promise<LicenseRecord> {
     const parsed = ManualLicenseInput.parse(input)
     const t = new Date(this.now()).toISOString()
     const { sendEmail, ...fields } = parsed
@@ -265,10 +278,10 @@ export class LicenseService {
       ...fields,
       status: 'active',
       devices: [],
-      source: null,
+      source,
       createdAt: t,
     }
-    if (!(await this.deps.store.insertLicense(record))) throw new StudioHttpError(409, 'KEY_COLLISION')
+    if (!(await this.deps.store.insertLicense(record))) throw new StudioHttpError(409, source ? 'ALREADY_ISSUED' : 'KEY_COLLISION')
     await this.audit({ actor, action: 'license.issued_manually', target: record.id, meta: { plan: record.plan } })
     if (sendEmail) await this.sendKey(record, actor)
     return record
@@ -319,6 +332,23 @@ export class LicenseService {
     const record = await this.mustFind(id)
     await this.deps.store.updateLicense(id, { updatesUntil: end, expiresAt: record.plan === 'subscription' ? end : null })
     await this.audit({ actor, action: 'license.extended', target: id, meta: { until: end } })
+  }
+
+  /** Zmiana warunków: plan, koniec aktualizacji i (dla subskrypcji) ważności. Perpetual nie ma `expiresAt`. */
+  async updateTerms(actor: string, id: string, input: { plan: 'perpetual' | 'subscription'; updatesUntil: string; expiresAt: string | null; note?: string }): Promise<void> {
+    const terms = z
+      .object({ plan: z.enum(['perpetual', 'subscription']), updatesUntil: z.iso.datetime(), expiresAt: z.iso.datetime().nullable(), note: z.string().max(500).optional() })
+      .refine((v) => (v.plan === 'subscription') === (v.expiresAt !== null), { message: 'expiresAt wymagane dla subskrypcji, zabronione dla wieczystej' })
+      .parse(input)
+    await this.mustFind(id)
+    await this.deps.store.updateLicense(id, terms)
+    await this.audit({ actor, action: 'license.terms_changed', target: id, meta: { plan: terms.plan, updatesUntil: terms.updatesUntil, expiresAt: terms.expiresAt } })
+  }
+
+  async setCustomerBlocked(actor: string, email: string, blocked: boolean, reason = ''): Promise<void> {
+    const mail = z.email().max(254).parse(email).toLowerCase()
+    await this.deps.store.setBlocked(mail, blocked, z.string().max(300).parse(reason))
+    await this.audit({ actor, action: blocked ? 'customer.blocked' : 'customer.unblocked', target: customerId(mail), meta: { reason } })
   }
 
   async removeDevice(actor: string, id: string, device: string): Promise<void> {

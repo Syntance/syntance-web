@@ -1,18 +1,24 @@
-import { adminRoute } from '@/lib/studio/admin-api'
-import { listLicenses } from '@/lib/studio/admin-queries'
-import { getLicenseService } from '@/lib/studio/runtime'
 import { z } from 'zod'
+import { adminRoute } from '@/lib/studio/admin-api'
+import { LicenseListParams, listLicenses } from '@/lib/studio/admin-queries'
 import { ManualLicenseInput } from '@/lib/studio/license-service'
+import { getLicenseService } from '@/lib/studio/runtime'
 
 export const runtime = 'nodejs'
 
-const Trial = z.object({ trial: z.literal(true), email: z.email(), days: z.number().int().min(1).max(90).default(14), entitlements: ManualLicenseInput.shape.entitlements })
+const Trial = z.object({
+  trial: z.literal(true),
+  email: z.email(),
+  days: z.number().int().min(1).max(365).default(14),
+  entitlements: ManualLicenseInput.shape.entitlements,
+})
 
 export function GET(req: Request) {
-  const q = new URL(req.url).searchParams.get('q') ?? ''
-  return adminRoute(async () => ({ licenses: await listLicenses('studio', q) }))
+  const params = Object.fromEntries(new URL(req.url).searchParams)
+  return adminRoute(async () => listLicenses('studio', LicenseListParams.parse(params)))
 }
 
+/** Ręczne wystawienie licencji (wieczysta / subskrypcja) albo licencji próbnej. */
 export async function POST(req: Request) {
   const body: unknown = await req.json().catch(() => null)
   return adminRoute(async (session) => {
