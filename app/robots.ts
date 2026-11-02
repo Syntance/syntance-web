@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/", "/_next/", "/private/", "/admin/"],
+        disallow: ["/api/", "/_next/", "/private/", "/admin/", "/pobieranie/"],
       },
     ],
     sitemap: "https://syntance.com/sitemap.xml",
