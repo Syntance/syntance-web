@@ -36,6 +36,8 @@ export interface PlanRow {
   billing: Plan
   updateMonths: number
   maxDevices: number
+  priceAmount: number | null
+  priceCurrency: string | null
   features: string[]
   active: boolean
   sortOrder: number
@@ -119,12 +121,14 @@ interface Draft {
   billing: Plan
   updateMonths: number
   maxDevices: number
+  price: string
+  currency: string
   features: string[]
   active: boolean
   sortOrder: number
 }
 
-const EMPTY: Draft = { id: null, kind: 'paid', slug: '', name: '', description: '', billing: 'perpetual', updateMonths: 12, maxDevices: 2, features: [], active: true, sortOrder: 10 }
+const EMPTY: Draft = { id: null, kind: 'paid', slug: '', name: '', description: '', billing: 'perpetual', updateMonths: 12, maxDevices: 2, price: '', currency: 'EUR', features: [], active: true, sortOrder: 10 }
 
 function PlanModal({ draft, catalog, onClose, onSaved }: { draft: Draft | null; catalog: Feature[]; onClose: () => void; onSaved: () => void }) {
   const { notify, node } = useNotify()
@@ -139,7 +143,8 @@ function PlanModal({ draft, catalog, onClose, onSaved }: { draft: Draft | null; 
     e.preventDefault()
     setPending(true)
     try {
-      const body = { name: f.name, description: f.description, billing: f.billing, updateMonths: f.updateMonths, maxDevices: f.maxDevices, features: f.features, active: f.active, sortOrder: f.sortOrder }
+      const priced = f.price.trim() !== ''
+      const body = { name: f.name, description: f.description, billing: f.billing, updateMonths: f.updateMonths, maxDevices: f.maxDevices, priceAmount: priced ? Math.round(Number(f.price.replace(',', '.')) * 100) : null, priceCurrency: priced ? f.currency.toUpperCase() : null, features: f.features, active: f.active, sortOrder: f.sortOrder }
       if (f.id) await api(`/api/magazyn/studio/plans/${f.id}`, { method: 'PATCH', body: JSON.stringify(free ? { name: f.name, description: f.description, features: f.features } : body) })
       else await api('/api/magazyn/studio/plans', { method: 'POST', body: JSON.stringify({ slug: f.slug, ...body }) })
       onSaved()
@@ -179,6 +184,16 @@ function PlanModal({ draft, catalog, onClose, onSaved }: { draft: Draft | null; 
             </Field>
             <Field label="Liczba urządzeń">
               <input className={magazynInputClass} type="number" min={1} max={10} value={f.maxDevices} onChange={(e) => setF({ ...f, maxDevices: Number(e.target.value) })} />
+            </Field>
+          </div>
+        )}
+        {!free && (
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Cena na stronie" hint="Tylko do wyświetlenia na landingu. Puste = bez ceny. Zakup wymaga ceny w Paddle (zakładka Ceny).">
+              <input className={magazynInputClass} inputMode="decimal" pattern="[0-9]+([.,][0-9]{1,2})?" placeholder="np. 59" value={f.price} onChange={(e) => setF({ ...f, price: e.target.value })} />
+            </Field>
+            <Field label="Waluta (ISO)">
+              <input className={`${magazynInputClass} uppercase`} maxLength={3} pattern="[A-Za-z]{3}" value={f.currency} onChange={(e) => setF({ ...f, currency: e.target.value })} />
             </Field>
           </div>
         )}
@@ -239,7 +254,7 @@ export function PlansPage() {
     }
   }
 
-  const edit = (p: PlanRow) => setDraft({ id: p.id, kind: p.kind, slug: p.slug, name: p.name, description: p.description, billing: p.billing, updateMonths: p.updateMonths, maxDevices: p.maxDevices, features: p.features, active: p.active, sortOrder: p.sortOrder })
+  const edit = (p: PlanRow) => setDraft({ id: p.id, kind: p.kind, slug: p.slug, name: p.name, description: p.description, billing: p.billing, updateMonths: p.updateMonths, maxDevices: p.maxDevices, price: p.priceAmount === null ? '' : String(p.priceAmount / 100), currency: p.priceCurrency ?? 'EUR', features: p.features, active: p.active, sortOrder: p.sortOrder })
 
   return (
     <div className="space-y-4">
@@ -268,7 +283,7 @@ export function PlansPage() {
             {p.description ? <p className="mb-3 text-sm text-neutral-400">{p.description}</p> : null}
             {p.kind === 'paid' ? (
               <p className="mb-3 text-sm text-neutral-300">
-                {p.maxDevices} urządz. · {p.billing === 'perpetual' ? `${p.updateMonths} mies. aktualizacji` : `okres ${p.updateMonths} mies.`} · wystawiono: {p.licenseCount}
+                {p.priceAmount !== null ? `${(p.priceAmount / 100).toFixed(2)} ${p.priceCurrency} · ` : ''}{p.maxDevices} urządz. · {p.billing === 'perpetual' ? `${p.updateMonths} mies. aktualizacji` : `okres ${p.updateMonths} mies.`} · wystawiono: {p.licenseCount}
               </p>
             ) : null}
             <ul className="mb-4 flex flex-wrap gap-1.5" aria-label="Funkcje planu">

@@ -72,13 +72,31 @@ describe('plany: tworzenie i walidacja', () => {
 
   it('plan Free: nie da się go usunąć ani wystawić z niego licencji, ale można zmienić funkcje', async () => {
     const { plans, planStore } = setup()
-    const free = { id: 'f0000000-0000-4000-8000-000000000001', appSlug: 'studio', slug: 'free', name: 'Free', description: '', kind: 'free' as const, billing: 'perpetual' as const, updateMonths: 12, maxDevices: 1, features: ['viewer'], active: true, sortOrder: 0, createdAt: '2026-01-01T00:00:00.000Z' }
+    const free = { id: 'f0000000-0000-4000-8000-000000000001', appSlug: 'studio', slug: 'free', name: 'Free', description: '', kind: 'free' as const, billing: 'perpetual' as const, updateMonths: 12, maxDevices: 1, priceAmount: null, priceCurrency: null, features: ['viewer'], active: true, sortOrder: 0, createdAt: '2026-01-01T00:00:00.000Z' }
     await planStore.insertPlan(free)
     await expectError(plans.deletePlan('a', free.id), 400, 'FREE_PLAN_FIXED')
     await expectError(plans.issueFromPlan('a', free.id, { email: 'k@x.pl' }), 400, 'FREE_PLAN_NOT_ISSUABLE')
     await expectError(plans.updatePlan('a', free.id, { billing: 'subscription' }), 400, 'FREE_PLAN_FIXED')
     await plans.updatePlan('a', free.id, { features: ['viewer', 'comments', 'organize'] })
     expect((await planStore.findPlan(free.id))?.features).toEqual(['viewer', 'comments', 'organize'])
+  })
+})
+
+describe('częściowa zmiana planu', () => {
+  it('nieprzesłane pola zostają bez zmian (brak resetu do wartości domyślnych)', async () => {
+    const { plans, planStore } = setup()
+    const plan = await plans.createPlan('a', { ...PRO, description: 'opis', sortOrder: 3, priceAmount: 5900, priceCurrency: 'EUR' })
+    await plans.updatePlan('a', plan.id, { name: 'Pro+' })
+    expect(await planStore.findPlan(plan.id)).toMatchObject({ name: 'Pro+', description: 'opis', maxDevices: 3, updateMonths: 12, sortOrder: 3, active: true, priceAmount: 5900, priceCurrency: 'EUR' })
+  })
+
+  it('cena wymaga kwoty i waluty razem', async () => {
+    const { plans } = setup()
+    await expectError(plans.createPlan('a', { ...PRO, priceAmount: 5900 }), 400, 'INVALID_PRICE')
+    const plan = await plans.createPlan('a', PRO)
+    await expectError(plans.updatePlan('a', plan.id, { priceCurrency: 'EUR' }), 400, 'INVALID_PRICE')
+    await plans.updatePlan('a', plan.id, { priceAmount: 5900, priceCurrency: 'EUR' })
+    await plans.updatePlan('a', plan.id, { priceAmount: null, priceCurrency: null })
   })
 })
 

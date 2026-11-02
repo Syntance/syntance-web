@@ -16,6 +16,8 @@ function toPlan(r: PlanRow): PlanRecord {
     billing: r.billing,
     updateMonths: r.updateMonths,
     maxDevices: r.maxDevices,
+    priceAmount: r.priceAmount,
+    priceCurrency: r.priceCurrency,
     features: r.features,
     active: r.active,
     sortOrder: r.sortOrder,

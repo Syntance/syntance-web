@@ -45,3 +45,12 @@ Decyzje: `docs/adr/001-studio-panel.md`.
 | C | Test ręczny w panelu na produkcji: wystawić licencję sobie, aktywować w aplikacji, dezaktywować urządzenie, zablokować i odblokować klienta, utworzyć kod `free_license` i wykorzystać | `/magazyn/studio` | Wymaga ustawionych `LICENSE_PRIVATE_KEY` i Resend (`LICENSE_FROM_EMAIL`) |
 | D | Kody rabatowe (`percent`/`amount`): utworzyć odpowiadający rabat w Paddle i wpisać jego id w kodzie; w checkout przekazywać `custom_data.promo_code` | Paddle + panel | Do czasu Paddle kody rabatowe są tylko planem |
 | E | Zdecydować o testach przeglądarkowych (Playwright) dla panelu — nie ma ich w repo | decyzja | Zaproponowane jako osobny PR |
+
+## Landing i pobieranie (ADR 005)
+| # | Zadanie | Gdzie | Uwagi |
+| --- | --- | --- | --- |
+| F | Snapshot Neon przed scaleniem — migracja `0010_studio_releases_plan_price` (nowa tabela + 2 kolumny w planach) | Neon | Addytywna |
+| G | Wgrać instalator: panel → Syntance Studio → **Wydania (pobieranie)** → plik `.exe`, wersja, kanał `stable` → **Opublikuj** | `/magazyn/studio/wydania` | Instalator z artefaktu CI `windows-installer` (folio-pdf, uruchomienie na `main`). Bez publikacji na stronie jest „Powiadom mnie o premierze” |
+| H | Wpisać ceny w planach (Plany → Edytuj → „Cena na stronie”), żeby pokazały się na landingu | `/magazyn/studio/plany` | Cena na stronie ≠ cena w Paddle — zakup wymaga mapowania w „Ceny (Paddle)” |
+| I | Certyfikat podpisu kodu dla instalatora (SmartScreen) | folio-pdf / Windows | Bez niego Windows ostrzega o nieznanym wydawcy |
+| J | Decyzja: czy host `studio.syntance.com` ma wskazywać na nowy landing (`/syntance-studio`) | `vercel.json`, `middleware.ts` | Dziś rewrite kieruje na `/studio`, które middleware przekierowuje na `/` |
