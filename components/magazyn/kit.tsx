@@ -36,7 +36,9 @@ export async function api<T>(url: string, init?: RequestInit): Promise<T> {
   const data = (await res.json().catch(() => ({}))) as T & { error?: string; message?: string }
   if (!res.ok) {
     const code = data.error ?? ''
-    throw new ApiError(ERROR_PL[code] ?? (code || `Błąd ${res.status}`))
+    const base = ERROR_PL[code] ?? (code || `Błąd ${res.status}`)
+    // Serwer bywa dokładniejszy niż ogólny kod (np. niedozwolona nazwa pliku) — pokazujemy jego komunikat.
+    throw new ApiError(data.message ? `${base} (${data.message})` : base)
   }
   return data
 }

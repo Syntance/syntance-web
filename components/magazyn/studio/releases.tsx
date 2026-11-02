@@ -39,6 +39,9 @@ interface Presigned {
   headers: Record<string, string>
 }
 
+/** Nazwa pliku w R2: spacje → myślniki, bez znaków spoza [A-Za-z0-9._-] (serwer dopuszcza tylko je). */
+const safeFilename = (name: string): string => name.trim().replace(/\s+/g, '-').replace(/[^A-Za-z0-9._-]/g, '').replace(/^[^A-Za-z0-9]+/, '')
+
 const mb = (n: number): string => `${(n / 1024 / 1024).toFixed(1)} MB`
 
 async function sha256Hex(file: File): Promise<string> {
@@ -93,15 +96,15 @@ export function ReleasesPage() {
       const sha256 = await sha256Hex(file)
       const presigned = await api<Presigned>('/api/magazyn/studio/uploads', {
         method: 'POST',
-        body: JSON.stringify({ kind: 'installer', id: 'app', version, filename: file.name, size: file.size }),
+        body: JSON.stringify({ kind: 'installer', id: 'app', version, filename: safeFilename(file.name), size: file.size }),
       })
       await putWithProgress(presigned.uploadUrl, presigned.headers, file, (p) => setProgress(`Wgrywam do R2… ${(p * 100).toFixed(0)}%`))
       setProgress('Rejestruję wydanie…')
       await api('/api/magazyn/studio/releases', {
         method: 'POST',
-        body: JSON.stringify({ version, channel, filename: file.name, size: file.size, sha256, notesPl: notes }),
+        body: JSON.stringify({ version, channel, filename: safeFilename(file.name), size: file.size, sha256, notesPl: notes }),
       })
-      notify(`Wgrano ${file.name} (${mb(file.size)}). Wydanie jest nieopublikowane — opublikuj je poniżej, żeby pojawiło się na stronie.`)
+      notify(`Wgrano ${safeFilename(file.name)} (${mb(file.size)}). Wydanie jest nieopublikowane — opublikuj je poniżej, żeby pojawiło się na stronie.`)
       setFile(null)
       setNotes('')
       setVersion('')
