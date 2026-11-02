@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { listBookings, listBlocks, countBookingsSince } from '@/lib/db/queries/booking'
 import { hasDb } from '@/lib/db'
 import { Calendar, Clock, ExternalLink } from 'lucide-react'
+import { StatCard } from '@/components/magazyn/kit'
+import { getStudioStats } from '@/lib/studio/admin-queries'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,6 +18,7 @@ function formatDateTime(iso: string) {
 }
 
 const MODULE_TILES = [
+  { href: '/magazyn/studio', title: 'Syntance Studio', desc: 'Licencje, klienci, kody promocyjne' },
   { href: '/magazyn/seo', title: 'SEO', desc: 'Meta tagi globalne i per strona' },
   { href: '/magazyn/cms', title: 'CMS', desc: 'FAQ i portfolio' },
   { href: '/magazyn/emaile', title: 'E-maile', desc: 'Szablony transakcyjne' },
@@ -36,6 +39,8 @@ export default async function MagazynDashboard() {
     countBookingsSince(sevenDaysAgo.toISOString()),
   ])
 
+  const studio = await getStudioStats('studio').catch(() => null)
+
   const stats = [
     { label: 'Rezerwacje · 7 dni', value: count7d },
     { label: 'Rezerwacje · 30 dni', value: count30d },
@@ -46,8 +51,8 @@ export default async function MagazynDashboard() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-medium">Syntance Shop</h1>
-        <p className="mt-1 text-neutral-400">CMS, SEO, cennik, maile i rezerwacje w jednym panelu.</p>
+        <h1 className="text-3xl font-medium">Magazyn</h1>
+        <p className="mt-1 text-neutral-400">Studio, rezerwacje, CMS, SEO, cennik i maile w jednym panelu.</p>
         {!hasDb() && (
           <p className="mt-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">
             Brak DATABASE_URL — podłącz Neon Postgres w Vercel, uruchom migrację i seed.
@@ -63,6 +68,18 @@ export default async function MagazynDashboard() {
           </div>
         ))}
       </div>
+
+      {studio ? (
+        <section aria-label="Syntance Studio" className="space-y-3">
+          <h2 className="text-lg font-medium">Syntance Studio</h2>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard label="Aktywne licencje" value={studio.activeLicenses} hint={`${studio.new30d} nowych w 30 dni`} href="/magazyn/studio/licencje?status=active" />
+            <StatCard label="Klienci" value={studio.customers} href="/magazyn/studio/klienci" />
+            <StatCard label="Subskrypcje kończą się ≤ 14 dni" value={studio.expiring14d} tone={studio.expiring14d ? 'warn' : undefined} href="/magazyn/studio/licencje?plan=subscription&sort=expiresAt&dir=asc" />
+            <StatCard label="Aktywne kody" value={studio.activeCodes} href="/magazyn/studio/kody" />
+          </div>
+        </section>
+      ) : null}
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {MODULE_TILES.map((tile) => (
