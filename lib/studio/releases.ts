@@ -138,3 +138,15 @@ export async function getLatestRelease(channel: 'stable' | 'beta' = 'stable'): P
     .limit(1)
   return row ? toRow(row) : null
 }
+
+/** Najnowsze zarejestrowane wydanie dowolnego kanału, także nieopublikowane — dla ukrytej strony testowej (/pobieranie/test). */
+export async function getLatestAnyRelease(): Promise<ReleaseRow | null> {
+  if (!hasDb()) return null
+  const [row] = await getDb()
+    .select()
+    .from(schema.studioReleases)
+    .where(eq(schema.studioReleases.platform, 'win'))
+    .orderBy(desc(schema.studioReleases.createdAt))
+    .limit(1)
+  return row ? toRow(row) : null
+}
