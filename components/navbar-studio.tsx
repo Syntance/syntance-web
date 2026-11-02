@@ -22,7 +22,10 @@ const navItems = [
   {
     label: "Produkty",
     href: "#",
-    dropdown: [{ label: "Panel", href: "/panel" }],
+    dropdown: [
+      { label: "Panel", href: "/panel" },
+      { label: "Syntance Studio", href: "/syntance-studio" },
+    ],
   },
   { label: "Portfolio", href: "/portfolio" },
   {
@@ -44,6 +47,7 @@ const pathToNavIndex: Record<string, number> = {
   '/sklepy-internetowe': 1,
   '/dla-agencji': 1,
   '/panel': 2,
+  '/syntance-studio': 2,
   '/portfolio': 3,
   '/realizacje': 3,
   '/strategia-marketingu-i-sprzedazy': 4,
@@ -137,7 +141,7 @@ export default function NavbarStudio() {
     pathname === '/sklepy-internetowe' ||
     pathname === '/dla-agencji';
 
-  const isProduktyActive = pathname === '/panel';
+  const isProduktyActive = pathname === '/panel' || pathname === '/syntance-studio';
 
   const isPortfolioActive =
     pathname === '/portfolio' ||
@@ -339,7 +343,7 @@ export default function NavbarStudio() {
                 id="mobile-produkty-submenu"
                 className={
                   mobileProduktyOpen
-                    ? 'overflow-hidden max-h-[120px] opacity-100 transition-all duration-300 ease-out'
+                    ? 'overflow-hidden max-h-[200px] opacity-100 transition-all duration-300 ease-out'
                     : 'hidden'
                 }
               >
@@ -353,6 +357,16 @@ export default function NavbarStudio() {
                     }`}
                   >
                     Panel
+                  </Link>
+                  <Link
+                    href="/syntance-studio"
+                    className={`block tap-target justify-start py-3 text-sm font-light tracking-wider transition-colors ${
+                      pathname === '/syntance-studio'
+                        ? 'text-white'
+                        : 'text-gray-400 hover:text-white active:text-purple-300'
+                    }`}
+                  >
+                    Syntance Studio
                   </Link>
                 </div>
               </div>

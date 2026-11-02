@@ -324,10 +324,40 @@ export const studioPlans = pgTable(
     /** Wieczysta: ile miesięcy aktualizacji w cenie. Subskrypcja: długość jednego okresu. */
     updateMonths: smallint('update_months').notNull().default(12),
     maxDevices: smallint('max_devices').notNull().default(2),
+    /** Cena do wyświetlenia na stronie (jednostki najmniejsze, np. grosze/centy); null = bez ceny. Zakup i tak wymaga ceny w Paddle (`studio_prices`). */
+    priceAmount: integer('price_amount'),
+    priceCurrency: text('price_currency'),
     features: jsonb('features').$type<string[]>().notNull().default([]),
     active: boolean('active').notNull().default(true),
     sortOrder: smallint('sort_order').notNull().default(0),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [uniqueIndex('studio_plans_slug_uq').on(t.appSlug, t.slug)],
+)
+
+/* ───────────── Wydania aplikacji (instalator do pobrania ze strony) ───────────── */
+
+/** Instalatory aplikacji w R2. Publiczna strona pokazuje najnowsze OPUBLIKOWANE wydanie kanału `stable`. */
+export const studioReleases = pgTable(
+  'studio_releases',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    appSlug: text('app_slug')
+      .notNull()
+      .references(() => studioApps.slug)
+      .default('studio'),
+    version: text('version').notNull(),
+    channel: text('channel').$type<'stable' | 'beta'>().notNull(),
+    platform: text('platform').$type<'win'>().notNull().default('win'),
+    filename: text('filename').notNull(),
+    objectKey: text('object_key').notNull(),
+    url: text('url').notNull(),
+    size: integer('size').notNull(),
+    sha256: text('sha256').notNull(),
+    notesPl: text('notes_pl').notNull().default(''),
+    published: boolean('published').notNull().default(false),
+    publishedAt: timestamp('published_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('studio_releases_uq').on(t.appSlug, t.version, t.channel, t.platform), index('studio_releases_pub_idx').on(t.published, t.publishedAt)],
 )

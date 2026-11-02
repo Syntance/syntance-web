@@ -11,13 +11,16 @@ export interface PlanRecord {
   billing: 'perpetual' | 'subscription'
   updateMonths: number
   maxDevices: number
+  /** Cena pokazywana na stronie (jednostki najmniejsze); null = bez ceny. */
+  priceAmount: number | null
+  priceCurrency: string | null
   features: string[]
   active: boolean
   sortOrder: number
   createdAt: string
 }
 
-export type PlanPatch = Partial<Pick<PlanRecord, 'name' | 'description' | 'billing' | 'updateMonths' | 'maxDevices' | 'features' | 'active' | 'sortOrder'>>
+export type PlanPatch = Partial<Pick<PlanRecord, 'name' | 'description' | 'billing' | 'updateMonths' | 'maxDevices' | 'priceAmount' | 'priceCurrency' | 'features' | 'active' | 'sortOrder'>>
 
 export type DeletePlanResult = 'ok' | 'not_found' | 'in_use_by_prices'
 export type DeleteFeatureResult = 'ok' | 'not_found' | 'in_use_by_plans'

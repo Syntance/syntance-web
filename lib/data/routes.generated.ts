@@ -22,4 +22,5 @@ export const DISCOVERED_ROUTES: readonly string[] = [
   '/sklepy-internetowe',
   '/strategia-marketingu-i-sprzedazy',
   '/strony-www',
+  '/syntance-studio',
 ]

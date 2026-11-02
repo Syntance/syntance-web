@@ -16,13 +16,30 @@ export const PlanInput = z.object({
   billing: z.enum(['perpetual', 'subscription']),
   updateMonths: z.number().int().min(1).max(120).default(12),
   maxDevices: z.number().int().min(1).max(MAX_DEVICES_LIMIT).default(2),
+  priceAmount: z.number().int().min(0).max(100_000_000).nullable().default(null),
+  priceCurrency: z.string().regex(/^[A-Z]{3}$/).nullable().default(null),
   features: FeatureKeys,
   active: z.boolean().default(true),
   sortOrder: z.number().int().min(0).max(1000).default(10),
 })
 export type PlanInput = z.input<typeof PlanInput>
 
-export const PlanPatchInput = PlanInput.omit({ slug: true }).partial()
+const priceConsistent = (v: { priceAmount?: number | null; priceCurrency?: string | null }) =>
+  (v.priceAmount == null) === (v.priceCurrency == null)
+
+/** Częściowa zmiana planu. Pola bez wartości domyślnych — nieprzesłane pola zostają bez zmian (zod 4 stosuje `default` także w `.partial()`). */
+export const PlanPatchInput = z.object({
+  name: z.string().trim().min(1).max(80).optional(),
+  description: z.string().max(300).optional(),
+  billing: z.enum(['perpetual', 'subscription']).optional(),
+  updateMonths: z.number().int().min(1).max(120).optional(),
+  maxDevices: z.number().int().min(1).max(MAX_DEVICES_LIMIT).optional(),
+  priceAmount: z.number().int().min(0).max(100_000_000).nullable().optional(),
+  priceCurrency: z.string().regex(/^[A-Z]{3}$/).nullable().optional(),
+  features: FeatureKeys.optional(),
+  active: z.boolean().optional(),
+  sortOrder: z.number().int().min(0).max(1000).optional(),
+})
 
 export const FeatureInput = z.object({
   key: z.string().regex(/^[a-z][a-z0-9-]{1,39}$/, 'klucz: a–z, 0–9, myślnik, 2–40 znaków'),
@@ -68,6 +85,7 @@ export class PlanService {
 
   async createPlan(actor: string, input: PlanInput): Promise<PlanRecord> {
     const parsed = PlanInput.parse(input)
+    if (!priceConsistent(parsed)) throw new StudioHttpError(400, 'INVALID_PRICE')
     if (parsed.slug === 'free') throw new StudioHttpError(409, 'SLUG_TAKEN')
     await this.validateFeatures(parsed.features, 'paid')
     const record: PlanRecord = { id: randomUUID(), appSlug: 'studio', kind: 'paid', createdAt: new Date(this.now()).toISOString(), ...parsed }
@@ -78,6 +96,7 @@ export class PlanService {
 
   async updatePlan(actor: string, id: string, patch: z.input<typeof PlanPatchInput>): Promise<void> {
     const parsed: PlanPatch = PlanPatchInput.parse(patch)
+    if (('priceAmount' in parsed || 'priceCurrency' in parsed) && !priceConsistent(parsed)) throw new StudioHttpError(400, 'INVALID_PRICE')
     const plan = await this.deps.store.findPlan(id)
     if (!plan) throw new StudioHttpError(404, 'UNKNOWN_PLAN')
     if (plan.kind === 'free' && (parsed.billing !== undefined || parsed.active === false)) throw new StudioHttpError(400, 'FREE_PLAN_FIXED')

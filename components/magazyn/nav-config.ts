@@ -48,6 +48,7 @@ export const MAGAZYN_SECTIONS: MagazynSection[] = [
       { href: '/magazyn/studio/kody', label: 'Kody promocyjne' },
       { href: '/magazyn/studio/zamowienia', label: 'Zamówienia' },
       { href: '/magazyn/studio/ceny', label: 'Ceny (Paddle)' },
+      { href: '/magazyn/studio/wydania', label: 'Wydania (pobieranie)' },
       { href: '/magazyn/studio/moduly', label: 'Moduły i katalog' },
       { href: '/magazyn/studio/audyt', label: 'Dziennik audytu' },
     ],
