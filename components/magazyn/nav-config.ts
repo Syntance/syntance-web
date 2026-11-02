@@ -1,22 +1,46 @@
 export interface MagazynNavItem {
   href: string
   label: string
-  /** Aktywny także dla podstron (domyślnie tak, poza korzeniem sekcji). */
+  /** Aktywny także dla podstron (domyślnie tak). */
   exact?: boolean
 }
 
-export interface MagazynNavGroup {
+export interface MagazynSection {
+  id: 'strona' | 'studio'
   label: string
+  /** Wejście do sekcji po kliknięciu zakładki. */
+  href: string
   items: MagazynNavItem[]
 }
 
-/** Nawigacja Magazynu: grupy według tego, czym właściciel zarządza. */
-export const MAGAZYN_NAV_GROUPS: MagazynNavGroup[] = [
-  { label: 'Start', items: [{ href: '/magazyn', label: 'Przegląd', exact: true }] },
+/**
+ * Dwie główne zakładki Magazynu. Menu boczne pokazuje tylko pozycje aktywnej sekcji;
+ * sekcja wynika z adresu (/magazyn/studio… = Studio, reszta = strona).
+ */
+export const MAGAZYN_SECTIONS: MagazynSection[] = [
   {
-    label: 'Syntance Studio',
+    id: 'strona',
+    label: 'Syntance strona',
+    href: '/magazyn',
     items: [
-      { href: '/magazyn/studio', label: 'Pulpit Studio', exact: true },
+      { href: '/magazyn', label: 'Przegląd', exact: true },
+      { href: '/magazyn/rezerwacje', label: 'Rezerwacje' },
+      { href: '/magazyn/blokady', label: 'Blokady' },
+      { href: '/magazyn/regulamin', label: 'Reguły bookingu' },
+      { href: '/magazyn/cms', label: 'CMS' },
+      { href: '/magazyn/seo', label: 'SEO' },
+      { href: '/magazyn/cennik', label: 'Cennik' },
+      { href: '/magazyn/emaile', label: 'E-maile' },
+      { href: '/magazyn/model-partnerski', label: 'Model partnerski' },
+      { href: '/magazyn/ustawienia', label: 'Ustawienia' },
+    ],
+  },
+  {
+    id: 'studio',
+    label: 'Syntance Studio',
+    href: '/magazyn/studio',
+    items: [
+      { href: '/magazyn/studio', label: 'Pulpit', exact: true },
       { href: '/magazyn/studio/licencje', label: 'Licencje' },
       { href: '/magazyn/studio/klienci', label: 'Klienci' },
       { href: '/magazyn/studio/kody', label: 'Kody promocyjne' },
@@ -26,28 +50,13 @@ export const MAGAZYN_NAV_GROUPS: MagazynNavGroup[] = [
       { href: '/magazyn/studio/audyt', label: 'Dziennik audytu' },
     ],
   },
-  {
-    label: 'Rezerwacje',
-    items: [
-      { href: '/magazyn/rezerwacje', label: 'Rezerwacje' },
-      { href: '/magazyn/blokady', label: 'Blokady' },
-      { href: '/magazyn/regulamin', label: 'Reguły bookingu' },
-    ],
-  },
-  {
-    label: 'Strona i sprzedaż',
-    items: [
-      { href: '/magazyn/cms', label: 'CMS' },
-      { href: '/magazyn/seo', label: 'SEO' },
-      { href: '/magazyn/cennik', label: 'Cennik' },
-      { href: '/magazyn/emaile', label: 'E-maile' },
-      { href: '/magazyn/model-partnerski', label: 'Model partnerski' },
-    ],
-  },
-  { label: 'System', items: [{ href: '/magazyn/ustawienia', label: 'Ustawienia' }] },
 ]
 
-export const MAGAZYN_NAV = MAGAZYN_NAV_GROUPS.flatMap((g) => g.items)
+export function sectionForPath(pathname: string): MagazynSection {
+  const studio = MAGAZYN_SECTIONS[1]!
+  const site = MAGAZYN_SECTIONS[0]!
+  return pathname === studio.href || pathname.startsWith(`${studio.href}/`) ? studio : site
+}
 
 export function isNavActive(pathname: string, item: MagazynNavItem): boolean {
   return item.exact ? pathname === item.href : pathname === item.href || pathname.startsWith(`${item.href}/`)
