@@ -17,6 +17,10 @@ export type PaymentEvent =
       amount: { total: number; currency: string } | null
       /** Kod promocyjny użyty w zakupie (custom_data.promo_code) + udzielony rabat. */
       promo?: { code: string; discount: number | null }
+      /** Zakres i limit z planu powiązanego z ceną (gdy ustawiony). */
+      planId?: string
+      features?: string[]
+      maxDevices?: number
     }
   | { kind: 'renewal'; eventId: string; reference: string; expiresAt: string }
   | { kind: 'refund'; eventId: string; reference: string }
@@ -29,6 +33,9 @@ export interface PriceEntry {
   entitlements: (typeof ENTITLEMENTS)[number][]
   /** Perpetual: liczba miesięcy aktualizacji w cenie. */
   updateMonths: number
+  planId?: string
+  features?: string[]
+  maxDevices?: number
 }
 export type PriceLookup = (priceId: string) => Promise<PriceEntry | undefined>
 
@@ -123,6 +130,7 @@ export class PaddleProvider implements PaymentProvider {
           email,
           plan: product.plan,
           entitlements: product.entitlements,
+          ...(product.planId ? { planId: product.planId, features: product.features ?? [], ...(product.maxDevices ? { maxDevices: product.maxDevices } : {}) } : {}),
           updatesUntil: expiresAt ? new Date(expiresAt).toISOString() : addMonths(now, product.updateMonths),
           expiresAt: expiresAt ? new Date(expiresAt).toISOString() : null,
           amount: total !== undefined && tx.currency_code && /^\d+$/.test(total) ? { total: Number(total), currency: tx.currency_code } : null,

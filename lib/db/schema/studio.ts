@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
 import {
+  type AnyPgColumn,
   boolean,
   index,
   integer,
@@ -75,6 +76,10 @@ export const studioLicenses = pgTable(
     sourceProvider: text('source_provider'),
     sourceReference: text('source_reference'),
     note: text('note').notNull().default(''),
+    /** Plan, z którego skopiowano ustawienia (null = własny zakres / sprzed planów). Licencja jest samodzielna — zmiana planu jej nie rusza. */
+    planId: uuid('plan_id').references((): AnyPgColumn => studioPlans.id, { onDelete: 'set null' }),
+    /** Zakres funkcji licencji; null = wszystkie funkcje wynikające z `entitlements` (licencje sprzed wprowadzenia funkcji). */
+    features: jsonb('features').$type<string[] | null>(),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
@@ -150,6 +155,8 @@ export const studioPrices = pgTable(
     plan: text('plan').$type<'perpetual' | 'subscription'>().notNull(),
     entitlements: jsonb('entitlements').$type<string[]>().notNull(),
     updateMonths: smallint('update_months').notNull().default(12),
+    /** Plan z katalogu planów — gdy ustawiony, zakup wystawia licencję o zakresie tego planu (zamiast samych `entitlements`). */
+    planId: uuid('plan_id').references((): AnyPgColumn => studioPlans.id, { onDelete: 'restrict' }),
   },
   (t) => [primaryKey({ columns: [t.provider, t.priceId] })],
 )
@@ -280,4 +287,47 @@ export const studioPromoRedemptions = pgTable(
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [uniqueIndex('studio_promo_redemptions_uq').on(t.codeId, t.email), index('studio_promo_redemptions_code_idx').on(t.codeId)],
+)
+
+/* ───────────── Plany i katalog funkcji ───────────── */
+
+/** Funkcje (moduły) aplikacji, które plan może zawierać. Klucze = id modułów aplikacji. */
+export const studioFeatures = pgTable('studio_features', {
+  key: text('key').primaryKey(),
+  appSlug: text('app_slug')
+    .notNull()
+    .references(() => studioApps.slug)
+    .default('studio'),
+  label: text('label').notNull(),
+  /** Uprawnienie wymagane dziś przez aplikację (null = darmowa). */
+  entitlement: text('entitlement').$type<'pro' | 'print' | 'vector' | 'image'>(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
+/**
+ * Plan = nazwany zestaw funkcji + warunki. `kind = 'free'` to plan bez licencji (jedyny, nieusuwalny): definiuje, co jest darmowe.
+ * Plany płatne służą do wystawiania licencji (ręcznie i z zakupów).
+ */
+export const studioPlans = pgTable(
+  'studio_plans',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    appSlug: text('app_slug')
+      .notNull()
+      .references(() => studioApps.slug)
+      .default('studio'),
+    slug: text('slug').notNull(),
+    name: text('name').notNull(),
+    description: text('description').notNull().default(''),
+    kind: text('kind').$type<'paid' | 'free'>().notNull().default('paid'),
+    billing: text('billing').$type<'perpetual' | 'subscription'>().notNull().default('perpetual'),
+    /** Wieczysta: ile miesięcy aktualizacji w cenie. Subskrypcja: długość jednego okresu. */
+    updateMonths: smallint('update_months').notNull().default(12),
+    maxDevices: smallint('max_devices').notNull().default(2),
+    features: jsonb('features').$type<string[]>().notNull().default([]),
+    active: boolean('active').notNull().default(true),
+    sortOrder: smallint('sort_order').notNull().default(0),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('studio_plans_slug_uq').on(t.appSlug, t.slug)],
 )

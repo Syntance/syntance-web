@@ -15,6 +15,7 @@ const Action = z.discriminatedUnion('action', [
   z.object({ action: z.literal('extend'), until: z.iso.datetime() }),
   z.object({ action: z.literal('remove_device'), deviceId: z.string().regex(/^[0-9a-f]{64}$/) }),
   z.object({ action: z.literal('resend_key') }),
+  z.object({ action: z.literal('features'), features: z.array(z.string().min(1).max(40)).max(64) }),
   z.object({
     action: z.literal('terms'),
     plan: z.enum(['perpetual', 'subscription']),
@@ -62,12 +63,26 @@ export async function PATCH(req: Request, ctx: Ctx) {
       case 'remove_device':
         await svc.removeDevice(actor, uuid.parse(id), input.deviceId)
         break
+      case 'features':
+        await svc.setFeatures(actor, uuid.parse(id), input.features)
+        break
       case 'terms':
         await svc.updateTerms(actor, uuid.parse(id), input)
         break
       case 'resend_key':
         return { ok: await svc.resendKey(actor, uuid.parse(id)) }
     }
+    return { ok: true }
+  })
+}
+
+/** Trwałe usunięcie — tylko unieważnionej licencji, z potwierdzeniem e-mailem klienta. */
+export async function DELETE(req: Request, ctx: Ctx) {
+  const { id } = await ctx.params
+  const body: unknown = await req.json().catch(() => null)
+  return adminRoute(async (session) => {
+    const { confirmEmail } = z.object({ confirmEmail: z.string().max(254) }).parse(body)
+    await getLicenseService().deleteLicense(session.email, uuid.parse(id), confirmEmail)
     return { ok: true }
   })
 }

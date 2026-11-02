@@ -64,6 +64,13 @@
       "when": 1793637100754,
       "tag": "0008_studio_promo_codes_customer_flags",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793649610227,
+      "tag": "0009_studio_plans_features",
+      "breakpoints": true
     }
   ]
 }

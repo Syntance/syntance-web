@@ -1,5 +1,6 @@
 import { and, eq, sql, type SQL } from 'drizzle-orm'
 import { getDb, schema } from '@/lib/db'
+import { deriveEntitlements } from './features'
 import type { Entitlement } from './license-contract'
 import type { PriceEntry } from './payments'
 import type {
@@ -36,6 +37,8 @@ function toLicense(row: LicenseRow, devices: DeviceRow[]): LicenseRecord {
     devices: devices.map(toDevice),
     source: row.sourceProvider && row.sourceReference ? { provider: row.sourceProvider, reference: row.sourceReference } : null,
     note: row.note,
+    planId: row.planId,
+    features: row.features ?? null,
     createdAt: row.createdAt.toISOString(),
   }
 }
@@ -92,6 +95,8 @@ export class DrizzleStudioStore implements StudioStore {
         sourceProvider: r.source?.provider ?? null,
         sourceReference: r.source?.reference ?? null,
         note: r.note,
+        planId: r.planId,
+        features: r.features,
         createdAt: toDate(r.createdAt),
       })
       return true
@@ -110,8 +115,15 @@ export class DrizzleStudioStore implements StudioStore {
     if (patch.entitlements !== undefined) set.entitlements = patch.entitlements
     if (patch.plan !== undefined) set.plan = patch.plan
     if (patch.note !== undefined) set.note = patch.note
+    if (patch.features !== undefined) set.features = patch.features
+    if (patch.planId !== undefined) set.planId = patch.planId
     if (Object.keys(set).length === 0) return
     await this.db.update(schema.studioLicenses).set(set).where(eq(schema.studioLicenses.id, id))
+  }
+
+  async deleteLicense(id: string): Promise<boolean> {
+    const rows = await this.db.delete(schema.studioLicenses).where(eq(schema.studioLicenses.id, id)).returning({ id: schema.studioLicenses.id })
+    return rows.length > 0
   }
 
   /**
@@ -228,5 +240,17 @@ export async function lookupPrice(provider: string, priceId: string): Promise<Pr
     .where(and(eq(schema.studioPrices.provider, provider), eq(schema.studioPrices.priceId, priceId)))
     .limit(1)
   if (!row) return undefined
-  return { plan: row.plan, entitlements: row.entitlements as Entitlement[], updateMonths: row.updateMonths }
+  if (!row.planId) return { plan: row.plan, entitlements: row.entitlements as Entitlement[], updateMonths: row.updateMonths }
+  // Cena powiązana z planem: zakres, limit urządzeń i okres bierze z planu (cena zostaje źródłem „co kupiono”).
+  const [plan] = await getDb().select().from(schema.studioPlans).where(eq(schema.studioPlans.id, row.planId)).limit(1)
+  if (!plan) return { plan: row.plan, entitlements: row.entitlements as Entitlement[], updateMonths: row.updateMonths }
+  const catalog = await getDb().select().from(schema.studioFeatures)
+  return {
+    plan: plan.billing,
+    entitlements: deriveEntitlements(plan.features, catalog),
+    updateMonths: plan.updateMonths,
+    planId: plan.id,
+    features: plan.features,
+    maxDevices: plan.maxDevices,
+  }
 }

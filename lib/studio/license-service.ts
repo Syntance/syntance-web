@@ -11,6 +11,7 @@ import {
   type Entitlement,
   type LicensePayload,
 } from './license-contract'
+import { DEFAULT_FEATURES, deriveEntitlements, unknownFeatures, type FeatureDef } from './features'
 import { newLicenseKey } from './license-key'
 import type { PaymentEvent } from './payments'
 import type { LicenseRecord, StudioStore } from './store'
@@ -47,6 +48,8 @@ export interface LicenseServiceDeps {
   privateKey: KeyObject
   mailer: Mailer
   audit?: (entry: AuditEntry) => Promise<void>
+  /** Katalog funkcji (produkcja: tabela studio_features). Domyślnie lista z aplikacji. */
+  catalog?: () => Promise<readonly FeatureDef[]>
   /** Wywoływane po zakupie z kodem promocyjnym (webhook) — rejestruje wykorzystanie kodu. */
   onPromo?: (promo: { code: string; discount: number | null; currency: string | null }, email: string, licenseId: string) => Promise<void>
   now?: () => number
@@ -64,10 +67,16 @@ const key = z
 export const ActivateBody = z.object({ key, deviceId, deviceName: z.string().max(120).default('') })
 export const DeviceBody = z.object({ key, deviceId })
 
+export const EntitlementList = z.array(z.enum(ENTITLEMENTS)).min(1)
+const FeatureList = z.array(z.string().min(1).max(40)).max(64)
+
+/** Zakres: albo `features` (uprawnienia wynikają z katalogu), albo same `entitlements` (cały komplet funkcji uprawnienia). */
 export const ManualLicenseInput = z.object({
   email: z.email().max(254),
   plan: z.enum(['perpetual', 'subscription']),
-  entitlements: z.array(z.enum(ENTITLEMENTS)).min(1),
+  entitlements: EntitlementList.optional(),
+  features: FeatureList.nullable().default(null),
+  planId: z.uuid().nullable().default(null),
   updatesUntil: z.iso.datetime(),
   expiresAt: z.iso.datetime().nullable(),
   maxDevices: z.number().int().min(1).max(MAX_DEVICES_LIMIT).default(DEFAULT_MAX_DEVICES),
@@ -85,6 +94,10 @@ export class LicenseService {
     this.appSlug = deps.appSlug ?? 'studio'
   }
 
+  private async catalog(): Promise<readonly FeatureDef[]> {
+    return (await this.deps.catalog?.()) ?? DEFAULT_FEATURES
+  }
+
   private async audit(entry: AuditEntry): Promise<void> {
     await this.deps.audit?.(entry)
   }
@@ -98,6 +111,7 @@ export class LicenseService {
       email: record.email,
       plan: record.plan,
       entitlements: record.entitlements,
+      ...(record.features ? { features: record.features } : {}),
       updatesUntil: record.updatesUntil,
       expiresAt: record.expiresAt,
       maxDevices: record.maxDevices,
@@ -183,11 +197,13 @@ export class LicenseService {
           entitlements: event.entitlements,
           updatesUntil: event.updatesUntil,
           expiresAt: event.expiresAt,
-          maxDevices: DEFAULT_MAX_DEVICES,
+          maxDevices: event.maxDevices ?? DEFAULT_MAX_DEVICES,
           status: 'active',
           devices: [],
           source: { provider, reference: event.reference },
           note: '',
+          planId: event.planId ?? null,
+          features: event.features ?? null,
           createdAt: t,
         }
         if (await this.deps.store.insertLicense(created)) {
@@ -270,12 +286,20 @@ export class LicenseService {
   async issueManual(actor: string, input: ManualLicenseInput, source: LicenseRecord['source'] = null): Promise<LicenseRecord> {
     const parsed = ManualLicenseInput.parse(input)
     const t = new Date(this.now()).toISOString()
-    const { sendEmail, ...fields } = parsed
+    const { sendEmail, entitlements: given, ...fields } = parsed
+    const catalog = await this.catalog()
+    if (fields.features) {
+      const unknown = unknownFeatures(fields.features, catalog)
+      if (unknown.length) throw new StudioHttpError(400, 'UNKNOWN_FEATURE', { unknown })
+    }
+    const entitlements = fields.features ? deriveEntitlements(fields.features, catalog) : (given ?? [])
+    if (entitlements.length === 0) throw new StudioHttpError(400, 'NO_PAID_FEATURES')
     const record: LicenseRecord = {
       id: randomUUID(),
       appSlug: this.appSlug,
       key: newLicenseKey(),
       ...fields,
+      entitlements,
       status: 'active',
       devices: [],
       source,
@@ -318,6 +342,28 @@ export class LicenseService {
     await this.mustFind(id)
     await this.deps.store.updateLicense(id, { maxDevices: limit })
     await this.audit({ actor, action: 'license.device_limit_changed', target: id, meta: { maxDevices: limit } })
+  }
+
+  /** Zakres funkcji licencji; uprawnienia (dla starszych aplikacji) wynikają z katalogu. Wymaga co najmniej jednej funkcji płatnej. */
+  async setFeatures(actor: string, id: string, features: string[]): Promise<void> {
+    const list = FeatureList.parse(features)
+    const catalog = await this.catalog()
+    const unknown = unknownFeatures(list, catalog)
+    if (unknown.length) throw new StudioHttpError(400, 'UNKNOWN_FEATURE', { unknown })
+    const entitlements = deriveEntitlements(list, catalog)
+    if (entitlements.length === 0) throw new StudioHttpError(400, 'NO_PAID_FEATURES')
+    await this.mustFind(id)
+    await this.deps.store.updateLicense(id, { features: list, entitlements })
+    await this.audit({ actor, action: 'license.features_changed', target: id, meta: { features: list } })
+  }
+
+  /** Trwałe usunięcie. Tylko licencja już unieważniona i z potwierdzeniem e-mailem klienta (ochrona przed pomyłką). */
+  async deleteLicense(actor: string, id: string, confirmEmail: string): Promise<void> {
+    const record = await this.mustFind(id)
+    if (record.status !== 'revoked') throw new StudioHttpError(409, 'LICENSE_NOT_REVOKED')
+    if (confirmEmail.trim().toLowerCase() !== record.email.toLowerCase()) throw new StudioHttpError(400, 'CONFIRM_MISMATCH')
+    await this.deps.store.deleteLicense(id)
+    await this.audit({ actor, action: 'license.deleted', target: id, meta: { plan: record.plan, devices: record.devices.length } })
   }
 
   async setEntitlements(actor: string, id: string, entitlements: Entitlement[]): Promise<void> {
