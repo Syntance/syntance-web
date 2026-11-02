@@ -5,6 +5,8 @@ export class MemoryStudioStore implements StudioStore {
   readonly licenses = new Map<string, LicenseRecord>()
   readonly orders: OrderRecord[] = []
   readonly events = new Map<string, { done: boolean }>()
+  readonly blocked = new Set<string>()
+  readonly reasons = new Map<string, string>()
 
   private clone(r: LicenseRecord | undefined): LicenseRecord | null {
     return r ? structuredClone(r) : null
@@ -67,6 +69,15 @@ export class MemoryStudioStore implements StudioStore {
   }
   completeEvent(provider: string, eventId: string): Promise<void> {
     this.events.set(`${provider}:${eventId}`, { done: true })
+    return Promise.resolve()
+  }
+  isBlocked(email: string): Promise<boolean> {
+    return Promise.resolve(this.blocked.has(email.toLowerCase()))
+  }
+  setBlocked(email: string, blocked: boolean, reason = ''): Promise<void> {
+    if (blocked) this.reasons.set(email.toLowerCase(), reason)
+    if (blocked) this.blocked.add(email.toLowerCase())
+    else this.blocked.delete(email.toLowerCase())
     return Promise.resolve()
   }
 }

@@ -1,8 +1,9 @@
 import { adminRoute } from '@/lib/studio/admin-api'
-import { listOrders } from '@/lib/studio/admin-queries'
+import { OrderListParams, listOrders } from '@/lib/studio/admin-queries'
 
 export const runtime = 'nodejs'
 
-export function GET() {
-  return adminRoute(async () => ({ orders: await listOrders() }))
+export function GET(req: Request) {
+  const params = Object.fromEntries(new URL(req.url).searchParams)
+  return adminRoute(async () => listOrders(OrderListParams.parse(params)))
 }

@@ -15,6 +15,8 @@ export type PaymentEvent =
       expiresAt: string | null
       /** Kwota i waluta do rejestru zamówień (jednostki najmniejsze, np. grosze); null, gdy dostawca ich nie podał. */
       amount: { total: number; currency: string } | null
+      /** Kod promocyjny użyty w zakupie (custom_data.promo_code) + udzielony rabat. */
+      promo?: { code: string; discount: number | null }
     }
   | { kind: 'renewal'; eventId: string; reference: string; expiresAt: string }
   | { kind: 'refund'; eventId: string; reference: string }
@@ -59,10 +61,10 @@ const PaddleTransaction = z.object({
   id: z.string(),
   subscription_id: z.string().nullable().optional(),
   currency_code: z.string().optional(),
-  custom_data: z.object({ email: z.email() }).partial().nullable().optional(),
+  custom_data: z.object({ email: z.email(), promo_code: z.string().min(1).max(40) }).partial().nullable().optional(),
   items: z.array(z.object({ price: z.object({ id: z.string() }) })).min(1),
   billing_period: z.object({ ends_at: z.iso.datetime({ offset: true }) }).nullable().optional(),
-  details: z.object({ totals: z.object({ grand_total: z.string() }).optional() }).optional(),
+  details: z.object({ totals: z.object({ grand_total: z.string(), discount: z.string().optional() }).optional() }).optional(),
 })
 const PaddleSubscription = z.object({
   id: z.string(),
@@ -124,6 +126,9 @@ export class PaddleProvider implements PaymentProvider {
           updatesUntil: expiresAt ? new Date(expiresAt).toISOString() : addMonths(now, product.updateMonths),
           expiresAt: expiresAt ? new Date(expiresAt).toISOString() : null,
           amount: total !== undefined && tx.currency_code && /^\d+$/.test(total) ? { total: Number(total), currency: tx.currency_code } : null,
+          ...(tx.custom_data?.promo_code
+            ? { promo: { code: tx.custom_data.promo_code, discount: /^\d+$/.test(tx.details?.totals?.discount ?? '') ? Number(tx.details?.totals?.discount) : null } }
+            : {}),
         }
       }
       case 'subscription.updated':

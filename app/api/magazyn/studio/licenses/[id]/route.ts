@@ -15,6 +15,13 @@ const Action = z.discriminatedUnion('action', [
   z.object({ action: z.literal('extend'), until: z.iso.datetime() }),
   z.object({ action: z.literal('remove_device'), deviceId: z.string().regex(/^[0-9a-f]{64}$/) }),
   z.object({ action: z.literal('resend_key') }),
+  z.object({
+    action: z.literal('terms'),
+    plan: z.enum(['perpetual', 'subscription']),
+    updatesUntil: z.iso.datetime(),
+    expiresAt: z.iso.datetime().nullable(),
+    note: z.string().max(500).optional(),
+  }),
 ])
 
 type Ctx = { params: Promise<{ id: string }> }
@@ -54,6 +61,9 @@ export async function PATCH(req: Request, ctx: Ctx) {
         break
       case 'remove_device':
         await svc.removeDevice(actor, uuid.parse(id), input.deviceId)
+        break
+      case 'terms':
+        await svc.updateTerms(actor, uuid.parse(id), input)
         break
       case 'resend_key':
         return { ok: await svc.resendKey(actor, uuid.parse(id)) }

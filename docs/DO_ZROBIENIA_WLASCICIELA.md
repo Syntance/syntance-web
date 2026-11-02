@@ -13,7 +13,7 @@ Decyzje: `docs/adr/001-studio-panel.md`.
 | 5 | **Usunąć `ADMIN_BOOTSTRAP_TOKEN`** z Vercel po utworzeniu konta; usunąć stare `ADMIN_EMAIL`/`ADMIN_PASSWORD` | Vercel | |
 | 6 | Wygenerować parę kluczy licencji lokalnie: `pnpm studio:keygen`. Prywatny → Vercel `LICENSE_PRIVATE_KEY` (Sensitive); publiczny → CI aplikacji (`FOLIO_LICENSE_PUBLIC_KEY`) | lokalnie | Klucz prywatny nie może trafić do czatu, repo ani maila. Zrób kopię w menedżerze haseł |
 | 7 | Skonfigurować Paddle: destynacja powiadomień `https://syntance.com/api/studio/v1/webhooks/paddle` (zdarzenia: `transaction.completed`, `subscription.updated`, `subscription.canceled`, `adjustment.created/updated`), sekret → `PADDLE_WEBHOOK_SECRET`; w checkout przekazywać `custom_data.email` | Paddle | Najpierw sandbox: kupić testowo i sprawdzić, że licencja powstaje (mapowanie jest w kodzie „do potwierdzenia”) |
-| 8 | W panelu → Syntance Studio → Ceny: dodać mapowanie każdego `price_id` (plan, uprawnienia, miesiące aktualizacji) | `/magazyn/studio` | Bez mapowania webhook ignoruje zakup |
+| 8 | W panelu → Syntance Studio → Ceny (Paddle) (`/magazyn/studio/ceny`): dodać mapowanie każdego `price_id` (plan, uprawnienia, miesiące aktualizacji) | `/magazyn/studio` | Bez mapowania webhook ignoruje zakup |
 | 9 | Resend: zweryfikować domenę nadawcy, ustawić `LICENSE_FROM_EMAIL` (np. `licencje@syntance.com`) | Resend | |
 | 10a | Vercel (Sensitive): `STUDIO_R2_ENDPOINT`, `STUDIO_R2_BUCKET=syntance-studio`, `STUDIO_R2_ACCESS_KEY_ID`, `STUDIO_R2_SECRET_ACCESS_KEY` (nowy token R2 Object Read & Write tylko dla bucketu — patrz INFRASTRUKTURA.md), `STUDIO_DL_BASE_URL=https://dl.syntance.com`, `STUDIO_MODULE_PUBLIC_KEY` (klucz PUBLICZNY wydawcy modułów, base64 SPKI), `CRON_SECRET`, `HEALTHCHECK_RETENTION_URL` | Vercel | Bez nich wgrywanie modułów i cron nie działają |
 | 10b | ~~Cloudflare: Cache Rule i TLS 1.2~~ — zrobione 2026-10-26 (patrz INFRASTRUKTURA.md §6) | — | — |
@@ -36,3 +36,12 @@ Decyzje: `docs/adr/001-studio-panel.md`.
 | `LICENSE_PRIVATE_KEY` | sekret Vercel (Sensitive) + kopia offline | nie w repo, nie w czacie |
 | `ADMIN_ENC_KEY` | sekret Vercel + kopia offline | utrata = konieczność ponownej konfiguracji TOTP (usuń wiersz `admin_users`, użyj tokenu) |
 | `PADDLE_WEBHOOK_SECRET` | Vercel | |
+
+## Ręczne zarządzanie licencjami i kody promocyjne (ADR 003, PR `feat/magazyn-licencje-kody`)
+| # | Zadanie | Gdzie | Uwagi |
+| --- | --- | --- | --- |
+| A | Snapshot Neon przed scaleniem — migracja `0008_studio_promo_codes_customer_flags` (addytywna: 3 nowe tabele) | Neon | Wykona się w buildzie Vercel |
+| B | Sprawdzić na gałęzi Neon (preview) wyścig kodów: 2–3 równoległe `POST /api/studio/v1/redeem` z kodem o limicie 1 → dokładnie 1 licencja | terminal | Atomowość opiera się na SQL (unikalność + warunkowy UPDATE) |
+| C | Test ręczny w panelu na produkcji: wystawić licencję sobie, aktywować w aplikacji, dezaktywować urządzenie, zablokować i odblokować klienta, utworzyć kod `free_license` i wykorzystać | `/magazyn/studio` | Wymaga ustawionych `LICENSE_PRIVATE_KEY` i Resend (`LICENSE_FROM_EMAIL`) |
+| D | Kody rabatowe (`percent`/`amount`): utworzyć odpowiadający rabat w Paddle i wpisać jego id w kodzie; w checkout przekazywać `custom_data.promo_code` | Paddle + panel | Do czasu Paddle kody rabatowe są tylko planem |
+| E | Zdecydować o testach przeglądarkowych (Playwright) dla panelu — nie ma ich w repo | decyzja | Zaproponowane jako osobny PR |
