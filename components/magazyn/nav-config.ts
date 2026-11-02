@@ -43,6 +43,8 @@ export const MAGAZYN_SECTIONS: MagazynSection[] = [
       { href: '/magazyn/studio', label: 'Pulpit', exact: true },
       { href: '/magazyn/studio/licencje', label: 'Licencje' },
       { href: '/magazyn/studio/klienci', label: 'Klienci' },
+      { href: '/magazyn/studio/plany', label: 'Plany' },
+      { href: '/magazyn/studio/funkcje', label: 'Funkcje i moduły' },
       { href: '/magazyn/studio/kody', label: 'Kody promocyjne' },
       { href: '/magazyn/studio/zamowienia', label: 'Zamówienia' },
       { href: '/magazyn/studio/ceny', label: 'Ceny (Paddle)' },

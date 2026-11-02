@@ -7,12 +7,15 @@ import { privateKeyFromPem } from './certificate'
 import { DrizzleStudioStore } from './drizzle-store'
 import { LicenseService, StudioHttpError } from './license-service'
 import { DrizzlePromoStore } from './drizzle-promo-store'
+import { DrizzlePlanStore } from './drizzle-plan-store'
+import { PlanService } from './plans'
 import { PromoService } from './promo'
 import { ResendMailer } from './mailer'
 import { PaddleProvider, WebhookSignatureError, type PaymentProvider } from './payments'
 
 let service: LicenseService | null = null
 let promoService: PromoService | null = null
+let planService: PlanService | null = null
 
 /** Serwis licencji z produkcyjnymi zależnościami. Klucz prywatny pochodzi wyłącznie z env (sekrety Vercel). */
 export function getLicenseService(): LicenseService {
@@ -28,6 +31,7 @@ export function getLicenseService(): LicenseService {
       privateKey: privateKeyFromPem(pem),
       mailer: new ResendMailer(),
       audit: writeAudit,
+      catalog: () => new DrizzlePlanStore().listFeatures(),
       onPromo: (promo, email, licenseId) => getPromoService().recordPurchase(promo, email, licenseId),
     })
   } catch (error) {
@@ -49,6 +53,13 @@ export function getPromoService(): PromoService {
     audit: writeAudit,
   })
   return promoService
+}
+
+/** Serwis planów i katalogu funkcji (wystawia licencje przez ten sam LicenseService). */
+export function getPlanService(): PlanService {
+  if (planService) return planService
+  planService = new PlanService({ store: new DrizzlePlanStore(), licenses: getLicenseService(), audit: writeAudit })
+  return planService
 }
 
 export function getPaymentProviders(): PaymentProvider[] {

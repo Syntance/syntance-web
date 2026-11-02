@@ -26,6 +26,10 @@ export interface LicenseRecord {
   /** Referencja płatności (dostawca + id transakcji/subskrypcji) — dla zwrotów i odnowień. Null = wystawiona ręcznie. */
   source: { provider: string; reference: string } | null
   note: string
+  /** Plan, z którego skopiowano ustawienia (informacyjnie). */
+  planId: string | null
+  /** Zakres funkcji; null = wszystkie funkcje wynikające z `entitlements`. */
+  features: string[] | null
   createdAt: string
 }
 
@@ -46,7 +50,7 @@ export interface OrderRecord {
 export type AddDeviceResult = 'added' | 'exists' | 'limit'
 
 export type LicensePatch = Partial<
-  Pick<LicenseRecord, 'status' | 'expiresAt' | 'updatesUntil' | 'maxDevices' | 'entitlements' | 'plan' | 'note'>
+  Pick<LicenseRecord, 'status' | 'expiresAt' | 'updatesUntil' | 'maxDevices' | 'entitlements' | 'plan' | 'note' | 'features' | 'planId'>
 >
 
 /**
@@ -60,6 +64,8 @@ export interface StudioStore {
   /** False, gdy naruszono unikalność (klucz albo źródło płatności). */
   insertLicense(record: LicenseRecord): Promise<boolean>
   updateLicense(id: string, patch: LicensePatch): Promise<void>
+  /** Trwałe usunięcie licencji (urządzenia znikają kaskadowo; zamówienia i wykorzystania kodów zostają bez powiązania). */
+  deleteLicense(id: string): Promise<boolean>
   addDevice(licenseId: string, device: DeviceRecord, maxDevices: number): Promise<AddDeviceResult>
   touchDevice(licenseId: string, deviceId: string, lastSeen: string): Promise<boolean>
   removeDevice(licenseId: string, deviceId: string): Promise<boolean>

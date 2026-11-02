@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { adminRoute } from '@/lib/studio/admin-api'
 import { LicenseListParams, listLicenses } from '@/lib/studio/admin-queries'
-import { ManualLicenseInput } from '@/lib/studio/license-service'
+import { EntitlementList, ManualLicenseInput } from '@/lib/studio/license-service'
 import { getLicenseService } from '@/lib/studio/runtime'
 
 export const runtime = 'nodejs'
@@ -10,7 +10,7 @@ const Trial = z.object({
   trial: z.literal(true),
   email: z.email(),
   days: z.number().int().min(1).max(365).default(14),
-  entitlements: ManualLicenseInput.shape.entitlements,
+  entitlements: EntitlementList,
 })
 
 export function GET(req: Request) {

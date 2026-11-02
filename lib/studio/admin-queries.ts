@@ -5,7 +5,9 @@ import { ENTITLEMENTS } from './license-contract'
 import { DrizzleStudioStore } from './drizzle-store'
 import { writeAudit } from './audit'
 import { DrizzlePromoStore, toPromo } from './drizzle-promo-store'
-import { customerId } from './license-service'
+import { StudioHttpError, customerId } from './license-service'
+import { DrizzlePlanStore } from './drizzle-plan-store'
+import { deriveEntitlements } from './features'
 
 /** Zapytania panelu (tylko dla zalogowanego właściciela). Dane osobowe: e-mail, nazwy urządzeń. */
 
@@ -343,6 +345,8 @@ export const PriceInput = z.object({
   plan: z.enum(['perpetual', 'subscription']),
   entitlements: z.array(z.enum(ENTITLEMENTS)).min(1),
   updateMonths: z.number().int().min(1).max(120).default(12),
+  /** Plan z katalogu planów: wtedy plan/uprawnienia/okres bierze się z planu, a zakup wystawia licencję o jego zakresie. */
+  planId: z.uuid().nullable().default(null),
 })
 export type PriceInput = z.infer<typeof PriceInput>
 
@@ -351,13 +355,20 @@ export async function listPrices(appSlug: string) {
 }
 
 export async function upsertPrice(actor: string, input: PriceInput): Promise<void> {
-  const values = { provider: 'paddle', ...input }
+  let fields = input
+  if (input.planId) {
+    const plan = await new DrizzlePlanStore().findPlan(input.planId)
+    if (!plan || plan.kind !== 'paid') throw new StudioHttpError(400, 'UNKNOWN_PLAN')
+    const catalog = await new DrizzlePlanStore().listFeatures()
+    fields = { ...input, plan: plan.billing, entitlements: deriveEntitlements(plan.features, catalog), updateMonths: plan.updateMonths }
+  }
+  const values = { provider: 'paddle', ...fields }
   await getDb()
     .insert(schema.studioPrices)
     .values(values)
     .onConflictDoUpdate({
       target: [schema.studioPrices.provider, schema.studioPrices.priceId],
-      set: { appSlug: input.appSlug, label: input.label, plan: input.plan, entitlements: input.entitlements, updateMonths: input.updateMonths },
+      set: { appSlug: fields.appSlug, label: fields.label, plan: fields.plan, entitlements: fields.entitlements, updateMonths: fields.updateMonths, planId: fields.planId },
     })
   await writeAudit({ actor, action: 'price.upserted', target: input.priceId, meta: { plan: input.plan, entitlements: input.entitlements } })
 }
@@ -365,4 +376,15 @@ export async function upsertPrice(actor: string, input: PriceInput): Promise<voi
 export async function deletePrice(actor: string, priceId: string): Promise<void> {
   await getDb().delete(schema.studioPrices).where(and(eq(schema.studioPrices.provider, 'paddle'), eq(schema.studioPrices.priceId, priceId)))
   await writeAudit({ actor, action: 'price.deleted', target: priceId })
+}
+
+/** Plany z liczbą licencji wystawionych z danego planu (informacyjnie). */
+export async function listPlansWithUsage() {
+  const plans = await new DrizzlePlanStore().listPlans()
+  const counts = await getDb()
+    .select({ planId: schema.studioLicenses.planId, n: sql<number>`count(*)::int` })
+    .from(schema.studioLicenses)
+    .groupBy(schema.studioLicenses.planId)
+  const byPlan = new Map(counts.map((c) => [c.planId, c.n]))
+  return plans.map((p) => ({ ...p, licenseCount: byPlan.get(p.id) ?? 0 }))
 }

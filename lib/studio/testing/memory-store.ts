@@ -37,6 +37,9 @@ export class MemoryStudioStore implements StudioStore {
     if (r) Object.assign(r, patch)
     return Promise.resolve()
   }
+  deleteLicense(id: string): Promise<boolean> {
+    return Promise.resolve(this.licenses.delete(id))
+  }
   addDevice(licenseId: string, device: DeviceRecord, maxDevices: number): Promise<AddDeviceResult> {
     const r = this.licenses.get(licenseId)
     if (!r) return Promise.resolve('limit')

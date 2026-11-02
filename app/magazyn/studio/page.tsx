@@ -10,6 +10,7 @@ export const dynamic = 'force-dynamic'
 const QUICK = [
   { href: '/magazyn/studio/licencje', title: 'Licencje', desc: 'Wystaw, zmień warunki, odbierz urządzenie, unieważnij.' },
   { href: '/magazyn/studio/klienci', title: 'Klienci', desc: 'Profile, blokady i dane RODO.' },
+  { href: '/magazyn/studio/plany', title: 'Plany', desc: 'Moduły, funkcje i liczba urządzeń w planie; co jest za darmo.' },
   { href: '/magazyn/studio/kody', title: 'Kody promocyjne', desc: 'Rabaty, darmowe licencje, wydłużone triale.' },
   { href: '/magazyn/studio/audyt', title: 'Dziennik audytu', desc: 'Kto, co i kiedy.' },
 ]
@@ -34,7 +35,7 @@ export default async function StudioDashboard() {
         <StatCard label="Urządzenia aktywne (30 dni)" value={stats.activeDevices30d} hint={`${stats.activeCodes} aktywnych kodów`} href="/magazyn/studio/kody" />
       </div>
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Skróty">
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5" aria-label="Skróty">
         {QUICK.map((q) => (
           <Link
             key={q.href}

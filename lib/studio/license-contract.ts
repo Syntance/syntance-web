@@ -24,6 +24,8 @@ export const LicensePayloadSchema = z.object({
   email: z.email().max(254),
   plan: z.enum(['perpetual', 'subscription']),
   entitlements: z.array(z.enum(ENTITLEMENTS)).min(1),
+  /** Zakres funkcji (id modułów). Opcjonalne i dodatkowe: starsze wersje aplikacji pomijają to pole i działają wg `entitlements`. */
+  features: z.array(z.string().min(1).max(40)).max(64).optional(),
   /** Perpetual: ostatnia data wydania objęta zakupem. Subskrypcja: koniec opłaconego okresu. */
   updatesUntil: z.iso.datetime(),
   /** Subskrypcja: koniec opłaconego okresu. Perpetual: null. */
