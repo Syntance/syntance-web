@@ -72,6 +72,16 @@ const nextConfig = {
     ]
   },
 
+  /**
+   * Aplikacja desktopowa (folio-pdf ≤ 0.1.10x) składa adres przez `new URL('/v1/activate', base)`, co gubi `/api/studio`.
+   * Te wersje są już u testerów, więc API licencji jest dostępne także pod `/v1/*` (rewrite, nie redirect — POST zostaje POST-em).
+   */
+  async rewrites() {
+    return {
+      beforeFiles: [{ source: '/v1/:action(activate|refresh|deactivate|redeem)', destination: '/api/studio/v1/:action' }],
+    }
+  },
+
   async redirects() {
     const strategia = '/strategia-marketingu-i-sprzedazy'
     const porozmawiajmy = '/porozmawiajmy'
